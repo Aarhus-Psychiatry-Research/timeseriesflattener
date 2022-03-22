@@ -1,3 +1,12 @@
+# Installation
+## For development
+`pip install . -e`
+The `-e` flag marks the install as editable, "overwriting" the package as you edit the source files.
+
+## For useage
+`pip install git+https://github.com/Aarhus-Psychiatry-Research/timeseries-flattener.git`
+
+## Purpose
 To train baseline models (logistic regression, elastic net, SVM, XGBoost/random forest etc.), we need to represent the longitudinal data in a tabular, flattened way. 
 
 In essence, we need to generate a training example for each prediction time, where that example contains "latest_blood_pressure" (float), "X_diagnosis_within_n_hours" (boolean) etc.
