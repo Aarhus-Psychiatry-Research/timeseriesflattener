@@ -1,2 +1,3 @@
 pandas
 black
+pre-commit
