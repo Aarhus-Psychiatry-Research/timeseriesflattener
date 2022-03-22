@@ -3,6 +3,9 @@
 `pip install . -e`
 The `-e` flag marks the install as editable, "overwriting" the package as you edit the source files.
 
+Recommended to also add black as a pre-commit hook.
+`pre-commit install`
+
 ## For use
 `pip install git+https://github.com/Aarhus-Psychiatry-Research/timeseries-flattener.git`
 
