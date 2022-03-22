@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Union
 from pandas import DataFrame
-from gen_test_dfs import *
 
 
 def group_df_to_dict_of_list(df: DataFrame, grouping_col: str, date_col: str) -> dict:

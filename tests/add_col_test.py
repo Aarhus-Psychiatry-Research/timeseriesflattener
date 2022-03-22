@@ -1,6 +1,8 @@
-from src.utils import *
-import pandas as pd
+import os
+print(os.getcwd())
 
+from src.timeseriesflattener.flattened_time_series import add_col_event_within_months
+import pandas as pd
 
 def str_to_df(str):
     from io import StringIO
