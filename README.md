@@ -35,6 +35,8 @@ class FlattenedTimeSeries:
         name (str): What to name the column
 ```
 
+Inspiration-code can be found in previous commits.
+
 #### Example
 ```python
 import FlattenedTimeSeries
