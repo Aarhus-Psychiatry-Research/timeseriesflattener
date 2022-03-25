@@ -7,12 +7,12 @@ class FlattenedDataset:
     def __init__(
         self,
         prediction_times_df: DataFrame,
-        prediction_time_colname: str = "datotid_start",
+        prediction_time_colname: str = "timestamp",
     ):
-        self.prediction_times_df = prediction_times_df
+        self.df_prediction_times = prediction_times_df
         self.prediction_time_colname = prediction_time_colname
 
-        self.df = self.prediction_times_df
+        self.df = self.df_prediction_times
 
     def add_outcome(
         self,
@@ -20,39 +20,48 @@ class FlattenedDataset:
         lookahead_days: float,
         resolve_multiple: str,
         fallback: List[str],
-        outcome_colname: str,
+        timestamp_colname: str = "timestamp",
+        values_colname: str = "values",
         id_colname: str = "dw_ek_borger",
-        timestamp_colname: str = "datotid_start",
+        new_col_name: str = None,
     ):
         """Adds an outcome-column to the dataset
 
         Args:
-            outcome_df (DataFrame): Cols: dw_ek_borger, datotid, (value if relevant).
+            outcome_df (DataFrame): Cols: dw_ek_borger, datotid, value if relevant.
             lookahead_days (float): How far ahead to look for an outcome in days. If none found, use fallback.
-            resolve_multiple (str): How to handle more than one record within the lookbehind.
-                Suggestions: earliest, latest, mean_of_records, max, min.
-            fallback (List[str]): How to handle lack of a record within the lookbehind.
+            resolve_multiple (str): What to do with more than one value within the lookahead.
+                Suggestions: earliest, latest, mean, max, min.
+            fallback (List[str]): What to do if no value within the lookahead.
                 Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
-            outcome_colname (str): What to name the column
-            id_colname (str): Column name for citizen id
             timestamp_colname (str): Column name for timestamps
+            values_colname (str): Colname for outcome values in outcome_df
+            id_colname (str): Column name for citizen id
+            new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
+                Defaults to using values_colname.
         """
 
         outcome_dict = (
             outcome_df.groupby(id_colname)
             .apply(
                 lambda x: [
-                    list(x) for x in zip(x[timestamp_colname], x[outcome_colname])
+                    list(x) for x in zip(x[timestamp_colname], x[values_colname])
                 ]
             )
             .to_dict()
         )
+        """
+            Generate a dict of shape {  
+                                        id1: [[timestamp11, val11], [timestamp12, val12]],
+                                        id2: [[timestamp21, val21], [timestamp22, val22]]
+                                    }
+        """
 
-        new_col = self.prediction_times_df.apply(
-            lambda row: flatten_events(
+        new_col = self.df_prediction_times.apply(
+            lambda row: self._flatten_events(
                 direction="ahead",
                 prediction_timestamp=row[self.prediction_time_colname],
-                event_dict=outcome_dict,
+                val_dict=outcome_dict,
                 interval_days=lookahead_days,
                 id=row[id_colname],
                 resolve_multiple=resolve_multiple,
@@ -61,51 +70,134 @@ class FlattenedDataset:
             axis=1,
         )
 
-        self.df[f"{outcome_colname}_within_{lookahead_days}_days"] = new_col
+        if new_col_name is None:
+            new_col_name = values_colname
+
+        self.df[f"{new_col_name}_within_{lookahead_days}_days"] = new_col
 
     def add_predictor(
         self,
-        outcome_df: DataFrame,
-        lookahead_window: float,
+        predictor_df: DataFrame,
+        lookbehind_days: float,
         resolve_multiple: str,
         fallback: List[str],
-        name: str,
+        outcome_colname: str,
+        id_colname: str = "dw_ek_borger",
+        timestamp_colname: str = "timestamp",
     ):
         """Adds a predictor-column to the dataset
 
         Args:
-            predictor (DataFrame): Cols: dw_ek_borger, datotid, (value if relevant).
-            lookback_window (float): How far back to look for a predictor. If none found, use fallback.
-            resolve_multiple (str): How to handle more than one record within the lookbehind.
-                Suggestions: earliest, latest, mean_of_records, max, min.
-            fallback (List[str]): How to handle lack of a record within the lookbehind.
+            predictor_df (DataFrame): Cols: dw_ek_borger, datotid, value if relevant.
+            lookahead_days (float): How far ahead to look for an outcome in days. If none found, use fallback.
+            resolve_multiple (str): What to do with more than one value within the lookahead.
+                Suggestions: earliest, latest, mean, max, min.
+            fallback (List[str]): What to do if no value within the lookahead.
                 Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
-            name (str): What to name the column
-
-        Raises:
-            NotImplementedError: _description_
+            outcome_colname (str): What to name the column
+            id_colname (str): Column name for citizen id
+            timestamp_colname (str): Column name for timestamps
         """
 
         return True
+
+    def _get_events_within_n_days(
+        self,
+        direction: str,
+        prediction_timestamp: datetime,
+        val_dict: Dict[str, List[List]],
+        interval_days: float,
+        id: int,
+    ):
+        """Gets a list of values that are within interval_days in direction from predictin_timestamp for id.
+
+        Args:
+            direction (str): Whether to look ahead or behind.
+            prediction_timestamp (timestamp):
+            val_dict (Dict[str, List[Dict[datetime, int]]]): A dict containing the timestamps and vals for the events.
+                Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
+            interval_days (int): How far to look in direction.
+            id (int): Patient id
+
+        Returns:
+            list: [datetime, value]
+        """
+
+        events_within_n_days = []
+
+        for event in val_dict[id]:
+            event_timestamp = event[0]
+
+            if is_within_n_days(
+                direction=direction,
+                prediction_timestamp=prediction_timestamp,
+                event_timestamp=event_timestamp,
+                interval_days=interval_days,
+            ):
+                events_within_n_days.append(event)
+
+        return events_within_n_days
+
+    def _flatten_events(
+        self,
+        direction: str,
+        prediction_timestamp: str,
+        val_dict: Dict[str, List[List]],
+        interval_days: float,
+        resolve_multiple: Callable,
+        fallback: list,
+        id: int = "dw_ek_borger",
+    ):
+        """Takes a list of events and turns them into a single value for a prediction_time
+        given a set of conditions.
+
+        Args:
+            direction (str): Whether to look ahead or behind from the prediction time.
+            prediction_timestamp (str): The timestamp to anchor on.
+            val_dict (Dict[str, List[Dict[datetime, int]]]): A dict containing the timestamps and vals for the events.
+                Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
+            interval_days (float): How many days to look in direction for events.
+            resolve_multiple (str): How to handle multiple events within interval_days.
+            fallback (list): How to handle no events within interval_days.
+            id (int, optional): Column name that identifies unique patients. Defaults to "dw_ek_borger".
+
+        Returns:
+            int: Value for each prediction_time.
+        """
+        events = self._get_events_within_n_days(
+            direction=direction,
+            prediction_timestamp=prediction_timestamp,
+            val_dict=val_dict,
+            interval_days=interval_days,
+            id=id,
+        )
+
+        if len(events) == 0:
+            return fallback
+        elif len(events) == 1:
+            event_val = events[0][1]
+            return event_val
+        elif len(events) > 1:
+            return resolve_multiple(events)
 
 
 def is_within_n_days(
     direction: str,
     prediction_timestamp: datetime,
     event_timestamp: datetime,
-    interval_days: int,
+    interval_days: float,
 ):
-    """Checks whether prediction_date is within interval_days of event_date.
-    Look ahead from prediction_date: interval_days must be negative
+    """Looks interval_days in direction from prediction_timestamp.
+    Returns true if event_timestamp is within interval_days.
 
     Args:
-        prediction_date (datetime): _description_
-        event_date (datetime): _description_
-        interval_days (int): _description_
         direction: Whether to look ahead or behind
+        prediction_timestamp (timestamp): timestamp for prediction
+        event_timestamp (timestamp): timestamp for event
+        interval_days (int): How far to look in direction
 
     Returns:
-        _type_: _description_
+        boolean
     """
 
     difference_in_days = (
@@ -121,78 +213,3 @@ def is_within_n_days(
         return ValueError("direction can only be 'ahead' or 'behind'")
 
     return is_in_interval
-
-
-def get_events_within_n_days(
-    direction: str,
-    prediction_timestamp: datetime,
-    event_dict: dict,
-    interval_days: int,
-    id: int = "dw_ek_borger",
-):
-    """Checks whether any event in event_dict is dated within lookahead_days after prediction_time for id
-    Args:
-        id (int): citizen_id
-        prediction_datetime (datetime)
-        event_dict (dict)
-        interval_months (int)
-    Returns:
-        _type_: _description_
-    """
-    events_within_n_days = []
-
-    for event in event_dict[id]:
-        event_timestamp = event[0]
-
-        if is_within_n_days(
-            direction=direction,
-            prediction_timestamp=prediction_timestamp,
-            event_timestamp=event_timestamp,
-            interval_days=interval_days,
-        ):
-            events_within_n_days.append(event)
-
-    return events_within_n_days
-
-
-def flatten_events(
-    direction: str,
-    prediction_timestamp: str,
-    event_dict: Dict[str, List[List]],
-    interval_days: int,
-    resolve_multiple: Callable,
-    fallback: list,
-    id: int = "dw_ek_borger",
-):
-    """Takes a list of events and turns them into a single value for a prediction_time
-    given a set of conditions.
-
-    Args:
-        direction (str): Whether to look ahead or behind from the prediction time.
-        prediction_datetime (str): The datetime to anchor on.
-        event_dict (Dict[str, List[Dict[Timestamp, int]]]): A dict containing the timestamps and vals for the events.
-            Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
-        interval_days (int): How many days to look in direction for events.
-        resolve_multiple (str): How to handle multiple events within interval_days.
-        fallback (list): How to handle no events within interval_days.
-        id (int, optional): Column name that identifies unique patients. Defaults to "dw_ek_borger".
-
-    Returns:
-        int: Value for each prediction_time.
-    """
-    events = get_events_within_n_days(
-        direction=direction,
-        prediction_timestamp=prediction_timestamp,
-        event_dict=event_dict,
-        interval_days=interval_days,
-        id=id,
-    )
-
-    if len(events) == 0:
-        if type(fallback) == int:
-            return fallback
-    elif len(events) == 1:
-        event_val = events[0][1]
-        return event_val
-    elif len(events) > 1:
-        return resolve_multiple(events)
