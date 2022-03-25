@@ -1,6 +1,8 @@
+from ctypes import Union
 from typing import Callable, Dict, List
+from xmlrpc.client import Boolean
 from pandas import DataFrame
-from datetime import datetime
+from datetime import date, datetime
 
 
 class FlattenedDataset:
@@ -108,7 +110,7 @@ class FlattenedDataset:
         val_dict: Dict[str, List[List]],
         interval_days: float,
         id: int,
-    ):
+    ) -> List:
         """Gets a list of values that are within interval_days in direction from predictin_timestamp for id.
 
         Args:
@@ -147,7 +149,7 @@ class FlattenedDataset:
         resolve_multiple: Callable,
         fallback: list,
         id: int = "dw_ek_borger",
-    ):
+    ) -> float:
         """Takes a list of events and turns them into a single value for a prediction_time
         given a set of conditions.
 
@@ -162,7 +164,7 @@ class FlattenedDataset:
             id (int, optional): Column name that identifies unique patients. Defaults to "dw_ek_borger".
 
         Returns:
-            int: Value for each prediction_time.
+            float: Value for each prediction_time.
         """
         events = self._get_events_within_n_days(
             direction=direction,
@@ -186,7 +188,7 @@ def is_within_n_days(
     prediction_timestamp: datetime,
     event_timestamp: datetime,
     interval_days: float,
-):
+) -> Boolean:
     """Looks interval_days in direction from prediction_timestamp.
     Returns true if event_timestamp is within interval_days.
 

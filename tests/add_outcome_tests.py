@@ -41,18 +41,20 @@ def test_multiple_citizens():
     run_tests_from_df_strings(prediction_times_str, event_times_str, [1, 0, 1, 0])
 
 
-def str_to_df(str):
+def str_to_df(str) -> DataFrame:
     from io import StringIO
 
     df = pd.read_table(StringIO(str), sep=",", index_col=False)
 
-    convert_cols_with_matching_colnames_to_datetime(df, "timestamp")
+    df = convert_cols_with_matching_colnames_to_datetime(df, "timestamp")
 
     # Drop "Unnamed" cols
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
-def convert_cols_with_matching_colnames_to_datetime(df: DataFrame, colname_substr: str):
+def convert_cols_with_matching_colnames_to_datetime(
+    df: DataFrame, colname_substr: str
+) -> DataFrame:
     """Convert columns that contain colname_substr in their name to datetimes
 
     Args:
