@@ -1,6 +1,4 @@
-from ctypes import Union
-from typing import Callable, Dict, List
-from xmlrpc.client import Boolean
+from typing import Callable, Dict, List, Union
 from pandas import DataFrame
 from datetime import date, datetime
 
@@ -46,8 +44,8 @@ class FlattenedDataset:
         outcome_dict = (
             outcome_df.groupby(id_colname)
             .apply(
-                lambda x: [
-                    list(x) for x in zip(x[timestamp_colname], x[values_colname])
+                lambda row: [
+                    list(x) for x in zip(row[timestamp_colname], row[values_colname])
                 ]
             )
             .to_dict()
@@ -101,7 +99,7 @@ class FlattenedDataset:
             timestamp_colname (str): Column name for timestamps
         """
 
-        return True
+        raise NotImplementedError
 
     def _get_events_within_n_days(
         self,
@@ -156,7 +154,7 @@ class FlattenedDataset:
         Args:
             direction (str): Whether to look ahead or behind from the prediction time.
             prediction_timestamp (str): The timestamp to anchor on.
-            val_dict (Dict[str, List[Dict[datetime, int]]]): A dict containing the timestamps and vals for the events.
+            val_dict (Dict[str, List[List[datetime, int]]]): A dict containing the timestamps and vals for the events.
                 Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
             interval_days (float): How many days to look in direction for events.
             resolve_multiple (str): How to handle multiple events within interval_days.
@@ -188,7 +186,7 @@ def is_within_n_days(
     prediction_timestamp: datetime,
     event_timestamp: datetime,
     interval_days: float,
-) -> Boolean:
+) -> bool:
     """Looks interval_days in direction from prediction_timestamp.
     Returns true if event_timestamp is within interval_days.
 
