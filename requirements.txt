@@ -1,13 +1,13 @@
 # Formatting
-black
+black==22.3.0
 
 # Data-wrangling
-pandas
+pandas==1.4.1
 
 # SQL
-sqlalchemy
-pyodbc
+sqlalchemy==1.4.32
+pyodbc==4.0.32
 
 # Testing
-pre-commit
-pytest
+pre-commit==2.17.0
+pytest==7.1.1
