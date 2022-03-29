@@ -1,5 +1,13 @@
-pandas
+# Formatting
 black
-pre-commit
+
+# Data-wrangling
+pandas
+
+# SQL
 sqlalchemy
 pyodbc
+
+# Testing
+pre-commit
+pytest
