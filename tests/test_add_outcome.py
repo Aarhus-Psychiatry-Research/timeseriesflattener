@@ -65,6 +65,8 @@ def convert_cols_with_matching_colnames_to_datetime(
         :, df.columns.str.contains(colname_substr)
     ].apply(pd.to_datetime)
 
+    return df
+
 
 def run_tests_from_df_strings(
     prediction_times: str,

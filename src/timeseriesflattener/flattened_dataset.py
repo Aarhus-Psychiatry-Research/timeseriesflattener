@@ -1,6 +1,6 @@
 from typing import Callable, Dict, List, Union
 from pandas import DataFrame
-from datetime import date, datetime
+from datetime import datetime
 
 
 class FlattenedDataset:
@@ -41,21 +41,9 @@ class FlattenedDataset:
                 Defaults to using values_colname.
         """
 
-        outcome_dict = (
-            outcome_df.groupby(id_colname)
-            .apply(
-                lambda row: [
-                    list(x) for x in zip(row[timestamp_colname], row[values_colname])
-                ]
-            )
-            .to_dict()
+        outcome_dict = self._events_to_dict_by_patient(
+            outcome_df, id_colname, timestamp_colname, values_colname
         )
-        """
-            Generate a dict of shape {  
-                                        id1: [[timestamp11, val11], [timestamp12, val12]],
-                                        id2: [[timestamp21, val21], [timestamp22, val22]]
-                                    }
-        """
 
         new_col = self.df_prediction_times.apply(
             lambda row: self._flatten_events(
@@ -101,11 +89,46 @@ class FlattenedDataset:
 
         raise NotImplementedError
 
+    def _events_to_dict_by_patient(
+        self,
+        df: DataFrame,
+        id_colname: str,
+        timestamp_colname: str,
+        values_colname: str,
+    ) -> Dict[str, List[List[Union[datetime, float]]]]:
+        """
+        Generate a dict of events grouped by patient_id
+        shape
+
+        Args:
+            df (DataFrame): Dataframe to come from
+            id_colname (str): Column name for patient ids
+            timestamp_colname (str): Column name for event timestamps
+            values_colname (str): Column name for event values
+
+        Returns:
+            Dict[str, List[List[Union[datetime, float]]]]:
+                                    {
+                                        patientid1: [[timestamp11, val11], [timestamp12, val12]],
+                                        patientid2: [[timestamp21, val21], [timestamp22, val22]]
+                                    }
+        """
+
+        return (
+            df.groupby(id_colname)
+            .apply(
+                lambda row: [
+                    list(x) for x in zip(row[timestamp_colname], row[values_colname])
+                ]
+            )
+            .to_dict()
+        )
+
     def _get_events_within_n_days(
         self,
         direction: str,
         prediction_timestamp: datetime,
-        val_dict: Dict[str, List[List]],
+        val_dict: Dict[str, List[List[Union[datetime, float]]]],
         interval_days: float,
         id: int,
     ) -> List:
@@ -114,7 +137,7 @@ class FlattenedDataset:
         Args:
             direction (str): Whether to look ahead or behind.
             prediction_timestamp (timestamp):
-            val_dict (Dict[str, List[Dict[datetime, int]]]): A dict containing the timestamps and vals for the events.
+            val_dict (Dict[str, List[List[Union[datetime, float]]]]): A dict containing the timestamps and vals for the events.
                 Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
             interval_days (int): How far to look in direction.
             id (int): Patient id
@@ -142,7 +165,7 @@ class FlattenedDataset:
         self,
         direction: str,
         prediction_timestamp: str,
-        val_dict: Dict[str, List[List]],
+        val_dict: Dict[str, List[List[Union[datetime, float]]]],
         interval_days: float,
         resolve_multiple: Callable,
         fallback: list,
@@ -154,7 +177,7 @@ class FlattenedDataset:
         Args:
             direction (str): Whether to look ahead or behind from the prediction time.
             prediction_timestamp (str): The timestamp to anchor on.
-            val_dict (Dict[str, List[List[datetime, int]]]): A dict containing the timestamps and vals for the events.
+            val_dict (Dict[str, List[List[Union[datetime, float]]]]): A dict containing the timestamps and vals for the events.
                 Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
             interval_days (float): How many days to look in direction for events.
             resolve_multiple (str): How to handle multiple events within interval_days.
