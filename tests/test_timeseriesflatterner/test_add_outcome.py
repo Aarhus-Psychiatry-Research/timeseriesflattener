@@ -95,7 +95,8 @@ def run_tests_from_df_strings(
     df_event_times = str_to_df(event_times)
 
     dataset = FlattenedDataset(
-        prediction_times_df=df_prediction_times, prediction_time_colname="timestamp"
+        prediction_times_df=df_prediction_times,
+        prediction_timestamp_colname="timestamp",
     )
 
     dataset.add_outcome(
