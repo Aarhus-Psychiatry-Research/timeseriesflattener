@@ -4,6 +4,7 @@
 # Installation
 ## For development
 `pip install . -e`
+
 The `-e` flag marks the install as editable, "overwriting" the package as you edit the source files.
 
 Recommended to also add black as a pre-commit hook:
@@ -12,18 +13,20 @@ Recommended to also add black as a pre-commit hook:
 ## For use
 `pip install git+https://github.com/Aarhus-Psychiatry-Research/psycop-ml-utils.git`
 
-## sql_load
+# Usage
+## Loading data from SQL
 
 Currently only contains one function to load a view from SQL, `sql_load`
 
 ```py 
 from loaders import sql_load
 
-view = ...
-df = sql_load(...)
+view = "[FOR_SFI_fritekst_resultat_udfoert_i_psykiatrien_aendret_2011]"
+sql = "SELECT * FROM [fct]." + view
+df = sql_load(sql, chunksize = None)
 ```
 
-## TimeSeriesFlattener
+## Flattening time series
 To train baseline models (logistic regression, elastic net, SVM, XGBoost/random forest etc.), we need to represent the longitudinal data in a tabular, flattened way. 
 
 In essence, we need to generate a training example for each prediction time, where that example contains "latest_blood_pressure" (float), "X_diagnosis_within_n_hours" (boolean) etc.
@@ -31,38 +34,63 @@ In essence, we need to generate a training example for each prediction time, whe
 To generate this, I propose the time-series flattener class (`TimeSeriesFlattener`). It builds a dataset like described above.
 
 ### TimeSeriesFlattener
-```
-class FlattenedTimeSeries:
-  Attributes:
-    prediction_df (dataframe): Cols: dw_ek_borger, prediction_time, (value if relevant).
+```python
+class FlattenedDataset:
+    def __init__():
+        """Class containing a time-series flattened.
 
-  Methods:
-    add_outcome
-        outcome_df (dataframe): Cols: dw_ek_borger, datotid, (value if relevant).
-        lookahead_window (float): How far ahead to look for an outcome. If none found, use fallback.
-        resolve_multiple (str): How to handle more than one record within the lookbehind. Suggestions: earliest, latest, mean, max, min.
-        fallback (list): How to handle lack of a record within the lookbehind. Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
-        name (str): What to name the column
-    
-    add_predictor
-        predictor (dataframe): Cols: dw_ek_borger, datotid, (value if relevant).
-        lookback_window (float): How far back to look for a predictor. If none found, use fallback.
-        resolve_multiple (str): How to handle more than one record within the lookbehind. Suggestions: earliest, latest, mean, max, min.
-        fallback (list): How to handle lack of a record within the lookbehind. Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
-        name (str): What to name the column
+        Args:
+            prediction_times_df (DataFrame): Dataframe with prediction times.
+            prediction_timestamp_colname (str, optional): Colname for timestamps. Defaults to "timestamp".
+            id_colname (str, optional): Colname for patients ids. Defaults to "dw_ek_borger".
+        """
+
+    def add_outcome():
+        """Adds an outcome-column to the dataset
+
+        Args:
+            outcome_df (DataFrame): Cols: dw_ek_borger, datotid, value if relevant.
+            lookahead_days (float): How far ahead to look for an outcome in days. If none found, use fallback.
+            resolve_multiple (str): What to do with more than one value within the lookahead.
+                Suggestions: earliest, latest, mean, max, min.
+            fallback (List[str]): What to do if no value within the lookahead.
+                Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
+            timestamp_colname (str): Column name for timestamps
+            values_colname (str): Colname for outcome values in outcome_df
+            id_colname (str): Column name for citizen id
+            new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
+                Defaults to using values_colname.
+        """
+
+    def add_predictor():
+        """Adds a predictor-column to the dataset
+
+        Args:
+            predictor_df (DataFrame): Cols: dw_ek_borger, datotid, value if relevant.
+            lookahead_days (float): How far ahead to look for an outcome in days. If none found, use fallback.
+            resolve_multiple (str): What to do with more than one value within the lookahead.
+                Suggestions: earliest, latest, mean, max, min.
+            fallback (List[str]): What to do if no value within the lookahead.
+                Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
+            outcome_colname (str): What to name the column
+            id_colname (str): Column name for citizen id
+            timestamp_colname (str): Column name for timestamps
+        """
 ```
 
 Inspiration-code can be found in previous commits.
 
 #### Example
-```python
-import FlattenedTimeSeries
+- [ ] Update examples as API matures
 
-dataset = FlattenedTimeSeries(prediction_df = prediction_times)
+```python
+import FlattenedDataset
+
+dataset = FlattenedDataset(prediction_times_df = prediction_times, prediction_timestamp_colname = "timestamp", id_colname = "dw_ek_borger")
 
 dataset.add_outcome(
-    outcome=type_2_diabetes,
-    lookahead_window=730,
+    outcome_df=type_2_diabetes_df,
+    lookahead_days=730,
     resolve_multiple="max",
     fallback=[0],
     name="t2d",

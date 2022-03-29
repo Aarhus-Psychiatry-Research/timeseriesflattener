@@ -7,10 +7,19 @@ class FlattenedDataset:
     def __init__(
         self,
         prediction_times_df: DataFrame,
-        prediction_time_colname: str = "timestamp",
+        prediction_timestamp_colname: str = "timestamp",
+        id_colname: str = "dw_ek_borger",
     ):
+        """Class containing a time-series flattened.
+
+        Args:
+            prediction_times_df (DataFrame): Dataframe with prediction times.
+            prediction_timestamp_colname (str, optional): Colname for timestamps. Defaults to "timestamp".
+            id_colname (str, optional): Colname for patients ids. Defaults to "dw_ek_borger".
+        """
         self.df_prediction_times = prediction_times_df
-        self.prediction_time_colname = prediction_time_colname
+        self.prediction_timestamp_colname = prediction_timestamp_colname
+        self.id_colname = id_colname
 
         self.df = self.df_prediction_times
 
@@ -48,7 +57,7 @@ class FlattenedDataset:
         new_col = self.df_prediction_times.apply(
             lambda row: self._flatten_events(
                 direction="ahead",
-                prediction_timestamp=row[self.prediction_time_colname],
+                prediction_timestamp=row[self.prediction_timestamp_colname],
                 val_dict=outcome_dict,
                 interval_days=lookahead_days,
                 id=row[id_colname],
