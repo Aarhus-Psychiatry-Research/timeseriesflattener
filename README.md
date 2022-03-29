@@ -7,16 +7,27 @@ Recommended to also add black as a pre-commit hook:
 `pre-commit install`
 
 ## For use
-`pip install git+https://github.com/Aarhus-Psychiatry-Research/timeseries-flattener.git`
+`pip install git+https://github.com/Aarhus-Psychiatry-Research/psycop-ml-utils.git`
 
-## Purpose
+## sql_load
+
+Currently only contains one function to load a view from SQL, `sql_load`
+
+```py 
+from loaders import sql_load
+
+view = ...
+df = sql_load(...)
+```
+
+## TimeSeriesFlattener
 To train baseline models (logistic regression, elastic net, SVM, XGBoost/random forest etc.), we need to represent the longitudinal data in a tabular, flattened way. 
 
 In essence, we need to generate a training example for each prediction time, where that example contains "latest_blood_pressure" (float), "X_diagnosis_within_n_hours" (boolean) etc.
 
 To generate this, I propose the time-series flattener class (`TimeSeriesFlattener`). It builds a dataset like described above.
 
-## TimeSeriesFlattener
+### TimeSeriesFlattener
 ```
 class FlattenedTimeSeries:
   Attributes:
@@ -75,6 +86,3 @@ Dataset now looks like this:
 For binary outcomes, `add_predictor` with `fallback = [0]` would take a df with only the times where the event occurred, and then generate 0's for the rest. 
 
 I propose we create the above functionality on a just-in-time basis, building the features as we need them.
-
-## Static features
-Since we'll all add age, gender etc., might want some higher-level functions for this type of static info. That said, the amount of code for implementing it is very small.

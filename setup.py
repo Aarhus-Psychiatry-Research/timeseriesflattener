@@ -2,6 +2,12 @@ from setuptools import setup
 from setuptools import find_packages
 import os
 
+with open("README.md", encoding="utf-8") as f:
+    long_description = f.read()
+
+with open("requirements.txt", encoding="utf-8") as f:
+    requirements = f.read().split("\n")
+
 path = os.path.join("src", "timeseriesflattener", "about.py")
 
 with open(path) as f:

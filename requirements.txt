@@ -1,3 +1,5 @@
 pandas
 black
 pre-commit
+sqlalchemy
+pyodbc
