@@ -8,7 +8,7 @@ with open("README.md", encoding="utf-8") as f:
 with open("requirements.txt", encoding="utf-8") as f:
     requirements = f.read().split("\n")
 
-path = os.path.join("src", "timeseriesflattener", "about.py")
+path = os.path.join("src", "about.py")
 
 with open(path) as f:
     v = f.read()
