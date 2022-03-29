@@ -13,7 +13,7 @@ from typing import Generator, Optional, Union
 def sql_load(
     query: str,
     server: str = "BI-DPA-PROD",
-    database: str = "USR_PS",
+    database: str = "USR_PS_Forsk",
     chunksize: Optional[int] = 1000,
 ) -> Union[pd.DataFrame, Generator[pd.DataFrame, None, None]]:
     """Function to load a SQL query. If chunksize is None, all data will be loaded into memory.
@@ -28,16 +28,11 @@ def sql_load(
     Returns:
         Union[pd.DataFrame, Generator[pd.DataFrame]]: DataFrame or generator of DataFrames
 
-    Examples:
-        # From USR_PS
-        >>> view = "[FOR_kohorte_indhold_pt_journal]"
-        >>> sql = "SELECT * FROM [dbo]." + view
-        >>> df = sql_load(sql, chunksize = None)
-
+    Example:
         # From USR_PS_Forsk
         >>> view = "[FOR_SFI_fritekst_resultat_udfoert_i_psykiatrien_aendret_2011]"
         >>> sql = "SELECT * FROM [fct]." + view
-        >>> df = sql_load(sql, database="USR_PS_FORSK", chunksize = None)
+        >>> df = sql_load(sql, chunksize = None)
 
     """
     driver = "SQL Server"
