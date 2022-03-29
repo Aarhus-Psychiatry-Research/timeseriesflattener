@@ -26,14 +26,14 @@ class FlattenedTimeSeries:
     add_outcome
         outcome_df (dataframe): Cols: dw_ek_borger, datotid, (value if relevant).
         lookahead_window (float): How far ahead to look for an outcome. If none found, use fallback.
-        resolve_multiple (str): How to handle more than one record within the lookbehind. Suggestions: earliest, latest, mean_of_records, max, min.
+        resolve_multiple (str): How to handle more than one record within the lookbehind. Suggestions: earliest, latest, mean, max, min.
         fallback (list): How to handle lack of a record within the lookbehind. Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
         name (str): What to name the column
     
     add_predictor
         predictor (dataframe): Cols: dw_ek_borger, datotid, (value if relevant).
         lookback_window (float): How far back to look for a predictor. If none found, use fallback.
-        resolve_multiple (str): How to handle more than one record within the lookbehind. Suggestions: earliest, latest, mean_of_records, max, min.
+        resolve_multiple (str): How to handle more than one record within the lookbehind. Suggestions: earliest, latest, mean, max, min.
         fallback (list): How to handle lack of a record within the lookbehind. Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
         name (str): What to name the column
 ```
