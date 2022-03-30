@@ -12,7 +12,12 @@ def test_event_after_prediction_time():
     event_times_str = """dw_ek_borger,timestamp,val,
                         1,2022-01-01 00:00:01, 1
                         """
-    run_tests_from_df_strings(prediction_times_str, event_times_str, [1])
+
+    assert_flattened_vals_as_expected(
+        prediction_times_str=prediction_times_str,
+        event_times_str=event_times_str,
+        expected_flattened_vals=[1],
+    )
 
 
 def test_event_before_prediction():
@@ -22,7 +27,12 @@ def test_event_before_prediction():
     event_times_str = """dw_ek_borger,timestamp,val,
                         1,2021-12-30 23:59:59, 1
                         """
-    run_tests_from_df_strings(prediction_times_str, event_times_str, [0])
+
+    assert_flattened_vals_as_expected(
+        prediction_times_str=prediction_times_str,
+        event_times_str=event_times_str,
+        expected_flattened_vals=[0],
+    )
 
 
 def test_multiple_citizens():
@@ -38,7 +48,12 @@ def test_multiple_citizens():
                         5,2025-01-03 00:00:00, 1
                         5,2022-01-05 00:00:01, 1
                         """
-    run_tests_from_df_strings(prediction_times_str, event_times_str, [1, 0, 1, 0])
+
+    assert_flattened_vals_as_expected(
+        prediction_times_str=prediction_times_str,
+        event_times_str=event_times_str,
+        expected_flattened_vals=[1, 0, 1, 0],
+    )
 
 
 def str_to_df(str) -> DataFrame:
@@ -68,10 +83,10 @@ def convert_cols_with_matching_colnames_to_datetime(
     return df
 
 
-def run_tests_from_df_strings(
-    prediction_times: str,
-    event_times: str,
-    expected_values: List,  # Generalise and expand with more arguments as we expand functionality
+def assert_flattened_vals_as_expected(
+    prediction_times_str: str,
+    event_times_str: str,
+    expected_flattened_vals: List,  # Generalise and expand with more arguments as we expand functionality
 ):
     """Run tests from string representations of dataframes.
 
@@ -91,8 +106,8 @@ def run_tests_from_df_strings(
     >
     > run_tests_from_strings(prediction_times_str, event_times_str, [1])
     """
-    df_prediction_times = str_to_df(prediction_times)
-    df_event_times = str_to_df(event_times)
+    df_prediction_times = str_to_df(prediction_times_str)
+    df_event_times = str_to_df(event_times_str)
 
     dataset = FlattenedDataset(
         prediction_times_df=df_prediction_times,
@@ -108,8 +123,10 @@ def run_tests_from_df_strings(
         timestamp_colname="timestamp",
     )
 
-    expected_values = pd.DataFrame({"val_within_2_days": expected_values})
+    expected_flattened_vals = pd.DataFrame(
+        {"val_within_2_days": expected_flattened_vals}
+    )
 
     pd.testing.assert_series_equal(
-        dataset.df["val_within_2_days"], expected_values["val_within_2_days"]
+        dataset.df["val_within_2_days"], expected_flattened_vals["val_within_2_days"]
     )
