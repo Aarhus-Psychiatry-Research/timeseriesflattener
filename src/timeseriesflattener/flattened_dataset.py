@@ -7,18 +7,18 @@ class FlattenedDataset:
     def __init__(
         self,
         prediction_times_df: DataFrame,
-        prediction_timestamp_colname: str = "timestamp",
+        timestamp_colname: str = "timestamp",
         id_colname: str = "dw_ek_borger",
     ):
         """Class containing a time-series flattened.
 
         Args:
             prediction_times_df (DataFrame): Dataframe with prediction times.
-            prediction_timestamp_colname (str, optional): Colname for timestamps. Defaults to "timestamp".
-            id_colname (str, optional): Colname for patients ids. Defaults to "dw_ek_borger".
+            timestamp_colname (str, optional): Colname for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
+            id_colname (str, optional): Colname for patients ids. Is used across outcome and predictors. Defaults to "dw_ek_borger".
         """
         self.df_prediction_times = prediction_times_df
-        self.prediction_timestamp_colname = prediction_timestamp_colname
+        self.timestamp_colname = timestamp_colname
         self.id_colname = id_colname
 
         self.df = self.df_prediction_times
@@ -29,9 +29,7 @@ class FlattenedDataset:
         lookahead_days: float,
         resolve_multiple: str,
         fallback: List[str],
-        timestamp_colname: str = "timestamp",
         values_colname: str = "values",
-        id_colname: str = "dw_ek_borger",
         new_col_name: str = None,
     ):
         """Adds an outcome-column to the dataset
@@ -43,24 +41,23 @@ class FlattenedDataset:
                 Suggestions: earliest, latest, mean, max, min.
             fallback (List[str]): What to do if no value within the lookahead.
                 Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
-            timestamp_colname (str): Column name for timestamps
             values_colname (str): Colname for outcome values in outcome_df
-            id_colname (str): Column name for citizen id
             new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
                 Defaults to using values_colname.
         """
 
         outcome_dict = self._events_to_dict_by_patient(
-            outcome_df, id_colname, timestamp_colname, values_colname
+            df=outcome_df,
+            values_colname=values_colname,
         )
 
         new_col = self.df_prediction_times.apply(
-            lambda row: self._flatten_events(
+            lambda row: self._flatten_events_for_prediction_time(
                 direction="ahead",
-                prediction_timestamp=row[self.prediction_timestamp_colname],
+                prediction_timestamp=row[self.timestamp_colname],
                 val_dict=outcome_dict,
                 interval_days=lookahead_days,
-                id=row[id_colname],
+                id=row[self.id_colname],
                 resolve_multiple=resolve_multiple,
                 fallback=fallback,
             ),
@@ -79,8 +76,6 @@ class FlattenedDataset:
         resolve_multiple: str,
         fallback: List[str],
         outcome_colname: str,
-        id_colname: str = "dw_ek_borger",
-        timestamp_colname: str = "timestamp",
     ):
         """Adds a predictor-column to the dataset
 
@@ -92,8 +87,6 @@ class FlattenedDataset:
             fallback (List[str]): What to do if no value within the lookahead.
                 Suggestions: latest, mean_of_patient, mean_of_population, hardcode (qualified guess)
             outcome_colname (str): What to name the column
-            id_colname (str): Column name for citizen id
-            timestamp_colname (str): Column name for timestamps
         """
 
         raise NotImplementedError
@@ -101,8 +94,6 @@ class FlattenedDataset:
     def _events_to_dict_by_patient(
         self,
         df: DataFrame,
-        id_colname: str,
-        timestamp_colname: str,
         values_colname: str,
     ) -> Dict[str, List[List[Union[datetime, float]]]]:
         """
@@ -111,8 +102,6 @@ class FlattenedDataset:
 
         Args:
             df (DataFrame): Dataframe to come from
-            id_colname (str): Column name for patient ids
-            timestamp_colname (str): Column name for event timestamps
             values_colname (str): Column name for event values
 
         Returns:
@@ -124,10 +113,11 @@ class FlattenedDataset:
         """
 
         return (
-            df.groupby(id_colname)
+            df.groupby(self.id_colname)
             .apply(
                 lambda row: [
-                    list(x) for x in zip(row[timestamp_colname], row[values_colname])
+                    list(x)
+                    for x in zip(row[self.timestamp_colname], row[values_colname])
                 ]
             )
             .to_dict()
@@ -170,7 +160,7 @@ class FlattenedDataset:
 
         return events_within_n_days
 
-    def _flatten_events(
+    def _flatten_events_for_prediction_time(
         self,
         direction: str,
         prediction_timestamp: str,
@@ -178,7 +168,7 @@ class FlattenedDataset:
         interval_days: float,
         resolve_multiple: Callable,
         fallback: list,
-        id: int = "dw_ek_borger",
+        id: int,
     ) -> float:
         """Takes a list of events and turns them into a single value for a prediction_time
         given a set of conditions.
@@ -191,7 +181,7 @@ class FlattenedDataset:
             interval_days (float): How many days to look in direction for events.
             resolve_multiple (str): How to handle multiple events within interval_days.
             fallback (list): How to handle no events within interval_days.
-            id (int, optional): Column name that identifies unique patients. Defaults to "dw_ek_borger".
+            id (int): Which patient ID to flatten events for.
 
         Returns:
             float: Value for each prediction_time.

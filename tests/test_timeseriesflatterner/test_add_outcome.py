@@ -111,7 +111,8 @@ def assert_flattened_vals_as_expected(
 
     dataset = FlattenedDataset(
         prediction_times_df=df_prediction_times,
-        prediction_timestamp_colname="timestamp",
+        timestamp_colname="timestamp",
+        id_colname="dw_ek_borger",
     )
 
     dataset.add_outcome(
@@ -120,7 +121,6 @@ def assert_flattened_vals_as_expected(
         resolve_multiple="max",
         fallback=0,
         values_colname="val",
-        timestamp_colname="timestamp",
     )
 
     expected_flattened_vals = pd.DataFrame(
