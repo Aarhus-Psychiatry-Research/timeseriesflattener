@@ -13,7 +13,7 @@ def test_event_after_prediction_time():
                         1,2022-01-01 00:00:01, 1
                         """
 
-    assert_flattened_vals_as_expected(
+    assert_flattened_outcome_vals_as_expected(
         prediction_times_str=prediction_times_str,
         event_times_str=event_times_str,
         expected_flattened_vals=[1],
@@ -28,7 +28,7 @@ def test_event_before_prediction():
                         1,2021-12-30 23:59:59, 1
                         """
 
-    assert_flattened_vals_as_expected(
+    assert_flattened_outcome_vals_as_expected(
         prediction_times_str=prediction_times_str,
         event_times_str=event_times_str,
         expected_flattened_vals=[0],
@@ -49,7 +49,7 @@ def test_multiple_citizens():
                         5,2022-01-05 00:00:01, 1
                         """
 
-    assert_flattened_vals_as_expected(
+    assert_flattened_outcome_vals_as_expected(
         prediction_times_str=prediction_times_str,
         event_times_str=event_times_str,
         expected_flattened_vals=[1, 0, 1, 0],
@@ -83,10 +83,14 @@ def convert_cols_with_matching_colnames_to_datetime(
     return df
 
 
-def assert_flattened_vals_as_expected(
+def assert_flattened_outcome_vals_as_expected(
     prediction_times_str: str,
     event_times_str: str,
     expected_flattened_vals: List,  # Generalise and expand with more arguments as we expand functionality
+    lookahead_days: float = 2,
+    resolve_multiple: str = "max",
+    values_colname: str = "val",
+    fallback: List = 0,
 ):
     """Run tests from string representations of dataframes.
 
@@ -117,16 +121,19 @@ def assert_flattened_vals_as_expected(
 
     dataset.add_outcome(
         outcome_df=df_event_times,
-        lookahead_days=2,
-        resolve_multiple="max",
-        fallback=0,
-        values_colname="val",
+        lookahead_days=lookahead_days,
+        resolve_multiple=resolve_multiple,
+        fallback=fallback,
+        values_colname=values_colname,
     )
 
+    flatenned_vals_colname = f"val_within_{lookahead_days}_days"
+
     expected_flattened_vals = pd.DataFrame(
-        {"val_within_2_days": expected_flattened_vals}
+        {flatenned_vals_colname: expected_flattened_vals}
     )
 
     pd.testing.assert_series_equal(
-        dataset.df["val_within_2_days"], expected_flattened_vals["val_within_2_days"]
+        dataset.df[flatenned_vals_colname],
+        expected_flattened_vals[flatenned_vals_colname],
     )
