@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Union, Tuple
 from pandas import DataFrame
 from datetime import datetime
 
@@ -95,30 +95,33 @@ class FlattenedDataset:
         self,
         df: DataFrame,
         values_colname: str,
-    ) -> Dict[str, List[List[Union[datetime, float]]]]:
+    ) -> Dict[str, List[Tuple[Union[datetime, float]]]]:
         """
         Generate a dict of events grouped by patient_id
-        shape
 
         Args:
             df (DataFrame): Dataframe to come from
             values_colname (str): Column name for event values
 
         Returns:
-            Dict[str, List[List[Union[datetime, float]]]]:
+            Dict[str, List[Tuple[Union[datetime, float]]]]:
                                     {
-                                        patientid1: [[timestamp11, val11], [timestamp12, val12]],
-                                        patientid2: [[timestamp21, val21], [timestamp22, val22]]
+                                        patientid1: [(timestamp11, val11), (timestamp12, val12)],
+                                        patientid2: [(timestamp21, val21), (timestamp22, val22)]
                                     }
         """
 
         return (
             df.groupby(self.id_colname)
             .apply(
-                lambda row: [
-                    list(x)
-                    for x in zip(row[self.timestamp_colname], row[values_colname])
-                ]
+                lambda row: tuple(
+                    [
+                        list(event)
+                        for event in zip(
+                            row[self.timestamp_colname], row[values_colname]
+                        )
+                    ]
+                )
             )
             .to_dict()
         )
@@ -127,7 +130,7 @@ class FlattenedDataset:
         self,
         direction: str,
         prediction_timestamp: datetime,
-        val_dict: Dict[str, List[List[Union[datetime, float]]]],
+        val_dict: Dict[str, List[Tuple[Union[datetime, float]]]],
         interval_days: float,
         id: int,
     ) -> List:
@@ -136,8 +139,8 @@ class FlattenedDataset:
         Args:
             direction (str): Whether to look ahead or behind.
             prediction_timestamp (timestamp):
-            val_dict (Dict[str, List[List[Union[datetime, float]]]]): A dict containing the timestamps and vals for the events.
-                Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
+            val_dict (Dict[str, List[Tuple[Union[datetime, float]]]]): A dict containing the timestamps and vals for the events.
+                Shaped like {patient_id: [(timestamp1: val1), (timestamp2: val2)]}
             interval_days (int): How far to look in direction.
             id (int): Patient id
 
@@ -164,7 +167,7 @@ class FlattenedDataset:
         self,
         direction: str,
         prediction_timestamp: str,
-        val_dict: Dict[str, List[List[Union[datetime, float]]]],
+        val_dict: Dict[str, List[Tuple[Union[datetime, float]]]],
         interval_days: float,
         resolve_multiple: Callable,
         fallback: list,
@@ -176,8 +179,8 @@ class FlattenedDataset:
         Args:
             direction (str): Whether to look ahead or behind from the prediction time.
             prediction_timestamp (str): The timestamp to anchor on.
-            val_dict (Dict[str, List[List[Union[datetime, float]]]]): A dict containing the timestamps and vals for the events.
-                Shaped like {patient_id: [[timestamp1: val1], [timestamp2: val2]]}
+            val_dict (Dict[str, List[Tuple[Union[datetime, float]]]]): A dict containing the timestamps and vals for the events.
+                Shaped like {patient_id: [(timestamp1: val1), (timestamp2: val2)]}
             interval_days (float): How many days to look in direction for events.
             resolve_multiple (str): How to handle multiple events within interval_days.
             fallback (list): How to handle no events within interval_days.
