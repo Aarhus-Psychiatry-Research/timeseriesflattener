@@ -28,42 +28,41 @@ jobs:
     - name: Run and write pytest
       run: |
         pip install --editable .
-        python -m pytest 
-  # --cov=src/timeseriesflattener --cov-report term-missing | tee pytest-coverage.txt
+        python -m pytest --cov=src --cov-report term-missing | tee pytest-coverage.txt
   
-  # pytest-coverage:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Set up Python 3.9
-  #     uses: actions/setup-python@v3
-  #     with:
-  #       python-version: 3.9
-  #   - name: Install dependencies
-  #     run: |
-  #       python -m pip install --upgrade pip
-  #       pip install flake8 pytest pytest-cov
-  #       pip install -r requirements.txt
-  #   - name: Run and write pytest
-  #     run: |
-  #       pip install --editable .
-  #       python -m pytest --cov=src/timeseriesflattener --cov-report term-missing | tee pytest-coverage.txt
-  #   - name: Pytest coverage comment
-  #     id: coverage-comment
-  #     uses: MishaKav/pytest-coverage-comment@v1.1.20
-  #     with:
-  #       pytest-coverage-path: ./pytest-coverage.txt
-  #   - name: Check the output coverage
-  #     run: |
-  #       echo "Coverage Report - ${{ steps.coverage-comment.outputs.coverage }}"
-  #       echo "Coverage Color - ${{ steps.coverage-comment.outputs.color }}"
-  #   - name: Create the Badge
-  #     uses: schneegans/dynamic-badges-action@v1.1.0
-  #     with:
-  #       auth: ${{ secrets.PYTEST_COVERAGE }}
-  #       gistID: ce7ccaf6aaa9faeeba83f9b61b5cfcd8
-  #       filename: badge-dfm-pytest-coverage.json
-  #       label: Coverage
-  #       message: ${{ steps.coverage-comment.outputs.coverage }}
-  #       color: ${{ steps.coverage-comment.outputs.color }}
-  #       namedLogo: python
+  pytest-coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-cov
+        pip install -r requirements.txt
+    - name: Run and write pytest
+      run: |
+        pip install --editable .
+        python -m pytest --cov=src --cov-report term-missing | tee pytest-coverage.txt
+    - name: Pytest coverage comment
+      id: coverage-comment
+      uses: MishaKav/pytest-coverage-comment@v1.1.20
+      with:
+        pytest-coverage-path: ./pytest-coverage.txt
+    - name: Check the output coverage
+      run: |
+        echo "Coverage Report - ${{ steps.coverage-comment.outputs.coverage }}"
+        echo "Coverage Color - ${{ steps.coverage-comment.outputs.color }}"
+    - name: Create the Badge
+      uses: schneegans/dynamic-badges-action@v1.1.0
+      with:
+        auth: ${{ secrets.PYTEST_COVERAGE }}
+        gistID: d6c40a5b5a3169c079e8b8f778b8e517
+        filename: badge-psycop-ml-utils-pytest-coverage.json
+        label: Coverage
+        message: ${{ steps.coverage-comment.outputs.coverage }}
+        color: ${{ steps.coverage-comment.outputs.color }}
+        namedLogo: python
