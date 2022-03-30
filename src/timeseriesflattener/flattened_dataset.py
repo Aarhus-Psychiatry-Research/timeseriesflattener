@@ -141,7 +141,7 @@ class FlattenedDataset:
         interval_days: float,
         id: int,
     ) -> List:
-        """Gets a list of values that are within interval_days in direction from predictin_timestamp for id.
+        """Gets a list of values that are within interval_days in direction from prediction_timestamp for id.
 
         Args:
             direction (str): Whether to look ahead or behind.
