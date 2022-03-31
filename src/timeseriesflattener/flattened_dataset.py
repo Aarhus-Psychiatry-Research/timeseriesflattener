@@ -54,7 +54,7 @@ class FlattenedDataset:
         """Adds an outcome-column to the dataset
 
         Args:
-            outcome_df (DataFrame): Required columns: patient_id, timestamp, outcome_value.
+            outcome_df (DataFrame): A table in wide format. Required columns: patient_id, timestamp, value.
             lookahead_days (float): How far ahead to look for an outcome in days. If none found, use fallback.
             resolve_multiple (Callable): How to handle multiple values within the lookahead window. Takes a a function that takes a list as an argument and returns a float.
             fallback (float): What to do if no value within the lookahead.
@@ -62,7 +62,7 @@ class FlattenedDataset:
             new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
         """
 
-        self._add_col_to_flattened_dataset(
+        self.add_col_to_flattened_dataset(
             values_df=outcome_df,
             direction="ahead",
             interval_days=lookahead_days,
@@ -84,7 +84,7 @@ class FlattenedDataset:
         """Adds a column with predictor values to the flattened dataset (e.g. "average value of bloodsample within n days")
 
         Args:
-            predictor_df (DataFrame): Required columns: patient_id, timestamp, outcome_value.
+            predictor_df (DataFrame): A table in wide format. Required columns: patient_id, timestamp, value.
             lookbehind_days (float): How far behind to look for a predictor value in days. If none found, use fallback.
             resolve_multiple (Callable): How to handle multiple values within the lookbehind window. Takes a a function that takes a list as an argument and returns a float.
             fallback (List[str]): What to do if no value within the lookahead.
@@ -92,7 +92,7 @@ class FlattenedDataset:
             new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
         """
 
-        self._add_col_to_flattened_dataset(
+        self.add_col_to_flattened_dataset(
             values_df=predictor_df,
             direction="behind",
             interval_days=lookbehind_days,
@@ -102,7 +102,7 @@ class FlattenedDataset:
             source_values_col_name=source_values_col_name,
         )
 
-    def _add_col_to_flattened_dataset(
+    def add_col_to_flattened_dataset(
         self,
         values_df: DataFrame,
         direction: str,
@@ -115,7 +115,7 @@ class FlattenedDataset:
         """Adds a column to the dataset (either predictor or outcome depending on the value of "direction")
 
         Args:
-            values_df (DataFrame): Required columns: patient_id, timestamp, outcome_value.
+            values_df (DataFrame): A table in wide format. Required columns: patient_id, timestamp, value.
             direction (str): Whether to look "ahead" or "behind".
             interval_days (float): How far to look in direction.
             resolve_multiple (Callable): How to handle multiple values within the lookbehind window. Takes a a function that takes a list as an argument and returns a float.
