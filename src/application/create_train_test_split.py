@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     X_train, X_intermediate = train_test_split(
         combined_df,
-        test_size=0.4,
+        test_size=0.3,
         random_state=random_state,
         stratify=combined_df[outcomes],
     )
