@@ -89,3 +89,37 @@ def get_earliest_value_from_list_of_events(
     list_of_events.sort(key=lambda event: event[0], reverse=False)
 
     return list_of_events[0][1]
+
+
+@resolve_fns.register("sum")
+def get_sum_of_values_from_list_of_events(
+    list_of_events: List[Tuple[Union[datetime, float]]]
+) -> float:
+    """Gets the sum of values for the events in the list.
+
+    Args:
+        list_of_events (List[Tuple[Union[datetime, float]]]): A list of events.
+            Shaped like [(timestamp1: val1), (timestamp2: val2)]
+
+    Returns:
+        float: Sum.
+    """
+    vals = [event[1] for event in list_of_events]
+
+    return sum(vals)
+
+
+@resolve_fns.register("count")
+def get_count_from_list_of_events(
+    list_of_events: List[Tuple[Union[datetime, float]]]
+) -> float:
+    """Get count in list.
+
+    Args:
+        list_of_events (List[Tuple[Union[datetime, float]]]): A list of events.
+            Shaped like [(timestamp1: val1), (timestamp2: val2)]
+
+    Returns:
+        int: The number of events in the list.
+    """
+    return len(list_of_events)
