@@ -2,6 +2,7 @@ from typing import Callable, Dict, List, Union, Tuple, Optional
 from pandas import DataFrame
 from datetime import datetime
 import catalogue
+import swifter
 
 resolve_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 
@@ -184,7 +185,7 @@ class FlattenedDataset:
             values_col_name=source_values_col_name,
         )
 
-        new_col = self.df_prediction_times.apply(
+        new_col = self.df_prediction_times.swifter.apply(
             lambda row: self._flatten_events_for_prediction_time(
                 direction=direction,
                 prediction_timestamp=row[self.timestamp_col_name],
