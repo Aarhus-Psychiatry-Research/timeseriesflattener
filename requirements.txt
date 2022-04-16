@@ -15,3 +15,4 @@ pytest-cov>=3.0.0
 
 # Util
 catalogue>=2.0.7
+swifter>=1.1.3
