@@ -1,9 +1,27 @@
-from pydoc import resolve
 from utils_for_testing import *
+
 from timeseriesflattener.resolve_multiple_functions import (
     get_max_value_from_list_of_events,
     get_avg_value_from_list_of_events,
 )
+
+
+def test_resolve_multiple_catalogue():
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+    event_times_str = """dw_ek_borger,timestamp,val,
+                        1,2022-01-01 00:00:01, 1
+                        1,2022-01-01 00:00:02, 2
+                        """
+
+    assert_flattened_outcome_as_expected(
+        prediction_times_df_str=prediction_times_str,
+        outcome_df_str=event_times_str,
+        resolve_multiple="min",
+        lookahead_days=2,
+        expected_flattened_vals=[1],
+    )
 
 
 def test_resolve_multiple_max():
