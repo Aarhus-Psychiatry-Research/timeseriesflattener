@@ -262,16 +262,17 @@ class FlattenedDataset:
 
         events_within_n_days = []
 
-        for event in val_dict[id]:
-            event_timestamp = event[0]
+        if id in val_dict:
+            for event in val_dict[id]:
+                event_timestamp = event[0]
 
-            if is_within_n_days(
-                direction=direction,
-                prediction_timestamp=prediction_timestamp,
-                event_timestamp=event_timestamp,
-                interval_days=interval_days,
-            ):
-                events_within_n_days.append(event)
+                if is_within_n_days(
+                    direction=direction,
+                    prediction_timestamp=prediction_timestamp,
+                    event_timestamp=event_timestamp,
+                    interval_days=interval_days,
+                ):
+                    events_within_n_days.append(event)
 
         return events_within_n_days
 

@@ -119,3 +119,21 @@ def test_multiple_citizens_outcome():
         resolve_multiple=get_max_value_from_list_of_events,
         expected_flattened_vals=[1, 0, 1, 0],
     )
+
+
+def test_citizen_without_outcome():
+    prediction_times_df_str = """dw_ek_borger,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+    outcome_df_str = """dw_ek_borger,timestamp,val,
+                        0,2021-12-31 00:00:01, 1
+                        """
+
+    assert_flattened_outcome_as_expected(
+        prediction_times_df_str=prediction_times_df_str,
+        outcome_df_str=outcome_df_str,
+        lookahead_days=2,
+        resolve_multiple=get_max_value_from_list_of_events,
+        fallback=0,
+        expected_flattened_vals=[0],
+    )
