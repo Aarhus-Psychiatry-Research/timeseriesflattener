@@ -6,6 +6,8 @@ import swifter
 
 resolve_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 
+from timeseriesflattener.resolve_multiple_functions import *
+
 
 class FlattenedDataset:
     def __init__(
