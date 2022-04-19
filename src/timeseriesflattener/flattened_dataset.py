@@ -43,6 +43,10 @@ class FlattenedDataset:
         self.df_prediction_times = prediction_times_df
         self.timestamp_col_name = timestamp_col_name
         self.id_col_name = id_col_name
+        
+        for col_name in [self.timestamp_col_name, self.id_col_name]:
+            if col_name not in self.df_prediction_times:
+                raise ValueError(f"{col_name} does not exist in df_prediction_times, change the df or set another argument")
 
         self.df = self.df_prediction_times
 
