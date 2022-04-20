@@ -1,7 +1,7 @@
 from utils_for_testing import *
 from timeseriesflattener.flattened_dataset import FlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import (
-    get_max_value_from_list_of_events,
+    get_max_in_group,
 )
 
 
@@ -35,14 +35,14 @@ def test_generate_two_features_from_dict():
         {
             "predictor_df": "event_times_df",
             "lookbehind_days": 1,
-            "resolve_multiple": "get_max_value_from_list_of_events",
+            "resolve_multiple": "max",
             "fallback": 0,
             "source_values_col_name": "val",
         },
         {
             "predictor_df": "event_times_df",
             "lookbehind_days": 2,
-            "resolve_multiple": "get_max_value_from_list_of_events",
+            "resolve_multiple": "max",
             "fallback": 0,
             "source_values_col_name": "val",
         },
@@ -51,9 +51,7 @@ def test_generate_two_features_from_dict():
     flattened_dataset.add_predictors_from_list_of_argument_dictionaries(
         predictor_list=predictor_list,
         predictor_dfs={"event_times_df": event_times_df},
-        resolve_multiple_fn_dict={
-            "get_max_value_from_list_of_events": get_max_value_from_list_of_events
-        },
+        resolve_multiple_fn_dict={"max": get_max_in_group},
     )
 
     assert flattened_dataset.df.equals(expected_df)

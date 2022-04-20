@@ -1,7 +1,6 @@
+import pandas as pd
 from timeseriesflattener.flattened_dataset import *
 from timeseriesflattener.resolve_multiple_functions import *
-
-import pandas as pd
 
 
 def str_to_df(str) -> DataFrame:
@@ -184,6 +183,7 @@ def assert_flattened_vals_as_expected(
     )
 
     pd.testing.assert_series_equal(
-        dataset.df[flattened_vals_colname],
-        expected_flattened_vals[flattened_vals_colname],
+        left=dataset.df[flattened_vals_colname].reset_index(drop=True),
+        right=expected_flattened_vals[flattened_vals_colname].reset_index(drop=True),
+        check_dtype=False,
     )
