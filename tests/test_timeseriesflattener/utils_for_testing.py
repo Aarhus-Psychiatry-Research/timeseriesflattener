@@ -1,6 +1,8 @@
+from typing import Callable, List, Union
+
 import pandas as pd
-from timeseriesflattener.flattened_dataset import *
-from timeseriesflattener.resolve_multiple_functions import *
+from pandas import DataFrame
+from timeseriesflattener.flattened_dataset import FlattenedDataset
 
 
 def str_to_df(str) -> DataFrame:

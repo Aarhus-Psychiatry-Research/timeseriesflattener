@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Union
+from typing import Dict, List, Union
 
 
 def list_has_dict_with_list_as_val(

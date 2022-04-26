@@ -1,6 +1,7 @@
-from timeseriesflattener.create_feature_combinations import *
-from utils_for_testing import *
 import pytest
+from timeseriesflattener.flattened_dataset import FlattenedDataset
+
+from utils_for_testing import str_to_df
 
 
 def test_col_does_not_exist_in_prediction_times():

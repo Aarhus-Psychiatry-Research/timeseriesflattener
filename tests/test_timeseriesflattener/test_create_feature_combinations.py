@@ -1,4 +1,8 @@
-from timeseriesflattener.create_feature_combinations import *
+from timeseriesflattener.create_feature_combinations import (
+    create_feature_combinations,
+    dict_has_list_in_any_value,
+    list_has_dict_with_list_as_val,
+)
 
 
 def test_skip_all_if_no_need_to_process():

@@ -1,9 +1,12 @@
-from utils_for_testing import *
-
 from timeseriesflattener.resolve_multiple_functions import (
+    get_earliest_val_in_group,
+    get_latest_val_in_group,
     get_max_in_group,
+    get_mean_in_group,
     get_min_in_group,
 )
+
+from utils_for_testing import assert_flattened_outcome_as_expected
 
 
 def test_resolve_multiple_catalogue():

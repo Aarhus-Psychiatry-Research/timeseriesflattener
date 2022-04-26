@@ -1,6 +1,10 @@
-from timeseriesflattener.flattened_dataset import *
-from timeseriesflattener.resolve_multiple_functions import *
-from utils_for_testing import *
+from timeseriesflattener.resolve_multiple_functions import get_max_in_group
+
+from utils_for_testing import (
+    assert_flattened_outcome_as_expected,
+    assert_flattened_predictor_as_expected,
+)
+
 
 # Predictors
 def test_predictor_after_prediction_time():

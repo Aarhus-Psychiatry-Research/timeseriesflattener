@@ -1,6 +1,7 @@
+import catalogue
 from pandas import DataFrame
 
-from timeseriesflattener.flattened_dataset import resolve_fns
+resolve_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 
 
 @resolve_fns.register("latest")
