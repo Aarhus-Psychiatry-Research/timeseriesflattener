@@ -20,7 +20,7 @@ Recommended to also add black as a pre-commit hook:
 Currently only contains one function to load a view from SQL, `sql_load`
 
 ```py 
-from loaders import sql_load
+from loaders.sql_load import sql_load
 
 view = "[FOR_SFI_fritekst_resultat_udfoert_i_psykiatrien_aendret_2011]"
 sql = "SELECT * FROM [fct]." + view

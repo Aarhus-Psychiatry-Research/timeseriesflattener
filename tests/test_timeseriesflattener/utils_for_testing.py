@@ -35,7 +35,7 @@ def assert_flattened_outcome_as_expected(
     prediction_times_df_str: str,
     outcome_df_str: str,
     lookahead_days: float,
-    expected_flattened_vals: List,
+    expected_flattened_values: List,
     resolve_multiple: Union[Callable, str],
     values_colname: str = "val",
     fallback: List = 0,
@@ -67,13 +67,13 @@ def assert_flattened_outcome_as_expected(
         >>> )
     """
 
-    assert_flattened_vals_as_expected(
+    assert_flattened_values_as_expected(
         interval_days=lookahead_days,
         direction="ahead",
         prediction_times_str=prediction_times_df_str,
         event_times_str=outcome_df_str,
         resolve_multiple=resolve_multiple,
-        expected_flattened_vals=expected_flattened_vals,
+        expected_flattened_values=expected_flattened_values,
         values_colname=values_colname,
         fallback=fallback,
     )
@@ -84,7 +84,7 @@ def assert_flattened_predictor_as_expected(
     predictor_df_str: str,
     lookbehind_days: float,
     resolve_multiple: Union[Callable, str],
-    expected_flattened_vals: List,
+    expected_flattened_values: List,
     values_colname: str = "val",
     fallback: List = 0,
 ):
@@ -94,7 +94,7 @@ def assert_flattened_predictor_as_expected(
         predictor_df_str (str): A string-representation of the predictor df
         lookbehind_days (float): How far to look behind
         resolve_multiple (Callable): How to handle multiple values within the lookahead window. Takes a a function that takes a list as an argument and returns a float.
-        expected_flattened_vals (List): A list of the expected values in the value column of the flattened df
+        expected_flattened_values (List): A list of the expected values in the value column of the flattened df
         values_colname (str, optional): Column name for the new values. Defaults to "val".
         fallback (List, optional): What to fill if no outcome within lookahead days. Defaults to 0.
     Example:
@@ -110,30 +110,30 @@ def assert_flattened_predictor_as_expected(
         >>>     predictor_df_str=predictor_df_str,
         >>>     lookbehind_days=2,
         >>>     resolve_multiple=get_max_value_from_list_of_events,
-        >>>     expected_flattened_vals=[-1],
+        >>>     expected_flattened_values=[-1],
         >>>     fallback=-1,
         >>> )
     """
 
-    assert_flattened_vals_as_expected(
+    assert_flattened_values_as_expected(
         interval_days=lookbehind_days,
         direction="behind",
         prediction_times_str=prediction_times_df_str,
         event_times_str=predictor_df_str,
         resolve_multiple=resolve_multiple,
-        expected_flattened_vals=expected_flattened_vals,
+        expected_flattened_values=expected_flattened_values,
         values_colname=values_colname,
         fallback=fallback,
     )
 
 
-def assert_flattened_vals_as_expected(
+def assert_flattened_values_as_expected(
     prediction_times_str: str,
     event_times_str: str,
     direction: str,
     interval_days: float,
     resolve_multiple: Union[Callable, str],
-    expected_flattened_vals: List,
+    expected_flattened_values: List,
     values_colname: str = "val",
     fallback: List = 0,
 ):
@@ -178,14 +178,16 @@ def assert_flattened_vals_as_expected(
     else:
         raise ValueError("direction only takes look ahead or behind")
 
-    flattened_vals_colname = f"{values_colname}_within_{interval_days}_days"
+    flattened_values_colname = f"{values_colname}_within_{interval_days}_days"
 
-    expected_flattened_vals = pd.DataFrame(
-        {flattened_vals_colname: expected_flattened_vals}
+    expected_flattened_values = pd.DataFrame(
+        {flattened_values_colname: expected_flattened_values}
     )
 
     pd.testing.assert_series_equal(
-        left=dataset.df[flattened_vals_colname].reset_index(drop=True),
-        right=expected_flattened_vals[flattened_vals_colname].reset_index(drop=True),
+        left=dataset.df[flattened_values_colname].reset_index(drop=True),
+        right=expected_flattened_values[flattened_values_colname].reset_index(
+            drop=True
+        ),
         check_dtype=False,
     )

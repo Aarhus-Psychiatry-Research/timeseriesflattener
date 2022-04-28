@@ -1,7 +1,7 @@
 from timeseriesflattener.create_feature_combinations import (
     create_feature_combinations,
     dict_has_list_in_any_value,
-    list_has_dict_with_list_as_val,
+    list_has_dict_with_list_as_value,
 )
 
 
@@ -67,7 +67,7 @@ def test_list_has_dict_with_list_as_val():
         }
     ]
 
-    assert list_has_dict_with_list_as_val(test_pos_dataset)
+    assert list_has_dict_with_list_as_value(test_pos_dataset)
 
     test_neg_dataset = [
         {
@@ -78,7 +78,7 @@ def test_list_has_dict_with_list_as_val():
         }
     ]
 
-    assert not list_has_dict_with_list_as_val(test_neg_dataset)
+    assert not list_has_dict_with_list_as_value(test_neg_dataset)
 
 
 def test_dict_has_list_as_val():

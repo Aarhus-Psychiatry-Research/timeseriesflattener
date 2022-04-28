@@ -5,7 +5,7 @@ resolve_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 
 
 @resolve_fns.register("latest")
-def get_latest_val_in_group(grouped_df: DataFrame) -> DataFrame:
+def get_latest_value_in_group(grouped_df: DataFrame) -> DataFrame:
     """Get the latest value.
 
     Args:
@@ -18,7 +18,7 @@ def get_latest_val_in_group(grouped_df: DataFrame) -> DataFrame:
 
 
 @resolve_fns.register("earliest")
-def get_earliest_val_in_group(grouped_df: DataFrame) -> DataFrame:
+def get_earliest_value_in_group(grouped_df: DataFrame) -> DataFrame:
     """Get the earliest value.
 
     Args:

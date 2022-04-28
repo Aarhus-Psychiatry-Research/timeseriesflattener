@@ -187,7 +187,7 @@ class FlattenedDataset:
         Returns:
             DataFrame: DataFrame generates with create_flattened_df
         """
-        return self.create_flattened_df_for_val(
+        return self.create_flattened_df_for_value(
             prediction_times_with_uuid_df=self.pred_times_with_uuid,
             id_col_name=self.id_col_name,
             timestamp_col_name=self.timestamp_col_name,
@@ -201,7 +201,7 @@ class FlattenedDataset:
         lookahead_days: float,
         resolve_multiple: Union[Callable, str],
         fallback: float,
-        outcome_df_values_col_name: str = "val",
+        outcome_df_values_col_name: str = "value",
         new_col_name: str = None,
     ):
         """Add an outcome-column to the dataset.
@@ -211,7 +211,7 @@ class FlattenedDataset:
             lookahead_days (float): How far ahead to look for an outcome in days. If none found, use fallback.
             resolve_multiple (Callable, str): How to handle multiple values within the lookahead window. Takes either i) a function that takes a list as an argument and returns a float, or ii) a str mapping to a callable from the resolve_multiple_fn catalogue.
             fallback (float): What to do if no value within the lookahead.
-            outcome_df_values_col_name (str): Column name for the outcome values in outcome_df, e.g. whether a patient has t2d or not at the timestamp. Defaults to "val".
+            outcome_df_values_col_name (str): Column name for the outcome values in outcome_df, e.g. whether a patient has t2d or not at the timestamp. Defaults to "value".
             new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
         """
         self.add_col_to_flattened_dataset(
@@ -230,7 +230,7 @@ class FlattenedDataset:
         lookbehind_days: float,
         resolve_multiple: Union[Callable, str],
         fallback: float,
-        source_values_col_name: str = "val",
+        source_values_col_name: str = "value",
         new_col_name: str = None,
     ):
         """Add a column with predictor values to the flattened dataset (e.g. "average value of bloodsample within n days").
@@ -240,7 +240,7 @@ class FlattenedDataset:
             lookbehind_days (float): How far behind to look for a predictor value in days. If none found, use fallback.
             resolve_multiple (Callable, str): How to handle multiple values within the lookbehind window. Takes either i) a function that takes a list as an argument and returns a float, or ii) a str mapping to a callable from the resolve_multiple_fn catalogue.
             fallback (List[str]): What to do if no value within the lookahead.
-            source_values_col_name (str): Column name for the predictor values in predictor_df, e.g. the patient's most recent blood-sample value. Defaults to "val".
+            source_values_col_name (str): Column name for the predictor values in predictor_df, e.g. the patient's most recent blood-sample value. Defaults to "value".
             new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
         """
         self.add_col_to_flattened_dataset(
@@ -274,7 +274,7 @@ class FlattenedDataset:
             new_col_name (str): Name to use for new column. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
             source_values_col_name (str, optional): Column name of the values column in values_df. Defaults to "val".
         """
-        df = FlattenedDataset.create_flattened_df_for_val(
+        df = FlattenedDataset.create_flattened_df_for_value(
             prediction_times_with_uuid_df=self.pred_times_with_uuid,
             values_df=values_df,
             direction=direction,
@@ -310,7 +310,7 @@ class FlattenedDataset:
         msg.good(f"Assigned {df.columns[1]} to instance")
 
     @staticmethod
-    def create_flattened_df_for_val(
+    def create_flattened_df_for_value(
         prediction_times_with_uuid_df: DataFrame,
         values_df: DataFrame,
         direction: str,
@@ -367,7 +367,7 @@ class FlattenedDataset:
             direction=direction,
             interval_days=interval_days,
             timestamp_pred_colname="timestamp_pred",
-            timestamp_val_colname="timestamp_val",
+            timestamp_value_colname="timestamp_val",
         )
 
         df = FlattenedDataset.add_back_prediction_times_without_value(
@@ -443,16 +443,16 @@ class FlattenedDataset:
         direction: str,
         interval_days: float,
         timestamp_pred_colname: str,
-        timestamp_val_colname: str,
+        timestamp_value_colname: str,
     ) -> DataFrame:
-        """Keep only rows where timestamp_val is within interval_days in direction of timestamp_pred.
+        """Keep only rows where timestamp_value is within interval_days in direction of timestamp_pred.
 
         Args:
             direction (str): Whether to look ahead or behind.
             interval_days (float): How far to look
             df (DataFrame): Source dataframe
             timestamp_pred_colname (str):
-            timestamp_val_colname (str):
+            timestamp_value_colname (str):
 
         Raises:
             ValueError: If direction is niether ahead nor behind.
@@ -461,7 +461,7 @@ class FlattenedDataset:
             DataFrame
         """
         df["time_from_pred_to_val_in_days"] = (
-            df[timestamp_val_colname] - df[timestamp_pred_colname]
+            df[timestamp_value_colname] - df[timestamp_pred_colname]
         ).dt.total_seconds() / 86_400
         # Divide by 86.400 seconds/day
 

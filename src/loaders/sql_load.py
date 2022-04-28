@@ -1,13 +1,10 @@
-import pandas as pd
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from sqlalchemy.pool import NullPool
-
-import time
 import urllib
 import urllib.parse
-
 from typing import Generator, Optional, Union
+
+import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.pool import NullPool
 
 
 def sql_load(
