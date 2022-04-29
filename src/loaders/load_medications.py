@@ -31,14 +31,17 @@ class LoadMedications:
         output_col_name: str = None,
         load_prescribed: bool = True,
         load_administered: bool = True,
+        wildcard_at_end: bool = True,
     ) -> pd.DataFrame:
-        """Load medications. Aggregates prescribed/administered if both true.
+        """Load medications. Aggregates prescribed/administered if both true. If wildcard_atc_at_end, match from atc_code*.
+        Aggregates all that match. Beware that data is incomplete prior to sep. 2016 for prescribed medications.
 
         Args:
             atc_code (str): ATC-code prefix to load. Matches atc_code_prefix*. Aggregates all.
             output_col_name (str, optional): Name of output_col_name. Contains 1 if atc_code matches atc_code_prefix, 0 if not.Defaults to {atc_code_prefix}_value.
             load_prescribed (bool, optional): Whether to load prescriptions. Defaults to True. Beware incomplete until sep 2016.
             load_administered (bool, optional): Whether to load administrations. Defaults to True.
+            wildcard_atc_at_end (bool, optional): Whether to match on atc_code* or atc_code.
 
         Returns:
             pd.DataFrame: Cols: dw_ek_borger, timestamp, {atc_code_prefix}_value = 1
@@ -59,6 +62,7 @@ class LoadMedications:
                 source_timestamp_col_name="datotid_ordinationstart",
                 view="FOR_Medicin_ordineret_inkl_2021_feb2022",
                 output_col_name=output_col_name,
+                wildcard_atc_at_end=wildcard_at_end,
             )
             df = pd.concat([df, df_medication_prescribed])
 
@@ -68,6 +72,7 @@ class LoadMedications:
                 source_timestamp_col_name="datotid_administration_start",
                 view="FOR_Medicin_administreret_inkl_2021_feb2022",
                 output_col_name=output_col_name,
+                wildcard_atc_at_end=wildcard_at_end,
             )
             df = pd.concat([df, df_medication_administered])
 
