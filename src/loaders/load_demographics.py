@@ -13,7 +13,11 @@ class LoadDemographics:
 
         df = sql_load(sql, database="USR_PS_FORSK", chunksize=None)
 
-        df.rename({"foedselsdato": "date_of_birth"}, inplace=True)
+        # Typically handled by sql_load, but because foedselsdato doesn't contain "datotid" in its name,
+        # We must handle it manually here
+        df["foedselsdato"] = pd.to_datetime(df["foedselsdato"], format="%Y-%m-%d")
+
+        df.rename(columns={"foedselsdato": "date_of_birth"}, inplace=True)
 
         msg.good("Loaded birthdays")
         return df.reset_index(drop=True)
