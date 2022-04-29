@@ -21,7 +21,7 @@ class LoadMedications:
             LoadMedications.load(
                 blood_sample_id=f"{id}", output_col_name=output_col_name
             )
-            for id in atc_codes
+            for id in atc_code_prefixes
         ]
 
         return pd.concat(dfs, axis=0).reset_index(drop=True)
