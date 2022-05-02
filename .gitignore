@@ -159,3 +159,6 @@ pytest-coverage.txt
 
 # Mac
 .DS_Store
+
+#other
+*test_load_data.py

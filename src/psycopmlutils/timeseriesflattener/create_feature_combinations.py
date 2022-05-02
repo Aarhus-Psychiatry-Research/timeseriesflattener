@@ -1,7 +1,7 @@
 from typing import Dict, List, Union
 
 
-def list_has_dict_with_list_as_val(
+def list_has_dict_with_list_as_value(
     list_of_dicts: List[Dict[str, Union[str, list]]]
 ) -> bool:
     """Checks if any dict in a list of dicts has a value that is a list.
@@ -46,7 +46,7 @@ def create_feature_combinations(
         >>>         "predictor_df": "prediction_times_df",
         >>>         "source_values_col_name": "val",
         >>>         "lookbehind_days": [1, 30],
-        >>>         "resolve_multiple": "get_max_value_from_list_of_events",
+        >>>         "resolve_multiple": "max",
         >>>         "fallback": 0,
         >>>     }
         >>> ]
@@ -55,14 +55,14 @@ def create_feature_combinations(
         >>>     {
         >>>         "predictor_df": "prediction_times_df",
         >>>         "lookbehind_days": 1,
-        >>>         "resolve_multiple": "get_max_value_from_list_of_events",
+        >>>         "resolve_multiple": "max",
         >>>         "fallback": 0,
         >>>         "source_values_col_name": "val",
         >>>     },
         >>>     {
         >>>         "predictor_df": "prediction_times_df",
         >>>         "lookbehind_days": 30,
-        >>>         "resolve_multiple": "get_max_value_from_list_of_events",
+        >>>         "resolve_multiple": "max",
         >>>         "fallback": 0,
         >>>         "source_values_col_name": "val",
         >>>     },
@@ -70,7 +70,7 @@ def create_feature_combinations(
     """
     output_arg_sets = []
 
-    if not list_has_dict_with_list_as_val(arg_sets):
+    if not list_has_dict_with_list_as_value(arg_sets):
         # If no arg_sets contain lists as values, no need for further processing
         return arg_sets
     else:
@@ -79,13 +79,13 @@ def create_feature_combinations(
                 # If arg_set contains no lists, just append it to output_list
                 output_arg_sets.append(arg_set)
             else:
-                for arg_name, arg_val in arg_set.items():
+                for arg_name, arg_value in arg_set.items():
                     hit_arg_with_list_as_value = False
 
-                    if isinstance(arg_val, list):
+                    if isinstance(arg_value, list):
                         hit_arg_with_list_as_value = True
 
-                        for item in arg_val:
+                        for item in arg_value:
                             i_arg_set = arg_set.copy()
                             i_arg_set[arg_name] = item
 
