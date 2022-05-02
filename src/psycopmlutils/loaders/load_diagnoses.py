@@ -1,10 +1,11 @@
 from pathlib import Path
 from typing import List, Union
 
+import catalogue
 import pandas as pd
+from psycopmlutils.loaders.sql_load import sql_load
+from psycopmlutils.utils import data_loaders
 from wasabi import msg
-
-from loaders.sql_load import sql_load
 
 
 class LoadDiagnoses:
@@ -159,6 +160,7 @@ class LoadDiagnoses:
             }
         )
 
+    @data_loaders.register("t2d_times")
     def t2d_times():
         msg.info("Loading t2d event times")
 
@@ -175,6 +177,7 @@ class LoadDiagnoses:
         msg.good("Finished loading t2d event times")
         return df.reset_index(drop=True)
 
+    @data_loaders.register("essential_hypertension")
     def essential_hypertension():
         return LoadDiagnoses.from_physical_visits(
             icd_code="I109",
@@ -182,6 +185,7 @@ class LoadDiagnoses:
             output_col_name="essential_hypertension",
         )
 
+    @data_loaders.register("hyperlipidemia")
     def hyperlipidemia():
         return LoadDiagnoses.from_physical_visits(
             icd_code=[
@@ -192,6 +196,7 @@ class LoadDiagnoses:
             wildcard_icd_10_end=False,
         )
 
+    @data_loaders.register("liverdisease_unspecified")
     def liverdisease_unspecified():
         return LoadDiagnoses.from_physical_visits(
             icd_code="K769",
@@ -199,6 +204,7 @@ class LoadDiagnoses:
             output_col_name="liverdisease_unspecified",
         )
 
+    @data_loaders.register("polycystic_ovarian_syndrome")
     def polycystic_ovarian_syndrome():
         return LoadDiagnoses.from_physical_visits(
             icd_code="E282",
@@ -206,6 +212,7 @@ class LoadDiagnoses:
             output_col_name="polycystic_ovarian_syndrome",
         )
 
+    @data_loaders.register("sleep_apnea")
     def sleep_apnea():
         return LoadDiagnoses.from_physical_visits(
             icd_code=["G473", "G4732"],
@@ -213,6 +220,7 @@ class LoadDiagnoses:
             output_col_name="sleep_apnea",
         )
 
+    @data_loaders.register("sleep_problems_unspecified")
     def sleep_problems_unspecified():
         return LoadDiagnoses.from_physical_visits(
             icd_code="G479",

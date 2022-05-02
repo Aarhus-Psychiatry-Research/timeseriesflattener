@@ -40,7 +40,7 @@ def get_min_in_group(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.min()
 
 
-@resolve_fns.register("average")
+@resolve_fns.register("mean")
 def get_mean_in_group(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.mean()
 

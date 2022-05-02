@@ -46,7 +46,7 @@ def create_feature_combinations(
         >>>         "predictor_df": "prediction_times_df",
         >>>         "source_values_col_name": "val",
         >>>         "lookbehind_days": [1, 30],
-        >>>         "resolve_multiple": "get_max_value_from_list_of_events",
+        >>>         "resolve_multiple": "max",
         >>>         "fallback": 0,
         >>>     }
         >>> ]
@@ -55,14 +55,14 @@ def create_feature_combinations(
         >>>     {
         >>>         "predictor_df": "prediction_times_df",
         >>>         "lookbehind_days": 1,
-        >>>         "resolve_multiple": "get_max_value_from_list_of_events",
+        >>>         "resolve_multiple": "max",
         >>>         "fallback": 0,
         >>>         "source_values_col_name": "val",
         >>>     },
         >>>     {
         >>>         "predictor_df": "prediction_times_df",
         >>>         "lookbehind_days": 30,
-        >>>         "resolve_multiple": "get_max_value_from_list_of_events",
+        >>>         "resolve_multiple": "max",
         >>>         "fallback": 0,
         >>>         "source_values_col_name": "val",
         >>>     },

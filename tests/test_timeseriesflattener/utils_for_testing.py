@@ -2,15 +2,17 @@ from typing import Callable, List, Union
 
 import pandas as pd
 from pandas import DataFrame
-from timeseriesflattener.flattened_dataset import FlattenedDataset
+from psycopmlutils.timeseriesflattener.flattened_dataset import FlattenedDataset
+from psycopmlutils.utils import data_loaders
 
 
-def str_to_df(str) -> DataFrame:
+def str_to_df(str, convert_timestamp_to_datetime: bool = True) -> DataFrame:
     from io import StringIO
 
     df = pd.read_table(StringIO(str), sep=",", index_col=False)
 
-    df = convert_cols_with_matching_colnames_to_datetime(df, "timestamp")
+    if convert_timestamp_to_datetime:
+        df = convert_cols_with_matching_colnames_to_datetime(df, "timestamp")
 
     # Drop "Unnamed" cols
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
@@ -37,7 +39,7 @@ def assert_flattened_outcome_as_expected(
     lookahead_days: float,
     expected_flattened_values: List,
     resolve_multiple: Union[Callable, str],
-    values_colname: str = "val",
+    values_colname: str = "value",
     fallback: List = 0,
 ):
     """Run tests from string representations of dataframes.
@@ -61,7 +63,7 @@ def assert_flattened_outcome_as_expected(
         >>>     prediction_times_df_str=prediction_times_df_str,
         >>>     outcome_df_str=outcome_df_str,
         >>>     lookahead_days=2,
-        >>>     resolve_multiple=get_max_value_from_list_of_events,
+        >>>     resolve_multiple=max,
         >>>     fallback = 0,
         >>>     expected_flattened_vals=[0],
         >>> )
@@ -85,7 +87,7 @@ def assert_flattened_predictor_as_expected(
     lookbehind_days: float,
     resolve_multiple: Union[Callable, str],
     expected_flattened_values: List,
-    values_colname: str = "val",
+    values_colname: str = "value",
     fallback: List = 0,
 ):
     """Run tests from string representations of dataframes.
@@ -109,7 +111,7 @@ def assert_flattened_predictor_as_expected(
         >>>     prediction_times_df_str=prediction_times_df_str,
         >>>     predictor_df_str=predictor_df_str,
         >>>     lookbehind_days=2,
-        >>>     resolve_multiple=get_max_value_from_list_of_events,
+        >>>     resolve_multiple=max,
         >>>     expected_flattened_values=[-1],
         >>>     fallback=-1,
         >>> )
@@ -134,7 +136,7 @@ def assert_flattened_values_as_expected(
     interval_days: float,
     resolve_multiple: Union[Callable, str],
     expected_flattened_values: List,
-    values_colname: str = "val",
+    values_colname: str = "value",
     fallback: List = 0,
 ):
     """Run tests from string representations of dataframes.
@@ -162,14 +164,14 @@ def assert_flattened_values_as_expected(
     )
 
     if direction == "behind":
-        dataset.add_predictor(
+        dataset.add_temporal_predictor(
             predictor_df=df_event_times,
             lookbehind_days=interval_days,
             resolve_multiple=resolve_multiple,
             fallback=fallback,
         )
     elif direction == "ahead":
-        dataset.add_outcome(
+        dataset.add_temporal_outcome(
             outcome_df=df_event_times,
             lookahead_days=interval_days,
             resolve_multiple=resolve_multiple,
@@ -178,7 +180,7 @@ def assert_flattened_values_as_expected(
     else:
         raise ValueError("direction only takes look ahead or behind")
 
-    flattened_values_colname = f"{values_colname}_within_{interval_days}_days"
+    flattened_values_colname = f"{values_colname}_within_{interval_days}_days_{resolve_multiple}_fallback_{fallback}"
 
     expected_flattened_values = pd.DataFrame(
         {flattened_values_colname: expected_flattened_values}
@@ -191,3 +193,13 @@ def assert_flattened_values_as_expected(
         ),
         check_dtype=False,
     )
+
+
+@data_loaders.register("load_event_times")
+def load_event_times():
+    event_times_str = """dw_ek_borger,timestamp,val,
+                    1,2021-12-30 00:00:01, 1
+                    1,2021-12-29 00:00:02, 2
+                    """
+
+    return str_to_df(event_times_str)

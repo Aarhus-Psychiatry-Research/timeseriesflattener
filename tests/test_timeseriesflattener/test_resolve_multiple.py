@@ -1,4 +1,4 @@
-from timeseriesflattener.resolve_multiple_functions import (
+from psycopmlutils.timeseriesflattener.resolve_multiple_functions import (
     get_earliest_value_in_group,
     get_latest_value_in_group,
     get_max_in_group,
@@ -39,7 +39,7 @@ def test_resolve_multiple_max():
     assert_flattened_outcome_as_expected(
         prediction_times_df_str=prediction_times_str,
         outcome_df_str=event_times_str,
-        resolve_multiple=get_max_in_group,
+        resolve_multiple="max",
         lookahead_days=2,
         expected_flattened_values=[2],
     )
@@ -57,7 +57,7 @@ def test_resolve_multiple_min():
     assert_flattened_outcome_as_expected(
         prediction_times_df_str=prediction_times_str,
         outcome_df_str=event_times_str,
-        resolve_multiple=get_min_in_group,
+        resolve_multiple="min",
         lookahead_days=2,
         expected_flattened_values=[1],
     )
@@ -75,7 +75,7 @@ def test_resolve_multiple_avg():
     assert_flattened_outcome_as_expected(
         prediction_times_df_str=prediction_times_str,
         outcome_df_str=event_times_str,
-        resolve_multiple=get_mean_in_group,
+        resolve_multiple="mean",
         lookahead_days=2,
         expected_flattened_values=[1.5],
     )
@@ -96,7 +96,7 @@ def test_resolve_multiple_latest():
     assert_flattened_outcome_as_expected(
         prediction_times_df_str=prediction_times_str,
         outcome_df_str=event_times_str,
-        resolve_multiple=get_latest_value_in_group,
+        resolve_multiple="latest",
         lookahead_days=2,
         expected_flattened_values=[2, 6],
     )
@@ -114,7 +114,7 @@ def test_resolve_multiple_earliest():
     assert_flattened_outcome_as_expected(
         prediction_times_df_str=prediction_times_str,
         outcome_df_str=event_times_str,
-        resolve_multiple=get_earliest_value_in_group,
+        resolve_multiple="earliest",
         lookahead_days=2,
         expected_flattened_values=[1],
     )
