@@ -41,6 +41,7 @@ def assert_flattened_outcome_as_expected(
     resolve_multiple: Union[Callable, str],
     values_colname: str = "value",
     fallback: List = 0,
+    is_fallback_prop_warning_threshold: float = 0.9,
 ):
     """Run tests from string representations of dataframes.
     Args:
@@ -78,6 +79,7 @@ def assert_flattened_outcome_as_expected(
         expected_flattened_values=expected_flattened_values,
         values_colname=values_colname,
         fallback=fallback,
+        is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
     )
 
 
@@ -138,6 +140,7 @@ def assert_flattened_values_as_expected(
     expected_flattened_values: List,
     values_colname: str = "value",
     fallback: List = 0,
+    is_fallback_prop_warning_threshold: float = 0.9,
 ):
     """Run tests from string representations of dataframes.
     Args:
@@ -150,6 +153,9 @@ def assert_flattened_values_as_expected(
         expected_flattened_vals (List): A list of the expected values in the value column of the flattened df
         values_colname (str, optional): Column name for the new values. Defaults to "val".
         fallback (List, optional): What to fill if no outcome within lookahead days. Defaults to 0.
+        is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
+                prediction_times that receive fallback is larger than threshold.
+                Indicates unlikely to be a learnable feature. Defaults to 0.9.
     Raises:
         ValueError: _description_
     """
@@ -173,6 +179,7 @@ def assert_flattened_values_as_expected(
     elif direction == "ahead":
         dataset.add_temporal_outcome(
             outcome_df=df_event_times,
+            is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
             lookahead_days=interval_days,
             resolve_multiple=resolve_multiple,
             fallback=fallback,
