@@ -1,9 +1,8 @@
 from multiprocessing import Pool
-from multiprocessing.sharedctypes import Value
 from typing import Callable, Dict, List, Optional, Union
 
 import pandas as pd
-from catalogue import Registry
+from catalogue import Registry  # noqa
 from pandas import DataFrame
 from psycopmlutils.timeseriesflattener.resolve_multiple_functions import resolve_fns
 from psycopmlutils.utils import data_loaders
@@ -269,8 +268,6 @@ class FlattenedDataset:
 
         self.df = self.df_aggregating.drop(self.pred_time_uuid_col_name, axis=1).copy()
 
-        msg.good(f"Assigned {predictor_df.columns[1]} to instance")
-
     def add_temporal_outcome(
         self,
         outcome_df: DataFrame,
@@ -393,8 +390,6 @@ class FlattenedDataset:
 
         self.df = self.df_aggregating.drop(self.pred_time_uuid_col_name, axis=1).copy()
 
-        msg.good(f"Assigned {df.columns[1]} to instance")
-
     @staticmethod
     def flatten_temporal_values_to_df(
         prediction_times_with_uuid_df: DataFrame,
@@ -409,6 +404,7 @@ class FlattenedDataset:
         new_col_name: Optional[str],
         source_values_col_name: str = "value",
         is_fallback_prop_warning_threshold: float = 0.9,
+        low_variance_threshold: float = 0.01,
     ) -> DataFrame:
 
         """Create a dataframe with flattened values (either predictor or outcome depending on the value of "direction").
@@ -467,8 +463,6 @@ class FlattenedDataset:
             suffixes=("_pred", "_val"),
         ).drop("dw_ek_borger", axis=1)
 
-        msg.info(f"Flattening dataframe for {full_col_str}")
-
         # Drop prediction times without event times within interval days
         df = FlattenedDataset.drop_records_outside_interval_days(
             df,
@@ -493,21 +487,36 @@ class FlattenedDataset:
 
         df.rename({"val": full_col_str}, axis=1, inplace=True)
 
-        if is_fallback_prop_warning_threshold is not None and direction is "ahead":
-            prop_of_values_that_are_fallback = (
-                df[df[full_col_str] == fallback].shape[0] / df.shape[0]
-            )
+        do_return_col = True
 
-            if prop_of_values_that_are_fallback > is_fallback_prop_warning_threshold:
-                raise ValueError(
-                    f"""{prop_of_values_that_are_fallback*100}% of {full_col_str} contain the fallback value, indicating that it is unlikely to be a learnable feature.\n
-                    Consider redefining.\n
-                    You can silence this warning by setting is_fallback_prop_warning_threshold to a higher threshold or None"""
+        if direction is "ahead":
+            if is_fallback_prop_warning_threshold is not None:
+                prop_of_values_that_are_fallback = (
+                    df[df[full_col_str] == fallback].shape[0] / df.shape[0]
                 )
 
-        msg.good(f"Returning flattened dataframe with {full_col_str}")
+                if (
+                    prop_of_values_that_are_fallback
+                    > is_fallback_prop_warning_threshold
+                ):
+                    error = f"""{full_col_str}: Removed since {prop_of_values_that_are_fallback*100}% of rows contain the fallback value, indicating that it is unlikely to be a learnable feature. Consider redefining. You can generate the feature anyway by passing an is_fallback_prop_warning_threshold argument with a higher threshold or None."""
 
-        return df[[pred_time_uuid_col_name, full_col_str]]
+                    do_return_col = False
+
+            if low_variance_threshold is not None:
+                variance_as_fraction_of_mean = (
+                    df[full_col_str].var() / df[full_col_str].mean()
+                )
+                if variance_as_fraction_of_mean < low_variance_threshold:
+                    error = f"""{full_col_str}: Removed since variance / mean < low_variance_threshold ({variance_as_fraction_of_mean} < {low_variance_threshold}), indicating high risk of overfitting. Consider redefining. You can generate the feature anyway by passing an low_variance_threshold argument with a lower threshold or None."""
+
+                    do_return_col = False
+
+        if do_return_col:
+            msg.good(f"Returning flattened dataframe with {full_col_str}")
+            return df[[pred_time_uuid_col_name, full_col_str]]
+        else:
+            return df[pred_time_uuid_col_name]
 
     @staticmethod
     def add_back_prediction_times_without_value(
