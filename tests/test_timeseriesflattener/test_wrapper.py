@@ -1,3 +1,4 @@
+import pytest
 from pandas.testing import assert_frame_equal
 from psycopmlutils.timeseriesflattener.create_feature_combinations import (
     create_feature_combinations,
@@ -183,3 +184,81 @@ def test_add_df_from_catalogue():
     )
 
     assert flattened_dataset.df.equals(expected_df)
+
+
+def test_wrong_formatting():
+    """Test generation of features from a dictionary."""
+
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+
+    expected_df_str = """dw_ek_borger,timestamp,val_within_1_days_max_fallback_0,val_within_2_days_max_fallback_0,val_within_3_days_max_fallback_0,val_within_4_days_max_fallback_0
+                        1,2021-12-31 00:00:00,1,2,2,2                      
+    """
+
+    prediction_times_df = str_to_df(prediction_times_str)
+    expected_df = str_to_df(expected_df_str)
+
+    predictor_str = """dw_ek_borger,timestamp,val,
+                        1,2021-12-30 00:00:01, 1
+                        1,2021-12-29 00:00:02, 2
+                        2,2021-12-30 00:00:01, 1
+                        2,2021-12-29 00:00:02, 2
+                        """
+
+    predictor_df = str_to_df(predictor_str)
+
+    flattened_dataset = FlattenedDataset(
+        prediction_times_df=prediction_times_df,
+        timestamp_col_name="timestamp",
+        id_col_name="dw_ek_borger",
+        n_workers=4,
+    )
+
+    with pytest.raises(ValueError):
+        unresolvable_df = [
+            {
+                "predictor_df": "df_doesn_not_exist",
+                "lookbehind_days": 1,
+                "resolve_multiple": "max",
+                "fallback": 0,
+                "source_values_col_name": "val",
+            },
+        ]
+
+        flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
+            predictors=unresolvable_df,
+        )
+
+    with pytest.raises(ValueError):
+        unresolvable_resolve_multiple = [
+            {
+                "predictor_df": "predictor_df",
+                "lookbehind_days": 1,
+                "resolve_multiple": "does_not_exist",
+                "fallback": 0,
+                "source_values_col_name": "val",
+            },
+        ]
+
+        flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
+            predictors=unresolvable_resolve_multiple,
+            predictor_dfs={"predictor_df": predictor_df},
+        )
+
+    with pytest.raises(ValueError):
+        lookbehind_days_not_int = [
+            {
+                "predictor_df": "predictor_df",
+                "lookbehind_days": "1",
+                "resolve_multiple": "does_not_exist",
+                "fallback": 0,
+                "source_values_col_name": "val",
+            },
+        ]
+
+        flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
+            predictors=lookbehind_days_not_int,
+            predictor_dfs={"predictor_df": predictor_df},
+        )

@@ -92,7 +92,7 @@ class FlattenedDataset:
                 Optionally, you can map the string to a dataframe in predictor_dfs.
             resolve_multiple_fns (Union[str, Callable], optional): If wanting to use manually defined resolve_multiple strategies
                 I.e. ones that aren't in the resolve_fns catalogue require a dictionary mapping the
-                resolve_multiple string to a Callable object.
+                resolve_multiple string to a Callable object. Defaults to None.
 
         Example:
             >>> predictor_list = [
@@ -106,7 +106,7 @@ class FlattenedDataset:
             >>>     {
             >>>         "predictor_df": "df_name",
             >>>         "lookbehind_days": 1,
-            >>>         "resolve_multiple": "min",
+            >>>         "resolve_multiple_fns": "min",
             >>>         "fallback": 0,
             >>>         "source_values_col_name": "val",
             >>>     }
@@ -124,13 +124,30 @@ class FlattenedDataset:
 
         # Replace strings with objects as relevant
         for arg_dict in predictors:
-            if (
-                resolve_multiple_fns is not None
-                and arg_dict["resolve_multiple"] in resolve_multiple_fns
-            ):
-                arg_dict["resolve_multiple"] = resolve_multiple_fns[
-                    arg_dict["resolve_multiple"]
-                ]
+
+            # If resolve_multiple is a string, see if possible to resolve to a Callable
+            # Actual resolving is handled in resolve_multiple_values_within_interval_days
+            # To preserve str for column name generation
+            if isinstance(arg_dict["resolve_multiple"], str):
+                # Try from resolve_multiple_fns
+                resolved_func = False
+                if resolve_multiple_fns is not None:
+                    try:
+                        resolved_func = resolve_multiple_fns.get(
+                            [arg_dict["resolve_multiple"]]
+                        )
+                    except:
+                        pass
+
+                try:
+                    resolved_func = resolve_fns.get(arg_dict["resolve_multiple"])
+                except:
+                    pass
+
+                if not isinstance(resolved_func, Callable):
+                    raise ValueError(
+                        "resolve_function neither is nor resolved to a Callable"
+                    )
 
             # Rename arguments for create_flattened_df_for_val
             arg_dict["values_df"] = arg_dict["predictor_df"]
@@ -154,8 +171,12 @@ class FlattenedDataset:
                     **predictor_dfs,
                     **self.loaders_catalogue.get_all(),
                 }
-
-            arg_dict["values_df"] = predictor_dfs[arg_dict["values_df"]]
+                try:
+                    arg_dict["values_df"] = predictor_dfs[arg_dict["values_df"]]
+                except:
+                    # Error handling in _validate_processed_arg_dicts
+                    # to handle in bulk
+                    pass
 
             required_keys = [
                 "values_df",
@@ -170,6 +191,9 @@ class FlattenedDataset:
             processed_arg_dicts.append(
                 select_and_assert_keys(dictionary=arg_dict, key_list=required_keys)
             )
+
+        # Validate dicts before starting pool, saves time if errors!
+        self._validate_processed_arg_dicts(processed_arg_dicts)
 
         pool = Pool(self.n_workers)
 
@@ -195,6 +219,29 @@ class FlattenedDataset:
         )
 
         self.df = self.df_aggregating.drop(self.pred_time_uuid_col_name, axis=1).copy()
+
+    def _validate_processed_arg_dicts(self, arg_dicts: list):
+        warn = False
+
+        for d in arg_dicts:
+            if not isinstance(d["values_df"], (DataFrame, Callable)):
+                msg.warn(
+                    f"values_df resolves to neither a Callable nor a DataFrame in {d}"
+                )
+                warn = True
+
+            if not (d["direction"] == "ahead" or d["direction"] == "behind"):
+                msg.warn(f"direction is neither ahead or behind in {d}")
+                warn = True
+
+            if not isinstance(d["interval_days"], (int, float)):
+                msg.warn(f"interval_days is neither an int nor a float in {d}")
+                warn = True
+
+        if warn:
+            raise ValueError(
+                "Errors in argument dictionaries, didn't generate any features."
+            )
 
     def _flatten_temporal_values_to_df_wrapper(self, kwargs_dict: Dict) -> DataFrame:
         """Wrap flatten_temporal_values_to_df with kwargs for multithreading pool.
@@ -400,7 +447,7 @@ class FlattenedDataset:
         direction: str,
         interval_days: float,
         resolve_multiple: Union[Callable, str],
-        fallback: float,
+        fallback: Union[float, str],
         id_col_name: str,
         timestamp_col_name: str,
         pred_time_uuid_col_name: str,
@@ -420,7 +467,7 @@ class FlattenedDataset:
             resolve_multiple (Union[Callable, str]): How to handle multiple values within interval_days. Takes either
                 i) a function that takes a list as an argument and returns a float, or
                 ii) a str mapping to a callable from the resolve_multiple_fn catalogue.
-            fallback (List[str]): What to do if no value within the lookahead.
+            fallback (Union[float, str]): Which value to put if no value within the lookahead. "NaN" for Pandas NA.
             id_col_name (str): Name of id_column in prediction_times_with_uuid_df and values_df.
                 Required because this is a static method.
             timestamp_col_name (str): Name of timestamp column in prediction_times_with_uuid_df and values_df.
@@ -566,11 +613,13 @@ class FlattenedDataset:
         # Sort by timestamp_pred in case resolve_multiple needs dates
         df = df.sort_values(by=timestamp_col_name).groupby(pred_time_uuid_colname)
 
+        if isinstance(resolve_multiple, str):
+            resolve_multiple = resolve_fns.get(resolve_multiple)
+
         if isinstance(resolve_multiple, Callable):
             df = resolve_multiple(df).reset_index()
         else:
-            resolve_strategy = resolve_fns.get(resolve_multiple)
-            df = resolve_strategy(df).reset_index()
+            raise ValueError("resolve_multiple must be or resolve to a Callable")
 
         return df
 
