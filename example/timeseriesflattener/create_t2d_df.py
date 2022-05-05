@@ -17,16 +17,32 @@ if __name__ == "__main__":
         [
             {
                 "predictor_df": "hba1c",
-                "lookbehind_days": [90, 180, 365, 730],
-                "resolve_multiple": ["latest", "mean"],
+                "lookbehind_days": [7, 30, 364, 720, 1827],
+                "resolve_multiple": ["mean", "latest", "max", "min"],
                 "fallback": np.nan,
-                "source_values_col_name": "val",
-                "new_col_name": "hba1c",
-            }
+            },
+            {
+                "predictor_df": "triglycerides",
+                "lookbehind_days": [7, 30, 364, 720, 1827],
+                "resolve_multiple": ["mean", "latest", "max", "min"],
+                "fallback": np.nan,
+            },
+            {
+                "predictor_df": "hdl",
+                "lookbehind_days": [7, 30, 364, 720, 1827],
+                "resolve_multiple": ["mean", "latest", "max", "min"],
+                "fallback": np.nan,
+            },
+            {
+                "predictor_df": "ldl",
+                "lookbehind_days": [7, 30, 364, 720, 1827],
+                "resolve_multiple": ["mean", "latest", "max", "min"],
+                "fallback": np.nan,
+            },
         ]
     )
 
-    print(PREDICTOR_LIST)
+    msg.info(f"Generating {len(PREDICTOR_LIST)} features")
 
     prediction_times = psycopmlutils.loaders.LoadVisits.physical_visits_to_psychiatry()
     event_times = psycopmlutils.loaders.LoadDiagnoses.t2d_times()

@@ -140,6 +140,12 @@ class FlattenedDataset:
             arg_dict["timestamp_col_name"] = self.timestamp_col_name
             arg_dict["pred_time_uuid_col_name"] = self.pred_time_uuid_col_name
 
+            if "new_col_name" not in arg_dict.keys():
+                arg_dict["new_col_name"] = arg_dict["values_df"]
+
+            if "source_values_col_name" not in arg_dict.keys():
+                arg_dict["source_values_col_name"] = "value"
+
             # Resolve values_df to either a dataframe from predictor_dfs_dict or a callable from the registry
             if predictor_dfs is None:
                 predictor_dfs = self.loaders_catalogue.get_all()
@@ -150,9 +156,6 @@ class FlattenedDataset:
                 }
 
             arg_dict["values_df"] = predictor_dfs[arg_dict["values_df"]]
-
-            if "new_col_name" not in arg_dict.keys():
-                arg_dict["new_col_name"] = None
 
             required_keys = [
                 "values_df",
@@ -485,7 +488,7 @@ class FlattenedDataset:
             pred_time_uuid_colname=pred_time_uuid_col_name,
         )
 
-        df.rename({"val": full_col_str}, axis=1, inplace=True)
+        df.rename({"value": full_col_str}, axis=1, inplace=True)
 
         do_return_col = True
 
