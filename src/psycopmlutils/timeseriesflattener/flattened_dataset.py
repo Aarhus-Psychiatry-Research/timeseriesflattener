@@ -80,8 +80,8 @@ class FlattenedDataset:
     def add_temporal_predictors_from_list_of_argument_dictionaries(
         self,
         predictors: List[Dict[str, str]],
-        predictor_dfs: Dict[str, DataFrame],
-        resolve_multiple_fns: Optional[Dict[str, Callable]],
+        predictor_dfs: Dict[str, DataFrame] = None,
+        resolve_multiple_fns: Optional[Dict[str, Callable]] = None,
     ):
         """Add predictors to the flattened dataframe from a list.
 
@@ -279,6 +279,7 @@ class FlattenedDataset:
         fallback: float,
         outcome_df_values_col_name: str = "value",
         new_col_name: str = None,
+        is_fallback_prop_warning_threshold: float = 0.9,
     ):
         """Add an outcome-column to the dataset.
 
@@ -289,6 +290,9 @@ class FlattenedDataset:
             fallback (float): What to do if no value within the lookahead.
             outcome_df_values_col_name (str): Column name for the outcome values in outcome_df, e.g. whether a patient has t2d or not at the timestamp. Defaults to "value".
             new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
+            is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
+                prediction_times that receive fallback is larger than threshold.
+                Indicates unlikely to be a learnable feature. Defaults to 0.9.
         """
         self.add_temporal_col_to_flattened_dataset(
             values_df=outcome_df,
@@ -298,6 +302,7 @@ class FlattenedDataset:
             fallback=fallback,
             new_col_name=new_col_name,
             source_values_col_name=outcome_df_values_col_name,
+            is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
         )
 
     def add_temporal_predictor(
@@ -338,6 +343,7 @@ class FlattenedDataset:
         fallback: float,
         new_col_name: Optional[str] = None,
         source_values_col_name: str = "value",
+        is_fallback_prop_warning_threshold: float = 0.9,
     ):
         """Add a column to the dataset (either predictor or outcome depending on the value of "direction").
 
@@ -349,6 +355,9 @@ class FlattenedDataset:
             fallback (List[str]): What to do if no value within the lookahead.
             new_col_name (str): Name to use for new column. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
             source_values_col_name (str, optional): Column name of the values column in values_df. Defaults to "val".
+            is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
+                prediction_times that receive fallback is larger than threshold.
+                Indicates unlikely to be a learnable feature. Defaults to 0.9.
         """
         df = FlattenedDataset.flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self.pred_times_with_uuid,
@@ -362,6 +371,7 @@ class FlattenedDataset:
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             new_col_name=new_col_name,
             source_values_col_name=source_values_col_name,
+            is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
         )
 
         self.assign_val_df(df)
@@ -398,7 +408,9 @@ class FlattenedDataset:
         pred_time_uuid_col_name: str,
         new_col_name: Optional[str],
         source_values_col_name: str = "value",
+        is_fallback_prop_warning_threshold: float = 0.9,
     ) -> DataFrame:
+
         """Create a dataframe with flattened values (either predictor or outcome depending on the value of "direction").
 
         Args:
@@ -418,6 +430,9 @@ class FlattenedDataset:
                 Required because this is a static method.
             new_col_name (Optional[str], optional): Name of new column in returned dataframe. .
             source_values_col_name (str, optional): Name of column containing values in values_df. Defaults to "value".
+            is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
+                prediction_times that receive fallback is larger than threshold.
+                Indicates unlikely to be a learnable feature. Defaults to 0.9.
 
         Returns:
             DataFrame:
@@ -478,7 +493,20 @@ class FlattenedDataset:
 
         df.rename({"val": full_col_str}, axis=1, inplace=True)
 
+        if is_fallback_prop_warning_threshold is not None and direction is "ahead":
+            prop_of_values_that_are_fallback = (
+                df[df[full_col_str] == fallback].shape[0] / df.shape[0]
+            )
+
+            if prop_of_values_that_are_fallback > is_fallback_prop_warning_threshold:
+                raise ValueError(
+                    f"""{prop_of_values_that_are_fallback*100}% of {full_col_str} contain the fallback value, indicating that it is unlikely to be a learnable feature.\n
+                    Consider redefining.\n
+                    You can silence this warning by setting is_fallback_prop_warning_threshold to a higher threshold or None"""
+                )
+
         msg.good(f"Returning flattened dataframe with {full_col_str}")
+
         return df[[pred_time_uuid_col_name, full_col_str]]
 
     @staticmethod
