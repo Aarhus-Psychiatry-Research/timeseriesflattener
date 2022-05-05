@@ -499,7 +499,9 @@ class FlattenedDataset:
                     prop_of_values_that_are_fallback
                     > is_fallback_prop_warning_threshold
                 ):
-                    error = f"""{full_col_str}: Removed since {prop_of_values_that_are_fallback*100}% of rows contain the fallback value, indicating that it is unlikely to be a learnable feature. Consider redefining. You can generate the feature anyway by passing an is_fallback_prop_warning_threshold argument with a higher threshold or None."""
+                    msg.warn(
+                        f"""{full_col_str}: Removed since {prop_of_values_that_are_fallback*100}% of rows contain the fallback value, indicating that it is unlikely to be a learnable feature. Consider redefining. You can generate the feature anyway by passing an is_fallback_prop_warning_threshold argument with a higher threshold or None."""
+                    )
 
                     do_return_col = False
 
@@ -508,7 +510,9 @@ class FlattenedDataset:
                     df[full_col_str].var() / df[full_col_str].mean()
                 )
                 if variance_as_fraction_of_mean < low_variance_threshold:
-                    error = f"""{full_col_str}: Removed since variance / mean < low_variance_threshold ({variance_as_fraction_of_mean} < {low_variance_threshold}), indicating high risk of overfitting. Consider redefining. You can generate the feature anyway by passing an low_variance_threshold argument with a lower threshold or None."""
+                    msg.warn(
+                        f"""{full_col_str}: Removed since variance / mean < low_variance_threshold ({variance_as_fraction_of_mean} < {low_variance_threshold}), indicating high risk of overfitting. Consider redefining. You can generate the feature anyway by passing an low_variance_threshold argument with a lower threshold or None."""
+                    )
 
                     do_return_col = False
 
