@@ -4,7 +4,8 @@ from typing import Callable, Dict, List, Optional, Union
 import pandas as pd
 from catalogue import Registry  # noqa
 from pandas import DataFrame
-from psycopmlutils.timeseriesflattener.resolve_multiple_functions import resolve_fns
+from psycopmlutils.timeseriesflattener.resolve_multiple_functions import \
+    resolve_fns
 from psycopmlutils.utils import data_loaders
 from wasabi import msg
 
@@ -171,12 +172,14 @@ class FlattenedDataset:
                     **predictor_dfs,
                     **self.loaders_catalogue.get_all(),
                 }
-                try:
-                    arg_dict["values_df"] = predictor_dfs[arg_dict["values_df"]]
-                except:
-                    # Error handling in _validate_processed_arg_dicts
-                    # to handle in bulk
-                    pass
+            
+            # Resolve arg_dict if string
+            try:
+                arg_dict["values_df"] = predictor_dfs[arg_dict["values_df"]]
+            except:
+                # Error handling in _validate_processed_arg_dicts
+                # to handle in bulk
+                pass
 
             required_keys = [
                 "values_df",

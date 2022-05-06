@@ -13,7 +13,7 @@ def test_resolve_multiple_catalogue():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         """
@@ -31,7 +31,7 @@ def test_resolve_multiple_max():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         """
@@ -49,7 +49,7 @@ def test_resolve_multiple_min():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         """
@@ -67,7 +67,7 @@ def test_resolve_multiple_avg():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         """
@@ -86,7 +86,7 @@ def test_resolve_multiple_latest():
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         2,2022-01-01 00:00:01, 3
@@ -106,7 +106,7 @@ def test_resolve_multiple_earliest():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         """
@@ -124,7 +124,7 @@ def test_resolve_multiple_sum():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         """
@@ -142,7 +142,7 @@ def test_resolve_multiple_count():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
                         """

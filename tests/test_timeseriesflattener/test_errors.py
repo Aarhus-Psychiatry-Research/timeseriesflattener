@@ -24,7 +24,7 @@ def test_col_does_not_exist():
                             1,2021-12-31 00:00:00
                             """
 
-    event_times_str = """dw_ek_borger,val,
+    event_times_str = """dw_ek_borger,value,
                         1, 1
                         1, 2
                         """

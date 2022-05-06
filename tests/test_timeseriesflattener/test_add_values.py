@@ -1,15 +1,13 @@
 import pandas as pd
 import pytest
-from psycopmlutils.timeseriesflattener.flattened_dataset import FlattenedDataset
-from psycopmlutils.timeseriesflattener.resolve_multiple_functions import (
-    get_max_in_group,
-)
+from psycopmlutils.timeseriesflattener.flattened_dataset import \
+    FlattenedDataset
+from psycopmlutils.timeseriesflattener.resolve_multiple_functions import \
+    get_max_in_group
 
-from utils_for_testing import (
-    assert_flattened_outcome_as_expected,
-    assert_flattened_predictor_as_expected,
-    str_to_df,
-)
+from utils_for_testing import (assert_flattened_outcome_as_expected,
+                               assert_flattened_predictor_as_expected,
+                               str_to_df)
 
 
 # Predictors
@@ -17,7 +15,7 @@ def test_predictor_after_prediction_time():
     prediction_times_df_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    predictor_df_str = """dw_ek_borger,timestamp,val,
+    predictor_df_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1.0
                         """
 
@@ -35,7 +33,7 @@ def test_predictor_before_prediction():
     prediction_times_df_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    predictor_df_str = """dw_ek_borger,timestamp,val,
+    predictor_df_str = """dw_ek_borger,timestamp,value,
                         1,2021-12-30 22:59:59, 1
                         """
 
@@ -57,7 +55,7 @@ def test_multiple_citizens_predictor():
                             5,2022-01-05 00:00:00
                             6,2022-01-05 00:00:00
                             """
-    predictor_df_str = """dw_ek_borger,timestamp,val,
+    predictor_df_str = """dw_ek_borger,timestamp,value,
                         1,2021-12-30 00:00:01, 0
                         1,2022-01-01 00:00:00, 1
                         5,2022-01-01 00:00:00, 0
@@ -80,7 +78,7 @@ def test_event_after_prediction_time():
     prediction_times_df_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,val,
+    outcome_df_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         """
 
@@ -97,7 +95,7 @@ def test_event_before_prediction():
     prediction_times_df_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,val,
+    outcome_df_str = """dw_ek_borger,timestamp,value,
                         1,2021-12-30 23:59:59, 1.0
                         """
 
@@ -118,7 +116,7 @@ def test_multiple_citizens_outcome():
                             5,2025-01-02 00:00:00
                             5,2025-08-05 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,val,
+    outcome_df_str = """dw_ek_borger,timestamp,value,
                         1,2021-12-31 00:00:01, 1.0
                         1,2023-01-02 00:00:00, 1.0
                         5,2025-01-03 00:00:00, 1.0
@@ -138,7 +136,7 @@ def test_citizen_without_outcome():
     prediction_times_df_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,val,
+    outcome_df_str = """dw_ek_borger,timestamp,value,
                         0,2021-12-31 00:00:01, 1.0
                         """
 
