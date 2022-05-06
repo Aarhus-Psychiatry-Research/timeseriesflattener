@@ -1,9 +1,9 @@
 import pytest
 from pandas.testing import assert_frame_equal
-from psycopmlutils.timeseriesflattener.create_feature_combinations import \
-    create_feature_combinations
-from psycopmlutils.timeseriesflattener.flattened_dataset import \
-    FlattenedDataset
+from psycopmlutils.timeseriesflattener.create_feature_combinations import (
+    create_feature_combinations,
+)
+from psycopmlutils.timeseriesflattener.flattened_dataset import FlattenedDataset
 
 from utils_for_testing import data_loaders, load_event_times, str_to_df
 

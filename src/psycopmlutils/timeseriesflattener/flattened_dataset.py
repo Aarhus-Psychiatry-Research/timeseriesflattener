@@ -4,8 +4,7 @@ from typing import Callable, Dict, List, Optional, Union
 import pandas as pd
 from catalogue import Registry  # noqa
 from pandas import DataFrame
-from psycopmlutils.timeseriesflattener.resolve_multiple_functions import \
-    resolve_fns
+from psycopmlutils.timeseriesflattener.resolve_multiple_functions import resolve_fns
 from psycopmlutils.utils import data_loaders
 from wasabi import msg
 
@@ -172,7 +171,7 @@ class FlattenedDataset:
                     **predictor_dfs,
                     **self.loaders_catalogue.get_all(),
                 }
-            
+
             # Resolve arg_dict if string
             try:
                 arg_dict["values_df"] = predictor_dfs[arg_dict["values_df"]]
