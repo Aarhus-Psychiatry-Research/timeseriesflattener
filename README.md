@@ -15,6 +15,8 @@ Recommended to also add black as a pre-commit hook:
 `pip install git+https://github.com/Aarhus-Psychiatry-Research/psycop-ml-utils.git`
 
 # Usage
+- [ ] Update examples as API matures
+
 ## Loading data from SQL
 
 Currently only contains one function to load a view from SQL, `sql_load`
