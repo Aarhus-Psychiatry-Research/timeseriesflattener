@@ -340,6 +340,7 @@ class FlattenedDataset:
         lookahead_days: float,
         resolve_multiple: Union[Callable, str],
         fallback: float,
+        incident: Optional[bool] = False,
         outcome_df_values_col_name: str = "value",
         new_col_name: str = None,
         is_fallback_prop_warning_threshold: float = 0.9,
@@ -351,12 +352,36 @@ class FlattenedDataset:
             lookahead_days (float): How far ahead to look for an outcome in days. If none found, use fallback.
             resolve_multiple (Callable, str): How to handle multiple values within the lookahead window. Takes either i) a function that takes a list as an argument and returns a float, or ii) a str mapping to a callable from the resolve_multiple_fn catalogue.
             fallback (float): What to do if no value within the lookahead.
+            incident (Optional[bool], optional): Whether looking for an incident outcome. If true, removes all prediction times after the outcome time. Defaults to false.
             outcome_df_values_col_name (str): Column name for the outcome values in outcome_df, e.g. whether a patient has t2d or not at the timestamp. Defaults to "value".
             new_col_name (str): Name to use for new col. Automatically generated as '{new_col_name}_within_{lookahead_days}_days'.
             is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
                 prediction_times that receive fallback is larger than threshold.
                 Indicates unlikely to be a learnable feature. Defaults to 0.9.
         """
+        if incident:
+            df = pd.merge(
+                self.df,
+                outcome_df,
+                how="left",
+                on=self.id_col_name,
+                suffixes=("_prediction", "_outcome"),
+            )
+
+            df = df.drop(df[df["timestamp_outcome"] < df["timestamp_prediction"]].index)
+
+            df.rename({"timestamp_prediction": "timestamp"}, axis=1, inplace=True)
+            df.drop(["timestamp_outcome", "value"], axis=1, inplace=True)
+
+            self.df_aggregating = df.copy()
+
+            self.df = df.drop(
+                [
+                    self.pred_time_uuid_col_name,
+                ],
+                axis=1,
+            ).copy()
+
         self.add_temporal_col_to_flattened_dataset(
             values_df=outcome_df,
             direction="ahead",

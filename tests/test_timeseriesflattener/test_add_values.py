@@ -258,3 +258,47 @@ def test_add_age_error():
             id_to_date_of_birth_mapping=str_to_df(static_predictor),
             date_of_birth_col_name="date_of_birth",
         )
+
+
+def test_incident_outcome_removing_prediction_times():
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            1,2021-12-31 00:00:00
+                            1,2023-12-31 00:00:00
+                            2,2021-12-31 00:00:00
+                            2,2023-12-31 00:00:00
+                            3,2023-12-31 00:00:00
+                            """
+
+    event_times_str = """dw_ek_borger,timestamp,value,
+                        1,2021-12-31 00:00:01, 1
+                        2,2021-12-31 00:00:01, 1
+                        """
+
+    expected_df_str = """dw_ek_borger,timestamp,value_within_2_days_max_fallback_0,
+                        1,2021-12-31 00:00:00, 1.0
+                        2,2021-12-31 00:00:00, 1.0
+                        3,2023-12-31 00:00:00, 0.0
+                        """
+
+    prediction_times_df = str_to_df(prediction_times_str)
+    event_times_df = str_to_df(event_times_str)
+    expected_df = str_to_df(expected_df_str)
+
+    flattened_dataset = FlattenedDataset(
+        prediction_times_df=prediction_times_df,
+        timestamp_col_name="timestamp",
+        id_col_name="dw_ek_borger",
+        n_workers=4,
+    )
+
+    flattened_dataset.add_temporal_outcome(
+        outcome_df=event_times_df,
+        lookahead_days=2,
+        incident=True,
+        resolve_multiple="max",
+        fallback=0,
+    )
+
+    outcome_df = flattened_dataset.df
+
+    assert outcome_df.equals(expected_df)
