@@ -1,10 +1,8 @@
 import catalogue
 import pandas as pd
-from wasabi import msg
-
 from psycopmlutils.loaders.sql_load import sql_load
-
 from psycopmlutils.utils import data_loaders
+from wasabi import msg
 
 
 class LoadLabResults:
@@ -18,7 +16,7 @@ class LoadLabResults:
             pd.DataFrame
         """
         print_str = f"blood samples matching NPU-code {blood_sample_id}"
-        msg.info(f"Loading {print_str}")
+        # msg.info(f"Loading {print_str}")
 
         view = "[FOR_labka_alle_blodprover_inkl_2021_feb2022]"
         sql = f"SELECT dw_ek_borger, datotid_sidstesvar, numerisksvar FROM [fct].{view} WHERE NPUkode = '{blood_sample_id}'"
@@ -30,7 +28,7 @@ class LoadLabResults:
             inplace=True,
         )
 
-        msg.good(f"Loaded {print_str}")
+        # msg.good(f"Loaded {print_str}")
         return df.reset_index(drop=True)
 
     def _aggregate_blood_samples(blood_sample_ids: list) -> pd.DataFrame:

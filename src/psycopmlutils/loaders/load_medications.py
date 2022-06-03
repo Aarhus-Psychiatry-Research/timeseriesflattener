@@ -1,9 +1,7 @@
 import pandas as pd
-from wasabi import msg
-
 from psycopmlutils.loaders.sql_load import sql_load
-
 from psycopmlutils.utils import data_loaders
+from wasabi import msg
 
 
 class LoadMedications:
@@ -49,7 +47,7 @@ class LoadMedications:
             pd.DataFrame: Cols: dw_ek_borger, timestamp, {atc_code_prefix}_value = 1
         """
         print_str = f"medications matching NPU-code {atc_code}"
-        msg.info(f"Loading {print_str}")
+        # msg.info(f"Loading {print_str}")
 
         if load_prescribed:
             msg.warn(
@@ -83,12 +81,12 @@ class LoadMedications:
 
         df.rename(
             columns={
-                atc_code: f"{output_col_name}_value",
+                atc_code: f"value",
             },
             inplace=True,
         )
 
-        msg.good(f"Loaded {print_str}")
+        # msg.good(f"Loaded {print_str}")
         return df.reset_index(drop=True)
 
     def _load_one_source(

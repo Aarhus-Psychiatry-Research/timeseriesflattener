@@ -4,8 +4,9 @@ from psycopmlutils.timeseriesflattener.create_feature_combinations import (
     create_feature_combinations,
 )
 from psycopmlutils.timeseriesflattener.flattened_dataset import FlattenedDataset
+from psycopmlutils.utils import data_loaders
 
-from utils_for_testing import data_loaders, load_event_times, str_to_df
+from utils_for_testing import load_event_times, str_to_df
 
 
 def test_generate_two_features_from_dict():

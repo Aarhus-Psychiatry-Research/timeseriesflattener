@@ -1,15 +1,13 @@
 import pandas as pd
-from wasabi import msg
-
 from psycopmlutils.loaders.sql_load import sql_load
-
 from psycopmlutils.utils import data_loaders
+from wasabi import msg
 
 
 class LoadDemographics:
     @data_loaders.register("birthdays")
     def birthdays():
-        msg.info("Loading birthdays")
+        # msg.info("Loading birthdays")
 
         view = "[FOR_kohorte_demografi_inkl_2021_feb2022]"
         sql = f"SELECT dw_ek_borger, foedselsdato FROM [fct].{view}"
@@ -22,12 +20,12 @@ class LoadDemographics:
 
         df.rename(columns={"foedselsdato": "date_of_birth"}, inplace=True)
 
-        msg.good("Loaded birthdays")
+        # msg.good("Loaded birthdays")
         return df.reset_index(drop=True)
 
-    @data_loaders.register("sex")
-    def sex():
-        msg.info("Loading sexes")
+    @data_loaders.register("male")
+    def male():
+        # msg.info("Loading sexes")
 
         view = "[FOR_kohorte_demografi_inkl_2021_feb2022]"
         sql = f"SELECT dw_ek_borger, koennavn FROM [fct].{view}"
@@ -42,5 +40,5 @@ class LoadDemographics:
             inplace=True,
         )
 
-        msg.good("Loaded sexes")
+        # msg.good("Loaded sexes")
         return df.reset_index(drop=True)

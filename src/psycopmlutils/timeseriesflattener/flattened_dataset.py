@@ -1,6 +1,7 @@
 from multiprocessing import Pool
 from typing import Callable, Dict, List, Optional, Union
 
+import numpy as np
 import pandas as pd
 from catalogue import Registry  # noqa
 from pandas import DataFrame
@@ -60,6 +61,15 @@ class FlattenedDataset:
                     f"{col_name} does not exist in prediction_times_df, change the df or set another argument"
                 )
 
+        timestamp_col_type = type(
+            self.pred_times_with_uuid[self.timestamp_col_name][0]
+        ).__name__
+
+        if timestamp_col_type not in ["Timestamp"]:
+            raise ValueError(
+                f"In prediction_times_df, {self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset."
+            )
+
         self.pred_times_with_uuid[
             self.pred_time_uuid_col_name
         ] = self.pred_times_with_uuid[self.id_col_name].astype(
@@ -68,6 +78,10 @@ class FlattenedDataset:
             self.timestamp_col_name
         ].dt.strftime(
             "-%Y-%m-%d-%H-%M-%S"
+        )
+
+        self.pred_times_with_uuid[self.timestamp_col_name] = pd.to_datetime(
+            self.pred_times_with_uuid[self.timestamp_col_name]
         )
 
         # Having a df_aggregating separate from df allows to only generate the UUID once, while not presenting it
@@ -172,7 +186,6 @@ class FlattenedDataset:
                     **self.loaders_catalogue.get_all(),
                 }
 
-            # Resolve arg_dict if string
             try:
                 arg_dict["values_df"] = predictor_dfs[arg_dict["values_df"]]
             except:
@@ -207,6 +220,7 @@ class FlattenedDataset:
             df.set_index(self.pred_time_uuid_col_name) for df in flattened_predictor_dfs
         ]
 
+        msg.info("Feature generation complete, concatenating")
         concatenated_dfs = pd.concat(
             flattened_predictor_dfs,
             axis=1,
@@ -408,6 +422,13 @@ class FlattenedDataset:
                 prediction_times that receive fallback is larger than threshold.
                 Indicates unlikely to be a learnable feature. Defaults to 0.9.
         """
+        timestamp_col_type = type(values_df[self.timestamp_col_name][0]).__name__
+
+        if timestamp_col_type not in ["Timestamp"]:
+            raise ValueError(
+                f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset."
+            )
+
         df = FlattenedDataset.flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self.pred_times_with_uuid,
             values_df=values_df,
@@ -541,7 +562,7 @@ class FlattenedDataset:
 
         do_return_col = True
 
-        if direction is "ahead":
+        if direction == "ahead":
             if is_fallback_prop_warning_threshold is not None:
                 prop_of_values_that_are_fallback = (
                     df[df[full_col_str] == fallback].shape[0] / df.shape[0]
@@ -552,10 +573,8 @@ class FlattenedDataset:
                     > is_fallback_prop_warning_threshold
                 ):
                     msg.warn(
-                        f"""{full_col_str}: Removed since {prop_of_values_that_are_fallback*100}% of rows contain the fallback value, indicating that it is unlikely to be a learnable feature. Consider redefining. You can generate the feature anyway by passing an is_fallback_prop_warning_threshold argument with a higher threshold or None."""
+                        f"""{full_col_str}: Beware, {prop_of_values_that_are_fallback*100}% of rows contain the fallback value, indicating that it is unlikely to be a learnable feature. Consider redefining. You can generate the feature anyway by passing an is_fallback_prop_warning_threshold argument with a higher threshold or None."""
                     )
-
-                    do_return_col = False
 
             if low_variance_threshold is not None:
                 variance_as_fraction_of_mean = (
@@ -563,10 +582,8 @@ class FlattenedDataset:
                 )
                 if variance_as_fraction_of_mean < low_variance_threshold:
                     msg.warn(
-                        f"""{full_col_str}: Removed since variance / mean < low_variance_threshold ({variance_as_fraction_of_mean} < {low_variance_threshold}), indicating high risk of overfitting. Consider redefining. You can generate the feature anyway by passing an low_variance_threshold argument with a lower threshold or None."""
+                        f"""{full_col_str}: Beware, variance / mean < low_variance_threshold ({variance_as_fraction_of_mean} < {low_variance_threshold}), indicating high risk of overfitting. Consider redefining. You can generate the feature anyway by passing an low_variance_threshold argument with a lower threshold or None."""
                     )
-
-                    do_return_col = False
 
         if do_return_col:
             msg.good(f"Returning flattened dataframe with {full_col_str}")
@@ -649,8 +666,10 @@ class FlattenedDataset:
             DataFrame
         """
         df["time_from_pred_to_val_in_days"] = (
-            df[timestamp_value_colname] - df[timestamp_pred_colname]
-        ).dt.total_seconds() / 86_400
+            (df[timestamp_value_colname] - df[timestamp_pred_colname])
+            / (np.timedelta64(1, "s"))
+            / 86_400
+        )
         # Divide by 86.400 seconds/day
 
         if direction == "ahead":

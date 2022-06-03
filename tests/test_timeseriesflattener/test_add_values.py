@@ -111,6 +111,31 @@ def test_event_before_prediction():
     )
 
 
+def test_raise_error_if_timestamp_col_not_timestamp_type():
+    prediction_times_df_str = """dw_ek_borger,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+    outcome_df_str = """dw_ek_borger,timestamp,value,
+                        1,2021-12-30 23:59:59, 1.0
+                        """
+
+    df_prediction_times = str_to_df(
+        prediction_times_df_str, convert_timestamp_to_datetime=True
+    )
+    df_event_times = str_to_df(outcome_df_str, convert_timestamp_to_datetime=False)
+
+    dataset = FlattenedDataset(
+        prediction_times_df=df_prediction_times,
+        timestamp_col_name="timestamp",
+        id_col_name="dw_ek_borger",
+    )
+
+    with pytest.raises(ValueError):
+        dataset.add_temporal_outcome(
+            df_event_times, lookahead_days=5, resolve_multiple="max", fallback=0
+        )
+
+
 def test_multiple_citizens_outcome():
     prediction_times_df_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
@@ -118,7 +143,7 @@ def test_multiple_citizens_outcome():
                             5,2025-01-02 00:00:00
                             5,2025-08-05 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,value,
+    outcome_df_str = """dw_ek_borger,timestamp,value
                         1,2021-12-31 00:00:01, 1.0
                         1,2023-01-02 00:00:00, 1.0
                         5,2025-01-03 00:00:00, 1.0

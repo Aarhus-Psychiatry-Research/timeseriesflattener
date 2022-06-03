@@ -24,7 +24,7 @@ def test_col_does_not_exist():
                             1,2021-12-31 00:00:00
                             """
 
-    event_times_str = """dw_ek_borger,value,
+    event_times_str = """dw_ek_borger,val,
                         1, 1
                         1, 2
                         """
@@ -38,7 +38,7 @@ def test_col_does_not_exist():
         id_col_name="dw_ek_borger",
     )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(KeyError):
         flattened_df.add_temporal_predictor(
             predictor_df=event_times_df,
             lookbehind_days=2,

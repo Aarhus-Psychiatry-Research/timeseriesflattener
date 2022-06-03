@@ -50,7 +50,7 @@ def assert_flattened_outcome_as_expected(
         lookahead_days (float): _description_
         expected_flattened_vals (List): A list of the expected values in the value column of the flattened df
         resolve_multiple (Callable): How to handle multiple values within the lookahead window. Takes a a function that takes a list as an argument and returns a float.
-        values_colname (str, optional): Column name for the new values. Defaults to "value".
+        values_colname (str, optional): Column name for the new values. Defaults to "val".
         fallback (List, optional): What to fill if no outcome within lookahead days. Defaults to 0.
     Example:
         >>> prediction_times_df_str = '''dw_ek_borger,timestamp,
