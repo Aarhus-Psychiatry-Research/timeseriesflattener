@@ -51,43 +51,35 @@ class FlattenedDataset:
 
         self.timestamp_col_name = timestamp_col_name
         self.id_col_name = id_col_name
-
         self.pred_time_uuid_col_name = "prediction_time_uuid"
-        self.pred_times_with_uuid = prediction_times_df
 
+        self.df = prediction_times_df
+
+        # Check that colnames are present
         for col_name in [self.timestamp_col_name, self.id_col_name]:
-            if col_name not in self.pred_times_with_uuid.columns:
+            if col_name not in self.df.columns:
                 raise ValueError(
                     f"{col_name} does not exist in prediction_times_df, change the df or set another argument"
                 )
 
-        timestamp_col_type = type(
-            self.pred_times_with_uuid[self.timestamp_col_name][0]
-        ).__name__
+        # Check timestamp col type
+        timestamp_col_type = type(self.df[self.timestamp_col_name][0]).__name__
 
         if timestamp_col_type not in ["Timestamp"]:
-            raise ValueError(
-                f"In prediction_times_df, {self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset."
-            )
+            try:
+                self.df[self.timestamp_col_name] = pd.to_datetime(
+                    self.df[self.timestamp_col_name]
+                )
+            except:
+                raise ValueError(
+                    f"prediction_times_df: {self.timestamp_col_name} is of type {timestamp_col_type}, and could not be converted to 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset."
+                )
 
-        self.pred_times_with_uuid[
-            self.pred_time_uuid_col_name
-        ] = self.pred_times_with_uuid[self.id_col_name].astype(
+        # Create pred_time_uuid_columne
+        self.df[self.pred_time_uuid_col_name] = self.df[self.id_col_name].astype(
             str
-        ) + self.pred_times_with_uuid[
-            self.timestamp_col_name
-        ].dt.strftime(
-            "-%Y-%m-%d-%H-%M-%S"
-        )
+        ) + self.df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
-        self.pred_times_with_uuid[self.timestamp_col_name] = pd.to_datetime(
-            self.pred_times_with_uuid[self.timestamp_col_name]
-        )
-
-        # Having a df_aggregating separate from df allows to only generate the UUID once, while not presenting it
-        # in self.df
-        self.df_aggregating = self.pred_times_with_uuid
-        self.df = self.pred_times_with_uuid.copy()
         self.loaders_catalogue = data_loaders
 
     def add_temporal_predictors_from_list_of_argument_dictionaries(
@@ -226,15 +218,15 @@ class FlattenedDataset:
             axis=1,
         ).reset_index()
 
-        self.df_aggregating = pd.merge(
-            self.df_aggregating,
+        self.df = pd.merge(
+            self.df,
             concatenated_dfs,
             how="left",
             on=self.pred_time_uuid_col_name,
             suffixes=("", ""),
         )
 
-        self.df = self.df_aggregating.drop(self.pred_time_uuid_col_name, axis=1).copy()
+        self.df = self.df.drop(self.pred_time_uuid_col_name, axis=1).copy()
 
     def _validate_processed_arg_dicts(self, arg_dicts: list):
         warn = False
@@ -269,7 +261,7 @@ class FlattenedDataset:
             DataFrame: DataFrame generates with create_flattened_df
         """
         return self.flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self.pred_times_with_uuid,
+            prediction_times_with_uuid_df=self.df,
             id_col_name=self.id_col_name,
             timestamp_col_name=self.timestamp_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
@@ -305,17 +297,12 @@ class FlattenedDataset:
         self.add_static_predictor(id_to_date_of_birth_mapping)
 
         age = (
-            (
-                self.df_aggregating[self.timestamp_col_name]
-                - self.df_aggregating[date_of_birth_col_name]
-            ).dt.days
+            (self.df[self.timestamp_col_name] - self.df[date_of_birth_col_name]).dt.days
             / (365.25)
         ).round(2)
 
-        self.df_aggregating.drop(date_of_birth_col_name, axis=1, inplace=True)
         self.df.drop(date_of_birth_col_name, axis=1, inplace=True)
 
-        self.df_aggregating["age_in_years"] = age
         self.df["age_in_years"] = age
 
     def add_static_predictor(self, predictor_df: DataFrame):
@@ -324,15 +311,15 @@ class FlattenedDataset:
         Args:
             predictor_df (DataFrame): Contains an id_column and a value column.
         """
-        self.df_aggregating = pd.merge(
-            self.df_aggregating,
+        self.df = pd.merge(
+            self.df,
             predictor_df,
             how="left",
             on=self.id_col_name,
             suffixes=("", ""),
         )
 
-        self.df = self.df_aggregating.drop(self.pred_time_uuid_col_name, axis=1).copy()
+        self.df = self.df.drop(self.pred_time_uuid_col_name, axis=1).copy()
 
     def add_temporal_outcome(
         self,
@@ -344,6 +331,7 @@ class FlattenedDataset:
         outcome_df_values_col_name: str = "value",
         new_col_name: str = None,
         is_fallback_prop_warning_threshold: float = 0.9,
+        keep_outcome_timestamp: bool = True,
     ):
         """Add an outcome-column to the dataset.
 
@@ -358,6 +346,7 @@ class FlattenedDataset:
             is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
                 prediction_times that receive fallback is larger than threshold.
                 Indicates unlikely to be a learnable feature. Defaults to 0.9.
+            keep_outcome:timestamp (bool, optional): Whether to keep the timestamp for the outcome value as a separate column. Defaults to False.
         """
         if incident:
             df = pd.merge(
@@ -371,16 +360,11 @@ class FlattenedDataset:
             df = df.drop(df[df["timestamp_outcome"] < df["timestamp_prediction"]].index)
 
             df.rename({"timestamp_prediction": "timestamp"}, axis=1, inplace=True)
-            df.drop(["timestamp_outcome", "value"], axis=1, inplace=True)
+            df.drop(["timestamp_outcome"], axis=1, inplace=True)
 
-            self.df_aggregating = df.copy()
+            df.drop(["value"], axis=1, inplace=True)
 
-            self.df = df.drop(
-                [
-                    self.pred_time_uuid_col_name,
-                ],
-                axis=1,
-            ).copy()
+            self.df = df
 
         self.add_temporal_col_to_flattened_dataset(
             values_df=outcome_df,
@@ -391,6 +375,7 @@ class FlattenedDataset:
             new_col_name=new_col_name,
             source_values_col_name=outcome_df_values_col_name,
             is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
+            keep_val_timestamp=keep_outcome_timestamp,
         )
 
     def add_temporal_predictor(
@@ -432,6 +417,7 @@ class FlattenedDataset:
         new_col_name: Optional[str] = None,
         source_values_col_name: str = "value",
         is_fallback_prop_warning_threshold: float = 0.9,
+        keep_val_timestamp: bool = False,
     ):
         """Add a column to the dataset (either predictor or outcome depending on the value of "direction").
 
@@ -446,6 +432,7 @@ class FlattenedDataset:
             is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
                 prediction_times that receive fallback is larger than threshold.
                 Indicates unlikely to be a learnable feature. Defaults to 0.9.
+            keep_val_timestamp (bool, optional): Whether to keep the timestamp for the temporal value as a separate column. Defaults to False.
         """
         timestamp_col_type = type(values_df[self.timestamp_col_name][0]).__name__
 
@@ -455,7 +442,7 @@ class FlattenedDataset:
             )
 
         df = FlattenedDataset.flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self.pred_times_with_uuid,
+            prediction_times_with_uuid_df=self.df,
             values_df=values_df,
             direction=direction,
             interval_days=interval_days,
@@ -467,26 +454,10 @@ class FlattenedDataset:
             new_col_name=new_col_name,
             source_values_col_name=source_values_col_name,
             is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
+            keep_val_timestamp=keep_val_timestamp,
         )
 
-        self.assign_val_df(df)
-
-    def assign_val_df(self, df: DataFrame):
-        """Assign a single value_df (already processed) to the current instance of the class.
-
-        Args:
-            df (DataFrame): The DataFrame to assign
-
-        """
-        self.df_aggregating = pd.merge(
-            self.df_aggregating,
-            df,
-            how="left",
-            on=self.pred_time_uuid_col_name,
-            suffixes=("", ""),
-        )
-
-        self.df = self.df_aggregating.drop(self.pred_time_uuid_col_name, axis=1).copy()
+        self.df = pd.merge(self.df, df, how="left", on=self.pred_time_uuid_col_name)
 
     @staticmethod
     def flatten_temporal_values_to_df(
@@ -503,6 +474,7 @@ class FlattenedDataset:
         source_values_col_name: str = "value",
         is_fallback_prop_warning_threshold: float = 0.9,
         low_variance_threshold: float = 0.01,
+        keep_val_timestamp: bool = False,
     ) -> DataFrame:
 
         """Create a dataframe with flattened values (either predictor or outcome depending on the value of "direction").
@@ -527,6 +499,7 @@ class FlattenedDataset:
             is_fallback_prop_warning_threshold (float, optional): Triggers a ValueError if proportion of
                 prediction_times that receive fallback is larger than threshold.
                 Indicates unlikely to be a learnable feature. Defaults to 0.9.
+            keep_val_timestamp (bool, optional): Whether to keep the timestamp for the temporal value as a separate column. Defaults to False.
 
         Returns:
             DataFrame:
@@ -570,6 +543,7 @@ class FlattenedDataset:
             timestamp_value_colname="timestamp_val",
         )
 
+        # Add back prediction times that don't have a value, and fill them with fallback
         df = FlattenedDataset.add_back_prediction_times_without_value(
             df=df,
             pred_times_with_uuid=prediction_times_with_uuid_df,
@@ -583,9 +557,11 @@ class FlattenedDataset:
             pred_time_uuid_colname=pred_time_uuid_col_name,
         )
 
-        df.rename({"value": full_col_str}, axis=1, inplace=True)
-
-        do_return_col = True
+        df.rename(
+            {"value": full_col_str},
+            axis=1,
+            inplace=True,
+        )
 
         if direction == "ahead":
             if is_fallback_prop_warning_threshold is not None:
@@ -610,11 +586,22 @@ class FlattenedDataset:
                         f"""{full_col_str}: Beware, variance / mean < low_variance_threshold ({variance_as_fraction_of_mean} < {low_variance_threshold}), indicating high risk of overfitting. Consider redefining. You can generate the feature anyway by passing an low_variance_threshold argument with a lower threshold or None."""
                     )
 
-        if do_return_col:
-            msg.good(f"Returning flattened dataframe with {full_col_str}")
-            return df[[pred_time_uuid_col_name, full_col_str]]
-        else:
-            return df[pred_time_uuid_col_name]
+        msg.good(f"Returning flattened dataframe with {full_col_str}")
+
+        cols_to_return = [pred_time_uuid_col_name, full_col_str]
+
+        if keep_val_timestamp:
+            timestamp_val_name = f"timestamp_{full_col_str}"
+
+            df.rename(
+                {"timestamp_val": timestamp_val_name},
+                axis=1,
+                inplace=True,
+            )
+
+            cols_to_return.append(timestamp_val_name)
+
+        return df[cols_to_return]
 
     @staticmethod
     def add_back_prediction_times_without_value(
@@ -635,8 +622,8 @@ class FlattenedDataset:
             df,
             how="left",
             on=pred_time_uuid_colname,
-            suffixes=("", ""),
-        ).drop(["timestamp_pred", "timestamp_val"], axis=1)
+            suffixes=("", "_temp"),
+        ).drop(["timestamp_pred"], axis=1)
 
     @staticmethod
     def resolve_multiple_values_within_interval_days(

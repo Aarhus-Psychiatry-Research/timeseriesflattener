@@ -301,4 +301,5 @@ def test_incident_outcome_removing_prediction_times():
 
     outcome_df = flattened_dataset.df
 
-    assert outcome_df.equals(expected_df)
+    for col in ["dw_ek_borger", "timestamp", "value_within_2_days_max_fallback_0"]:
+        pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
