@@ -22,5 +22,5 @@ def write_df_to_sql(
         name=table_name,
         con=f"mssql+pymssql://{server}/{database}",
         if_exists=if_exists,
-        schema="dbo",
+        schema="fct",
     )
