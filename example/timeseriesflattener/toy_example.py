@@ -94,19 +94,32 @@ if __name__ == "__main__":
 
     outcome_col_name = "t2d_within_1826.25_days_max_fallback_0"
 
+    flattened_df_ids = flattened_df.df["dw_ek_borger"].unique()
+
     for dataset_name in splits:
         split_id_path = midtx_path / "train-test-splits" / f"{dataset_name}_ids.csv"
-        split_ids = pd.read_csv(split_id_path)
+        df_split_ids = pd.read_csv(split_id_path)
+        split_ids = df_split_ids["dw_ek_borger"].unique()
 
-        split_df = pd.merge(flattened_df.df, split_ids, how="right")
+        ids_in_split_but_not_in_flattened_df = split_ids[
+            ~np.isin(split_ids, flattened_df_ids)
+        ]
+
+        msg.warn(
+            f"There are {len(ids_in_split_but_not_in_flattened_df)} ({round(len(ids_in_split_but_not_in_flattened_df)/len(split_ids)*100, 2)}%) ids which are in {dataset_name}_ids but not in flattened_df_ids, will get dropped during merge"
+        )
+
+        split_df = pd.merge(flattened_df.df, df_split_ids, how="inner")
 
         split_features = split_df.loc[:, ~split_df.columns.str.startswith("t2d")]
         split_events = split_df[["dw_ek_borger", "timestamp", outcome_col_name]]
 
         base_path = midtx_path / "feature_generation" / "toy_example"
 
+        msg.info("Writing {dataset_name}_features csv")
         feature_path = base_path / f"{dataset_name}_features.csv"
         split_features.to_csv(feature_path)
 
+        msg.info("Writing {dataset_name}_events csv")
         event_path = base_path / f"{dataset_name}_events.csv"
         split_events.to_csv(event_path)
