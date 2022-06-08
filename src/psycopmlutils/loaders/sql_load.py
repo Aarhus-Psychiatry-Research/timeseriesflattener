@@ -40,10 +40,14 @@ def sql_load(
             driver, server, database
         )
     )
+
     engine = create_engine(
         "mssql+pyodbc:///?odbc_connect=%s" % params, poolclass=NullPool
     )
-    conn = engine.connect().execution_options(stream_results=True)
+
+    conn = engine.connect().execution_options(
+        stream_results=True, fast_executemany=True
+    )
 
     df = pd.read_sql(query, conn, chunksize=chunksize)
 

@@ -1,13 +1,14 @@
 import time
+from pathlib import Path
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import psycopmlutils.loaders  # noqa
 from psycopmlutils.timeseriesflattener import (
     FlattenedDataset,
     create_feature_combinations,
 )
-from pathlib import Path
+from psycopmlutils.writers.sql_writer import write_df_to_sql
 from wasabi import msg
 
 if __name__ == "__main__":
@@ -62,6 +63,7 @@ if __name__ == "__main__":
         fallback=0,
         outcome_df_values_col_name="value",
         new_col_name="t2d",
+        incident=True,
     )
     msg.good("Finished adding outcome")
 
@@ -90,36 +92,46 @@ if __name__ == "__main__":
 
     midtx_path = Path("\\\\tsclient\\X\\MANBER01\\documentLibrary")
 
-    splits = ["train", "test", "val"]
+    splits = ["test", "val", "train"]
 
     outcome_col_name = "t2d_within_1826.25_days_max_fallback_0"
 
     flattened_df_ids = flattened_df.df["dw_ek_borger"].unique()
 
     for dataset_name in splits:
-        split_id_path = midtx_path / "train-test-splits" / f"{dataset_name}_ids.csv"
-        df_split_ids = pd.read_csv(split_id_path)
+        ROWS_PER_CHUNK = 5_000
+
+        df_split_ids = psycopmlutils.loaders.LoadIDs.load(split=dataset_name)
+
+        # Find IDs which are in split_ids, but not in flattened_df.
         split_ids = df_split_ids["dw_ek_borger"].unique()
+        flattened_df_ids = flattened_df.df["dw_ek_borger"].unique()
 
         ids_in_split_but_not_in_flattened_df = split_ids[
             ~np.isin(split_ids, flattened_df_ids)
         ]
 
         msg.warn(
-            f"There are {len(ids_in_split_but_not_in_flattened_df)} ({round(len(ids_in_split_but_not_in_flattened_df)/len(split_ids)*100, 2)}%) ids which are in {dataset_name}_ids but not in flattened_df_ids, will get dropped during merge"
+            f"{dataset_name}: There are {len(ids_in_split_but_not_in_flattened_df)} ({round(len(ids_in_split_but_not_in_flattened_df)/len(split_ids)*100, 2)}%) ids which are in {dataset_name}_ids but not in flattened_df_ids, will get dropped during merge"
         )
 
         split_df = pd.merge(flattened_df.df, df_split_ids, how="inner")
 
         split_features = split_df.loc[:, ~split_df.columns.str.startswith("t2d")]
+        msg.info(f"{dataset_name}: Writing features")
+        write_df_to_sql(
+            df=split_features,
+            table_name=f"psycop_t2d_{dataset_name}_features",
+            if_exists="replace",
+            rows_per_chunk=ROWS_PER_CHUNK,
+        )
+
         split_events = split_df[["dw_ek_borger", "timestamp", outcome_col_name]]
-
-        base_path = midtx_path / "feature_generation" / "toy_example"
-
-        msg.info("Writing {dataset_name}_features csv")
-        feature_path = base_path / f"{dataset_name}_features.csv"
-        split_features.to_csv(feature_path)
-
-        msg.info("Writing {dataset_name}_events csv")
-        event_path = base_path / f"{dataset_name}_events.csv"
-        split_events.to_csv(event_path)
+        msg.info(f"{dataset_name}: Writing events")
+        write_df_to_sql(
+            df=split_events,
+            table_name=f"psycop_t2d_{dataset_name}_events",
+            if_exists="replace",
+            rows_per_chunk=ROWS_PER_CHUNK,
+        )
+        msg.good(f"{dataset_name}: Succesfully wrote {dataset_name} to SQL server")
