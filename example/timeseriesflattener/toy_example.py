@@ -62,6 +62,7 @@ if __name__ == "__main__":
         fallback=0,
         outcome_df_values_col_name="value",
         new_col_name="t2d",
+        incident=True,
     )
     msg.good("Finished adding outcome")
 
@@ -90,7 +91,7 @@ if __name__ == "__main__":
 
     midtx_path = Path("\\\\tsclient\\X\\MANBER01\\documentLibrary")
 
-    splits = ["train", "test", "val"]
+    splits = ["test", "val", "train"]
 
     outcome_col_name = "t2d_within_1826.25_days_max_fallback_0"
 
@@ -110,3 +111,4 @@ if __name__ == "__main__":
 
         event_path = base_path / f"{dataset_name}_events.csv"
         split_events.to_csv(event_path)
+        msg.good(f"{dataset_name}: Finished writing datasets to MidtX")
