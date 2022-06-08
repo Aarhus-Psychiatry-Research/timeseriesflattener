@@ -7,6 +7,7 @@ from psycopmlutils.timeseriesflattener import (
     FlattenedDataset,
     create_feature_combinations,
 )
+from psycopmlutils.writers.sql_writer import write_df_to_sql
 from pathlib import Path
 from wasabi import msg
 
@@ -96,19 +97,39 @@ if __name__ == "__main__":
     outcome_col_name = "t2d_within_1826.25_days_max_fallback_0"
 
     for dataset_name in splits:
-        split_id_path = midtx_path / "train-test-splits" / f"{dataset_name}_ids.csv"
-        split_ids = pd.read_csv(split_id_path)
+        rows_per_chunk = 5_000
 
-        split_df = pd.merge(flattened_df.df, split_ids, how="right")
+        df_split_ids = psycopmlutils.loaders.LoadIDs.load(split=dataset_name)
+
+        # Find IDs which are in split_ids, but not in flattened_df.
+        split_ids = df_split_ids["dw_ek_borger"].unique()
+        flattened_df_ids = flattened_df.df["dw_ek_borger"].unique()
+
+        ids_in_split_but_not_in_flattened_df = split_ids[
+            ~np.isin(split_ids, flattened_df_ids)
+        ]
+
+        msg.warn(
+            f"{dataset_name}: There are {len(ids_in_split_but_not_in_flattened_df)} ({round(len(ids_in_split_but_not_in_flattened_df)/len(split_ids)*100, 2)}%) ids which are in {dataset_name}_ids but not in flattened_df_ids, will get dropped during merge"
+        )
+
+        split_df = pd.merge(flattened_df.df, df_split_ids, how="right")
 
         split_features = split_df.loc[:, ~split_df.columns.str.startswith("t2d")]
+        msg.info(f"{dataset_name}: Writing features")
+        write_df_to_sql(
+            df=split_features,
+            table_name=f"psycop_t2d_{dataset_name}_features",
+            if_exists="replace",
+            rows_per_chunk=rows_per_chunk,
+        )
+
         split_events = split_df[["dw_ek_borger", "timestamp", outcome_col_name]]
-
-        base_path = midtx_path / "feature_generation" / "toy_example"
-
-        feature_path = base_path / f"{dataset_name}_features.csv"
-        split_features.to_csv(feature_path)
-
-        event_path = base_path / f"{dataset_name}_events.csv"
-        split_events.to_csv(event_path)
-        msg.good(f"{dataset_name}: Finished writing datasets to MidtX")
+        msg.info(f"{dataset_name}: Writing events")
+        write_df_to_sql(
+            df=split_events,
+            table_name=f"psycop_t2d_{dataset_name}_events",
+            if_exists="replace",
+            rows_per_chunk=rows_per_chunk,
+        )
+        msg.good(f"{dataset_name}: Succesfully wrote {dataset_name} to SQL server")
