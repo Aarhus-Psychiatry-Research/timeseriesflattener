@@ -303,3 +303,69 @@ def test_incident_outcome_removing_prediction_times():
 
     for col in ["dw_ek_borger", "timestamp", "value_within_2_days_max_fallback_0"]:
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
+
+
+def test_add_multiple_static_predictors():
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            1,2021-12-31 00:00:00
+                            1,2023-12-31 00:00:00
+                            2,2021-12-31 00:00:00
+                            2,2023-12-31 00:00:00
+                            3,2023-12-31 00:00:00
+                            """
+
+    event_times_str = """dw_ek_borger,timestamp,value,
+                        1,2021-12-31 00:00:01, 1
+                        2,2021-12-31 00:00:01, 1
+                        """
+
+    expected_df_str = """dw_ek_borger,timestamp,value_within_2_days_max_fallback_0,age_in_years,male
+                        1,2021-12-31 00:00:00, 1.0,22.00,1
+                        2,2021-12-31 00:00:00, 1.0,22.00,0
+                        3,2023-12-31 00:00:00, 0.0,23.99,1
+                        """
+
+    birthdates_df_str = """dw_ek_borger,date_of_birth,
+    1,2000-01-01,
+    2,2000-01-02,
+    3,2000-01-03"""
+
+    male_df_str = """dw_ek_borger,male,
+    1,1
+    2,0
+    3,1"""
+
+    prediction_times_df = str_to_df(prediction_times_str)
+    event_times_df = str_to_df(event_times_str)
+    expected_df = str_to_df(expected_df_str)
+    birthdates_df = str_to_df(birthdates_df_str)
+    male_df = str_to_df(male_df_str)
+
+    flattened_dataset = FlattenedDataset(
+        prediction_times_df=prediction_times_df,
+        timestamp_col_name="timestamp",
+        id_col_name="dw_ek_borger",
+        n_workers=4,
+    )
+
+    flattened_dataset.add_temporal_outcome(
+        outcome_df=event_times_df,
+        lookahead_days=2,
+        incident=True,
+        resolve_multiple="max",
+        fallback=0,
+    )
+
+    flattened_dataset.add_age(birthdates_df)
+    flattened_dataset.add_static_predictor(male_df)
+
+    outcome_df = flattened_dataset.df
+
+    for col in [
+        "dw_ek_borger",
+        "timestamp",
+        "value_within_2_days_max_fallback_0",
+        "age_in_years",
+        "male",
+    ]:
+        pd.testing.assert_series_equal(outcome_df[col], expected_df[col])

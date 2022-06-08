@@ -319,8 +319,6 @@ class FlattenedDataset:
             suffixes=("", ""),
         )
 
-        self.df = self.df.drop(self.pred_time_uuid_col_name, axis=1).copy()
-
     def add_temporal_outcome(
         self,
         outcome_df: DataFrame,
