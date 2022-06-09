@@ -226,7 +226,7 @@ class FlattenedDataset:
             suffixes=("", ""),
         )
 
-        self.df = self.df.drop(self.pred_time_uuid_col_name, axis=1).copy()
+        self.df = self.df.copy()
 
     def _validate_processed_arg_dicts(self, arg_dicts: list):
         warn = False

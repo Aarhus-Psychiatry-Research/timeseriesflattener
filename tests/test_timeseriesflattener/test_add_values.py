@@ -1,6 +1,10 @@
+import numpy as np
 import pandas as pd
 import pytest
-from psycopmlutils.timeseriesflattener.flattened_dataset import FlattenedDataset
+from psycopmlutils.timeseriesflattener import (
+    FlattenedDataset,
+    create_feature_combinations,
+)
 from psycopmlutils.timeseriesflattener.resolve_multiple_functions import (
     get_max_in_group,
 )
@@ -367,5 +371,72 @@ def test_add_multiple_static_predictors():
         "value_within_2_days_max_fallback_0",
         "age_in_years",
         "male",
+    ]:
+        pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
+
+
+def test_add_temporal_predictors_then_temporal_outcome():
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            1,2021-11-05 00:00:00
+                            2,2021-11-05 00:00:00
+                            """
+
+    predictors_df_str = """dw_ek_borger,timestamp,value,
+                        1,2020-11-05 00:00:01, 1
+                        2,2020-11-05 00:00:01, 1
+                        2,2021-01-15 00:00:01, 3
+                        """
+
+    event_times_str = """dw_ek_borger,timestamp,value,
+                        1,2021-11-05 00:00:01, 1
+                        2,2021-11-05 00:00:01, 1
+                        """
+
+    expected_df_str = """dw_ek_borger,timestamp,prediction_time_uuid
+                            1,2021-11-05,1-2021-11-05-00-00-00
+                            2,2021-11-05,2-2021-11-05-00-00-00
+                        """
+
+    prediction_times_df = str_to_df(prediction_times_str)
+    predictors_df = str_to_df(predictors_df_str)
+    event_times_df = str_to_df(event_times_str)
+    expected_df = str_to_df(expected_df_str)
+
+    flattened_dataset = FlattenedDataset(
+        prediction_times_df=prediction_times_df,
+        timestamp_col_name="timestamp",
+        id_col_name="dw_ek_borger",
+        n_workers=4,
+    )
+
+    PREDICTOR_LIST = create_feature_combinations(
+        [
+            {
+                "predictor_df": "predictors",
+                "lookbehind_days": [1, 365, 720],
+                "resolve_multiple": "min",
+                "fallback": np.nan,
+            },
+        ]
+    )
+
+    flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
+        predictors=PREDICTOR_LIST, predictor_dfs={"predictors": predictors_df}
+    )
+
+    flattened_dataset.add_temporal_outcome(
+        outcome_df=event_times_df,
+        lookahead_days=2,
+        incident=True,
+        resolve_multiple="max",
+        fallback=0,
+    )
+
+    outcome_df = flattened_dataset.df
+
+    for col in [
+        "dw_ek_borger",
+        "timestamp",
+        "prediction_time_uuid",
     ]:
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
