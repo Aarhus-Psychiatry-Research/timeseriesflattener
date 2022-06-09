@@ -53,12 +53,12 @@ def sql_load(
 
     if format_timestamp_cols_to_datetime:
         datetime_col_names = [
-            colname for colname in df.columns if "datotid" in colname.lower()
+            colname
+            for colname in df.columns
+            if any(str for str in ["datotid", "timestamp"] in colname.lower)
         ]
 
-        df[datetime_col_names] = df[datetime_col_names].apply(
-            pd.to_datetime, format="%Y-%m-%d %H:%M:%S"
-        )
+        df[datetime_col_names] = df[datetime_col_names].apply(pd.to_datetime)
 
     engine.dispose()
 
