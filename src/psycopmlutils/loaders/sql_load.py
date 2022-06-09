@@ -11,7 +11,7 @@ def sql_load(
     query: str,
     server: str = "BI-DPA-PROD",
     database: str = "USR_PS_Forsk",
-    chunksize: Optional[int] = 1000,
+    chunksize: Optional[int] = None,
     format_timestamp_cols_to_datetime: bool = True,
 ) -> Union[pd.DataFrame, Generator[pd.DataFrame, None, None]]:
     """Function to load a SQL query. If chunksize is None, all data will be loaded into memory.
