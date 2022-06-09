@@ -62,7 +62,7 @@ def write_df_to_sql(
         if_exists (str, optional): What to do if the table already exists. Takes {'fail’, 'replace’, 'append’}. Defaults to "fail".
     """
 
-    driver = "ODBC Driver 13 for SQL Server"
+    driver = "SQL Server"
 
     params = urllib.parse.quote(
         f"DRIVER={driver};SERVER={server};DATABASE={database};Trusted_Connection=yes"
