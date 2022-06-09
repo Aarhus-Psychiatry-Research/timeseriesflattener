@@ -55,7 +55,7 @@ def sql_load(
         datetime_col_names = [
             colname
             for colname in df.columns
-            if any(str for str in ["datotid", "timestamp"] in colname.lower)
+            if any(substr in colname.lower() for substr in ["datotid", "timestamp"])
         ]
 
         df[datetime_col_names] = df[datetime_col_names].apply(pd.to_datetime)
