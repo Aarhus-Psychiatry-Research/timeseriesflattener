@@ -60,4 +60,6 @@ def sql_load(
             pd.to_datetime, format="%Y-%m-%d %H:%M:%S"
         )
 
+    engine.dispose()
+
     return df
