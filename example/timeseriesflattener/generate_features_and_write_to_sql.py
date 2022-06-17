@@ -52,7 +52,19 @@ if __name__ == "__main__":
     prediction_times = psycopmlutils.loaders.LoadVisits.physical_visits_to_psychiatry()
 
     msg.info("Initialising flattened dataset")
-    flattened_df = FlattenedDataset(prediction_times_df=prediction_times, n_workers=20)
+    flattened_df = FlattenedDataset(prediction_times_df=prediction_times, n_workers=60)
+
+    # Predictors
+    msg.info("Adding static predictors")
+    flattened_df.add_static_predictor(psycopmlutils.loaders.LoadDemographics.male())
+    flattened_df.add_age(psycopmlutils.loaders.LoadDemographics.birthdays())
+
+    start_time = time.time()
+
+    msg.info("Adding temporal predictors")
+    flattened_df.add_temporal_predictors_from_list_of_argument_dictionaries(
+        predictors=PREDICTOR_LIST,
+    )
 
     # Outcome
     msg.info("Adding outcome")
@@ -71,20 +83,9 @@ if __name__ == "__main__":
         )
         msg.good("Finished adding outcome")
 
-    # Predictors
-    msg.info("Adding static predictors")
-    flattened_df.add_static_predictor(psycopmlutils.loaders.LoadDemographic.male())
-    flattened_df.add_age(psycopmlutils.loaders.LoadDemographic.birthdays())
-
-    start_time = time.time()
-
-    msg.info("Adding temporal predictors")
-    flattened_df.add_temporal_predictors_from_list_of_argument_dictionaries(
-        predictors=PREDICTOR_LIST,
-    )
-
     end_time = time.time()
 
+    # Finish
     msg.good(
         f"Finished adding {len(PREDICTOR_LIST)} predictors, took {round((end_time - start_time)/60, 1)} minutes"
     )
@@ -96,8 +97,6 @@ if __name__ == "__main__":
     msg.good("Done!")
 
     # Split and upload to SQL_server
-    midtx_path = Path("\\\\tsclient\\X\\MANBER01\\documentLibrary")
-
     splits = ["test", "val", "train"]
 
     outcome_col_name = "t2d_within_1826.25_days_max_fallback_0"
@@ -109,7 +108,7 @@ if __name__ == "__main__":
 
         df_split_ids = psycopmlutils.loaders.LoadIDs.load(split=dataset_name)
 
-        # Find IDs which are in split_ids, but not in flattened_df.
+        # Find IDs which are in split_ids, but not in flattened_df
         split_ids = df_split_ids["dw_ek_borger"].unique()
         flattened_df_ids = flattened_df.df["dw_ek_borger"].unique()
 
@@ -130,4 +129,5 @@ if __name__ == "__main__":
             if_exists="replace",
             rows_per_chunk=ROWS_PER_CHUNK,
         )
+
         msg.good(f"{dataset_name}: Succesfully wrote {dataset_name} to SQL server")

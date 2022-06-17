@@ -41,9 +41,7 @@ def sql_load(
         )
     )
 
-    engine = create_engine(
-        f"mssql+pyodbc:///?odbc_connect={params}", poolclass=NullPool
-    )
+    engine = create_engine(f"mssql+pyodbc:///?odbc_connect={params}")
 
     conn = engine.connect().execution_options(
         stream_results=True, fast_executemany=True
@@ -60,6 +58,7 @@ def sql_load(
 
         df[datetime_col_names] = df[datetime_col_names].apply(pd.to_datetime)
 
+    conn.close()
     engine.dispose()
 
     return df

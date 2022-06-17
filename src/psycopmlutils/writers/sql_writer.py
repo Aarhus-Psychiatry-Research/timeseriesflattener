@@ -30,16 +30,13 @@ def insert_with_progress(
         for i, chunked_df in enumerate(chunker(df, rows_per_chunk)):
             replace = if_exists if i == 0 else "append"
 
-            try:
-                chunked_df.to_sql(
-                    schema="fct",
-                    con=conn,
-                    name=table_name,
-                    if_exists=replace,
-                    index=False,
-                )
-            except Exception:
-                break
+            chunked_df.to_sql(
+                schema="fct",
+                con=conn,
+                name=table_name,
+                if_exists=replace,
+                index=False,
+            )
 
             pbar.update(rows_per_chunk)
 
@@ -70,7 +67,7 @@ def write_df_to_sql(
 
     url = f"mssql+pyodbc:///?odbc_connect={params}"
 
-    engine = create_engine(url=url, poolclass=NullPool, fast_executemany=True)
+    engine = create_engine(url=url, fast_executemany=True)
     conn = engine.connect()
 
     insert_with_progress(
@@ -81,4 +78,5 @@ def write_df_to_sql(
         if_exists=if_exists,
     )
 
+    conn.close()
     engine.dispose()
