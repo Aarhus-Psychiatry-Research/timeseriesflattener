@@ -12,8 +12,8 @@ from psycopmlutils.writers.sql_writer import write_df_to_sql
 from wasabi import msg
 
 if __name__ == "__main__":
-    RESOLVE_MULTIPLE = ["mean", "latest", "earliest", "max", "min"]
-    LOOKBEHIND_DAYS = [365, 9999]
+    RESOLVE_MULTIPLE = ["mean", "max", "min"]
+    LOOKBEHIND_DAYS = [365, 730, 1825, 9999]
 
     PREDICTOR_LIST = create_feature_combinations(
         [
@@ -80,6 +80,7 @@ if __name__ == "__main__":
     )
 
     end_time = time.time()
+
     msg.good(
         f"Finished adding {len(PREDICTOR_LIST)} predictors, took {round((end_time - start_time)/60, 1)} minutes"
     )
@@ -90,6 +91,7 @@ if __name__ == "__main__":
 
     msg.good("Done!")
 
+    # Split and upload to SQL_server
     midtx_path = Path("\\\\tsclient\\X\\MANBER01\\documentLibrary")
 
     splits = ["test", "val", "train"]
@@ -117,20 +119,10 @@ if __name__ == "__main__":
 
         split_df = pd.merge(flattened_df.df, df_split_ids, how="inner")
 
-        split_features = split_df.loc[:, ~split_df.columns.str.startswith("t2d")]
-        msg.info(f"{dataset_name}: Writing features")
+        msg.info(f"{dataset_name}: Writing to SQL")
         write_df_to_sql(
-            df=split_features,
-            table_name=f"psycop_t2d_{dataset_name}_features",
-            if_exists="replace",
-            rows_per_chunk=ROWS_PER_CHUNK,
-        )
-
-        split_events = split_df[["dw_ek_borger", "timestamp", outcome_col_name]]
-        msg.info(f"{dataset_name}: Writing events")
-        write_df_to_sql(
-            df=split_events,
-            table_name=f"psycop_t2d_{dataset_name}_events",
+            df=split_df,
+            table_name=f"psycop_t2d_{dataset_name}",
             if_exists="replace",
             rows_per_chunk=ROWS_PER_CHUNK,
         )

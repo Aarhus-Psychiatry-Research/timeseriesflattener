@@ -4,7 +4,7 @@ from psycopmlutils.utils import data_loaders
 from wasabi import msg
 
 
-class LoadDemographics:
+class LoadDemographic:
     @data_loaders.register("birthdays")
     def birthdays():
         # msg.info("Loading birthdays")
