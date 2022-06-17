@@ -11,7 +11,7 @@ def sql_load(
     query: str,
     server: str = "BI-DPA-PROD",
     database: str = "USR_PS_Forsk",
-    chunksize: Optional[int] = 1000,
+    chunksize: Optional[int] = None,
     format_timestamp_cols_to_datetime: bool = True,
 ) -> Union[pd.DataFrame, Generator[pd.DataFrame, None, None]]:
     """Function to load a SQL query. If chunksize is None, all data will be loaded into memory.
@@ -40,20 +40,26 @@ def sql_load(
             driver, server, database
         )
     )
+
     engine = create_engine(
         "mssql+pyodbc:///?odbc_connect=%s" % params, poolclass=NullPool
     )
-    conn = engine.connect().execution_options(stream_results=True)
+
+    conn = engine.connect().execution_options(
+        stream_results=True, fast_executemany=True
+    )
 
     df = pd.read_sql(query, conn, chunksize=chunksize)
 
     if format_timestamp_cols_to_datetime:
         datetime_col_names = [
-            colname for colname in df.columns if "datotid" in colname.lower()
+            colname
+            for colname in df.columns
+            if any(substr in colname.lower() for substr in ["datotid", "timestamp"])
         ]
 
-        df[datetime_col_names] = df[datetime_col_names].apply(
-            pd.to_datetime, format="%Y-%m-%d %H:%M:%S"
-        )
+        df[datetime_col_names] = df[datetime_col_names].apply(pd.to_datetime)
+
+    engine.dispose()
 
     return df

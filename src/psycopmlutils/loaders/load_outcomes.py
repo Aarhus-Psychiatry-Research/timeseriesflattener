@@ -9,20 +9,16 @@ class LoadOutcome:
     def t2d():
         # msg.info("Loading t2d event times")
 
-        full_csv_path = Path(
-            r"E:\Users\adminmanber\Desktop\T2D\csv\first_t2d_diagnosis.csv"
+        df = sql_load(
+            "SELECT dw_ek_borger, timestamp FROM [fct].[psycop_t2d_first_diabetes_t2d]",
+            database="USR_PS_FORSK",
+            chunksize=None,
+            format_timestamp_cols_to_datetime=True,
         )
-
-        df = pd.read_csv(full_csv_path)
-        df = df[["dw_ek_borger", "datotid_first_t2d_diagnosis"]]
         df["value"] = 1
 
-        df.rename(columns={"datotid_first_t2d_diagnosis": "timestamp"}, inplace=True)
-        df["timestamp"] = pd.to_datetime(df["timestamp"]).dt.tz_localize(None)
-
         msg.good("Finished loading t2d event times")
-        output = df[["dw_ek_borger", "timestamp", "value"]]
-        return output.reset_index(drop=True)
+        return df.reset_index(drop=True)
 
     @data_loaders.register("any_diabetes")
     def any_diabetes():
