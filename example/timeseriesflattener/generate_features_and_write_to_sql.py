@@ -44,7 +44,7 @@ if __name__ == "__main__":
         ]
     )
 
-    event_times = psycopmlutils.loaders.LoadDiagnoses.t2d_times()
+    event_times = psycopmlutils.loaders.LoadOutcome.t2d()
 
     msg.info(f"Generating {len(PREDICTOR_LIST)} features")
 
@@ -56,21 +56,25 @@ if __name__ == "__main__":
 
     # Outcome
     msg.info("Adding outcome")
-    flattened_df.add_temporal_outcome(
-        outcome_df=event_times,
-        lookahead_days=365.25 * 5,
-        resolve_multiple="max",
-        fallback=0,
-        outcome_df_values_col_name="value",
-        new_col_name="t2d",
-        incident=True,
-    )
-    msg.good("Finished adding outcome")
+    for i in [0.5, 1, 2, 3, 4, 5]:
+        lookahead_days = i * 365.25
+        msg.info(f"Adding outcome with {lookahead_days} days of lookahead")
+        flattened_df.add_temporal_outcome(
+            outcome_df=event_times,
+            lookahead_days=lookahead_days,
+            resolve_multiple="max",
+            fallback=0,
+            outcome_df_values_col_name="value",
+            new_col_name="t2d",
+            incident=True,
+            dichotomous=True,
+        )
+        msg.good("Finished adding outcome")
 
     # Predictors
     msg.info("Adding static predictors")
-    flattened_df.add_static_predictor(psycopmlutils.loaders.LoadDemographics.male())
-    flattened_df.add_age(psycopmlutils.loaders.LoadDemographics.birthdays())
+    flattened_df.add_static_predictor(psycopmlutils.loaders.LoadDemographic.male())
+    flattened_df.add_age(psycopmlutils.loaders.LoadDemographic.birthdays())
 
     start_time = time.time()
 

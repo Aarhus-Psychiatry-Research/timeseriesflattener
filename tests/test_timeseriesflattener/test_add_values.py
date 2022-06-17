@@ -440,3 +440,47 @@ def test_add_temporal_predictors_then_temporal_outcome():
         "prediction_time_uuid",
     ]:
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
+
+
+def test_add_temporal_incident_binary_outcome():
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            1,2021-11-05 00:00:00
+                            1,2021-11-01 00:00:00
+                            1,2023-11-05 00:00:00
+                            """
+
+    event_times_str = """dw_ek_borger,timestamp,value,
+                        1,2021-11-06 00:00:01, 1
+                        """
+
+    expected_df_str = """t2d_within_2_days_max_fallback_0,
+    1
+    0"""
+
+    prediction_times_df = str_to_df(prediction_times_str)
+    event_times_df = str_to_df(event_times_str)
+    expected_df = str_to_df(expected_df_str)
+
+    flattened_dataset = FlattenedDataset(
+        prediction_times_df=prediction_times_df,
+        timestamp_col_name="timestamp",
+        id_col_name="dw_ek_borger",
+        n_workers=4,
+    )
+
+    flattened_dataset.add_temporal_outcome(
+        outcome_df=event_times_df,
+        lookahead_days=2,
+        incident=True,
+        dichotomous=True,
+        resolve_multiple="max",
+        fallback=0,
+        new_col_name="t2d",
+    )
+
+    outcome_df = flattened_dataset.df
+
+    for col in [
+        "t2d_within_2_days_max_fallback_0",
+    ]:
+        pd.testing.assert_series_equal(outcome_df[col], expected_df[col])

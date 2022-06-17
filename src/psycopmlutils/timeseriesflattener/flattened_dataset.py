@@ -1,3 +1,4 @@
+from datetime import timedelta
 from multiprocessing import Pool
 from typing import Callable, Dict, List, Optional, Union
 
@@ -330,6 +331,7 @@ class FlattenedDataset:
         new_col_name: str = None,
         is_fallback_prop_warning_threshold: float = 0.9,
         keep_outcome_timestamp: bool = True,
+        dichotomous: bool = False,
     ):
         """Add an outcome-column to the dataset.
 
@@ -345,6 +347,7 @@ class FlattenedDataset:
                 prediction_times that receive fallback is larger than threshold.
                 Indicates unlikely to be a learnable feature. Defaults to 0.9.
             keep_outcome:timestamp (bool, optional): Whether to keep the timestamp for the outcome value as a separate column. Defaults to False.
+            dichotomous (bool, optional): Whether the outcome is dichotomous. Allows computational shortcuts, making adding an outcome _much_ faster. Defaults to False.
         """
         if incident:
             df = pd.merge(
@@ -357,6 +360,14 @@ class FlattenedDataset:
 
             df = df.drop(df[df["timestamp_outcome"] < df["timestamp_prediction"]].index)
 
+            if dichotomous:
+                full_col_str = f"{new_col_name}_within_{lookahead_days}_days_{resolve_multiple}_fallback_{fallback}"
+
+                df[full_col_str] = (
+                    df["timestamp_prediction"] + timedelta(days=lookahead_days)
+                    > df["timestamp_outcome"]
+                ).astype(int)
+
             df.rename({"timestamp_prediction": "timestamp"}, axis=1, inplace=True)
             df.drop(["timestamp_outcome"], axis=1, inplace=True)
 
@@ -364,17 +375,18 @@ class FlattenedDataset:
 
             self.df = df
 
-        self.add_temporal_col_to_flattened_dataset(
-            values_df=outcome_df,
-            direction="ahead",
-            interval_days=lookahead_days,
-            resolve_multiple=resolve_multiple,
-            fallback=fallback,
-            new_col_name=new_col_name,
-            source_values_col_name=outcome_df_values_col_name,
-            is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
-            keep_val_timestamp=keep_outcome_timestamp,
-        )
+        if not dichotomous:
+            self.add_temporal_col_to_flattened_dataset(
+                values_df=outcome_df,
+                direction="ahead",
+                interval_days=lookahead_days,
+                resolve_multiple=resolve_multiple,
+                fallback=fallback,
+                new_col_name=new_col_name,
+                source_values_col_name=outcome_df_values_col_name,
+                is_fallback_prop_warning_threshold=is_fallback_prop_warning_threshold,
+                keep_val_timestamp=keep_outcome_timestamp,
+            )
 
     def add_temporal_predictor(
         self,
