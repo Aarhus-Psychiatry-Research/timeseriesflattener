@@ -161,25 +161,6 @@ class LoadDiagnoses:
             }
         )
 
-    @data_loaders.register("t2d_times")
-    def t2d_times():
-        # msg.info("Loading t2d event times")
-
-        full_csv_path = Path(
-            r"E:\Users\adminmanber\Desktop\T2D\csv\first_t2d_diagnosis.csv"
-        )
-
-        df = pd.read_csv(full_csv_path)
-        df = df[["dw_ek_borger", "datotid_first_t2d_diagnosis"]]
-        df["value"] = 1
-
-        df.rename(columns={"datotid_first_t2d_diagnosis": "timestamp"}, inplace=True)
-        df["timestamp"] = pd.to_datetime(df["timestamp"]).dt.tz_localize(None)
-
-        msg.good("Finished loading t2d event times")
-        output = df[["dw_ek_borger", "timestamp", "value"]]
-        return output.reset_index(drop=True)
-
     @data_loaders.register("essential_hypertension")
     def essential_hypertension():
         return LoadDiagnoses.from_physical_visits(
