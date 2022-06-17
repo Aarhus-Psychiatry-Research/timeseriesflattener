@@ -42,7 +42,7 @@ def sql_load(
     )
 
     engine = create_engine(
-        "mssql+pyodbc:///?odbc_connect=%s" % params, poolclass=NullPool
+        f"mssql+pyodbc:///?odbc_connect={params}", poolclass=NullPool
     )
 
     conn = engine.connect().execution_options(
