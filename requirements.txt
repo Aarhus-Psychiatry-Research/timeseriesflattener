@@ -19,3 +19,6 @@ catalogue>=2.0.7
 
 # Printing
 wasabi>=0.9.1
+
+# Model comparison
+scikit-learn>=1.0.0
