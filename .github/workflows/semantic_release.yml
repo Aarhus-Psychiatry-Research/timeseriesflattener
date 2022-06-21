@@ -1,4 +1,4 @@
-name: CI Pytest
+name: Semantic release
 on:
   push:
     branches: [ main, dev ]
