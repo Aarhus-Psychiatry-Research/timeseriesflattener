@@ -1,0 +1,69 @@
+[tool.poetry]
+name = "psycopmlutils"
+version = "0.1.0"
+description = "A collection of machine-learning utilities used across the psycop-projects."
+authors = ["Martin Bernstorff <martinbernstorff@gmail.com>"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.11"
+black = "^22.3.0"
+numpy = "^1.22.4"
+scipy = "^1.8.1"
+pandas = "^1.4.2"
+SQLAlchemy = "^1.4.37"
+pyodbc = { version = "^4.0.32", markers = "platform_machine == 'x86_64'" }
+catalogue = "^2.0.7"
+wasabi = "^0.9.1"
+scikit-learn = "^1.1.1"
+
+[tool.poetry.dev-dependencies]
+pre-commit = "^2.19.0"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+
+[tool.coverage.run]
+omit = [
+    "**/tests/*",
+    "**/_vendorized/*",
+    "**/about.py",
+]
+
+exclude_lines = [
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:
+    "def __unicode__",
+    "def __repr__",
+    "if self.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+]
+
+[tool.semantic_release]
+version_variable = [
+    "pyproject.toml:version"
+]
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+build_command = "pip install poetry && poetry build"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
