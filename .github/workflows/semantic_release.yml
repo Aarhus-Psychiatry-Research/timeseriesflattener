@@ -9,9 +9,12 @@ jobs:
     # https://github.community/t/how-do-i-specify-job-dependency-running-in-another-workflow/16482
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
+    concurrency: release
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Install poetry
         run: pipx install poetry
       - name: Setup python
@@ -24,6 +27,6 @@ jobs:
           poetry install
       - name: Release
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          poetry run semantic-release publish
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository_username: __token__
+          repository_password: ${{ secrets.PYPI_API_TOKEN }
