@@ -7,55 +7,37 @@ on:
 
 jobs:
   pytest:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-        matrix:
-            os: [ubuntu-latest]
-            python-version: ['3.7']
-
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v3
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install --editable .
-    - name: Run and write pytest
-      run: |
-        pytest --cov=src --cov-report term-missing
-  
-  pytest-coverage:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v3
+        python-version: 3.7
+    - name: Caching
+      uses: actions/cache@v2
       with:
-        python-version: 3.9
+        path: ${{ env.pythonLocation }}
+        key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python -m pip install -e . --no-cache-dir
         pip install -r requirements.txt
-        pip install --editable .
     - name: Run and write pytest
       run: |
         set -o pipefail
         python -m pytest --cov=src --cov-report term-missing | tee pytest-coverage.txt
-    - name: Pytest coverage comment
+    - name: Coverage comment
       id: coverage-comment
       uses: MishaKav/pytest-coverage-comment@v1.1.24
       with:
         pytest-coverage-path: ./pytest-coverage.txt
-    - name: Check the output coverage
+    - name: Output coverage
       run: |
         echo "Coverage Report - ${{ steps.coverage-comment.outputs.coverage }}"
         echo "Coverage Color - ${{ steps.coverage-comment.outputs.color }}"
-    - name: Create the Badge
+    - name: Create Badge
       uses: schneegans/dynamic-badges-action@v1.1.0
       with:
         auth: ${{ secrets.PYTEST_COVERAGE }}
