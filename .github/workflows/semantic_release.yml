@@ -1,21 +1,25 @@
 name: Semantic release
+
 on:
   push:
     branches: [ main, dev ]
 
 jobs:
   semantic-release:
-    needs: pytest
     # https://github.community/t/how-do-i-specify-job-dependency-running-in-another-workflow/16482
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Setup python
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
           cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          poetry install
       - name: Semantic Release
         run: |
           pip install python-semantic-release
