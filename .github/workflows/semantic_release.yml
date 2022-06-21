@@ -26,7 +26,8 @@ jobs:
         run: |
           poetry install
       - name: Release
-        run: |
+        uses: relekang/python-semantic-release@master
+        with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository_username: __token__
           repository_password: ${{ secrets.PYPI_API_TOKEN }}
