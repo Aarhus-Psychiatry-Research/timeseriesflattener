@@ -5,7 +5,7 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  semantic-release:
+  release:
     # https://github.community/t/how-do-i-specify-job-dependency-running-in-another-workflow/16482
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
@@ -22,9 +22,8 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install
-      - name: Semantic Release
+      - name: Release
         run: |
-          pip install python-semantic-release
           git config user.name github-actions
           git config user.email github-actions@github.com
           semantic-release publish
