@@ -5,10 +5,10 @@
 from typing import Optional
 
 import pandas as pd
-from psycop_feature_generation.utils import data_loaders
 from wasabi import msg
 
 from psycop_feature_generation.loaders.raw.sql_load import sql_load
+from psycop_feature_generation.utils import data_loaders
 
 
 @data_loaders.register("t2d")

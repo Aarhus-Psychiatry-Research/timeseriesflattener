@@ -3,6 +3,7 @@
 from typing import Optional
 
 import pandas as pd
+
 from psycop_feature_generation.utils import PROJECT_ROOT, data_loaders
 
 

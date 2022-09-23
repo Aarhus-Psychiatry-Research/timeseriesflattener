@@ -8,14 +8,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
-    FlattenedDataset,
-)
 
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
     synth_predictor_float,
+)
+from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
+    FlattenedDataset,
 )
 from src.application.t2d.generate_features_and_write_to_disk import (
     log_to_wandb,

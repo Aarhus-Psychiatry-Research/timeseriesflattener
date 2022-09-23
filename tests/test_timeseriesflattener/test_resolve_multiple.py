@@ -2,6 +2,7 @@
 # pylint: disable=missing-function-docstring
 
 import numpy as np
+
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: disable=unused-import
     get_earliest_value_in_group,
     get_latest_value_in_group,
@@ -9,7 +10,6 @@ from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions im
     get_mean_in_group,
     get_min_in_group,
 )
-
 from tests.helpers.utils_for_testing import (  # pylint: disable=import-error
     assert_flattened_outcome_as_expected,
     assert_flattened_predictor_as_expected,

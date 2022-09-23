@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 import psutil
 import wandb
-from psycop_feature_generation.utils import FEATURE_SETS_PATH
 from wasabi import Printer
 
 import psycop_feature_generation.loaders.raw  # noqa
@@ -27,10 +26,13 @@ from psycop_feature_generation.data_checks.flattened.feature_describer import (
     save_feature_description_from_dir,
 )
 from psycop_feature_generation.loaders.raw.pre_load_dfs import pre_load_unique_dfs
-from psycop_feature_generation.timeseriesflattener import (
-    FlattenedDataset,
+from psycop_feature_generation.timeseriesflattener.create_feature_combinations import (
     create_feature_combinations,
 )
+from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
+    FlattenedDataset,
+)
+from psycop_feature_generation.utils import FEATURE_SETS_PATH
 
 
 def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
@@ -130,7 +132,7 @@ def split_and_save_to_disk(
     for dataset_name in splits:
         if split_ids_dict is None:
             df_split_ids = psycop_feature_generation.loaders.raw.load_ids(
-                split=dataset_name
+                split=dataset_name,
             )
         else:
             df_split_ids = split_ids_dict[dataset_name]
@@ -228,7 +230,7 @@ def add_outcomes(
 
 def add_predictors(
     pre_loaded_dfs: dict[str, pd.DataFrame],
-    predictor_combinations: list[dict[str, dict[str, Any]]],
+    predictor_combinations: list[dict[str, Any]],
     flattened_dataset: FlattenedDataset,
 ):
     """Add predictors.
@@ -330,7 +332,7 @@ def create_full_flattened_dataset(
 
 
 def setup_for_main(
-    predictor_spec_list: list[dict[str, dict[str, Any]]],
+    predictor_spec_list: list[dict[str, Any]],
     feature_sets_path: Path,
     proj_name: str,
 ) -> tuple[list[dict[str, dict[str, Any]]], Path, str]:

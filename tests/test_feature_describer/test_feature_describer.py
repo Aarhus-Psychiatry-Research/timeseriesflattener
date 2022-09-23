@@ -2,12 +2,12 @@
 import numpy as np
 import pandas as pd
 import pytest
-from psycop_feature_generation.utils import generate_feature_colname
 
 from psycop_feature_generation.data_checks.flattened.feature_describer import (
     generate_feature_description_df,
     generate_feature_description_row,
 )
+from psycop_feature_generation.utils import generate_feature_colname
 
 # pylint: disable=redefined-outer-name, missing-function-docstring
 

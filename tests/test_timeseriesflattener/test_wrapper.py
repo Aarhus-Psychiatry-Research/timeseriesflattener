@@ -3,13 +3,14 @@
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
+from utils_for_testing import str_to_df
+
 from psycop_feature_generation.timeseriesflattener.create_feature_combinations import (
     create_feature_combinations,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
-from utils_for_testing import str_to_df
 
 
 def test_generate_two_features_from_dict():

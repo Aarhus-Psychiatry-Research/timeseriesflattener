@@ -3,12 +3,12 @@ from pathlib import Path
 
 import dill as pkl
 import pandas as pd
-from psycop_feature_generation.utils import FEATURIZERS_PATH
 from sklearn.feature_extraction.text import TfidfVectorizer
 from wasabi import Printer
 
 from psycop_feature_generation.loaders.raw.load_ids import load_ids
 from psycop_feature_generation.loaders.raw.load_text import load_all_notes
+from psycop_feature_generation.utils import FEATURIZERS_PATH
 
 
 def create_tfidf_vectorizer(

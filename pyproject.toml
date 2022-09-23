@@ -29,3 +29,13 @@ mypy = "^0.971"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+known_third_party = ["wandb"]
+
+[tool.pylint]
+load-plugins = "pylint.extensions.docparams,pylint.extensions.code_style,pylint.extensions.for_any_all,pylint.extensions.typing"
+good-names = "df,p,f,d,e,n,k,i,v"
+disable = "too-many-lines,line-too-long,missing-raises-doc,no-self-argument,unused-wildcard-import,wildcard-import,no-else-return,too-many-arguments,redefined-outer-name"
+
+[tool.pyright] # Added because of weird pylance error, issue here: https://github.com/microsoft/pylance-release/issues/3366

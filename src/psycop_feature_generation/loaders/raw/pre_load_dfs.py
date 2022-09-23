@@ -4,10 +4,10 @@ from multiprocessing import Pool
 from typing import Any, Union
 
 import pandas as pd
-from psycop_feature_generation.utils import data_loaders
 from wasabi import Printer
 
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
+from psycop_feature_generation.utils import data_loaders
 
 
 def load_df(predictor_df: str, values_to_load: Union[str, None] = None) -> pd.DataFrame:

@@ -7,6 +7,7 @@ from typing import Any, Optional, Union
 import numpy as np
 import pandas as pd
 from pandas import DataFrame
+
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )

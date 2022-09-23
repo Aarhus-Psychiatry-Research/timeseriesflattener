@@ -7,16 +7,16 @@ import numpy as np
 import pandas as pd
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.suites import data_integrity
-from psycop_feature_generation.utils import RAW_DATA_VALIDATION_PATH
 from wasabi import Printer
 
 from psycop_feature_generation.data_checks.flattened.data_integrity import (
-    get_name_of_failed_checks,
+    get_failed_check_names,
 )
 from psycop_feature_generation.data_checks.flattened.feature_describer import (
     create_unicode_hist,
 )
 from psycop_feature_generation.data_checks.utils import save_df_to_pretty_html_table
+from psycop_feature_generation.utils import RAW_DATA_VALIDATION_PATH
 
 
 def median_absolute_deviation(series: pd.Series) -> np.array:
@@ -161,7 +161,7 @@ def validate_raw_data(
     with msg.loading("Running data integrity checks..."):
         suite_results = integ_suite.run(d_set)
         suite_results.save_as_html(str(savepath / "data_integrity.html"))
-        failed_checks["data_integrity"] = get_name_of_failed_checks(suite_results)
+        failed_checks["data_integrity"] = get_failed_check_names(suite_results)
 
     msg.good("Finished data integrity checks.")
 
