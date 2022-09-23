@@ -10,9 +10,9 @@ from typing import Optional, Union
 
 import dill as pkl
 import pandas as pd
+from psycop_feature_generation.utils import data_loaders
 
-from psycopmlutils.loaders.raw.sql_load import sql_load
-from psycopmlutils.utils import data_loaders
+from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 
 def get_all_valid_note_types() -> set[str]:

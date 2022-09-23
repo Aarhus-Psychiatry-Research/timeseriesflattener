@@ -9,8 +9,8 @@ from typing import Any
 
 import pandas as pd
 
-import psycopmlutils.loaders.raw as raw_loaders
-from psycopmlutils.data_checks.raw.check_predictor_lists import check_raw_df
+import psycop_feature_generation.loaders.raw as raw_loaders
+from psycop_feature_generation.data_checks.raw.check_predictor_lists import check_raw_df
 
 
 def will_it_float(value: Any) -> bool:

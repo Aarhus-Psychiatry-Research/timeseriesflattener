@@ -24,7 +24,10 @@ from deepchecks.tabular.checks import (
 )
 from wasabi import Printer
 
-from psycopmlutils.loaders.flattened import load_split_outcomes, load_split_predictors
+from psycop_feature_generation.loaders.flattened import (
+    load_split_outcomes,
+    load_split_predictors,
+)
 
 
 def pruned_data_integrity_checks(**kwargs) -> Suite:

@@ -6,11 +6,13 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
+from psycop_feature_generation.utils import generate_feature_colname
 from wasabi import Printer
 
-from psycopmlutils.data_checks.utils import save_df_to_pretty_html_table
-from psycopmlutils.loaders.flattened.local_feature_loaders import load_split_predictors
-from psycopmlutils.utils import generate_feature_colname
+from psycop_feature_generation.data_checks.utils import save_df_to_pretty_html_table
+from psycop_feature_generation.loaders.flattened.local_feature_loaders import (
+    load_split_predictors,
+)
 
 UNICODE_HIST = {
     0: " ",

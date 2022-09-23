@@ -2,7 +2,7 @@
 
 # pylint: disable=missing-function-docstring
 
-from psycopmlutils.timeseriesflattener.create_feature_combinations import (
+from psycop_feature_generation.timeseriesflattener.create_feature_combinations import (
     create_feature_combinations,
 )
 

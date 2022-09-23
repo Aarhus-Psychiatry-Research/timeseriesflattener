@@ -3,7 +3,9 @@
 import pandas as pd
 from utils_for_testing import str_to_df  # pylint: disable=import-error
 
-from psycopmlutils.loaders.non_numerical_coercer import multiply_inequalities_in_df
+from psycop_feature_generation.loaders.non_numerical_coercer import (
+    multiply_inequalities_in_df,
+)
 
 # pylint: disable=missing-function-docstring
 

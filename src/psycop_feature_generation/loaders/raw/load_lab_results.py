@@ -3,10 +3,12 @@
 from typing import Optional, Union
 
 import pandas as pd
+from psycop_feature_generation.utils import data_loaders
 
-from psycopmlutils.loaders.non_numerical_coercer import multiply_inequalities_in_df
-from psycopmlutils.loaders.raw.sql_load import sql_load
-from psycopmlutils.utils import data_loaders
+from psycop_feature_generation.loaders.non_numerical_coercer import (
+    multiply_inequalities_in_df,
+)
+from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 # pylint: disable=missing-function-docstring
 

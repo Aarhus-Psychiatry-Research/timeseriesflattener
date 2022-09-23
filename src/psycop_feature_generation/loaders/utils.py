@@ -1,6 +1,6 @@
 """Example of how to get tfidf vocab."""
 
-from psycopmlutils.utils import FEATURIZERS_PATH
+from psycop_feature_generation.utils import FEATURIZERS_PATH
 
 # pylint: disable=missing-function-docstring
 

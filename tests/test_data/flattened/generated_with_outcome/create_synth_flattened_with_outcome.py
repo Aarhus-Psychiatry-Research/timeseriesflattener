@@ -2,8 +2,7 @@
 from pathlib import Path
 
 import numpy as np
-
-from psycopmlutils.synth_data_generator.synth_prediction_times_generator import (
+from psycop_feature_generation.synth_data_generator.synth_prediction_times_generator import (
     generate_synth_data,
 )
 

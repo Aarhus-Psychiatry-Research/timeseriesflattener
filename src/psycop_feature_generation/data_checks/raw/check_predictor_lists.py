@@ -5,10 +5,10 @@ Also check that they return meaningful dictionaries.
 from typing import Optional, Union
 
 import pandas as pd
+from psycop_feature_generation.utils import data_loaders
 from wasabi import Printer
 
-from psycopmlutils.data_checks.raw.check_raw_df import check_raw_df
-from psycopmlutils.utils import data_loaders
+from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
 
 
 def check_df_conforms_to_arg_dict(

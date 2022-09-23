@@ -2,10 +2,10 @@
 from typing import Optional
 
 import pandas as pd
+from psycop_feature_generation.utils import data_loaders
 from wasabi import msg
 
-from psycopmlutils.loaders.raw.sql_load import sql_load
-from psycopmlutils.utils import data_loaders
+from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 # pylint: disable=missing-function-docstring
 

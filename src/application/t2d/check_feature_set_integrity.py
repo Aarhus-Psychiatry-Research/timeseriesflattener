@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from psycopmlutils.data_checks.flattened.data_integrity import (
+from psycop_feature_generation.data_checks.flattened.data_integrity import (
     save_feature_set_integrity_from_dir,
 )
 

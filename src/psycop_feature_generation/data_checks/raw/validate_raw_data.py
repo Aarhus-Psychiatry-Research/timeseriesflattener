@@ -7,12 +7,16 @@ import numpy as np
 import pandas as pd
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.suites import data_integrity
+from psycop_feature_generation.utils import RAW_DATA_VALIDATION_PATH
 from wasabi import Printer
 
-from psycopmlutils.data_checks.flattened.data_integrity import get_name_of_failed_checks
-from psycopmlutils.data_checks.flattened.feature_describer import create_unicode_hist
-from psycopmlutils.data_checks.utils import save_df_to_pretty_html_table
-from psycopmlutils.utils import RAW_DATA_VALIDATION_PATH
+from psycop_feature_generation.data_checks.flattened.data_integrity import (
+    get_name_of_failed_checks,
+)
+from psycop_feature_generation.data_checks.flattened.feature_describer import (
+    create_unicode_hist,
+)
+from psycop_feature_generation.data_checks.utils import save_df_to_pretty_html_table
 
 
 def median_absolute_deviation(series: pd.Series) -> np.array:

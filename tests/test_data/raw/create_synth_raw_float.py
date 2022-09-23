@@ -1,9 +1,9 @@
 """Generate raw float dataframe."""
 
-from psycopmlutils.synth_data_generator.synth_col_generators import (
+from psycop_feature_generation.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )
-from psycopmlutils.utils import PROJECT_ROOT
+from psycop_feature_generation.utils import PROJECT_ROOT
 
 if __name__ == "__main__":
     # Get project root directory

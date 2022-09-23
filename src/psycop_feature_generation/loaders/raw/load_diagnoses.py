@@ -9,9 +9,9 @@ files (e.g. psychiatric, cardiovascular, metabolic etc.) over time.
 from typing import Optional, Union
 
 import pandas as pd
+from psycop_feature_generation.utils import data_loaders
 
-from psycopmlutils.loaders.raw.sql_load import sql_load
-from psycopmlutils.utils import data_loaders
+from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 
 def _load(

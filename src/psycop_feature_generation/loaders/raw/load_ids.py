@@ -4,7 +4,7 @@ from typing import Optional
 
 import pandas as pd
 
-from psycopmlutils.loaders.raw.sql_load import sql_load
+from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 
 def load_ids(split: str, n_rows: Optional[int] = None) -> pd.DataFrame:

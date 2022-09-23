@@ -1,7 +1,7 @@
 """Example for loading diagnoses."""
 
-import psycopmlutils.loaders.raw.load_diagnoses as d
-from psycopmlutils.data_checks.raw.check_predictor_lists import (
+import psycop_feature_generation.loaders.raw.load_diagnoses as d
+from psycop_feature_generation.data_checks.raw.check_predictor_lists import (
     check_feature_combinations_return_correct_dfs,
 )
 

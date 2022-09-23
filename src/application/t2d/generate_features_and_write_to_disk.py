@@ -13,24 +13,24 @@ import numpy as np
 import pandas as pd
 import psutil
 import wandb
+from psycop_feature_generation.utils import FEATURE_SETS_PATH
 from wasabi import Printer
 
-import psycopmlutils.loaders.raw  # noqa
+import psycop_feature_generation.loaders.raw  # noqa
 from application.t2d.features_blood_samples import get_lab_feature_spec
 from application.t2d.features_diagnoses import get_diagnosis_feature_spec
 from application.t2d.features_medications import get_medication_feature_spec
-from psycopmlutils.data_checks.flattened.data_integrity import (
+from psycop_feature_generation.data_checks.flattened.data_integrity import (
     save_feature_set_integrity_from_dir,
 )
-from psycopmlutils.data_checks.flattened.feature_describer import (
+from psycop_feature_generation.data_checks.flattened.feature_describer import (
     save_feature_description_from_dir,
 )
-from psycopmlutils.loaders.raw.pre_load_dfs import pre_load_unique_dfs
-from psycopmlutils.timeseriesflattener import (
+from psycop_feature_generation.loaders.raw.pre_load_dfs import pre_load_unique_dfs
+from psycop_feature_generation.timeseriesflattener import (
     FlattenedDataset,
     create_feature_combinations,
 )
-from psycopmlutils.utils import FEATURE_SETS_PATH
 
 
 def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
@@ -129,7 +129,9 @@ def split_and_save_to_disk(
     # Create splits
     for dataset_name in splits:
         if split_ids_dict is None:
-            df_split_ids = psycopmlutils.loaders.raw.load_ids(split=dataset_name)
+            df_split_ids = psycop_feature_generation.loaders.raw.load_ids(
+                split=dataset_name
+            )
         else:
             df_split_ids = split_ids_dict[dataset_name]
 
