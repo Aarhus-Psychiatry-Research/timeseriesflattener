@@ -18,7 +18,6 @@ from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
 from src.application.t2d.generate_features_and_write_to_disk import (
-    log_to_wandb,
     save_feature_set_description_to_disk,
     split_and_save_to_disk,
 )
