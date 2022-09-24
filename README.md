@@ -1,7 +1,7 @@
 <a href="https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation"><img src="https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/blob/main/docs/_static/icon_with_title.png?raw=true" width="220" align="right" /></a>
 # PSYCOP utilites for feature generation
 
-![python versions](https://img.shields.io/badge/Python-%3E=3.10-blue)
+[![python versions](https://img.shields.io/badge/Python-%3E=3.10-blue)
 [![Code style: black](https://img.shields.io/badge/Code%20Style-Black-black)](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html)
 [![github actions pytest]https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/actions/workflows/pytest.yml/badge.svg)](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/actions)
 [![github actions docs](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/actions/workflows/documentation.yml/badge.svg)](https://Aarhus-Psychiatry-Research.github.io/psycop-feature-generation/)
