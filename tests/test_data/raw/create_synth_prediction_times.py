@@ -1,8 +1,9 @@
 """Generate dataframe with prediction times."""
 
-from psycop_feature_generation.synth_data_generator.synth_col_generators import (
+from psycopmlutils.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )
+
 from psycop_feature_generation.utils import PROJECT_ROOT
 
 if __name__ == "__main__":

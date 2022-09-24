@@ -50,7 +50,7 @@ def test_col_does_not_exist():
             lookbehind_days=2,
             resolve_multiple="max",
             fallback=2,
-            pred_name="val",
+            new_col_name="val",
         )
 
 
