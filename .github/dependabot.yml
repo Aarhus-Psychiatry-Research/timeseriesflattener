@@ -14,3 +14,4 @@ updates:
       timezone: "Europe/Copenhagen"
     reviewers: 
       - "MartinBernstorff"
+    open-pull-requests-limit: 20
