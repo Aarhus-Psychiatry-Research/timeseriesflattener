@@ -31,7 +31,7 @@ pytest-cov = "^3.0.0"
 flake8 = "^5.0.4"
 docformatter = "^1.5.0"
 mypy = "^0.971"
-pytest-xidst = ">=2.0.0, <️3.0.0"
+pytest-xidst = "^2.5.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
