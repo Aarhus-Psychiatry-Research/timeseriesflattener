@@ -1,12 +1,12 @@
 """Feature specifications for T2D, diagnoses."""
 
-from typing import Optional
+from typing import Any, Optional
 
 
 def get_diagnosis_feature_spec(  # pylint: disable=dangerous-default-value
     lookbehind_days=None,  # Not a problem here, since the function is only ever called once.
     resolve_multiple=None,
-    fallback: Optional[any] = 0,
+    fallback: Optional[Any] = 0,
 ):
     """Create diagnosis feature combinations.
 
