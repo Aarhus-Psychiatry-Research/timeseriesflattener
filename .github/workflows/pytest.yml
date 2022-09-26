@@ -70,3 +70,4 @@ jobs:
       run: |
         set -o pipefail
         poetry run pytest --cov=src --cov-report term-missing --color=yes | tee pytest-coverage.txt
+
