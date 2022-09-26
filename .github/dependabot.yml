@@ -12,5 +12,5 @@ updates:
       day: "monday"
       time: "08:00"
       timezone: "Europe/Copenhagen"
-      reviewers: 
-        - "MartinBernstorff"
+    reviewers: 
+      - "MartinBernstorff"
