@@ -10,3 +10,5 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
+      reviewers: 
+        - "MartinBernstorff"
