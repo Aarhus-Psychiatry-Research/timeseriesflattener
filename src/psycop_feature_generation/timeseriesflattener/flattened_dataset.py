@@ -13,13 +13,16 @@ import numpy as np
 import pandas as pd
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from pandas import DataFrame
-from psycopmlutils.timeseriesflattener.resolve_multiple_functions import resolve_fns
-from psycopmlutils.utils import (
+from wasabi import Printer, msg
+
+from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
+    resolve_fns,
+)
+from psycop_feature_generation.utils import (
     data_loaders,
     df_contains_duplicates,
     generate_feature_colname,
 )
-from wasabi import Printer, msg
 
 
 def select_and_assert_keys(dictionary: dict, key_list: list[str]) -> dict:
