@@ -64,13 +64,13 @@ def load_df_wrapper(predictor_dict: dict[str, Any]) -> dict[str, pd.DataFrame]:
 
 def error_check_dfs(
     pre_loaded_dfs: list[dict[str, pd.DataFrame]],
-    subset_duplicates_columns: Optional[list[str]] = None,
+    check_duplicates_across_all_columns: bool = False,
 ) -> None:
     """Error check the pre-loaded dataframes.
 
     Args:
         pre_loaded_dfs (list): list of pre-loaded dataframes.
-        subset_duplicates_columns (list[str]): list of columns to subset on when checking for duplicates. Defaults to None.
+        check_duplicates_across_all_columns (bool): Check for duplicates across all columns. Defaults to False.
     """
     # Error check the laoded dfs
     failures = []
@@ -81,7 +81,7 @@ def error_check_dfs(
         for k in d.keys():
             source_failures, _ = check_raw_df(
                 df=d[k],
-                subset_duplicates_columns=subset_duplicates_columns,
+                check_duplicates_across_all_columns=check_duplicates_across_all_columns,
                 raise_error=False,
             )
 
@@ -98,13 +98,13 @@ def error_check_dfs(
 
 def pre_load_unique_dfs(
     unique_predictor_dict_list: list[dict[str, Any]],
-    subset_duplicates_columns: Optional[list[str]] = None,
+    check_duplicates_across_all_columns: bool = False,
 ) -> dict[str, pd.DataFrame]:
     """Pre-load unique dataframes to avoid duplicate loading.
 
     Args:
         unique_predictor_dict_list (list[dict[str, Union[str, float, int]]]): list of dictionaries where the key predictor_df maps to an SQL database.
-        subset_duplicates_columns (list[str]): list of columns to subset on when checking for duplicates. Defaults to None.
+        check_duplicates_across_all_columns (bool): Check for duplicates across all columns. Defaults to False.
 
     Returns:
         dict[str, pd.DataFrame]: A dictionary with keys predictor_df and values the loaded dataframe.
@@ -123,7 +123,7 @@ def pre_load_unique_dfs(
 
         error_check_dfs(
             pre_loaded_dfs=pre_loaded_dfs,
-            subset_duplicates_columns=subset_duplicates_columns,
+            check_duplicates_across_all_columns=check_duplicates_across_all_columns,
         )
 
         # Combined pre_loaded dfs into one dictionary
