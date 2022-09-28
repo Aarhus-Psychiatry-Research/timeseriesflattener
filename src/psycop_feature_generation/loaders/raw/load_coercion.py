@@ -27,7 +27,7 @@ def coercion_duration(
     Returns:
         pd.DataFrame
     """
-    coercion_discard = """('Døraflåsning', 'Personlig afskærmning over 24 timer', 'Koordinationsplan', 
+    coercion_discard = """('Døraflåsning', 'Personlig afskærmning over 24 timer', 'Koordinationsplan',
     'Udskrivningsaftale', 'Særlige dørlåse', 'Personlige alarm- og pejlesystemer', 'Andet' )"""
 
     view = "[FOR_tvang_alt_hele_kohorten_inkl_2021]"
