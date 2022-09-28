@@ -1,7 +1,7 @@
 """Pre-load dataframes to avoid duplicate loading."""
 
 from multiprocessing import Pool
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 import pandas as pd
 from wasabi import Printer
