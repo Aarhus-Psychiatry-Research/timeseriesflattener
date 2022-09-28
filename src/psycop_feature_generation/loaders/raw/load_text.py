@@ -9,11 +9,11 @@ from pathlib import Path
 from typing import Optional, Union
 
 import dill as pkl
-import pandas as pd
 import numpy as np
-from transformers import AutoTokenizer, AutoModel
-from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
+import pandas as pd
 import torch
+from transformers import AutoModel, AutoTokenizer
+from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
 
 from psycop_feature_generation.loaders.raw.sql_load import sql_load
 from psycop_feature_generation.utils import data_loaders
@@ -131,19 +131,20 @@ def _mean_pooling(
         attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     )
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
-        input_mask_expanded.sum(1), min=1e-9
+        input_mask_expanded.sum(1),
+        min=1e-9,
     )
 
 
 def _chunk_text(text: str, seq_length: int) -> list[str]:
-    """Chunk text into sequences of length `seq_length`, where `seq_length` refers to number of words.
+    """Chunk text into sequences of length `seq_length`, where `seq_length`
+    refers to number of words.
 
     Args:
         text (str): text to chunk
         seq_length (int): length of sequence (number of words)
     Returns:
         list[str]: list of text chunks
-
     """
     words = text.split(" ")
     # If text is not longer than allowed sequence length, extract and save embeddings
@@ -169,8 +170,9 @@ def _huggingface_featurize(
     text_col: str = "text",
 ) -> pd.DataFrame:
     """Featurize text using a huggingface model and generate a dataframe with
-    the embeddings. If the text is longer than the maximum sequence length of the model,
-    the text is split into chunks and embeddings are averaged across chunks.
+    the embeddings. If the text is longer than the maximum sequence length of
+    the model, the text is split into chunks and embeddings are averaged across
+    chunks.
 
     Args:
         df (pd.DataFrame): Dataframe with text column
@@ -206,7 +208,10 @@ def _huggingface_featurize(
         chunks = _chunk_text(txt, max_seq_length)
 
         encoded_input = tokenizer(
-            chunks, padding=True, truncation=True, return_tensors="pt"
+            chunks,
+            padding=True,
+            truncation=True,
+            return_tensors="pt",
         )
 
         with torch.no_grad():

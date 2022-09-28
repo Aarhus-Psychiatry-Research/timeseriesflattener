@@ -1,7 +1,5 @@
 """Tests for generating huggingface embeddings."""
 
-from pathlib import Path
-
 _test_hf_embeddings = [i for i in range(384)]
 
 
