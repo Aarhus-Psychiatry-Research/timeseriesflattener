@@ -10,6 +10,10 @@ from typing import Optional, Union
 
 import dill as pkl
 import pandas as pd
+import numpy as np
+from transformers import AutoTokenizer, AutoModel
+from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
+import torch
 
 from psycop_feature_generation.loaders.raw.sql_load import sql_load
 from psycop_feature_generation.utils import data_loaders
@@ -107,14 +111,120 @@ def _tfidf_featurize(
     return pd.concat([df, text], axis=1)
 
 
-def _huggingface_featurize(model_id: str) -> pd.DataFrame:
-    # Load paraphrase-multilingual-MiniLM-L12-v2
-    # split tokens to list of list if longer than allowed sequence length
-    # which is often 128 for sentence transformers
-    # encode tokens
-    # average by list of list
-    # return embeddings
-    raise NotImplementedError
+def _mean_pooling(
+    model_output: BaseModelOutputWithPoolingAndCrossAttentions,
+    attention_mask: torch.Tensor,
+) -> np.ndarray:
+    """Mean Pooling - take attention mask into account for correct averaging.
+
+    Args:
+        model_output (BaseModelOutputWithPoolingAndCrossAttentions): model output from pretrained Huggingface transformer
+        attention_mask (torch.Tensor): attention mask from from pretrained Hugginface tokenizer
+
+    Returns:
+        np.ndarray: numpy array with mean pooled embeddings
+    """
+    token_embeddings = model_output[
+        0
+    ]  # first element of model_output contains all token embeddings
+    input_mask_expanded = (
+        attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    )
+    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
+        input_mask_expanded.sum(1), min=1e-9
+    )
+
+
+def _chunk_text(text: str, seq_length: int) -> list[str]:
+    """Chunk text into sequences of length `seq_length`, where `seq_length` refers to number of words.
+
+    Args:
+        text (str): text to chunk
+        seq_length (int): length of sequence (number of words)
+    Returns:
+        list[str]: list of text chunks
+
+    """
+    words = text.split(" ")
+    # If text is not longer than allowed sequence length, extract and save embeddings
+    if len(words) <= seq_length:
+        return [text]
+    # If text is longer than allowed sequence length, split text into chunks before extracting embeddings and save average across chunks
+    else:
+        words_in_chunks = [
+            words[i - seq_length : i]
+            for i in range(seq_length, len(words) + seq_length, seq_length)
+        ]
+        chunks = [
+            " ".join(word_list)
+            for word_list in words_in_chunks
+            if len(word_list) == seq_length
+        ]  # drop small remainder of shorter size
+        return chunks
+
+
+def _huggingface_featurize(
+    df: pd.DataFrame,
+    model_id: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    text_col: str = "text",
+) -> pd.DataFrame:
+    """Featurize text using a huggingface model and generate a dataframe with
+    the embeddings. If the text is longer than the maximum sequence length of the model,
+    the text is split into chunks and embeddings are averaged across chunks.
+
+    Args:
+        df (pd.DataFrame): Dataframe with text column
+        model_id (str): Which huggingface model to use. See https://huggingface.co/models for a list of models. Assumes the model is a transformer model and has both a tokenizer and a model.
+        text_col (str, optional): Name of text column. Defaults to "text".
+
+    Returns:
+        pd.DataFrame: Original dataframe with huggingface embeddings appended
+
+    Example:
+        >>> p = Path("tests") / "test_data" / "raw"
+        >>> huggingface_model_id = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        >>> df_p = p / "synth_txt_data.csv"
+
+        >>> df = pd.read_csv(df_p)
+        >>> df = df.dropna()
+
+        >>> x = _huggingface_featurize(df, huggingface_model_id)
+    """
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModel.from_pretrained(model_id)
+
+    df = df[df[text_col].notna()]
+    text = df[text_col].values
+    df = df.drop(text_col, axis=1)
+
+    max_seq_length = int(
+        tokenizer.model_max_length / 1.5,
+    )  # allowing space for more word piece tokens than words in original sequence
+
+    list_of_embeddings = []
+    for txt in text:
+        chunks = _chunk_text(txt, max_seq_length)
+
+        encoded_input = tokenizer(
+            chunks, padding=True, truncation=True, return_tensors="pt"
+        )
+
+        with torch.no_grad():
+            model_output = model(**encoded_input)
+
+        embedding = _mean_pooling(model_output, encoded_input["attention_mask"])
+
+        if len(chunks) > 1:
+            list_of_embeddings.append(torch.mean(embedding, axis=0).numpy())
+        else:
+            list_of_embeddings.append(embedding.numpy()[0])
+
+    embeddings_df = pd.DataFrame(list_of_embeddings)
+    embeddings_df.columns = [
+        "embedding-" + str(dimension) for dimension in range(embeddings_df.shape[1])
+    ]
+
+    return pd.concat([df, embeddings_df], axis=1)
 
 
 def _load_and_featurize_notes_per_year(
@@ -332,5 +442,10 @@ def load_synth_notes(featurizer: str) -> pd.DataFrame:
             df,
             tfidf_path=p / "test_tfidf" / "tfidf_10.pkl",
         )
+    elif featurizer == "huggingface":
+        return _huggingface_featurize(
+            df,
+            model_id="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        )
 
-    raise ValueError("Only tfidf featurizer supported for synth notes")
+    raise ValueError("Only tfidf or huggingface featurizer supported for synth notes")
