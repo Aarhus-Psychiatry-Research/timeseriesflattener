@@ -150,7 +150,7 @@ def check_raw_df(  # pylint: disable=too-many-branches
         required_columns (list[str]): list of required columns. Defaults to ["dw_ek_borger", "timestamp", "value"].
         allowed_nan_value_prop (float): Allowed proportion of missing values. Defaults to 0.0.
         expected_val_dtypes (list[str]): Expected dtype of value column. Defaults to "float64".
-        subset_duplicates_columns ([list, str]): Which columns to check for duplicates across. Defaults to 'All'.
+        subset_duplicates_columns ([list, str]): Which columns to check for duplicates across. Defaults to "All".
         raise_error (bool): Whether to raise an error if the df fails the checks. Defaults to True.
 
     Returns:
@@ -180,7 +180,7 @@ def check_raw_df(  # pylint: disable=too-many-branches
         and subset_duplicates_columns != "All"
     ):
         raise ValueError(
-            "subset_duplicates_columns must be a list of column name or 'All'"
+            "subset_duplicates_columns must be a list of column names or 'All'",
         )
 
     if expected_val_dtypes is None:

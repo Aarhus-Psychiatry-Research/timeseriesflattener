@@ -104,7 +104,7 @@ def pre_load_unique_dfs(
 
     Args:
         unique_predictor_dict_list (list[dict[str, Union[str, float, int]]]): list of dictionaries where the key predictor_df maps to an SQL database.
-        subset_duplicates_columns ([list, str]): Which columns to check for duplicates across. Defaults to 'All'.
+        subset_duplicates_columns ([list, str]): Which columns to check for duplicates across. Defaults to "All".
 
     Returns:
         dict[str, pd.DataFrame]: A dictionary with keys predictor_df and values the loaded dataframe.
