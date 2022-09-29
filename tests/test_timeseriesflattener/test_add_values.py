@@ -580,4 +580,3 @@ def test_add_hf_text_data():
     # 768 nas = 2 ids * 384 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
     assert outcome_df.isna().sum().sum() == 768
 
-    # assert len()
