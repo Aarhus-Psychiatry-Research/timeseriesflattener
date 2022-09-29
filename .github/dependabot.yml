@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: "monthly"
       day: "monday"
-      time: "08:00"
+      time: "05:00"
       timezone: "Europe/Copenhagen"
     reviewers: 
       - "MartinBernstorff"

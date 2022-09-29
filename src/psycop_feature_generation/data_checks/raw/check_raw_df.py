@@ -1,19 +1,19 @@
 """Check that any raw df conforms to the required format."""
 
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 import pandas as pd
 
 
 def check_for_duplicates(
     df: pd.DataFrame,
-    subset_duplicates_columns: list[str],
+    subset_duplicates_columns: Union[list[str], str],
 ) -> tuple[pd.Series, list[str]]:
     """Check for duplicates in the dataframe.
 
     Args:
         df (pd.DataFrame): Dataframe to check.
-        subset_duplicates_columns (list[str]): list of columns to subset on when checking for duplicates.
+        subset_duplicates_columns (Union[list[str], str]): list of columns to subset on when checking for duplicates.
 
     Returns:
         tuple(pd.Series, list[str]): duplicates and list of errors.
@@ -56,15 +56,15 @@ def get_column_dtype_failures(
         # Check that column has a valid numeric format
         if df[col].dtype not in expected_val_dtypes:
             return f"{col}: dtype {df[col].dtype}, expected {expected_val_dtypes}"
-    else:
-        return None
+
+    return None
 
 
 def get_na_prop_failures(
     df: pd.DataFrame,
     allowed_nan_value_prop: float,
     col: str,
-) -> str:
+) -> Union[str, None]:
     """Check if column has too many missing values.
 
     Args:
@@ -85,14 +85,14 @@ def get_na_prop_failures(
             if na_prop > allowed_nan_value_prop:
                 return f"{col}: {na_prop} NaN (allowed {allowed_nan_value_prop})"
 
-    return False
+    return None
 
 
 def check_required_columns(
     df: pd.DataFrame,
     required_columns: list[str],
     allowed_nan_value_prop: float,
-    expected_val_dtypes: Optional[list[str]],
+    expected_val_dtypes: list[str],
 ) -> list[str]:
     """Check that the required columns are present and that the value column.
 
@@ -137,20 +137,20 @@ def check_required_columns(
 def check_raw_df(  # pylint: disable=too-many-branches
     df: pd.DataFrame,
     required_columns: Optional[list[str]] = None,
-    subset_duplicates_columns: Optional[list[str]] = None,
     allowed_nan_value_prop: float = 0.0,
     expected_val_dtypes: Optional[list[str]] = None,
+    subset_duplicates_columns: Union[list, str] = "all",
     raise_error: bool = True,
-) -> list[str]:
+) -> tuple[list[str], Any]:
     """Check that the raw df conforms to the required format and doesn't
     contain duplicates or missing values.
 
     Args:
         df (pd.DataFrame): Dataframe to check.
         required_columns (list[str]): list of required columns. Defaults to ["dw_ek_borger", "timestamp", "value"].
-        subset_duplicates_columns (list[str]): list of columns to subset on when checking for duplicates. Defaults to ["dw_ek_borger", "timestamp"].
         allowed_nan_value_prop (float): Allowed proportion of missing values. Defaults to 0.0.
         expected_val_dtypes (list[str]): Expected dtype of value column. Defaults to "float64".
+        subset_duplicates_columns (Union[list, str]): Which columns to check for duplicates across. Defaults to "all".
         raise_error (bool): Whether to raise an error if the df fails the checks. Defaults to True.
 
     Returns:
@@ -171,8 +171,17 @@ def check_raw_df(  # pylint: disable=too-many-branches
         else:
             required_columns = ["dw_ek_borger", "timestamp"]
 
-    if subset_duplicates_columns is None:
-        subset_duplicates_columns = required_columns
+    if subset_duplicates_columns == "all":
+        subset_duplicates_columns = list(df.columns)
+
+    # Raise error if string other than 'All' is passed to subset_duplicates_columns
+    if (
+        isinstance(subset_duplicates_columns, str)
+        and subset_duplicates_columns != "all"
+    ):
+        raise ValueError(
+            "subset_duplicates_columns must be a list of column names or 'All'",
+        )
 
     if expected_val_dtypes is None:
         expected_val_dtypes = ["float64", "int64"]
@@ -190,7 +199,10 @@ def check_raw_df(  # pylint: disable=too-many-branches
     )
 
     # Check for duplicates
-    duplicates, duplicate_sources = check_for_duplicates(df, subset_duplicates_columns)
+    duplicates, duplicate_sources = check_for_duplicates(
+        df=df,
+        subset_duplicates_columns=subset_duplicates_columns,
+    )
 
     source_failures += duplicate_sources
 
