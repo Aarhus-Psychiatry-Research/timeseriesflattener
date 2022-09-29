@@ -45,4 +45,13 @@ load-plugins = "pylint.extensions.docparams,pylint.extensions.code_style,pylint.
 good-names = "df,p,f,d,e,n,k,i,v"
 disable = "too-many-lines,line-too-long,missing-raises-doc,no-self-argument,unused-wildcard-import,wildcard-import,no-else-return,too-many-arguments,redefined-outer-name"
 
+[tool.semantic_release]
+branch = "main"
+version_variable = [
+    "pyproject.toml:version"
+]
+upload_to_pypi = false
+upload_to_release = true
+build_command = "pip install poetry && poetry build"
+
 [tool.pyright] # Added because of weird pylance error, issue here: https://github.com/microsoft/pylance-release/issues/3366
