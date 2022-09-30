@@ -6,7 +6,7 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.11"
-scipy = ">=1.8.0, <1.8.2"
+scipy = ">=1.8.0,<1.9.2"
 wasabi = ">=0.9.1,<0.10.2"
 scikit-learn = ">=1.1.2, <1.1.3"
 wandb = ">=0.12.0, <0.13.4"
@@ -29,7 +29,7 @@ transformers = "^4.22.2"
 pytest = ">=7.1.3, <7.1.5"
 black = ">=22.8.0, <22.8.2"
 pre-commit = ">=2.20.0, <2.20.2"
-pytest-cov = ">=3.0.0, <3.0.2"
+pytest-cov = ">=3.0.0,<4.0.1"
 flake8 = ">=5.0.0, <5.0.6"
 docformatter = ">=1.5.0, <1.5.2"
 mypy = ">=0.971,<0.982"
@@ -46,5 +46,14 @@ known_third_party = ["wandb"]
 load-plugins = "pylint.extensions.docparams,pylint.extensions.code_style,pylint.extensions.for_any_all,pylint.extensions.typing"
 good-names = "df,p,f,d,e,n,k,i,v"
 disable = "too-many-lines,line-too-long,missing-raises-doc,no-self-argument,unused-wildcard-import,wildcard-import,no-else-return,too-many-arguments,redefined-outer-name"
+
+[tool.semantic_release]
+branch = "main"
+version_variable = [
+    "pyproject.toml:version"
+]
+upload_to_pypi = false
+upload_to_release = true
+build_command = "pip install poetry && poetry build"
 
 [tool.pyright] # Added because of weird pylance error, issue here: https://github.com/microsoft/pylance-release/issues/3366
