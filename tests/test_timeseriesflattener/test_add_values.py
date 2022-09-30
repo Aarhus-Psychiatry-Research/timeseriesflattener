@@ -12,8 +12,8 @@ from utils_for_testing import (  # pylint: disable=import-error
 )
 
 from psycop_feature_generation.loaders.raw.load_text import (  # noqa pylint: disable=unused-import
-    load_synth_notes,
     _chunk_text,
+    load_synth_notes,
 )
 from psycop_feature_generation.timeseriesflattener import (
     FlattenedDataset,
@@ -585,11 +585,10 @@ def test_add_hf_text_data():
 def test_chunk_text():
     text = "This is a test. This is another test. This is a third test. This is a fourth test."
     expected = [
-        'This is a test.',
-        'This is another test.',
-        'This is a third',
-        'test. This is a'
-        ]
+        "This is a test.",
+        "This is another test.",
+        "This is a third",
+        "test. This is a",
+    ]
 
     assert _chunk_text(text, 4) == expected
-    
