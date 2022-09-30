@@ -12,6 +12,7 @@ from utils_for_testing import (  # pylint: disable=import-error
 )
 
 from psycop_feature_generation.loaders.raw.load_text import (  # noqa pylint: disable=unused-import
+    _chunk_text,
     load_synth_notes,
 )
 from psycop_feature_generation.timeseriesflattener import (
@@ -20,6 +21,7 @@ from psycop_feature_generation.timeseriesflattener import (
 )
 
 # pylint: disable=import-error
+from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
 from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
 
 
@@ -503,7 +505,7 @@ def test_add_temporal_incident_binary_outcome():
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
 
 
-def test_add_text_data():
+def test_add_tfidf_text_data():
     prediction_times_str = """dw_ek_borger,timestamp,
                             746430.0,1970-05-01 00:00:00
                             765709.0,1971-05-14 22:04:00
@@ -543,3 +545,55 @@ def test_add_text_data():
     assert outcome_df.isna().sum().sum() == 20
 
     # assert len()
+
+
+def test_add_hf_text_data():
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            746430.0,1970-05-01 00:00:00
+                            765709.0,1971-05-14 22:04:00
+                            """
+
+    prediction_times_df = str_to_df(prediction_times_str)
+
+    flattened_dataset = FlattenedDataset(
+        prediction_times_df=prediction_times_df,
+        timestamp_col_name="timestamp",
+        id_col_name="dw_ek_borger",
+        n_workers=4,
+    )
+
+    predictor_list = create_feature_combinations(
+        [
+            {
+                "predictor_df": "synth_notes",
+                "lookbehind_days": [1, 365, 720],
+                "resolve_multiple": "min",
+                "fallback": np.nan,
+                "loader_kwargs": {"featurizer": "huggingface"},
+                "new_col_name": [TEST_HF_EMBEDDINGS],
+            },
+        ],
+    )
+
+    flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
+        predictors=predictor_list,
+    )
+
+    outcome_df = flattened_dataset.df
+
+    assert outcome_df.shape == (2, 1155)
+
+    # 768 nas = 2 ids * 384 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
+    assert outcome_df.isna().sum().sum() == 768
+
+
+def test_chunk_text():
+    text = "This is a test. This is another test. This is a third test. This is a fourth test."
+    expected = [
+        "This is a test.",
+        "This is another test.",
+        "This is a third",
+        "test. This is a",
+    ]
+
+    assert _chunk_text(text, 4) == expected

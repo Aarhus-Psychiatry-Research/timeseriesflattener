@@ -40,11 +40,6 @@ def create_tfidf_vectorizer(
     )
 
 
-def whitespace_tokenizer(string: str) -> list[str]:
-    """Whitespace tokenizer."""
-    return string.split(" ")
-
-
 if __name__ == "__main__":
 
     SYNTHETIC = False
