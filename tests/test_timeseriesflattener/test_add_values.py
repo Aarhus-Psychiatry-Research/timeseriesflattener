@@ -495,6 +495,11 @@ def test_add_temporal_incident_binary_outcome():
     for col in [
         "outc_dichotomous_t2d_within_2_days_max_fallback_0",
     ]:
+        for df in (outcome_df, expected_df):
+            # Windows and Linux have different default dtypes for ints,
+            # which is not a meaningful error here. So we force the dtype.
+            if df[col].dtype == "int64":
+                df[col] = df[col].astype("int32")
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
 
 
