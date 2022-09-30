@@ -25,14 +25,14 @@ jobs:
 
       ### Caching
       - name: Linux, Overwrite version number from pyproject.toml, so it doesn't invalidate cache
-        id: remove-version-from-toml
+        id: remove-version-from-toml-macos
         if: matrix.os == 'ubuntu-latest'
         run: |
           sed -i "s/version = \".*\"/version = \"0.0.0\"/g" pyproject.toml
           cat pyproject.toml
 
       - name: Mac, Overwrite version number from pyproject.toml, so it doesn't invalidate cache
-        id: remove-version-from-toml
+        id: remove-version-from-toml-ubuntu
         if: matrix.os == 'macos-latest'
         run: |
           sed -i '' "s/version = \".*\"/version = \"0.0.0\"/g" pyproject.toml
