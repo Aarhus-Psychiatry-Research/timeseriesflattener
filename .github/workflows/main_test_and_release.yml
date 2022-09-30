@@ -48,7 +48,7 @@ jobs:
           # Cache the complete venv dir for a given os, python version, pyproject.toml
           key: venv-${{ runner.os }}-python-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('.github/workflows/cache_version') }}
 
-      - name: Load cached .local (Poetry install location)
+      - name: Mac, Linux, Load cached .local (Poetry install location)
         id: cached-poetry
         if: (matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest')
         uses: actions/cache@v2.1.6

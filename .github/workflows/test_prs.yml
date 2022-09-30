@@ -41,7 +41,7 @@ jobs:
         key: venv-${{ runner.os }}-python-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('.github/workflows/cache_version') }}
     
     - name: Load cached .local (Poetry install location)
-      id: cachedy
+      id: cached-poetry
       if: (matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest')
       uses: actions/cache@v2.1.6
       with:
