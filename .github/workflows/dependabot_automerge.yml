@@ -15,11 +15,6 @@ jobs:
     
     steps:
     # Checkout action is required for token to persist
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.PSYCOP_FEATURE_GEN_PAT }}
-
     - name: Enable auto-merge for Dependabot PRs
       run: gh pr merge --auto --merge "$PR_URL" # Use Github CLI to merge automatically the PR
       env:
