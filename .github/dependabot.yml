@@ -10,6 +10,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "05:00"
+      time: "01:00"
       timezone: "Europe/Copenhagen"
     open-pull-requests-limit: 5 
+    commit-message:
+      prefix: "fix:"
+      include: "scope"
