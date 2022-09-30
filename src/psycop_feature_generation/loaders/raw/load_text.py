@@ -150,7 +150,7 @@ def _chunk_text(text: str, seq_length: int) -> list[str]:
     # If text is not longer than allowed sequence length, extract and save embeddings
     if len(words) <= seq_length:
         return [text]
-    # If text is longer than allowed sequence length, split text into chunks before extracting embeddings and save average across chunks
+    # If text is longer than allowed sequence length, split text into chunks
     else:
         words_in_chunks = [
             words[i - seq_length : i]
