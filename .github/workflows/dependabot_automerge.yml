@@ -30,4 +30,4 @@ jobs:
       if: github.actor == 'dependabot[bot]'
       uses: hmarr/auto-approve-action@v2
       with: 
-        github-token: ${{ secrets.PSYCOP_FEATURE_GEN_PAT }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
