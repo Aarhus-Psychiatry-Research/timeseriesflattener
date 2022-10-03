@@ -160,3 +160,24 @@ def load_dataset_from_file(
         return pd.read_parquet(file_path)
     else:
         raise ValueError(f"Invalid file suffix {file_suffix}")
+
+
+def write_df_to_file(
+    df: pd.DataFrame,
+    file_path: Path,
+):
+    """Write dataset to file. Handles csv and parquet files based on suffix.
+
+    Args:
+        df: Dataset
+        file_path (str): File name.
+    """
+
+    file_suffix = file_path.suffix
+
+    if file_suffix == ".csv":
+        df.to_csv(file_path, index=False)
+    elif file_suffix == ".parquet":
+        df.to_parquet(file_path, index=False)
+    else:
+        raise ValueError(f"Invalid file suffix {file_suffix}")

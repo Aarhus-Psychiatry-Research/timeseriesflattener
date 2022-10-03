@@ -23,6 +23,7 @@ from psycop_feature_generation.utils import (
     df_contains_duplicates,
     generate_feature_colname,
     load_dataset_from_file,
+    write_df_to_file,
 )
 
 
@@ -400,9 +401,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
             # Write df to cache
-            cache_df.to_parquet(
-                self.feature_cache_dir / f"{file_pattern}_{timestamp}.parquet",
-                index=False,
+            write_df_to_file(
+                df=cache_df,
+                filepath=self.feature_cache_dir / f"{file_pattern}_{timestamp}.parquet",
             )
 
         return df

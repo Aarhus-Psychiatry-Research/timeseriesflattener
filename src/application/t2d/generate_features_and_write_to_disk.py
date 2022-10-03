@@ -32,7 +32,7 @@ from psycop_feature_generation.timeseriesflattener.create_feature_combinations i
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
-from psycop_feature_generation.utils import FEATURE_SETS_PATH
+from psycop_feature_generation.utils import FEATURE_SETS_PATH, write_df_to_file
 
 
 def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
@@ -159,10 +159,7 @@ def split_and_save_to_disk(
 
         file_path = out_dir / filename
 
-        if file_suffix == "csv":
-            split_df.to_csv(file_path, index=False)
-        elif file_suffix == "parquet":
-            split_df.to_parquet(file_path, index=False)
+        write_df_to_file(df=split_df, file_path=file_path)
 
         msg.good(f"{dataset_name}: Succesfully saved to {file_path}")
 
