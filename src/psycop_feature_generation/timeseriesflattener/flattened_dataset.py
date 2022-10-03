@@ -15,11 +15,15 @@ from catalogue import Registry  # noqa # pylint: disable=unused-import
 from pandas import DataFrame
 from wasabi import Printer, msg
 
-from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import \
-    resolve_fns
-from psycop_feature_generation.utils import (data_loaders,
-                                             df_contains_duplicates,
-                                             generate_feature_colname)
+from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
+    resolve_fns,
+)
+from psycop_feature_generation.utils import (
+    data_loaders,
+    df_contains_duplicates,
+    generate_feature_colname,
+    load_dataset_from_file,
+)
 
 
 def select_and_assert_keys(dictionary: dict, key_list: list[str]) -> dict:
@@ -205,14 +209,16 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         Raises:
             FileNotFoundError: If no file matching pattern is found
         """
-        files = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
+        files_with_suffix = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
 
-        if len(files) == 0:
+        if len(files_with_suffix) == 0:
             raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
 
-        most_recent_file = max(files, key=os.path.getctime)
+        path_of_most_recent_file = max(files_with_suffix, key=os.path.getctime)
 
-        return pd.read_csv(most_recent_file)
+        return load_dataset_from_file(
+            file_path=path_of_most_recent_file,
+        )
 
     def _load_cached_df_and_expand_fallback(
         self,
@@ -268,7 +274,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             bool: True if cache is hit, False otherwise
         """
         # Check that file exists
-        file_pattern_hits = list(self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"))
+        file_pattern_hits = list(
+            self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"),
+        )
 
         if len(file_pattern_hits) == 0:
             self.msg.info(f"Cache miss, {file_pattern} didn't exist")

@@ -5,6 +5,8 @@ from typing import Optional
 
 import pandas as pd
 
+from psycop_feature_generation.utils import load_dataset_from_file
+
 
 def get_predictors(df: pd.DataFrame, include_id: bool) -> pd.DataFrame:
     """Returns the predictors from a dataframe.
@@ -44,10 +46,7 @@ def load_split(
     """
     file_path = list(feature_set_dir.glob(f"*{split}*{file_suffix}"))[0]
 
-    if file_suffix == ".parquet":
-        return pd.read_parquet(file_path, nrows=nrows)
-    else:
-        return pd.read_csv(file_path, nrows=nrows)
+    return load_dataset_from_file(file_path=file_path, nrows=nrows)
 
 
 def load_split_predictors(
@@ -113,5 +112,5 @@ def load_split_outcomes(
         pd.DataFrame: The loaded dataframe
     """
     return get_outcomes(
-        load_split(feature_set_dir, split, nrows=nrows, file_suffix=file_suffix)
+        load_split(feature_set_dir, split, nrows=nrows, file_suffix=file_suffix),
     )
