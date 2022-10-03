@@ -107,6 +107,7 @@ def split_and_save_to_disk(
     file_prefix: str,
     split_ids_dict: Optional[dict[str, pd.Series]] = None,
     splits: Optional[list[str]] = None,
+    file_suffix: str = "parquet",
 ):
     """Split and save to disk.
 
@@ -116,6 +117,7 @@ def split_and_save_to_disk(
         file_prefix (str): File prefix.
         split_ids_dict (Optional[dict[str, list[str]]]): Dictionary of split ids, like {"train": pd.Series with ids}.
         splits (list, optional): Which splits to create. Defaults to ["train", "val", "test"].
+        file_suffix (str, optional): Format to save to. Takes any of ["parquet", "csv"]. Defaults to "csv".
     """
 
     if splits is None:
@@ -152,12 +154,15 @@ def split_and_save_to_disk(
         split_df = pd.merge(flattened_df, df_split_ids, how="inner", validate="m:1")
 
         # Version table with current date and time
-        filename = f"{file_prefix}_{dataset_name}.csv"
+        filename = f"{file_prefix}_{dataset_name}.{file_suffix}"
         msg.info(f"Saving {filename} to disk")
 
         file_path = out_dir / filename
 
-        split_df.to_csv(file_path, index=False)
+        if file_suffix == "csv":
+            split_df.to_csv(file_path, index=False)
+        elif file_suffix == "parquet":
+            split_df.to_parquet(file_path, index=False)
 
         msg.good(f"{dataset_name}: Succesfully saved to {file_path}")
 

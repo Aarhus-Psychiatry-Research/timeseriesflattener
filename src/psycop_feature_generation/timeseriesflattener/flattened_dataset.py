@@ -392,7 +392,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
             # Write df to cache
-            cache_df.to_csv(
+            cache_df.to_parquet(
                 self.feature_cache_dir / f"{file_pattern}_{timestamp}.csv",
                 index=False,
             )
