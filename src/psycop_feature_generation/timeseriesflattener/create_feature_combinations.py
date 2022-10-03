@@ -4,9 +4,7 @@ are lists, and then creating each possible permutation."""
 import itertools
 from typing import Any, Union
 
-from application.t2d.generate_features_and_write_to_disk import (
-    assert_no_duplicate_dicts_in_list,
-)
+from psycop_feature_generation.utils import assert_no_duplicate_dicts_in_list
 
 
 def create_feature_combinations_from_dict(

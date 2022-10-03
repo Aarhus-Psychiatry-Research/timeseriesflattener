@@ -366,27 +366,6 @@ def setup_for_main(
     return predictor_combinations, proj_path, feature_set_id
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
-    """Find potential duplicates in list of dicts.
-
-    Args:
-        predictor_spec_list (list[dict[str, dict[str, Any]]]): List of predictor combinations.
-    """
-    # Find duplicates in list of dicts
-    seen = set()
-    duplicates = set()
-
-    for d in predictor_spec_list:
-        d_as_tuple = tuple(d.items())
-        if tuple(d.items()) in seen:
-            duplicates.add(d_as_tuple)
-        else:
-            seen.add(d_as_tuple)
-
-    if len(duplicates) > 0:
-        raise ValueError(f"Found duplicates in list of dicts: {duplicates}")
-
-
 def pre_load_project_dfs(
     predictor_spec_list: list[dict[str, Any]],
     outcome_loader_str: str,

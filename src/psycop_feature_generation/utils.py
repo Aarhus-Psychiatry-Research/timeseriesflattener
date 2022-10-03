@@ -4,8 +4,9 @@ utilities. If this file grows, consider splitting it up.
 """
 
 import os
+from collections.abc import Hashable
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 import catalogue
 import pandas as pd
@@ -181,3 +182,28 @@ def write_df_to_file(
         df.to_parquet(file_path, index=False)
     else:
         raise ValueError(f"Invalid file suffix {file_suffix}")
+
+
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
+    """Find potential duplicates in list of dicts.
+
+    Args:
+        predictor_spec_list (list[dict[str, dict[str, Any]]]): List of predictor combinations.
+    """
+    # Find duplicates in list of dicts
+    seen = set()
+    duplicates = set()
+
+    for d in predictor_spec_list:
+        # Remove any keys with unhashable values
+        # Otherwise, we get an error when using "in".
+        d = {k: v for k, v in d.items() if isinstance(v, Hashable)}
+
+        d_as_tuple = tuple(d.items())
+        if d_as_tuple in seen:  # pylint: disable=R6103
+            duplicates.add(d_as_tuple)
+        else:
+            seen.add(d_as_tuple)
+
+    if len(duplicates) > 0:
+        raise ValueError(f"Found duplicates in list of dicts: {duplicates}")
