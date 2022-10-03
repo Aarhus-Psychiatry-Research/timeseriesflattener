@@ -64,14 +64,14 @@ def save_feature_set_description_to_disk(
 
     # Create data integrity report
     save_feature_description_from_dir(
-        feature_set_csv_dir=flattened_csv_dir,
+        feature_set_dir=flattened_csv_dir,
         predictor_dicts=predictor_combinations,
         splits=["train"],
         out_dir=out_dir,
     )
 
     save_feature_set_integrity_from_dir(
-        feature_set_csv_dir=flattened_csv_dir,
+        feature_set_dir=flattened_csv_dir,
         split_names=["train", "val", "test"],
         out_dir=out_dir,
     )
@@ -450,6 +450,7 @@ def main(
         flattened_df=flattened_df,
         out_dir=out_dir,
         file_prefix=feature_set_id,
+        file_suffix="parquet",
     )
 
     log_to_wandb(

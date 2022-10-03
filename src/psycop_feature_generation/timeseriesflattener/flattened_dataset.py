@@ -15,14 +15,11 @@ from catalogue import Registry  # noqa # pylint: disable=unused-import
 from pandas import DataFrame
 from wasabi import Printer, msg
 
-from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
-    resolve_fns,
-)
-from psycop_feature_generation.utils import (
-    data_loaders,
-    df_contains_duplicates,
-    generate_feature_colname,
-)
+from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import \
+    resolve_fns
+from psycop_feature_generation.utils import (data_loaders,
+                                             df_contains_duplicates,
+                                             generate_feature_colname)
 
 
 def select_and_assert_keys(dictionary: dict, key_list: list[str]) -> dict:
@@ -49,12 +46,12 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
-        id_col_name: Optional[str] = "dw_ek_borger",
-        timestamp_col_name: Optional[str] = "timestamp",
+        id_col_name: str = "dw_ek_borger",
+        timestamp_col_name: str = "timestamp",
         min_date: Optional[pd.Timestamp] = None,
-        n_workers: Optional[int] = 60,
-        predictor_col_name_prefix: Optional[str] = "pred",
-        outcome_col_name_prefix: Optional[str] = "outc",
+        n_workers: int = 60,
+        predictor_col_name_prefix: str = "pred",
+        outcome_col_name_prefix: str = "outc",
         feature_cache_dir: Optional[Path] = None,
     ):
         """Class containing a time-series, flattened.
@@ -193,12 +190,14 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self,
         dir_path: Path,
         file_pattern: str,
+        file_suffix: str = "parquet",
     ) -> DataFrame:
         """Load most recent df matching pattern.
 
         Args:
             dir (Path): Directory to search
             file_pattern (str): Pattern to match
+            file_suffix (str, optional): File suffix to match. Defaults to "parquet".
 
         Returns:
             DataFrame: DataFrame matching pattern
@@ -206,7 +205,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         Raises:
             FileNotFoundError: If no file matching pattern is found
         """
-        files = list(dir_path.glob(f"*{file_pattern}*.csv"))
+        files = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
 
         if len(files) == 0:
             raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
@@ -255,6 +254,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         kwargs_dict: dict,
         file_pattern: str,
         full_col_str: str,
+        file_suffix: str = "parquet",
     ) -> bool:
         """Check if cache is hit.
 
@@ -268,7 +268,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             bool: True if cache is hit, False otherwise
         """
         # Check that file exists
-        file_pattern_hits = list(self.feature_cache_dir.glob(f"*{file_pattern}*.csv"))
+        file_pattern_hits = list(self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"))
 
         if len(file_pattern_hits) == 0:
             self.msg.info(f"Cache miss, {file_pattern} didn't exist")
@@ -393,7 +393,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
             # Write df to cache
             cache_df.to_parquet(
-                self.feature_cache_dir / f"{file_pattern}_{timestamp}.csv",
+                self.feature_cache_dir / f"{file_pattern}_{timestamp}.parquet",
                 index=False,
             )
 

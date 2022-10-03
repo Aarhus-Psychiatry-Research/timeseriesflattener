@@ -43,6 +43,6 @@ if __name__ == "__main__":
     PREDICTOR_LIST = MEDICATION_PREDICTORS + DIAGNOSIS_PREDICTORS + LAB_PREDICTORS
 
     save_feature_description_from_dir(
-        feature_set_csv_dir=feature_set_dir,
+        feature_set_dir=feature_set_dir,
         predictor_dicts=PREDICTOR_LIST,
     )

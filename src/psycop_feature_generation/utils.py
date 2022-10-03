@@ -90,15 +90,17 @@ def generate_feature_colname(
     return col_name
 
 
-def load_most_recent_csv_matching_pattern_as_df(
+def load_most_recent_file_matching_pattern_as_df(
     dir_path: Path,
     file_pattern: str,
+    file_suffix: str,
 ) -> pd.DataFrame:
     """Load most recent df matching pattern.
 
     Args:
         dir_path (Path): Directory to search
         file_pattern (str): Pattern to match
+        file_suffix (str): File suffix. Must be either ".csv" or ".parquet".
 
     Returns:
         pd.DataFrame: DataFrame matching pattern
@@ -106,14 +108,17 @@ def load_most_recent_csv_matching_pattern_as_df(
     Raises:
         FileNotFoundError: If no file matching pattern is found
     """
-    files = list(dir_path.glob(f"*{file_pattern}*.csv"))
+    files = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
 
     if len(files) == 0:
         raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
 
     most_recent_file = max(files, key=os.path.getctime)
 
-    return pd.read_csv(most_recent_file)
+    if file_suffix == "csv":
+        return pd.read_csv(most_recent_file)
+    elif file_suffix == "parquet":
+        return pd.read_parquet(most_recent_file)
 
 
 def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]):
