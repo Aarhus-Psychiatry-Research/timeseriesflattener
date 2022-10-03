@@ -42,7 +42,6 @@ def get_lab_feature_spec(  # pylint: disable=dangerous-default-value
         "unscheduled_p_glc",
         "triglycerides",
         "fasting_ldl",
-        "alat",
         "crp",
         "egfr",
         "albumine_creatinine_ratio",
