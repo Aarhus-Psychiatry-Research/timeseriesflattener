@@ -388,11 +388,12 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
     The resulting reports are saved to a sub directory as .html files.
 
     Args:
-        feature_set_csv_dir (Path): Path to a directory containing train/val/test files
+        feature_set_dir (Path): Path to a directory containing train/val/test files
         n_rows (Optional[int]): Whether to only load a subset of the data.
             Should only be used for debugging.
         split_names (list[str]): list of splits to check (train, val, test)
         out_dir (Optional[Path]): Path to the directory where the reports should be saved
+        file_suffix (str, optional): Suffix of the files. Defaults to "parquet".
     """
     if split_names is None:
         split_names = ["train", "val", "test"]
