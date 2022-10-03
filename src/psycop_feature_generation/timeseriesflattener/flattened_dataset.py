@@ -403,7 +403,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             # Write df to cache
             write_df_to_file(
                 df=cache_df,
-                filepath=self.feature_cache_dir / f"{file_pattern}_{timestamp}.parquet",
+                file_path=self.feature_cache_dir
+                / f"{file_pattern}_{timestamp}.parquet",
             )
 
         return df
