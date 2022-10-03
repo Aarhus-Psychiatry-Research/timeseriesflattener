@@ -350,9 +350,6 @@ def setup_for_main(
     """
     predictor_combinations = create_feature_combinations(arg_sets=predictor_spec_list)
 
-    # Check that there are no duplicates in predictor combinations
-    assert_no_duplicates_in_list(predictor_combinations)
-
     # Some predictors take way longer to complete. Shuffling ensures that e.g. the ones that take the longest aren't all
     # at the end of the list.
     random.shuffle(predictor_spec_list)
@@ -369,16 +366,25 @@ def setup_for_main(
     return predictor_combinations, proj_path, feature_set_id
 
 
-def assert_no_duplicates_in_list(predictor_spec_list):
-    """Assert that there are no duplicates in list.
+def assert_no_duplicate_dicts_in_list(predictor_spec_list):
+    """Find potential duplicates in list of dicts.
 
     Args:
         predictor_combinations (list[dict[str, dict[str, Any]]]): List of predictor combinations.
     """
-    # Check that there are no duplicates in predictor combinations
-    assert len(predictor_spec_list) == len(
-        set(tuple(sorted(x.items())) for x in predictor_spec_list)
-    )
+    # Find duplicates in list of dicts
+    seen = set()
+    duplicates = set()
+
+    for d in predictor_spec_list:
+        t = tuple(d.items())
+        if t in seen:
+            duplicates.add(t)
+        else:
+            seen.add(t)
+
+    if len(duplicates) > 0:
+        raise ValueError(f"Found duplicates in list of dicts: {duplicates}")
 
 
 def pre_load_project_dfs(

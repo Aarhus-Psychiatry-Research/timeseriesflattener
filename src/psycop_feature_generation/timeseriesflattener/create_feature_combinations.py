@@ -4,6 +4,10 @@ are lists, and then creating each possible permutation."""
 import itertools
 from typing import Any, Union
 
+from application.t2d.generate_features_and_write_to_disk import (
+    assert_no_duplicate_dicts_in_list,
+)
+
 
 def create_feature_combinations_from_dict(
     d: dict[str, Union[str, list]],
@@ -73,6 +77,9 @@ def create_feature_combinations(
     feature_combinations = []
     for arg_set in arg_sets:
         feature_combinations.extend(create_feature_combinations_from_dict(arg_set))
+
+    assert_no_duplicate_dicts_in_list(feature_combinations)
+
     return feature_combinations
 
 
