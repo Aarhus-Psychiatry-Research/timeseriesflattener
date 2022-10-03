@@ -68,5 +68,5 @@ jobs:
         # 1) Set upload_to_pypi to true in pyproject.toml and
         # 2) Set the pypi_token in the repo
         # 3) Uncomment the two lines below
-        # repository_username: __token__
-        # repository_password: ${{ secrets.PYPI_TOKEN }}
+        repository_username: __token__
+        repository_password: ${{ secrets.PYPI_TOKEN }}
