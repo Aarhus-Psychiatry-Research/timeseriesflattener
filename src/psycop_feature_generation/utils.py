@@ -134,7 +134,10 @@ def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]):
     return df.duplicated(subset=col_subset).any()
 
 
-def load_dataset_from_file(file_path: str, nrows: Optional[int] = None) -> pd.DataFrame:
+def load_dataset_from_file(
+    file_path: Path,
+    nrows: Optional[int] = None,
+) -> pd.DataFrame:
     """Load dataset from file. Handles csv and parquet files based on suffix.
 
     Args:
@@ -145,12 +148,12 @@ def load_dataset_from_file(file_path: str, nrows: Optional[int] = None) -> pd.Da
         pd.DataFrame: Dataset
     """
 
-    file_suffix = file_path.split(".")[-1]
+    file_suffix = file_path.suffix
 
-    if file_suffix == "csv":
+    if file_suffix == ".csv":
         return pd.read_csv(file_path, nrows=nrows)
 
-    elif file_suffix == "parquet":
+    elif file_suffix == ".parquet":
         if nrows:
             raise ValueError("nrows not supported for parquet files")
 
