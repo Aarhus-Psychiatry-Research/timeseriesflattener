@@ -350,6 +350,9 @@ def setup_for_main(
     """
     predictor_combinations = create_feature_combinations(arg_sets=predictor_spec_list)
 
+    # Check that there are no duplicates in predictor combinations
+    assert_no_duplicates_in_list(predictor_combinations)
+
     # Some predictors take way longer to complete. Shuffling ensures that e.g. the ones that take the longest aren't all
     # at the end of the list.
     random.shuffle(predictor_spec_list)
@@ -364,6 +367,18 @@ def setup_for_main(
     feature_set_id = f"psycop_{proj_name}_{current_user}_{len(predictor_combinations)}_features_{time.strftime('%Y_%m_%d_%H_%M')}"
 
     return predictor_combinations, proj_path, feature_set_id
+
+
+def assert_no_duplicates_in_list(predictor_spec_list):
+    """Assert that there are no duplicates in list.
+
+    Args:
+        predictor_combinations (list[dict[str, dict[str, Any]]]): List of predictor combinations.
+    """
+    # Check that there are no duplicates in predictor combinations
+    assert len(predictor_spec_list) == len(
+        set(tuple(sorted(x.items())) for x in predictor_spec_list)
+    )
 
 
 def pre_load_project_dfs(
