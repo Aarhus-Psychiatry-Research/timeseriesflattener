@@ -93,7 +93,7 @@ def create_save_dir_path(
 
     # Split and save to disk
     # Create directory to store all files related to this run
-    save_dir = proj_path / feature_set_id
+    save_dir = proj_path / "feature_sets" / feature_set_id
 
     if not save_dir.exists():
         save_dir.mkdir()
@@ -366,22 +366,22 @@ def setup_for_main(
     return predictor_combinations, proj_path, feature_set_id
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list):
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
     """Find potential duplicates in list of dicts.
 
     Args:
-        predictor_combinations (list[dict[str, dict[str, Any]]]): List of predictor combinations.
+        predictor_spec_list (list[dict[str, dict[str, Any]]]): List of predictor combinations.
     """
     # Find duplicates in list of dicts
     seen = set()
     duplicates = set()
 
     for d in predictor_spec_list:
-        t = tuple(d.items())
-        if t in seen:
-            duplicates.add(t)
+        d_as_tuple = tuple(d.items())
+        if tuple(d.items()) in seen:
+            duplicates.add(d_as_tuple)
         else:
-            seen.add(t)
+            seen.add(d_as_tuple)
 
     if len(duplicates) > 0:
         raise ValueError(f"Found duplicates in list of dicts: {duplicates}")
