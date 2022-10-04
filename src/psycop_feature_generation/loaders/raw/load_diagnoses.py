@@ -274,6 +274,15 @@ def sleep_problems_unspecified(n_rows: Optional[int] = None) -> pd.DataFrame:
     )
 
 
+@data_loaders.register("copd")
+def copd(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return from_physical_visits(
+        icd_code=["j44"],
+        wildcard_icd_code=True,
+        n_rows=n_rows,
+    )
+
+
 # Psychiatric diagnoses
 # data loaders for all diagnoses in the f0-chapter (organic mental disorders)
 @data_loaders.register("f0_disorders")
@@ -713,16 +722,6 @@ def behavioural_disorders(n_rows: Optional[int] = None) -> pd.DataFrame:
 def tics_and_misc(n_rows: Optional[int] = None) -> pd.DataFrame:
     return from_physical_visits(
         icd_code=["f95", "f98"],
-        wildcard_icd_code=True,
-        n_rows=n_rows,
-    )
-
-
-# COPD
-@data_loaders.register("copd")
-def copd(n_rows: Optional[int] = None) -> pd.DataFrame:
-    return from_physical_visits(
-        icd_code=["j44"],
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
