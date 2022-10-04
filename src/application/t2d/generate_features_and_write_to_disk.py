@@ -5,6 +5,8 @@ maturity.
 """
 
 import random
+import sys
+import tempfile
 import time
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -32,7 +34,7 @@ from psycop_feature_generation.timeseriesflattener.create_feature_combinations i
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
-from psycop_feature_generation.utils import FEATURE_SETS_PATH
+from psycop_feature_generation.utils import FEATURE_SETS_PATH, PROJECT_ROOT
 
 
 def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
@@ -42,6 +44,13 @@ def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
         "save_path": save_dir,
         "predictor_list": predictor_combinations,
     }
+
+    # on Overtaci, the wandb tmp directory is not automatically created
+    # so we create it here
+    # create dewbug-cli.one folders in /tmp and project dir
+    if sys.platform == "win32":
+        (Path(tempfile.gettempdir()) / "debug-cli.onerm").mkdir(exist_ok=True)
+        (PROJECT_ROOT / "wandb" / "debug-cli.onerm").mkdir(exist_ok=True)
 
     run = wandb.init(project=wandb_project_name, config=feature_settings)
     run.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
