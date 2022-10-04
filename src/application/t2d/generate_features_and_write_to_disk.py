@@ -34,7 +34,11 @@ from psycop_feature_generation.timeseriesflattener.create_feature_combinations i
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
-from psycop_feature_generation.utils import FEATURE_SETS_PATH, PROJECT_ROOT, write_df_to_file
+from psycop_feature_generation.utils import (
+    FEATURE_SETS_PATH,
+    PROJECT_ROOT,
+    write_df_to_file,
+)
 
 
 def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
