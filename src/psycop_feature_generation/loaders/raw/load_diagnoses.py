@@ -716,3 +716,13 @@ def tics_and_misc(n_rows: Optional[int] = None) -> pd.DataFrame:
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
+
+
+# COPD
+@data_loaders.register("copd")
+def copd(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return from_physical_visits(
+        icd_code=["j44"],
+        wildcard_icd_code=True,
+        n_rows=n_rows,
+    )
