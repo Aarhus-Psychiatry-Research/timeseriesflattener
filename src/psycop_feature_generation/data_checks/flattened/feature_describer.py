@@ -2,7 +2,6 @@
 df."""
 
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -161,22 +160,19 @@ def generate_feature_description_df(
 def save_feature_description_from_dir(
     feature_set_dir: Path,
     predictor_dicts: list[dict[str, str]],
-    splits: Optional[list[str]] = None,
+    file_suffix: str,
+    splits: tuple[str] = ("train",),
     out_dir: Path = None,
-    file_suffix: str = "parquet",
 ):
     """Write a csv with feature descriptions in the directory.
 
     Args:
         feature_set_dir (Path): Path to directory with data frames.
         predictor_dicts (list[dict[str, str]]): list of dictionaries with predictor information.
-        splits (list[str]): list of splits to include in the description. Defaults to ["train"].
+        file_suffix (str): Suffix of the data frames to load. Must be either ".csv" or ".parquet".
+        splits (tuple[str]): tuple of splits to include in the description. Defaults to ("train").
         out_dir (Path): Path to directory where to save the feature description. Defaults to None.
-        file_suffix (str): Suffix of the data frames. Defaults to "parquet".
     """
-    if splits is None:
-        splits = ["train"]
-
     msg = Printer(timestamp=True)
 
     if out_dir is None:

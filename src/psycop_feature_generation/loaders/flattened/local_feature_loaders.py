@@ -29,17 +29,17 @@ def get_predictors(df: pd.DataFrame, include_id: bool) -> pd.DataFrame:
 
 def load_split(
     feature_set_dir: Path,
+    file_suffix: str,
     split: str,
     nrows: Optional[int] = None,
-    file_suffix: str = ".parquet",
 ) -> pd.DataFrame:
     """Loads a given data split as a dataframe from a directory.
 
     Args:
         feature_set_dir (Path): Path to directory containing data files
+        file_suffix (str): The suffix of the files to load.
         split (str): Which string to look for (e.g. 'train', 'val', 'test')
-        nrows (Optional[int]): Whether to only load a subset of the data
-        file_suffix (str): The suffix of the files to load. Defaults to '.parquet'.
+        nrows (Optional[int]): Whether to only load a subset of the dat
 
     Returns:
         pd.DataFrame: The loaded dataframe
@@ -51,30 +51,31 @@ def load_split(
 
 def load_split_predictors(
     feature_set_dir: Path,
+    file_suffix: str,
     split: str,
     include_id: bool,
     nrows: Optional[int] = None,
-    file_suffix: str = ".parquet",
 ) -> pd.DataFrame:
     """Loads predictors from a given data split as a dataframe from a
     directory.
 
     Args:
         feature_set_dir (Path): Path to directory containing data files
+        file_suffix (str): The suffix of the files to load.
         split (str): Which string to look for (e.g. 'train', 'val', 'test')
         include_id (bool): Whether to include 'dw_ek_borger' in the returned df
         nrows (Optional[int]): Whether to only load a subset of the data
-        file_suffix (str): The suffix of the files to load. Defaults to '.parquet'.
 
     Returns:
         pd.DataFrame: The loaded dataframe
     """
+
     return get_predictors(
         load_split(
-            feature_set_dir,
-            split,
-            nrows=nrows,
+            feature_set_dir=feature_set_dir,
             file_suffix=file_suffix,
+            split=split,
+            nrows=nrows,
         ),
         include_id,
     )
@@ -96,21 +97,26 @@ def get_outcomes(df: pd.DataFrame) -> pd.DataFrame:
 
 def load_split_outcomes(
     feature_set_dir: Path,
+    file_suffix: str,
     split: str,
     nrows: Optional[int] = None,
-    file_suffix: str = ".parquet",
 ) -> pd.DataFrame:
     """Loads outcomes from a given data split as a dataframe from a directory.
 
     Args:
         feature_set_dir (Path): Path to directory containing data files
+        file_suffix (str): The suffix of the files to load.
         split (str): Which string to look for (e.g. 'train', 'val', 'test')
         nrows (Optional[int]): Whether to only load a subset of the data
-        file_suffix (str): The suffix of the files to load. Defaults to '.parquet'.
 
     Returns:
         pd.DataFrame: The loaded dataframe
     """
     return get_outcomes(
-        load_split(feature_set_dir, split, nrows=nrows, file_suffix=file_suffix),
+        load_split(
+            feature_set_dir=feature_set_dir,
+            split=split,
+            nrows=nrows,
+            file_suffix=file_suffix,
+        ),
     )

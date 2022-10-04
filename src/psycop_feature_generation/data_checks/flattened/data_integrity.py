@@ -130,6 +130,7 @@ def get_failed_check_names(result: SuiteResult) -> list[str]:
 
 def check_train_data_integrity(
     feature_set_dir: Path,
+    file_suffix: str,
     out_dir: Path,
     train_outcomes_df: pd.DataFrame,
     outcome_checks_dir: Path,
@@ -139,6 +140,7 @@ def check_train_data_integrity(
 
     Args:
         feature_set_dir (Path): Path to a directory containing train/val/test files
+        file_suffix (str): File suffix of the train/val/test files
         out_dir (Path): Path to the directory where the reports should be saved
         train_outcomes_df (pd.DataFrame): The train outcomes dataframe
         outcome_checks_dir (Path): Path to the directory where the outcome specific reports should be saved
@@ -161,6 +163,7 @@ def check_train_data_integrity(
         split="train",
         include_id=True,
         nrows=n_rows,
+        file_suffix=file_suffix,
     )
 
     data_s = Dataset(
@@ -244,7 +247,7 @@ def get_split_as_ds_dict(
     feature_set_dir: Path,
     n_rows: Optional[int],
     split: str,
-    file_suffix: str = "parquet",
+    file_suffix: str,
 ) -> dict[str, Any]:
     """Loads a split as a Deepchecks Dataset dict.
 
@@ -253,7 +256,7 @@ def get_split_as_ds_dict(
         n_rows (Optional[int]): Whether to only load a subset of the data.
             Should only be used for debugging.
         split (str): Which split to load
-        file_suffix (str, optional): Suffix of the files. Defaults to "parquet".
+        file_suffix (str, optional): Suffix of the files.
 
     Returns:
         dict: Deepchecks Dataset dict
@@ -289,6 +292,7 @@ def get_split_as_ds_dict(
 def run_validation_requiring_split_comparison(
     feature_set_dir: Path,
     split_names: list[str],
+    file_suffix: str,
     out_dir: Path,
     train_outcome_df: pd.DataFrame,
     n_rows: Optional[int] = None,
@@ -298,6 +302,7 @@ def run_validation_requiring_split_comparison(
     Args:
         feature_set_dir (Path): Path to a directory containing train/val/test files
         split_names (list[str]): list of splits to check (train, val, test)
+        file_suffix (str): File suffix of the train/val/test files
         out_dir (Path): Path to the directory where the reports should be saved
         train_outcome_df (pd.DataFrame): The train outcomes.
         n_rows (int): Whether to only load a subset of the data.
@@ -316,6 +321,7 @@ def run_validation_requiring_split_comparison(
             feature_set_dir=feature_set_dir,
             n_rows=n_rows,
             split=split_name,
+            file_suffix=file_suffix,
         )
 
     for split_pair in (("train", "val"), ("train", "test")):
@@ -379,7 +385,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
     n_rows: Optional[int] = None,
     split_names: Optional[list[str]] = None,
     out_dir: Optional[Path] = None,
-    file_suffix: Optional[str] = "parquet",
+    file_suffix: Optional[str] = None,
 ) -> None:
     """Runs Deepcheck data integrity and train/val/test checks for a given
     directory containing train/val/test files. Splits indicates which data.
@@ -393,8 +399,13 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
             Should only be used for debugging.
         split_names (list[str]): list of splits to check (train, val, test)
         out_dir (Optional[Path]): Path to the directory where the reports should be saved
-        file_suffix (str, optional): Suffix of the files. Defaults to "parquet".
+        file_suffix (str, optional): Suffix of the files to load. Must be either "csv" or "parquet".
     """
+    if file_suffix not in ["parquet", "csv"]:
+        raise ValueError(
+            f"file_suffix must be either 'parquet' or 'csv', got {file_suffix}",
+        )
+
     if split_names is None:
         split_names = ["train", "val", "test"]
 
@@ -410,6 +421,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
         feature_set_dir=feature_set_dir,
         split="train",
         nrows=n_rows,
+        file_suffix="parquet",
     )
 
     failed_checks = (
@@ -440,6 +452,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
             out_dir=out_dir,
             outcome_checks_dir=outcome_checks_dir,
             train_outcomes_df=train_outcomes_df,
+            file_suffix=file_suffix,
         )
 
         # Add all keys in failures to failed_checks
@@ -454,4 +467,5 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
         n_rows=n_rows,
         out_dir=out_dir,
         train_outcome_df=train_outcomes_df,
+        file_suffix=file_suffix,
     )

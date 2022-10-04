@@ -14,4 +14,5 @@ if __name__ == "__main__":
     save_feature_set_integrity_from_dir(
         feature_set_dir=subdir,
         split_names=["train", "val", "test"],
+        file_suffix=".parquet",
     )

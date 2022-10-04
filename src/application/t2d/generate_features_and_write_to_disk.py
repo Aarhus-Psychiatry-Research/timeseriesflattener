@@ -66,6 +66,7 @@ def save_feature_set_description_to_disk(
     predictor_combinations: list,
     flattened_csv_dir: Path,
     out_dir: Path,
+    file_suffix: str,
 ):
     """Describe output.
 
@@ -73,6 +74,7 @@ def save_feature_set_description_to_disk(
         predictor_combinations (list): List of predictor specs.
         flattened_csv_dir (Path): Path to flattened csv dir.
         out_dir (Path): Path to output dir.
+        file_suffix (str): File suffix.
     """
 
     # Create data integrity report
@@ -81,12 +83,14 @@ def save_feature_set_description_to_disk(
         predictor_dicts=predictor_combinations,
         splits=["train"],
         out_dir=out_dir,
+        file_suffix=file_suffix,
     )
 
     save_feature_set_integrity_from_dir(
         feature_set_dir=flattened_csv_dir,
         split_names=["train", "val", "test"],
         out_dir=out_dir,
+        file_suffix=file_suffix,
     )
 
 
@@ -118,9 +122,9 @@ def split_and_save_to_disk(
     flattened_df: pd.DataFrame,
     out_dir: Path,
     file_prefix: str,
+    file_suffix: str,
     split_ids_dict: Optional[dict[str, pd.Series]] = None,
     splits: Optional[list[str]] = None,
-    file_suffix: str = "parquet",
 ):
     """Split and save to disk.
 
@@ -128,9 +132,9 @@ def split_and_save_to_disk(
         flattened_df (pd.DataFrame): Flattened dataframe.
         out_dir (Path): Path to output directory.
         file_prefix (str): File prefix.
+        file_suffix (str, optional): Format to save to. Takes any of ["parquet", "csv"].
         split_ids_dict (Optional[dict[str, list[str]]]): Dictionary of split ids, like {"train": pd.Series with ids}.
         splits (list, optional): Which splits to create. Defaults to ["train", "val", "test"].
-        file_suffix (str, optional): Format to save to. Takes any of ["parquet", "csv"]. Defaults to "csv".
     """
 
     if splits is None:
@@ -473,6 +477,7 @@ def main(
         predictor_combinations=predictor_combinations,
         flattened_csv_dir=out_dir,
         out_dir=out_dir,
+        file_suffix="parquet",
     )
 
 

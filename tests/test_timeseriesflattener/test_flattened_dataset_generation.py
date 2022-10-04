@@ -214,10 +214,12 @@ def test_all_non_online_elements_in_pipeline(
         file_prefix="integration",
         split_ids_dict=split_ids,
         splits=splits,
+        file_suffix="parquet",
     )
 
     save_feature_set_description_to_disk(
         predictor_combinations=predictor_combinations,
         flattened_csv_dir=tmp_path,
         out_dir=tmp_path,
+        file_suffix="parquet",
     )

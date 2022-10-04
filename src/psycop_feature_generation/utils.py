@@ -91,50 +91,6 @@ def generate_feature_colname(
     return col_name
 
 
-def load_most_recent_file_matching_pattern_as_df(
-    dir_path: Path,
-    file_pattern: str,
-    file_suffix: str,
-) -> pd.DataFrame:
-    """Load most recent df matching pattern.
-
-    Args:
-        dir_path (Path): Directory to search
-        file_pattern (str): Pattern to match
-        file_suffix (str): File suffix. Must be either ".csv" or ".parquet".
-
-    Returns:
-        pd.DataFrame: DataFrame matching pattern
-
-    Raises:
-        FileNotFoundError: If no file matching pattern is found
-    """
-    files = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
-
-    if len(files) == 0:
-        raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
-
-    most_recent_file = max(files, key=os.path.getctime)
-
-    if file_suffix == "csv":
-        return pd.read_csv(most_recent_file)
-    elif file_suffix == "parquet":
-        return pd.read_parquet(most_recent_file)
-
-
-def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]):
-    """Check if a dataframe contains duplicates.
-
-    Args:
-        df (pd.DataFrame): Dataframe to check.
-        col_subset (list[str]): Columns to check for duplicates.
-
-    Returns:
-        bool: True if duplicates are found.
-    """
-    return df.duplicated(subset=col_subset).any()
-
-
 def load_dataset_from_file(
     file_path: Path,
     nrows: Optional[int] = None,
@@ -161,6 +117,47 @@ def load_dataset_from_file(
         return pd.read_parquet(file_path)
     else:
         raise ValueError(f"Invalid file suffix {file_suffix}")
+
+
+def load_most_recent_file_matching_pattern_as_df(
+    dir_path: Path,
+    file_pattern: str,
+    file_suffix: str,
+) -> pd.DataFrame:
+    """Load most recent df matching pattern.
+
+    Args:
+        dir_path (Path): Directory to search
+        file_pattern (str): Pattern to match
+        file_suffix (str): File suffix. Must be either ".csv" or ".parquet".
+
+    Returns:
+        pd.DataFrame: DataFrame matching pattern
+
+    Raises:
+        FileNotFoundError: If no file matching pattern is found
+    """
+    files = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
+
+    if len(files) == 0:
+        raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
+
+    most_recent_file = max(files, key=os.path.getctime)
+
+    return load_dataset_from_file(file_path=most_recent_file)
+
+
+def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]):
+    """Check if a dataframe contains duplicates.
+
+    Args:
+        df (pd.DataFrame): Dataframe to check.
+        col_subset (list[str]): Columns to check for duplicates.
+
+    Returns:
+        bool: True if duplicates are found.
+    """
+    return df.duplicated(subset=col_subset).any()
 
 
 def write_df_to_file(
