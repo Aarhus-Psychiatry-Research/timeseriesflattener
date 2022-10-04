@@ -9,9 +9,6 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    concurrency: 
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
 
     strategy:
       matrix:
@@ -19,6 +16,11 @@ jobs:
         python-version: [3.9]
         poetry-version: [1.1.15]
         cache-version: [0.0.2] # Change this number if you want to manually invalidate all caches
+
+    # This allows a subsequently queued workflow run to interrupt previous runs
+    concurrency:
+      group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+      cancel-in-progress: true
 
     steps:
       - name: Checkout repo
