@@ -11,8 +11,8 @@ from psycop_feature_generation.utils import data_loaders
 
 
 def sfi_loader(
-    sfi_type: Optional[str] = None,
-    element_type: Optional[str] = None,
+    aktivitetstypenavn: Optional[str] = None,
+    elementledetekst: Optional[str] = None,
     n_rows: Optional[int] = None,
     value_col: str = "numelementvaerdi",
 ) -> pd.DataFrame:
@@ -20,8 +20,8 @@ def sfi_loader(
     view with numelementværdi as the value column.
 
     Args:
-        sfi_type (str): Type of structured_sfi, e.g. 'broeset_violence_checklist', 'selvmordsvurdering'. Defaults to None. # noqa: DAR102
-        element_type (str): elementledetekst which specifies which sub-element of the SFI, e.g. 'Sum', "Selvmordstanker". Defaults to None.
+        aktivitetstypenavn (str): Type of structured_sfi, e.g. 'broeset_violence_checklist', 'selvmordsvurdering'. Defaults to None. # noqa: DAR102
+        elementledetekst (str): elementledetekst which specifies which sub-element of the SFI, e.g. 'Sum', "Selvmordstanker". Defaults to None.
         n_rows: Number of rows to return. Defaults to None which returns entire structured_sfi data view.
         value_col: Column to return as value col. Defaults to 'numelementvaerdi'.
 
@@ -31,10 +31,10 @@ def sfi_loader(
     view = "[FOR_SFI_uden_fritekst_resultater_psyk_somatik_inkl_2021]"
     sql = f"SELECT dw_ek_borger, datotid_resultat_udfoert, {value_col} FROM [fct].{view} WHERE datotid_resultat_udfoert IS NOT NULL"
 
-    if element_type:
-        sql += f" AND aktivitetstypenavn = '{sfi_type}'"
-    if sfi_type:
-        sql += f" AND elementledetekst = '{element_type}'"
+    if elementledetekst:
+        sql += f" AND aktivitetstypenavn = '{aktivitetstypenavn}'"
+    if aktivitetstypenavn:
+        sql += f" AND elementledetekst = '{elementledetekst}'"
 
     df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
 
@@ -55,8 +55,8 @@ def sfi_loader(
 @data_loaders.register("broeset_violence_checklist")
 def broeset_violence_checklist(n_rows: Optional[int] = None) -> pd.DataFrame:
     return sfi_loader(
-        sfi_type="Brøset Violence Checkliste (BVC)",
-        element_type="Sum",
+        aktivitetstypenavn="Brøset Violence Checkliste (BVC)",
+        elementledetekst="Sum",
         n_rows=n_rows,
     )
 
@@ -64,8 +64,8 @@ def broeset_violence_checklist(n_rows: Optional[int] = None) -> pd.DataFrame:
 @data_loaders.register("selvmordsrisiko")
 def selvmordsrisiko(n_rows: Optional[int] = None) -> pd.DataFrame:
     df = sfi_loader(
-        sfi_type="Screening for selvmordsrisiko",
-        element_type="ScrSelvmordlRisikoniveauKonkl",
+        aktivitetstypenavn="Screening for selvmordsrisiko",
+        elementledetekst="ScrSelvmordlRisikoniveauKonkl",
         n_rows=n_rows,
         value_col="elementkode",
     )
@@ -86,8 +86,8 @@ def selvmordsrisiko(n_rows: Optional[int] = None) -> pd.DataFrame:
 @data_loaders.register("hamilton_d17")
 def hamilton_d17(n_rows: Optional[int] = None) -> pd.DataFrame:
     return sfi_loader(
-        sfi_type="Vurdering af depressionssværhedsgrad med HAM-D17",
-        element_type="Samlet score HAM-D17",
+        aktivitetstypenavn="Vurdering af depressionssværhedsgrad med HAM-D17",
+        elementledetekst="Samlet score HAM-D17",
         n_rows=n_rows,
     )
 
@@ -95,8 +95,38 @@ def hamilton_d17(n_rows: Optional[int] = None) -> pd.DataFrame:
 @data_loaders.register("mas_m")
 def mas_m(n_rows: Optional[int] = None) -> pd.DataFrame:
     return sfi_loader(
-        sfi_type="MAS-M maniscoringsskema (Modificeret Bech-Rafaelsen Maniskala)",
-        element_type="MAS-M score",
+        aktivitetstypenavn="MAS-M maniscoringsskema (Modificeret Bech-Rafaelsen Maniskala)",
+        elementledetekst="MAS-M score",
+        n_rows=n_rows,
+        value_col="numelementvaerdi",
+    )
+
+
+@data_loaders.register("height_in_cm")
+def height_in_cm(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return sfi_loader(
+        aktivitetstypenavn="Måling af patienthøjde (cm)",
+        elementledetekst="Højde i cm",
+        n_rows=n_rows,
+        value_col="numelementvaerdi",
+    )
+
+
+@data_loaders.register("weight_in_kg")
+def weight_in_kg(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return sfi_loader(
+        aktivitetstypenavn="Måling af patientvægt (kg)",
+        elementledetekst="Vægt i kg",
+        n_rows=n_rows,
+        value_col="numelementvaerdi",
+    )
+
+
+@data_loaders.register("bmi")
+def bmi(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return sfi_loader(
+        aktivitetstypenavn="Bestemmelse af Body Mass Index (BMI)",
+        elementledetekst="BMI",
         n_rows=n_rows,
         value_col="numelementvaerdi",
     )
