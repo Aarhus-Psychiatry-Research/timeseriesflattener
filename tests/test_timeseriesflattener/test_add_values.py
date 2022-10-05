@@ -569,7 +569,10 @@ def test_add_hf_text_data():
                 "lookbehind_days": [1, 365, 720],
                 "resolve_multiple": "min",
                 "fallback": np.nan,
-                "loader_kwargs": {"featurizer": "huggingface"},
+                "loader_kwargs": {
+                    "featurizer": "huggingface",
+                    "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+                },
                 "new_col_name": [TEST_HF_EMBEDDINGS],
             },
         ],
