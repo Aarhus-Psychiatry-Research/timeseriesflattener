@@ -24,6 +24,8 @@ from psycop_feature_generation.utils import (
     data_loaders,
     df_contains_duplicates,
     generate_feature_colname,
+    load_dataset_from_file,
+    write_df_to_file,
 )
 
 ProgressBar().register()
@@ -53,12 +55,12 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
-        id_col_name: Optional[str] = "dw_ek_borger",
-        timestamp_col_name: Optional[str] = "timestamp",
+        id_col_name: str = "dw_ek_borger",
+        timestamp_col_name: str = "timestamp",
         min_date: Optional[pd.Timestamp] = None,
-        n_workers: Optional[int] = 60,
-        predictor_col_name_prefix: Optional[str] = "pred",
-        outcome_col_name_prefix: Optional[str] = "outc",
+        n_workers: int = 60,
+        predictor_col_name_prefix: str = "pred",
+        outcome_col_name_prefix: str = "outc",
         feature_cache_dir: Optional[Path] = None,
     ):
         """Class containing a time-series, flattened.
@@ -197,12 +199,14 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self,
         dir_path: Path,
         file_pattern: str,
+        file_suffix: str,
     ) -> DataFrame:
         """Load most recent df matching pattern.
 
         Args:
             dir (Path): Directory to search
             file_pattern (str): Pattern to match
+            file_suffix (str, optional): File suffix to match.
 
         Returns:
             DataFrame: DataFrame matching pattern
@@ -210,18 +214,21 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         Raises:
             FileNotFoundError: If no file matching pattern is found
         """
-        files = list(dir_path.glob(f"*{file_pattern}*.csv"))
+        files_with_suffix = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
 
-        if len(files) == 0:
+        if len(files_with_suffix) == 0:
             raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
 
-        most_recent_file = max(files, key=os.path.getctime)
+        path_of_most_recent_file = max(files_with_suffix, key=os.path.getctime)
 
-        return pd.read_csv(most_recent_file)
+        return load_dataset_from_file(
+            file_path=path_of_most_recent_file,
+        )
 
     def _load_cached_df_and_expand_fallback(
         self,
         file_pattern: str,
+        file_suffix: str,
         fallback: Any,
         full_col_str: str,
     ) -> pd.DataFrame:
@@ -229,6 +236,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         Args:
             file_pattern (str): File pattern to search for
+            file_suffix (str): File suffix to search for
             fallback (Any): Fallback value
             prediction_times_with_uuid_df (pd.DataFrame): Prediction times with uuids
             full_col_str (str): Full column name for values
@@ -239,6 +247,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         df = self._load_most_recent_df_matching_pattern(
             dir_path=self.feature_cache_dir,
             file_pattern=file_pattern,
+            file_suffix=file_suffix,
         )
 
         # Expand fallback column
@@ -259,20 +268,24 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         kwargs_dict: dict,
         file_pattern: str,
         full_col_str: str,
+        file_suffix: str,
     ) -> bool:
         """Check if cache is hit.
 
         Args:
             kwargs_dict (dict): dictionary of kwargs
             file_pattern (str): File pattern to match. Looks for *file_pattern* in cache dir.
-            e.g. "*feature_name*_uuids*.csv"
+            e.g. "*feature_name*_uuids*.file_suffix"
             full_col_str (str): Full column string. e.g. "feature_name_ahead_interval_days_resolve_multiple_fallback"
+            file_suffix (str): File suffix to match. e.g. "csv"
 
         Returns:
             bool: True if cache is hit, False otherwise
         """
         # Check that file exists
-        file_pattern_hits = list(self.feature_cache_dir.glob(f"*{file_pattern}*.csv"))
+        file_pattern_hits = list(
+            self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"),
+        )
 
         if len(file_pattern_hits) == 0:
             self.msg.info(f"Cache miss, {file_pattern} didn't exist")
@@ -282,6 +295,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         cache_df = self._load_most_recent_df_matching_pattern(
             dir_path=self.feature_cache_dir,
             file_pattern=file_pattern,
+            file_suffix=file_suffix,
         )
 
         generated_df = pd.DataFrame({full_col_str: []})
@@ -334,11 +348,16 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         msg.good(f"Cache hit for {full_col_str}")
         return True
 
-    def _get_feature(self, kwargs_dict: dict) -> DataFrame:
+    def _get_feature(
+        self,
+        kwargs_dict: dict,
+        file_suffix: str = "parquet",
+    ) -> DataFrame:
         """Get features. Either load from cache, or generate if necessary.
 
         Args:
             kwargs_dict (dict): dictionary of kwargs
+            file_suffix (str, optional): File suffix for the cache lookup. Defaults to "parquet".
 
         Returns:
             DataFrame: DataFrame generates with create_flattened_df
@@ -359,12 +378,14 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 file_pattern=file_pattern,
                 full_col_str=full_col_str,
                 kwargs_dict=kwargs_dict,
+                file_suffix="parquet",
             ):
 
                 df = self._load_cached_df_and_expand_fallback(
                     file_pattern=file_pattern,
                     full_col_str=full_col_str,
                     fallback=kwargs_dict["fallback"],
+                    file_suffix=file_suffix,
                 )
 
                 return df
@@ -396,9 +417,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
             # Write df to cache
-            cache_df.to_csv(
-                self.feature_cache_dir / f"{file_pattern}_{timestamp}.csv",
-                index=False,
+            write_df_to_file(
+                df=cache_df,
+                file_path=self.feature_cache_dir
+                / f"{file_pattern}_{timestamp}.parquet",
             )
 
         return df

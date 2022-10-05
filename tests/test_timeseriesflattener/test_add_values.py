@@ -493,9 +493,7 @@ def test_add_temporal_incident_binary_outcome():
 
     outcome_df = flattened_dataset.df
 
-    for col in [
-        "outc_dichotomous_t2d_within_2_days_max_fallback_0",
-    ]:
+    for col in ("outc_dichotomous_t2d_within_2_days_max_fallback_0",):
         for df in (outcome_df, expected_df):
             # Windows and Linux have different default dtypes for ints,
             # which is not a meaningful error here. So we force the dtype.
@@ -546,6 +544,7 @@ def test_add_tfidf_text_data():
     # assert len()
 
 
+# @pytest.mark.slow  # Only run if --runslow is passed to pytest
 # def test_add_hf_text_data():
 #     prediction_times_str = """dw_ek_borger,timestamp,
 #                             746430.0,1970-05-01 00:00:00

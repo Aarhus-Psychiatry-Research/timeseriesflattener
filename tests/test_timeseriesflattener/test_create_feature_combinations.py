@@ -26,7 +26,7 @@ def test_skip_one_if_no_need_to_process():
         {
             "predictor_df": "prediction_times_df",
             "source_values_col_name": "val",
-            "lookbehind_days": 1,
+            "lookbehind_days": 2,
             "resolve_multiple": "max",
             "fallback": 0,
         },
@@ -43,7 +43,7 @@ def test_skip_one_if_no_need_to_process():
         {
             "predictor_df": "prediction_times_df",
             "source_values_col_name": "val",
-            "lookbehind_days": 1,
+            "lookbehind_days": 2,
             "resolve_multiple": "max",
             "fallback": 0,
         },
