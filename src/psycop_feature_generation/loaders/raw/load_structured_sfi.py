@@ -98,4 +98,5 @@ def mas_m(n_rows: Optional[int] = None) -> pd.DataFrame:
         sfi_type="MAS-M maniscoringsskema (Modificeret Bech-Rafaelsen Maniskala)",
         element_type="MAS-M score",
         n_rows=n_rows,
+        value_col="numelementvaerdi",
     )
