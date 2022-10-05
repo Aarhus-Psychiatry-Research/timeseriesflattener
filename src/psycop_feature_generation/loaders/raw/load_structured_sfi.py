@@ -29,7 +29,7 @@ def sfi_loader(
         pd.DataFrame
     """
     view = "[FOR_SFI_uden_fritekst_resultater_psyk_somatik_inkl_2021]"
-    sql = f"SELECT dw_ek_borger, datotid_resultat_udfoert, aktivitetstypenavn, elementledetekst, {value_col} FROM [fct].{view} WHERE datotid_resultat_udfoert IS NOT NULL"
+    sql = f"SELECT dw_ek_borger, datotid_resultat_udfoert, {value_col} FROM [fct].{view} WHERE datotid_resultat_udfoert IS NOT NULL"
 
     if element_type:
         sql += f" AND aktivitetstypenavn = '{sfi_type}'"
