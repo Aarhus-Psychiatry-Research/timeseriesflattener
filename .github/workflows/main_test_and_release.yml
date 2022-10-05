@@ -17,6 +17,11 @@ jobs:
         poetry-version: [1.1.15]
         cache-version: [0.0.3] # Change this number if you want to manually invalidate all caches
 
+    # This allows a subsequently queued workflow run to interrupt previous runs
+    concurrency:
+      group: '${{ github.workflow }} - ${{ matrix.os }} @ ${{ github.ref }}'
+      cancel-in-progress: true
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
