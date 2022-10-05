@@ -49,9 +49,6 @@ def sfi_loader(
         inplace=True,
     )
 
-    # Change NaNs to 0
-    df["value"].fillna(0, inplace=True)
-
     return df.reset_index(drop=True)
 
 
