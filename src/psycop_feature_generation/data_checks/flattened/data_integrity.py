@@ -401,6 +401,8 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
         out_dir (Optional[Path]): Path to the directory where the reports should be saved
         file_suffix (str, optional): Suffix of the files to load. Must be either "csv" or "parquet".
     """
+    if file_suffix is None:
+        file_suffix = "parquet"
     if file_suffix not in ["parquet", "csv"]:
         raise ValueError(
             f"file_suffix must be either 'parquet' or 'csv', got {file_suffix}",
@@ -421,7 +423,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
         feature_set_dir=feature_set_dir,
         split="train",
         nrows=n_rows,
-        file_suffix="parquet",
+        file_suffix=file_suffix,
     )
 
     failed_checks = (
