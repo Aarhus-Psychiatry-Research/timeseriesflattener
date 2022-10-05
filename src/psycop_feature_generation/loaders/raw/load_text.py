@@ -425,11 +425,12 @@ def load_arbitrary_notes(
 
 
 @data_loaders.register("synth_notes")
-def load_synth_notes(featurizer: str) -> pd.DataFrame:
+def load_synth_notes(featurizer: str, **featurizer_kwargs) -> pd.DataFrame:
     """Load (featurized) synthetic notes for testing.
 
     Args:
         featurizer (str): Which featurizer to use
+        **featurizer_kwargs: Keyword arguments passed to the featurizer
 
     Raises:
         ValueError: If given invalid featurizer
@@ -450,7 +451,7 @@ def load_synth_notes(featurizer: str) -> pd.DataFrame:
     elif featurizer == "huggingface":
         return _huggingface_featurize(
             df,
-            model_id="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+            **featurizer_kwargs,
         )
 
     raise ValueError("Only tfidf or huggingface featurizer supported for synth notes")
