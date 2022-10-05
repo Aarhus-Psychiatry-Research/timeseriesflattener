@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.3.2 (2022-10-05)
+### Fix
+* Hardcoded file suffix ([`0101acc`](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/commit/0101accb995d060908b28f1338a313d82661683a))
+
 ## v0.3.1 (2022-10-05)
 ### Fix
 * Mismatched version in .tomll ([`292979b`](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/commit/292979bf85401818d5837a159c30c88c67ac454d))

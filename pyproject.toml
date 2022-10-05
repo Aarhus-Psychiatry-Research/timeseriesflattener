@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "psycop_feature_generation"
-version = "0.3.1"
+version = "0.3.2"
 description = ""
 authors = ["Your Name <you@example.com>"]
 
