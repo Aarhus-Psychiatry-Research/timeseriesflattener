@@ -1,4 +1,10 @@
-from typing import Any, Callable, Iterable, Optional, Union
+"""Generator for feature specifications.
+
+Makes it easy to generate many feature specifications at once, and
+documents the intended shape.
+"""
+from collections.abc import Callable, Iterable
+from typing import Any, Optional, Union
 
 
 def generate_feature_specification(  # pylint: disable=dangerous-default-value

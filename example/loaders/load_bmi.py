@@ -1,3 +1,4 @@
+"""Example of how to load demographic features."""
 import pandas as pd
 
 from psycop_feature_generation.loaders.raw.load_structured_sfi import (
@@ -19,11 +20,10 @@ if __name__ == "__main__":
     df_height = height_in_cm(n_rows=100_000)
     df_weight = weight_in_kg(n_rows=100_000)
 
-    pass
-
 
 def unique_and_percentage(series: pd.Series) -> pd.Series:
-    """Return unique values and their percentage of the total number of values in the series.
+    """Return unique values and their percentage of the total number of values
+    in the series.
 
     Args:
         series (pd.Series): Series to get unique values and percentage of.
