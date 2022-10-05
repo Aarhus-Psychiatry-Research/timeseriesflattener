@@ -489,3 +489,219 @@ def albumine_creatinine_ratio(
         n_rows=n_rows,
         values_to_load=values_to_load,
     )
+
+
+@data_loaders.register("cyp21a2")
+def cyp21a2(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU19053",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp2c19")
+def cyp2c19(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU19309",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp2c9")
+def cyp2c9(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU32095",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp3a5")
+def cyp3a5(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU27992",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp2d6")
+def cyp2d6(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU19308",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_lithium")
+def p_lithium(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU02613",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_clozapine")
+def p_clozapine(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU04114",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_olanzapine")
+def p_olanzapine(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU09358",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_aripiprazol")
+def p_aripiprazol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU26669",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_risperidone")
+def p_risperidone(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU04868",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_paliperidone")
+def p_paliperidone(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU18359",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_haloperidol")
+def p_haloperidol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU03937",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_amitriptyline")
+def p_amitriptyline(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU01224",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_nortriptyline")
+def p_nortriptyline(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU02923",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_clomipramine")
+def p_clomipramine(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU01616",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_paracetamol")
+def p_paracetamol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU03024",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_ibuprofen")
+def p_ibuprofen(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU08794",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_ethanol")
+def p_ethanol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = None,
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU01992",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
