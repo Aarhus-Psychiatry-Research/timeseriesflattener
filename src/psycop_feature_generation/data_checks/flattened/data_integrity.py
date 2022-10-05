@@ -385,7 +385,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
     n_rows: Optional[int] = None,
     split_names: Optional[list[str]] = None,
     out_dir: Optional[Path] = None,
-    file_suffix: Optional[str] = None,
+    file_suffix: str = "parquet",
 ) -> None:
     """Runs Deepcheck data integrity and train/val/test checks for a given
     directory containing train/val/test files. Splits indicates which data.
@@ -399,7 +399,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
             Should only be used for debugging.
         split_names (list[str]): list of splits to check (train, val, test)
         out_dir (Optional[Path]): Path to the directory where the reports should be saved
-        file_suffix (str, optional): Suffix of the files to load. Must be either "csv" or "parquet".
+        file_suffix (str, optional): Suffix of the files to load. Must be either "csv" or "parquet". Defaults to "parquet".
     """
     if file_suffix not in ["parquet", "csv"]:
         raise ValueError(
@@ -421,7 +421,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
         feature_set_dir=feature_set_dir,
         split="train",
         nrows=n_rows,
-        file_suffix="parquet",
+        file_suffix=file_suffix,
     )
 
     failed_checks = (
