@@ -67,6 +67,7 @@ def selvmordsrisiko(n_rows: Optional[int] = None) -> pd.DataFrame:
         sfi_type="Screening for selvmordsrisiko",
         element_type="ScrSelvmordlRisikoniveauKonkl",
         n_rows=n_rows,
+        value_col="elementkode",
     )
 
     df["value"] = df["value"].replace(
