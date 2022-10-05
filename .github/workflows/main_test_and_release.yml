@@ -15,7 +15,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: [3.9]
         poetry-version: [1.1.15]
-        cache-version: [0.0.2] # Change this number if you want to manually invalidate all caches
+        cache-version: [0.0.3] # Change this number if you want to manually invalidate all caches
 
     steps:
       - name: Checkout repo
