@@ -11,9 +11,8 @@ from utils_for_testing import (  # pylint: disable=import-error
     str_to_df,
 )
 
-from psycop_feature_generation.loaders.raw.load_text import (  # noqa pylint: disable=unused-import
+from psycop_feature_generation.loaders.raw.load_text import (  # noqa pylint: disable=unused-import; load_synth_notes,
     _chunk_text,
-    load_synth_notes,
 )
 from psycop_feature_generation.timeseriesflattener import (
     FlattenedDataset,
@@ -21,7 +20,7 @@ from psycop_feature_generation.timeseriesflattener import (
 )
 
 # pylint: disable=import-error
-from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
+# from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
 from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
 
 
@@ -547,47 +546,47 @@ def test_add_tfidf_text_data():
     # assert len()
 
 
-def test_add_hf_text_data():
-    prediction_times_str = """dw_ek_borger,timestamp,
-                            746430.0,1970-05-01 00:00:00
-                            765709.0,1971-05-14 22:04:00
-                            """
+# def test_add_hf_text_data():
+#     prediction_times_str = """dw_ek_borger,timestamp,
+#                             746430.0,1970-05-01 00:00:00
+#                             765709.0,1971-05-14 22:04:00
+#                             """
 
-    prediction_times_df = str_to_df(prediction_times_str)
+#     prediction_times_df = str_to_df(prediction_times_str)
 
-    flattened_dataset = FlattenedDataset(
-        prediction_times_df=prediction_times_df,
-        timestamp_col_name="timestamp",
-        id_col_name="dw_ek_borger",
-        n_workers=4,
-    )
+#     flattened_dataset = FlattenedDataset(
+#         prediction_times_df=prediction_times_df,
+#         timestamp_col_name="timestamp",
+#         id_col_name="dw_ek_borger",
+#         n_workers=4,
+#     )
 
-    predictor_list = create_feature_combinations(
-        [
-            {
-                "predictor_df": "synth_notes",
-                "lookbehind_days": [1, 365, 720],
-                "resolve_multiple": "min",
-                "fallback": np.nan,
-                "loader_kwargs": {
-                    "featurizer": "huggingface",
-                    "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-                },
-                "new_col_name": [TEST_HF_EMBEDDINGS],
-            },
-        ],
-    )
+#     predictor_list = create_feature_combinations(
+#         [
+#             {
+#                 "predictor_df": "synth_notes",
+#                 "lookbehind_days": [1, 365, 720],
+#                 "resolve_multiple": "min",
+#                 "fallback": np.nan,
+#                 "loader_kwargs": {
+#                     "featurizer": "huggingface",
+#                     "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+#                 },
+#                 "new_col_name": [TEST_HF_EMBEDDINGS],
+#             },
+#         ],
+#     )
 
-    flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
-        predictors=predictor_list,
-    )
+#     flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
+#         predictors=predictor_list,
+#     )
 
-    outcome_df = flattened_dataset.df
+#     outcome_df = flattened_dataset.df
 
-    assert outcome_df.shape == (2, 1155)
+#     assert outcome_df.shape == (2, 1155)
 
-    # 768 nas = 2 ids * 384 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
-    assert outcome_df.isna().sum().sum() == 768
+#     # 768 nas = 2 ids * 384 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
+#     assert outcome_df.isna().sum().sum() == 768
 
 
 def test_chunk_text():
