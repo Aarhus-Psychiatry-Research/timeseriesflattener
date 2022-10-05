@@ -18,9 +18,7 @@ import wandb
 from wasabi import Printer
 
 import psycop_feature_generation.loaders.raw  # noqa
-from application.t2d.features_blood_samples import get_lab_feature_spec
-from application.t2d.features_diagnoses import get_diagnosis_feature_spec
-from application.t2d.features_medications import get_medication_feature_spec
+from application.t2d.feature_spec_generator import generate_feature_specification
 from psycop_feature_generation.data_checks.flattened.data_integrity import (
     save_feature_set_integrity_from_dir,
 )
@@ -485,25 +483,58 @@ if __name__ == "__main__":
     RESOLVE_MULTIPLE = ["max", "min", "mean", "latest"]
     LOOKBEHIND_DAYS = [365, 1825, 9999]
 
-    LAB_PREDICTORS = get_lab_feature_spec(
+    LAB_PREDICTORS = generate_feature_specification(
+        dfs=(
+            "hba1c",
+            "alat",
+            "hdl",
+            "ldl",
+            "scheduled_glc",
+            "unscheduled_p_glc",
+            "triglycerides",
+            "fasting_ldl",
+            "crp",
+            "egfr",
+            "albumine_creatinine_ratio",
+        ),
         resolve_multiple=RESOLVE_MULTIPLE,
         lookbehind_days=LOOKBEHIND_DAYS,
+        fallback=np.nan,
         values_to_load="numerical_and_coerce",
     )
 
-    DIAGNOSIS_PREDICTORS = get_diagnosis_feature_spec(
+    DIAGNOSIS_PREDICTORS = generate_feature_specification(
+        dfs=(
+            "essential_hypertension",
+            "hyperlipidemia",
+            "polycystic_ovarian_syndrome",
+            "sleep_apnea",
+        ),
         resolve_multiple=RESOLVE_MULTIPLE,
         lookbehind_days=LOOKBEHIND_DAYS,
         fallback=0,
     )
 
-    MEDICATION_PREDICTORS = get_medication_feature_spec(
+    MEDICATION_PREDICTORS = generate_feature_specification(
+        dfs=("antipsychotics",),
         lookbehind_days=LOOKBEHIND_DAYS,
-        resolve_multiple=["count"],
+        resolve_multiple=RESOLVE_MULTIPLE,
         fallback=0,
     )
 
-    PREDICTOR_SPEC_LIST = DIAGNOSIS_PREDICTORS + LAB_PREDICTORS + MEDICATION_PREDICTORS
+    DEMOGRAPHIC_PREDICTORS = generate_feature_specification(
+        dfs=("weight_in_kg", "height_in_cm", "bmi"),
+        lookbehind_days=LOOKBEHIND_DAYS,
+        resolve_multiple=["latest"],
+        fallback=np.nan,
+    )
+
+    PREDICTOR_SPEC_LIST = (
+        DIAGNOSIS_PREDICTORS
+        + LAB_PREDICTORS
+        + MEDICATION_PREDICTORS
+        + DEMOGRAPHIC_PREDICTORS
+    )
 
     main(
         feature_sets_path=FEATURE_SETS_PATH,
