@@ -58,7 +58,4 @@ upload_to_pypi = true
 upload_to_release = true
 build_command = "pip install poetry && poetry build"
 
-[tool.pytest]
-n = 4
-
 [tool.pyright] # Added because of weird pylance error, issue here: https://github.com/microsoft/pylance-release/issues/3366
