@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     save_feature_set_description_to_disk(
         predictor_combinations=gen_predictor_spec_list(),
-        flattened_csv_dir=small_out_dir,
+        flattened_dataset_file_dir=small_out_dir,
         out_dir=small_out_dir,
         file_suffix="csv",
         describe_splits=False,
