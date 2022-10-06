@@ -5,6 +5,8 @@ maturity.
 """
 
 import random
+import sys
+import tempfile
 import time
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -16,9 +18,7 @@ import wandb
 from wasabi import Printer
 
 import psycop_feature_generation.loaders.raw  # noqa
-from application.t2d.features_blood_samples import get_lab_feature_spec
-from application.t2d.features_diagnoses import get_diagnosis_feature_spec
-from application.t2d.features_medications import get_medication_feature_spec
+from application.t2d.feature_spec_generator import generate_feature_specification
 from psycop_feature_generation.data_checks.flattened.data_integrity import (
     save_feature_set_integrity_from_dir,
 )
@@ -32,7 +32,11 @@ from psycop_feature_generation.timeseriesflattener.create_feature_combinations i
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
-from psycop_feature_generation.utils import FEATURE_SETS_PATH
+from psycop_feature_generation.utils import (
+    FEATURE_SETS_PATH,
+    PROJECT_ROOT,
+    write_df_to_file,
+)
 
 
 def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
@@ -42,6 +46,13 @@ def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
         "save_path": save_dir,
         "predictor_list": predictor_combinations,
     }
+
+    # on Overtaci, the wandb tmp directory is not automatically created
+    # so we create it here
+    # create dewbug-cli.one folders in /tmp and project dir
+    if sys.platform == "win32":
+        (Path(tempfile.gettempdir()) / "debug-cli.onerm").mkdir(exist_ok=True)
+        (PROJECT_ROOT / "wandb" / "debug-cli.onerm").mkdir(exist_ok=True)
 
     run = wandb.init(project=wandb_project_name, config=feature_settings)
     run.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
@@ -53,6 +64,7 @@ def save_feature_set_description_to_disk(
     predictor_combinations: list,
     flattened_csv_dir: Path,
     out_dir: Path,
+    file_suffix: str,
 ):
     """Describe output.
 
@@ -60,20 +72,23 @@ def save_feature_set_description_to_disk(
         predictor_combinations (list): List of predictor specs.
         flattened_csv_dir (Path): Path to flattened csv dir.
         out_dir (Path): Path to output dir.
+        file_suffix (str): File suffix.
     """
 
     # Create data integrity report
     save_feature_description_from_dir(
-        feature_set_csv_dir=flattened_csv_dir,
+        feature_set_dir=flattened_csv_dir,
         predictor_dicts=predictor_combinations,
         splits=["train"],
         out_dir=out_dir,
+        file_suffix=file_suffix,
     )
 
     save_feature_set_integrity_from_dir(
-        feature_set_csv_dir=flattened_csv_dir,
+        feature_set_dir=flattened_csv_dir,
         split_names=["train", "val", "test"],
         out_dir=out_dir,
+        file_suffix=file_suffix,
     )
 
 
@@ -93,7 +108,7 @@ def create_save_dir_path(
 
     # Split and save to disk
     # Create directory to store all files related to this run
-    save_dir = proj_path / feature_set_id
+    save_dir = proj_path / "feature_sets" / feature_set_id
 
     if not save_dir.exists():
         save_dir.mkdir()
@@ -105,6 +120,7 @@ def split_and_save_to_disk(
     flattened_df: pd.DataFrame,
     out_dir: Path,
     file_prefix: str,
+    file_suffix: str,
     split_ids_dict: Optional[dict[str, pd.Series]] = None,
     splits: Optional[list[str]] = None,
 ):
@@ -114,6 +130,7 @@ def split_and_save_to_disk(
         flattened_df (pd.DataFrame): Flattened dataframe.
         out_dir (Path): Path to output directory.
         file_prefix (str): File prefix.
+        file_suffix (str, optional): Format to save to. Takes any of ["parquet", "csv"].
         split_ids_dict (Optional[dict[str, list[str]]]): Dictionary of split ids, like {"train": pd.Series with ids}.
         splits (list, optional): Which splits to create. Defaults to ["train", "val", "test"].
     """
@@ -152,12 +169,12 @@ def split_and_save_to_disk(
         split_df = pd.merge(flattened_df, df_split_ids, how="inner", validate="m:1")
 
         # Version table with current date and time
-        filename = f"{file_prefix}_{dataset_name}.csv"
+        filename = f"{file_prefix}_{dataset_name}.{file_suffix}"
         msg.info(f"Saving {filename} to disk")
 
         file_path = out_dir / filename
 
-        split_df.to_csv(file_path, index=False)
+        write_df_to_file(df=split_df, file_path=file_path)
 
         msg.good(f"{dataset_name}: Succesfully saved to {file_path}")
 
@@ -445,6 +462,7 @@ def main(
         flattened_df=flattened_df,
         out_dir=out_dir,
         file_prefix=feature_set_id,
+        file_suffix="parquet",
     )
 
     log_to_wandb(
@@ -457,6 +475,7 @@ def main(
         predictor_combinations=predictor_combinations,
         flattened_csv_dir=out_dir,
         out_dir=out_dir,
+        file_suffix="parquet",
     )
 
 
@@ -464,25 +483,58 @@ if __name__ == "__main__":
     RESOLVE_MULTIPLE = ["max", "min", "mean", "latest"]
     LOOKBEHIND_DAYS = [365, 1825, 9999]
 
-    LAB_PREDICTORS = get_lab_feature_spec(
+    LAB_PREDICTORS = generate_feature_specification(
+        dfs=(
+            "hba1c",
+            "alat",
+            "hdl",
+            "ldl",
+            "scheduled_glc",
+            "unscheduled_p_glc",
+            "triglycerides",
+            "fasting_ldl",
+            "crp",
+            "egfr",
+            "albumine_creatinine_ratio",
+        ),
         resolve_multiple=RESOLVE_MULTIPLE,
         lookbehind_days=LOOKBEHIND_DAYS,
+        fallback=np.nan,
         values_to_load="numerical_and_coerce",
     )
 
-    DIAGNOSIS_PREDICTORS = get_diagnosis_feature_spec(
+    DIAGNOSIS_PREDICTORS = generate_feature_specification(
+        dfs=(
+            "essential_hypertension",
+            "hyperlipidemia",
+            "polycystic_ovarian_syndrome",
+            "sleep_apnea",
+        ),
         resolve_multiple=RESOLVE_MULTIPLE,
         lookbehind_days=LOOKBEHIND_DAYS,
         fallback=0,
     )
 
-    MEDICATION_PREDICTORS = get_medication_feature_spec(
+    MEDICATION_PREDICTORS = generate_feature_specification(
+        dfs=("antipsychotics",),
         lookbehind_days=LOOKBEHIND_DAYS,
-        resolve_multiple=["count"],
+        resolve_multiple=RESOLVE_MULTIPLE,
         fallback=0,
     )
 
-    PREDICTOR_SPEC_LIST = DIAGNOSIS_PREDICTORS + LAB_PREDICTORS + MEDICATION_PREDICTORS
+    DEMOGRAPHIC_PREDICTORS = generate_feature_specification(
+        dfs=("weight_in_kg", "height_in_cm", "bmi"),
+        lookbehind_days=LOOKBEHIND_DAYS,
+        resolve_multiple=["latest"],
+        fallback=np.nan,
+    )
+
+    PREDICTOR_SPEC_LIST = (
+        DIAGNOSIS_PREDICTORS
+        + LAB_PREDICTORS
+        + MEDICATION_PREDICTORS
+        + DEMOGRAPHIC_PREDICTORS
+    )
 
     main(
         feature_sets_path=FEATURE_SETS_PATH,

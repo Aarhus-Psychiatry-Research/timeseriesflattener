@@ -62,11 +62,15 @@ def load_df_wrapper(predictor_dict: dict[str, Any]) -> dict[str, pd.DataFrame]:
     }
 
 
-def error_check_dfs(pre_loaded_dfs: list[dict[str, pd.DataFrame]]) -> None:
+def error_check_dfs(
+    pre_loaded_dfs: list[dict[str, pd.DataFrame]],
+    subset_duplicates_columns: Union[list, str] = "all",
+) -> None:
     """Error check the pre-loaded dataframes.
 
     Args:
         pre_loaded_dfs (list): list of pre-loaded dataframes.
+        subset_duplicates_columns (Union[list, str]): Which columns to check for duplicates across. Defaults to 'All'.
     """
     # Error check the laoded dfs
     failures = []
@@ -75,14 +79,18 @@ def error_check_dfs(pre_loaded_dfs: list[dict[str, pd.DataFrame]]) -> None:
 
     for d in pre_loaded_dfs:
         for k in d.keys():
-            source_failures, _ = check_raw_df(df=d[k], raise_error=False)
+            source_failures, _ = check_raw_df(
+                df=d[k],
+                subset_duplicates_columns=subset_duplicates_columns,
+                raise_error=False,
+            )
 
             if len(source_failures) > 0:
                 failures.append({k: source_failures})
 
     if len(failures) > 0:
         raise ValueError(
-            f"Pre-loaded dataframes failed source checks. {source_failures}",
+            f"Pre-loaded dataframes failed source checks. {failures}",
         )
 
     msg.info(f"Pre-loaded {len(pre_loaded_dfs)} dataframes, all conformed to criteria")
@@ -90,11 +98,13 @@ def error_check_dfs(pre_loaded_dfs: list[dict[str, pd.DataFrame]]) -> None:
 
 def pre_load_unique_dfs(
     unique_predictor_dict_list: list[dict[str, Any]],
+    subset_duplicates_columns: Union[list, str] = "all",
 ) -> dict[str, pd.DataFrame]:
     """Pre-load unique dataframes to avoid duplicate loading.
 
     Args:
         unique_predictor_dict_list (list[dict[str, Union[str, float, int]]]): list of dictionaries where the key predictor_df maps to an SQL database.
+        subset_duplicates_columns (Union[list, str]): Which columns to check for duplicates across. Defaults to "all".
 
     Returns:
         dict[str, pd.DataFrame]: A dictionary with keys predictor_df and values the loaded dataframe.
@@ -111,7 +121,10 @@ def pre_load_unique_dfs(
     with Pool(n_workers) as p:
         pre_loaded_dfs = p.map(load_df_wrapper, unique_predictor_dict_list)
 
-        error_check_dfs(pre_loaded_dfs=pre_loaded_dfs)
+        error_check_dfs(
+            pre_loaded_dfs=pre_loaded_dfs,
+            subset_duplicates_columns=subset_duplicates_columns,
+        )
 
         # Combined pre_loaded dfs into one dictionary
         pre_loaded_dfs = {k: v for d in pre_loaded_dfs for k, v in d.items()}  # type: ignore

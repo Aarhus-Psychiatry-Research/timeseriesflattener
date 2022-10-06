@@ -2,7 +2,6 @@
 df."""
 
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -159,26 +158,25 @@ def generate_feature_description_df(
 
 
 def save_feature_description_from_dir(
-    feature_set_csv_dir: Path,
+    feature_set_dir: Path,
     predictor_dicts: list[dict[str, str]],
-    splits: Optional[list[str]] = None,
+    file_suffix: str,
+    splits: tuple[str] = ("train",),
     out_dir: Path = None,
 ):
     """Write a csv with feature descriptions in the directory.
 
     Args:
-        feature_set_csv_dir (Path): Path to directory with data frames.
+        feature_set_dir (Path): Path to directory with data frames.
         predictor_dicts (list[dict[str, str]]): list of dictionaries with predictor information.
-        splits (list[str]): list of splits to include in the description. Defaults to ["train"].
+        file_suffix (str): Suffix of the data frames to load. Must be either ".csv" or ".parquet".
+        splits (tuple[str]): tuple of splits to include in the description. Defaults to ("train").
         out_dir (Path): Path to directory where to save the feature description. Defaults to None.
     """
-    if splits is None:
-        splits = ["train"]
-
     msg = Printer(timestamp=True)
 
     if out_dir is None:
-        save_dir = feature_set_csv_dir / "feature_descriptions"
+        save_dir = feature_set_dir / "feature_descriptions"
 
     else:
         save_dir = out_dir / "feature_descriptions"
@@ -190,9 +188,10 @@ def save_feature_description_from_dir(
         msg.info(f"{split}: Creating feature description")
 
         predictors = load_split_predictors(
-            feature_set_csv_dir=feature_set_csv_dir,
+            feature_set_dir=feature_set_dir,
             split=split,
             include_id=False,
+            file_suffix=file_suffix,
         )
 
         msg.info(f"{split}: Generating feature description dataframe")

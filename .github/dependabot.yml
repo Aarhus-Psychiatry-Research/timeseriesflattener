@@ -8,10 +8,11 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "monthly"
+      interval: "weekly"
       day: "monday"
-      time: "08:00"
+      time: "01:00"
       timezone: "Europe/Copenhagen"
-    reviewers: 
-      - "MartinBernstorff"
-    open-pull-requests-limit: 20
+    open-pull-requests-limit: 5 
+    commit-message:
+      prefix: "fix:"
+      include: "scope"
