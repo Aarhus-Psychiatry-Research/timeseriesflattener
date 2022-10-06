@@ -90,14 +90,15 @@ def save_feature_set_description_to_disk(
         )
 
     # Describe/compare splits control flow happens within this function
-    save_feature_set_integrity_from_dir(
-        feature_set_dir=flattened_csv_dir,
-        split_names=["train", "val", "test"],
-        out_dir=out_dir,
-        file_suffix=file_suffix,
-        describe_splits=describe_splits,
-        compare_splits=compare_splits,
-    )
+    if compare_splits:
+        save_feature_set_integrity_from_dir(
+            feature_set_dir=flattened_csv_dir,
+            split_names=["train", "val", "test"],
+            out_dir=out_dir,
+            file_suffix=file_suffix,
+            describe_splits=describe_splits,
+            compare_splits=compare_splits,
+        )
 
 
 def create_save_dir_path(
