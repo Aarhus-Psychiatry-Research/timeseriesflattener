@@ -65,34 +65,43 @@ def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
 
 def save_feature_set_description_to_disk(
     predictor_combinations: list,
-    flattened_csv_dir: Path,
+    flattened_dataset_file_dir: Path,
     out_dir: Path,
     file_suffix: str,
+    describe_splits: bool = True,
+    compare_splits: bool = True,
 ):
     """Describe output.
 
     Args:
         predictor_combinations (list): List of predictor specs.
-        flattened_csv_dir (Path): Path to flattened csv dir.
+        flattened_dataset_file_dir (Path): Path to dir containing flattened time series files.
         out_dir (Path): Path to output dir.
         file_suffix (str): File suffix.
+        describe_splits (bool, optional): Whether to describe each split. Defaults to True.
+        compare_splits (bool, optional): Whether to compare splits, e.g. do all categories exist in both train and val. Defaults to True.
     """
 
     # Create data integrity report
-    save_feature_description_from_dir(
-        feature_set_dir=flattened_csv_dir,
-        predictor_dicts=predictor_combinations,
-        splits=["train"],
-        out_dir=out_dir,
-        file_suffix=file_suffix,
-    )
+    if describe_splits:
+        save_feature_description_from_dir(
+            feature_set_dir=flattened_dataset_file_dir,
+            predictor_dicts=predictor_combinations,
+            splits=["train"],
+            out_dir=out_dir,
+            file_suffix=file_suffix,
+        )
 
-    save_feature_set_integrity_from_dir(
-        feature_set_dir=flattened_csv_dir,
-        split_names=["train", "val", "test"],
-        out_dir=out_dir,
-        file_suffix=file_suffix,
-    )
+    # Describe/compare splits control flow happens within this function
+    if compare_splits:
+        save_feature_set_integrity_from_dir(
+            feature_set_dir=flattened_dataset_file_dir,
+            split_names=["train", "val", "test"],
+            out_dir=out_dir,
+            file_suffix=file_suffix,
+            describe_splits=describe_splits,
+            compare_splits=compare_splits,
+        )
 
 
 def create_save_dir_path(
@@ -476,17 +485,18 @@ def main(
 
     save_feature_set_description_to_disk(
         predictor_combinations=predictor_combinations,
-        flattened_csv_dir=out_dir,
+        flattened_dataset_file_dir=out_dir,
         out_dir=out_dir,
         file_suffix="parquet",
     )
 
 
-if __name__ == "__main__":
-    RESOLVE_MULTIPLE = ["max", "min", "mean", "latest"]
-    LOOKBEHIND_DAYS = [365, 1825, 9999]
+def gen_predictor_spec_list():
+    """Generate predictor spec list."""
+    resolve_multiple = ["max", "min", "mean", "latest"]
+    lookbehind_days = [365, 1825, 9999]
 
-    LAB_PREDICTORS = generate_feature_specification(
+    lab_predictors = generate_feature_specification(
         dfs=(
             "hba1c",
             "alat",
@@ -500,44 +510,48 @@ if __name__ == "__main__":
             "egfr",
             "albumine_creatinine_ratio",
         ),
-        resolve_multiple=RESOLVE_MULTIPLE,
-        lookbehind_days=LOOKBEHIND_DAYS,
+        resolve_multiple=resolve_multiple,
+        lookbehind_days=lookbehind_days,
         fallback=np.nan,
         values_to_load="numerical_and_coerce",
     )
 
-    DIAGNOSIS_PREDICTORS = generate_feature_specification(
+    diagnosis_predictors = generate_feature_specification(
         dfs=(
             "essential_hypertension",
             "hyperlipidemia",
             "polycystic_ovarian_syndrome",
             "sleep_apnea",
         ),
-        resolve_multiple=RESOLVE_MULTIPLE,
-        lookbehind_days=LOOKBEHIND_DAYS,
+        resolve_multiple=resolve_multiple,
+        lookbehind_days=lookbehind_days,
         fallback=0,
     )
 
-    MEDICATION_PREDICTORS = generate_feature_specification(
+    medication_predictors = generate_feature_specification(
         dfs=("antipsychotics",),
-        lookbehind_days=LOOKBEHIND_DAYS,
-        resolve_multiple=RESOLVE_MULTIPLE,
+        lookbehind_days=lookbehind_days,
+        resolve_multiple=resolve_multiple,
         fallback=0,
     )
 
-    DEMOGRAPHIC_PREDICTORS = generate_feature_specification(
+    demographic_predictors = generate_feature_specification(
         dfs=("weight_in_kg", "height_in_cm", "bmi"),
-        lookbehind_days=LOOKBEHIND_DAYS,
+        lookbehind_days=lookbehind_days,
         resolve_multiple=["latest"],
         fallback=np.nan,
     )
 
-    PREDICTOR_SPEC_LIST = (
-        DIAGNOSIS_PREDICTORS
-        + LAB_PREDICTORS
-        + MEDICATION_PREDICTORS
-        + DEMOGRAPHIC_PREDICTORS
+    return (
+        lab_predictors
+        + diagnosis_predictors
+        + medication_predictors
+        + demographic_predictors
     )
+
+
+if __name__ == "__main__":
+    PREDICTOR_SPEC_LIST = gen_predictor_spec_list()
 
     main(
         feature_sets_path=FEATURE_SETS_PATH,
