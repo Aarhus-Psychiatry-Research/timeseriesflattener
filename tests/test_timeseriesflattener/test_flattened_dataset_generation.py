@@ -187,13 +187,6 @@ def test_all_non_online_elements_in_pipeline(
         prediction_times_df=synth_prediction_times,
     )
 
-    split_and_save_to_disk(
-        flattened_df=flattened_df,
-        out_dir=tmp_path,
-        file_prefix="file_prefix",
-        file_suffix="parquet",
-    )
-
     split_ids = {}
 
     start_idx = 0
@@ -226,6 +219,6 @@ def test_all_non_online_elements_in_pipeline(
         flattened_csv_dir=tmp_path,
         out_dir=tmp_path,
         file_suffix="parquet",
-        describe_splits=False,
+        describe_splits=True,
         compare_splits=True,
     )

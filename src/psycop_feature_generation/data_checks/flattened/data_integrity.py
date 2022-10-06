@@ -233,8 +233,8 @@ def get_suite_results_for_split_pair_and_save_to_disk(
     """
 
     suite_results = deepchecks_suite.run(
-        split_dicts[split_pair[0]],
-        split_dicts[split_pair[1]],
+        split_dicts[split_pair[0]]["ds"],
+        split_dicts[split_pair[1]]["ds"],
     )
 
     suite_results.save_as_html(
