@@ -1,4 +1,5 @@
 """Code to generate data integrity and train/val/test drift reports."""
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, Optional
 
@@ -232,8 +233,8 @@ def get_suite_results_for_split_pair_and_save_to_disk(
     """
 
     suite_results = deepchecks_suite.run(
-        split_dicts[split_pair[0]]["ds"],
-        split_dicts[split_pair[1]]["ds"],
+        split_dicts[split_pair[0]],
+        split_dicts[split_pair[1]],
     )
 
     suite_results.save_as_html(
@@ -291,7 +292,7 @@ def get_split_as_ds_dict(
 
 def run_validation_requiring_split_comparison(
     feature_set_dir: Path,
-    split_names: list[str],
+    split_names: Iterable[str],
     file_suffix: str,
     out_dir: Path,
     train_outcome_df: pd.DataFrame,
@@ -383,9 +384,11 @@ def run_validation_requiring_split_comparison(
 def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statements
     feature_set_dir: Path,
     n_rows: Optional[int] = None,
-    split_names: Optional[list[str]] = None,
+    split_names: Iterable[str] = ("train", "val", "test"),
     out_dir: Optional[Path] = None,
     file_suffix: str = "parquet",
+    describe_splits: bool = True,
+    compare_splits: bool = True,
 ) -> None:
     """Runs Deepcheck data integrity and train/val/test checks for a given
     directory containing train/val/test files. Splits indicates which data.
@@ -400,22 +403,20 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
         split_names (list[str]): list of splits to check (train, val, test)
         out_dir (Optional[Path]): Path to the directory where the reports should be saved
         file_suffix (str, optional): Suffix of the files to load. Must be either "csv" or "parquet". Defaults to "parquet".
+        describe_splits (bool, optional): Whether to describe each split. Defaults to True.
+        compare_splits (bool, optional): Whether to compare splits, e.g. do all categories exist in both train and val. Defaults to True.
     """
-    if file_suffix not in ["parquet", "csv"]:
+    if file_suffix not in ("parquet", "csv"):
         raise ValueError(
             f"file_suffix must be either 'parquet' or 'csv', got {file_suffix}",
         )
-
-    if split_names is None:
-        split_names = ["train", "val", "test"]
 
     if out_dir is None:
         out_dir = feature_set_dir / "deepchecks"
     else:
         out_dir = out_dir / "deepchecks"
 
-    if not out_dir.exists():
-        out_dir.mkdir()
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     train_outcomes_df = load_split_outcomes(
         feature_set_dir=feature_set_dir,
@@ -432,7 +433,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
     for split_name in split_names:
         file = list(feature_set_dir.glob(f"*{split_name}*{file_suffix}"))
 
-        if not file:
+        if not file:  # pylint: disable=consider-using-assignment-expr
             raise ValueError(f"{split_name} split not found in {feature_set_dir}")
         if len(file) > 1:
             raise ValueError(
@@ -444,28 +445,30 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
     if not outcome_checks_dir.exists():
         outcome_checks_dir.mkdir()
 
-    # Check train data integrity
-    if "train" in split_names:
-        failures = check_train_data_integrity(
+    if describe_splits:
+        # Check train data integrity
+        if "train" in split_names:
+            failures = check_train_data_integrity(
+                feature_set_dir=feature_set_dir,
+                n_rows=n_rows,
+                out_dir=out_dir,
+                outcome_checks_dir=outcome_checks_dir,
+                train_outcomes_df=train_outcomes_df,
+                file_suffix=file_suffix,
+            )
+
+            # Add all keys in failures to failed_checks
+            for k, v in failures.items():
+                failed_checks[k] = v
+
+    if compare_splits:
+        # Running data validation checks on train/val and train/test splits that do not
+        # require a label
+        run_validation_requiring_split_comparison(
             feature_set_dir=feature_set_dir,
+            split_names=split_names,
             n_rows=n_rows,
             out_dir=out_dir,
-            outcome_checks_dir=outcome_checks_dir,
-            train_outcomes_df=train_outcomes_df,
+            train_outcome_df=train_outcomes_df,
             file_suffix=file_suffix,
         )
-
-        # Add all keys in failures to failed_checks
-        for k, v in failures.items():
-            failed_checks[k] = v
-
-    # Running data validation checks on train/val and train/test splits that do not
-    # require a label
-    run_validation_requiring_split_comparison(
-        feature_set_dir=feature_set_dir,
-        split_names=split_names,
-        n_rows=n_rows,
-        out_dir=out_dir,
-        train_outcome_df=train_outcomes_df,
-        file_suffix=file_suffix,
-    )

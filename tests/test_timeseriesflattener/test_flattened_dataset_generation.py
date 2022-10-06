@@ -2,24 +2,21 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
-
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
+from application.t2d.generate_features_and_write_to_disk import (
+    save_feature_set_description_to_disk,
+    split_and_save_to_disk,
+)
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
-    load_synth_outcome,
     load_synth_prediction_times,
-    synth_predictor_float,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
-)
-from src.application.t2d.generate_features_and_write_to_disk import (
-    save_feature_set_description_to_disk,
-    split_and_save_to_disk,
 )
 
 
@@ -190,6 +187,13 @@ def test_all_non_online_elements_in_pipeline(
         prediction_times_df=synth_prediction_times,
     )
 
+    split_and_save_to_disk(
+        flattened_df=flattened_df,
+        out_dir=tmp_path,
+        file_prefix="file_prefix",
+        file_suffix="parquet",
+    )
+
     split_ids = {}
 
     start_idx = 0
@@ -222,4 +226,6 @@ def test_all_non_online_elements_in_pipeline(
         flattened_csv_dir=tmp_path,
         out_dir=tmp_path,
         file_suffix="parquet",
+        describe_splits=False,
+        compare_splits=True,
     )
