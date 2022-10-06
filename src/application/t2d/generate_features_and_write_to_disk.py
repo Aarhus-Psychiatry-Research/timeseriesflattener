@@ -51,8 +51,10 @@ def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
     # so we create it here
     # create dewbug-cli.one folders in /tmp and project dir
     if sys.platform == "win32":
-        (Path(tempfile.gettempdir()) / "debug-cli.onerm").mkdir(exist_ok=True)
-        (PROJECT_ROOT / "wandb" / "debug-cli.onerm").mkdir(exist_ok=True)
+        (Path(tempfile.gettempdir()) / "debug-cli.onerm").mkdir(
+            exist_ok=True, parents=True
+        )
+        (PROJECT_ROOT / "wandb" / "debug-cli.onerm").mkdir(exist_ok=True, parents=True)
 
     run = wandb.init(project=wandb_project_name, config=feature_settings)
     run.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
