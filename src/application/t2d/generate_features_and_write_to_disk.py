@@ -72,7 +72,7 @@ def save_feature_set_description_to_disk(
 
     Args:
         predictor_combinations (list): List of predictor specs.
-        flattened_dataset_file_dir (Path): Path to flattened csv dir.
+        flattened_dataset_file_dir (Path): Path to dir containing flattened time series files.
         out_dir (Path): Path to output dir.
         file_suffix (str): File suffix.
         describe_splits (bool, optional): Whether to describe each split. Defaults to True.
