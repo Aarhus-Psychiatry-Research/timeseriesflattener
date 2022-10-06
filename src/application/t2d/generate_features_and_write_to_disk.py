@@ -62,7 +62,7 @@ def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
 
 def save_feature_set_description_to_disk(
     predictor_combinations: list,
-    flattened_csv_dir: Path,
+    flattened_dataset_file_dir: Path,
     out_dir: Path,
     file_suffix: str,
     describe_splits: bool = True,
@@ -72,7 +72,7 @@ def save_feature_set_description_to_disk(
 
     Args:
         predictor_combinations (list): List of predictor specs.
-        flattened_csv_dir (Path): Path to flattened csv dir.
+        flattened_dataset_file_dir (Path): Path to flattened csv dir.
         out_dir (Path): Path to output dir.
         file_suffix (str): File suffix.
         describe_splits (bool, optional): Whether to describe each split. Defaults to True.
@@ -82,7 +82,7 @@ def save_feature_set_description_to_disk(
     # Create data integrity report
     if describe_splits:
         save_feature_description_from_dir(
-            feature_set_dir=flattened_csv_dir,
+            feature_set_dir=flattened_dataset_file_dir,
             predictor_dicts=predictor_combinations,
             splits=["train"],
             out_dir=out_dir,
@@ -92,7 +92,7 @@ def save_feature_set_description_to_disk(
     # Describe/compare splits control flow happens within this function
     if compare_splits:
         save_feature_set_integrity_from_dir(
-            feature_set_dir=flattened_csv_dir,
+            feature_set_dir=flattened_dataset_file_dir,
             split_names=["train", "val", "test"],
             out_dir=out_dir,
             file_suffix=file_suffix,
@@ -482,7 +482,7 @@ def main(
 
     save_feature_set_description_to_disk(
         predictor_combinations=predictor_combinations,
-        flattened_csv_dir=out_dir,
+        flattened_dataset_file_dir=out_dir,
         out_dir=out_dir,
         file_suffix="parquet",
     )

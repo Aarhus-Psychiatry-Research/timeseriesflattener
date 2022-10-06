@@ -349,18 +349,22 @@ def run_validation_requiring_split_comparison(
             )
 
             deepchecks_ds_dict = {
-                "train": Dataset(
-                    df=split_dicts["train"]["predictors"],
-                    index_name="dw_ek_borger",
-                    datetime_name="timestamp",
-                    label=split_dicts["train"]["outcomes"][outcome_col],
-                ),
-                split_name: Dataset(
-                    df=split_contents["predictors"],
-                    index_name="dw_ek_borger",
-                    datetime_name="timestamp",
-                    label=split_contents["outcomes"][outcome_col],
-                ),
+                "train": {
+                    "ds": Dataset(
+                        df=split_dicts["train"]["predictors"],
+                        index_name="dw_ek_borger",
+                        datetime_name="timestamp",
+                        label=split_dicts["train"]["outcomes"][outcome_col],
+                    )
+                },
+                split_name: {
+                    "ds": Dataset(
+                        df=split_contents["predictors"],
+                        index_name="dw_ek_borger",
+                        datetime_name="timestamp",
+                        label=split_contents["outcomes"][outcome_col],
+                    )
+                },
             }
 
             suite_results = get_suite_results_for_split_pair_and_save_to_disk(
