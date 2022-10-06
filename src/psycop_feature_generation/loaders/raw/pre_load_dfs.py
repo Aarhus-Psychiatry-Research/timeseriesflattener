@@ -90,7 +90,7 @@ def error_check_dfs(
 
     if len(failures) > 0:
         raise ValueError(
-            f"Pre-loaded dataframes failed source checks. {source_failures}",
+            f"Pre-loaded dataframes failed source checks. {failures}",
         )
 
     msg.info(f"Pre-loaded {len(pre_loaded_dfs)} dataframes, all conformed to criteria")
