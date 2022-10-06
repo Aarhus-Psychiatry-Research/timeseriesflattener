@@ -52,7 +52,8 @@ def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
     # create dewbug-cli.one folders in /tmp and project dir
     if sys.platform == "win32":
         (Path(tempfile.gettempdir()) / "debug-cli.onerm").mkdir(
-            exist_ok=True, parents=True
+            exist_ok=True,
+            parents=True,
         )
         (PROJECT_ROOT / "wandb" / "debug-cli.onerm").mkdir(exist_ok=True, parents=True)
 
