@@ -13,6 +13,7 @@ from application.t2d.generate_features_and_write_to_disk import (
     split_and_save_to_disk,
 )
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
+    load_synth_outcome,
     load_synth_prediction_times,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
@@ -24,6 +25,12 @@ from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
 def synth_prediction_times():
     """Load the prediction times."""
     return load_synth_prediction_times()
+
+
+@pytest.fixture(scope="function")
+def synth_outcome():
+    """Load the synth outcome times."""
+    return load_synth_outcome()
 
 
 base_float_predictor_combinations = [
@@ -181,10 +188,19 @@ def test_all_non_online_elements_in_pipeline(
 ):
     """Test that the splitting and saving to disk works as expected."""
 
-    flattened_df = create_flattened_df(
-        cache_dir=None,
-        predictor_combinations=predictor_combinations,
+    flattened_ds = FlattenedDataset(
         prediction_times_df=synth_prediction_times,
+        n_workers=4,
+        feature_cache_dir=None,
+    )
+
+    flattened_ds.add_temporal_predictors_from_list_of_argument_dictionaries(
+        predictor_combinations,
+    )
+
+    flattened_ds.add_temporal_outcome(
+        outcome_df=synth_outcome,
+        outcome_col="value",
     )
 
     split_ids = {}
@@ -216,7 +232,7 @@ def test_all_non_online_elements_in_pipeline(
 
     save_feature_set_description_to_disk(
         predictor_combinations=predictor_combinations,
-        flattened_csv_dir=tmp_path,
+        flattened_dataset_file_dir=tmp_path,
         out_dir=tmp_path,
         file_suffix="parquet",
         describe_splits=True,
