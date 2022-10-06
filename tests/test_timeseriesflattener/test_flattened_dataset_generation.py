@@ -184,6 +184,7 @@ def test_cache_hitting(
 def test_all_non_online_elements_in_pipeline(
     tmp_path,
     synth_prediction_times,
+    synth_outcome,
     predictor_combinations,
 ):
     """Test that the splitting and saving to disk works as expected."""
@@ -200,8 +201,14 @@ def test_all_non_online_elements_in_pipeline(
 
     flattened_ds.add_temporal_outcome(
         outcome_df=synth_outcome,
-        outcome_col="value",
+        lookahead_days=365,
+        resolve_multiple="max",
+        fallback=0,
+        incident=True,
+        dichotomous=True,
     )
+
+    flattened_df = flattened_ds.df
 
     split_ids = {}
 
