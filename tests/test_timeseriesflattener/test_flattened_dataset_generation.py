@@ -124,19 +124,6 @@ def create_flattened_df(cache_dir, predictor_combinations, prediction_times_df):
     return first_df.df
 
 
-def init_temp_dir(tmp_path):
-    """Create a temp dir for testing."""
-    # Delete temp dir
-    # Add a random number so tmp_paths from different processes don't overlap
-
-    tmp_path = Path(tmp_path / f"temp_{np.random.randint(100_000_000)}")
-
-    # Create temp dir
-    tmp_path.mkdir(parents=True, exist_ok=True)
-
-    return tmp_path
-
-
 @pytest.mark.parametrize(
     "predictor_combinations",
     [base_float_predictor_combinations, base_binary_predictor_combinations],
