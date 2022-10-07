@@ -6,6 +6,10 @@ documents the intended shape.
 from collections.abc import Callable, Iterable
 from typing import Any, Optional, Union
 
+from psycop_feature_generation.timeseriesflattener.create_feature_combinations import (
+    create_feature_combinations,
+)
+
 
 def generate_feature_specification(  # pylint: disable=dangerous-default-value
     dfs: Iterable[str],
@@ -33,7 +37,7 @@ def generate_feature_specification(  # pylint: disable=dangerous-default-value
     Returns:
         list[dict[str, Any]]: List of feature specifications.
     """
-    return [
+    non_permuted = [
         {
             "predictor_df": df,
             "lookbehind_days": lookbehind_days,
@@ -44,3 +48,5 @@ def generate_feature_specification(  # pylint: disable=dangerous-default-value
         }
         for df in dfs
     ]
+
+    return create_feature_combinations(arg_sets=non_permuted)
