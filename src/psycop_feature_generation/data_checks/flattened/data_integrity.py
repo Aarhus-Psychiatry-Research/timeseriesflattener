@@ -419,7 +419,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
     if not out_dir.exists():
         out_dir.mkdir()
 
-    train_outcomes_df = load_split_ƒoutcomes(
+    train_outcomes_df = load_split_outcomes(
         feature_set_dir=feature_set_dir,
         split="train",
         nrows=n_rows,
