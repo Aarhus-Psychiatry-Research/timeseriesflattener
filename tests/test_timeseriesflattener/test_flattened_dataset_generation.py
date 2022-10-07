@@ -2,24 +2,22 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
-
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
+from application.t2d.generate_features_and_write_to_disk import (
+    save_feature_set_description_to_disk,
+    split_and_save_to_disk,
+)
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
-    synth_predictor_float,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
-)
-from src.application.t2d.generate_features_and_write_to_disk import (
-    save_feature_set_description_to_disk,
-    split_and_save_to_disk,
 )
 
 
@@ -27,6 +25,12 @@ from src.application.t2d.generate_features_and_write_to_disk import (
 def synth_prediction_times():
     """Load the prediction times."""
     return load_synth_prediction_times()
+
+
+@pytest.fixture(scope="function")
+def synth_outcome():
+    """Load the synth outcome times."""
+    return load_synth_outcome()
 
 
 base_float_predictor_combinations = [
@@ -124,19 +128,6 @@ def create_flattened_df(cache_dir, predictor_combinations, prediction_times_df):
     return first_df.df
 
 
-def init_temp_dir(tmp_path):
-    """Create a temp dir for testing."""
-    # Delete temp dir
-    # Add a random number so tmp_paths from different processes don't overlap
-
-    tmp_path = Path(tmp_path / f"temp_{np.random.randint(100_000_000)}")
-
-    # Create temp dir
-    tmp_path.mkdir(parents=True, exist_ok=True)
-
-    return tmp_path
-
-
 @pytest.mark.parametrize(
     "predictor_combinations",
     [base_float_predictor_combinations, base_binary_predictor_combinations],
@@ -180,15 +171,31 @@ def test_cache_hitting(
 def test_all_non_online_elements_in_pipeline(
     tmp_path,
     synth_prediction_times,
+    synth_outcome,
     predictor_combinations,
 ):
     """Test that the splitting and saving to disk works as expected."""
 
-    flattened_df = create_flattened_df(
-        cache_dir=None,
-        predictor_combinations=predictor_combinations,
+    flattened_ds = FlattenedDataset(
         prediction_times_df=synth_prediction_times,
+        n_workers=4,
+        feature_cache_dir=None,
     )
+
+    flattened_ds.add_temporal_predictors_from_list_of_argument_dictionaries(
+        predictor_combinations,
+    )
+
+    flattened_ds.add_temporal_outcome(
+        outcome_df=synth_outcome,
+        lookahead_days=365,
+        resolve_multiple="max",
+        fallback=0,
+        incident=True,
+        dichotomous=True,
+    )
+
+    flattened_df = flattened_ds.df
 
     split_ids = {}
 
@@ -219,7 +226,9 @@ def test_all_non_online_elements_in_pipeline(
 
     save_feature_set_description_to_disk(
         predictor_combinations=predictor_combinations,
-        flattened_csv_dir=tmp_path,
+        flattened_dataset_file_dir=tmp_path,
         out_dir=tmp_path,
         file_suffix="parquet",
+        describe_splits=True,
+        compare_splits=True,
     )
