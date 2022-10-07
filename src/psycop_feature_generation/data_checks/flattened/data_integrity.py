@@ -283,6 +283,7 @@ def get_split_as_ds_dict(
         df=predictors,
         index_name="dw_ek_borger",
         datetime_name="timestamp",
+        cat_features=[],
     )
 
     return {
