@@ -170,6 +170,7 @@ def check_train_data_integrity(
         df=train_predictors,
         index_name="dw_ek_borger",
         datetime_name="timestamp",
+        cat_features=[],
     )
 
     # Running checks that do not require a label
@@ -193,6 +194,7 @@ def check_train_data_integrity(
             index_name="dw_ek_borger",
             datetime_name="timestamp",
             label=train_outcomes_df[outcome_column],
+            cat_features=[],
         )
 
         suite_results = label_checks.run(data_s)
@@ -417,7 +419,7 @@ def save_feature_set_integrity_from_dir(  # noqa pylint: disable=too-many-statem
     if not out_dir.exists():
         out_dir.mkdir()
 
-    train_outcomes_df = load_split_outcomes(
+    train_outcomes_df = load_split_ƒoutcomes(
         feature_set_dir=feature_set_dir,
         split="train",
         nrows=n_rows,
