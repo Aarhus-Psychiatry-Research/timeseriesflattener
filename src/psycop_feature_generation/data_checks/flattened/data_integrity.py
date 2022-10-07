@@ -1,4 +1,4 @@
-"""Code to generate data integrity and train/val/test drift reports."""
+"""Code to generate data integrity report and train/val/test drift reports."""
 from pathlib import Path
 from typing import Any, Optional
 
