@@ -34,7 +34,7 @@ pre-commit = ">=2.20.0, <2.20.2"
 pytest-cov = ">=3.0.0,<4.0.1"
 flake8 = ">=5.0.0, <5.0.6"
 docformatter = ">=1.5.0, <1.5.2"
-mypy = ">=0.971,<0.982"
+mypy = ">=0.971,<0.983"
 pytest-xdist = ">=2.4.0, <2.5.2"
 protobuf = "3.19.4" # Other versions give errors with pytest, super weird!
 
