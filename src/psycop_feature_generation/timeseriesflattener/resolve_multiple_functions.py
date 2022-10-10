@@ -61,6 +61,11 @@ def get_count_in_group(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.count()
 
 
+@resolve_fns.register("variance")
+def get_count_in_group(grouped_df: DataFrame) -> DataFrame:
+    return grouped_df.var()
+
+
 @resolve_fns.register("bool")
 def get_bool_in_group(grouped_df: DataFrame) -> DataFrame:
     """Returns boolean value indicating whether or not event has occured in
@@ -80,5 +85,5 @@ def get_bool_in_group(grouped_df: DataFrame) -> DataFrame:
 @resolve_fns.register("change_per_day")
 def get_change_in_value_per_day(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.apply(
-        lambda x: Series({"value": stats.linregress(x.val, x.timestamp_val)[0]}),
+        lambda x: Series({"value": stats.linregress(x.value, x.timestamp_val)[0]}),
     )
