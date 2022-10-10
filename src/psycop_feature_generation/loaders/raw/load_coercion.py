@@ -285,7 +285,7 @@ def tvangsindlaeggelse(n_rows: Optional[int] = None) -> pd.DataFrame:
     )
 
 
-@data_loaders.register("tvangstilbageholdelse ")
+@data_loaders.register("tvangstilbageholdelse")
 def tvangstilbageholdelse(n_rows: Optional[int] = None) -> pd.DataFrame:
     return coercion_duration(
         coercion_type="Tvangstilbageholdelse",
