@@ -62,7 +62,7 @@ def get_count_in_group(grouped_df: DataFrame) -> DataFrame:
 
 
 @resolve_fns.register("variance")
-def get_count_in_group(grouped_df: DataFrame) -> DataFrame:
+def get_variance_in_group(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.var()
 
 

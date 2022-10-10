@@ -344,5 +344,5 @@ def test_resolve_multiple_variance():
         outcome_df_str=event_times_str,
         resolve_multiple="variance",
         lookahead_days=4,
-        expected_flattened_values=[1, np.NaN],
+        expected_flattened_values=[0.5, np.NaN],
     )
