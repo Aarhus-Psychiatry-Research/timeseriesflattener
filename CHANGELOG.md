@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.4 (2022-10-10)
+### Fix
+* Deleted_irritating_blank_space ([`a4cdfc5`](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/commit/a4cdfc58ccf7524a308af1bab3b0ca6f0b15e834))
+
 ## v0.4.3 (2022-10-10)
 ### Fix
 * Auto inferred cat features ([`ea0d946`](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/commit/ea0d946cbf658d8d7e22d45363f9dd7d5a7e3fff))
