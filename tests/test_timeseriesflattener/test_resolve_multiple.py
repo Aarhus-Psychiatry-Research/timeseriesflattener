@@ -224,7 +224,7 @@ def test_resolve_multiple_change_per_day():
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:00, 1
                         1,2022-01-02 00:00:00, 2
                         2,2022-01-01 00:00:00, 1
@@ -245,7 +245,7 @@ def test_resolve_multiple_change_per_day_unordered():
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-02 00:00:00, 2
                         1,2022-01-01 00:00:00, 1
                         2,2022-01-02 00:00:00, 2
@@ -266,7 +266,7 @@ def test_resolve_multiple_change_per_day_negative():
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-02 00:00:00, 2
                         1,2022-01-01 00:00:00, 1
                         2,2022-01-02 00:00:00, 1
@@ -287,7 +287,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
                             """
-    event_times_str = """dw_ek_borger,timestamp,val,
+    event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:00, 1
                         1,2022-01-02 00:00:00, 2
                         2,2022-01-01 00:00:00, 1
@@ -324,4 +324,25 @@ def test_resolve_multiple_mean_of_multiple_columns():
         expected_flattened_values=[[1.5, 2.5], [3.0, 4.0]],
         fallback=99999,
         values_colname=["val1", "val2"],
+    )
+
+
+def test_resolve_multiple_variance():
+    prediction_times_str = """dw_ek_borger,timestamp,
+                            1,2021-12-31 00:00:00
+                            2,2021-12-31 00:00:00
+                            """
+    event_times_str = """dw_ek_borger,timestamp,value,
+                        1,2022-01-01 00:00:00, 1
+                        1,2022-01-02 00:00:00, 2
+                        2,2022-01-01 00:00:00, 1
+                        2,2022-01-08 00:00:00, 2
+                        """
+
+    assert_flattened_outcome_as_expected(
+        prediction_times_df_str=prediction_times_str,
+        outcome_df_str=event_times_str,
+        resolve_multiple="variance",
+        lookahead_days=4,
+        expected_flattened_values=[0.5, np.NaN],
     )
