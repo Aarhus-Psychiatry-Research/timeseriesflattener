@@ -171,6 +171,7 @@ def check_train_data_integrity(
         df=train_predictors,
         index_name="dw_ek_borger",
         datetime_name="timestamp",
+        cat_features=[],
     )
 
     # Running checks that do not require a label
@@ -194,6 +195,7 @@ def check_train_data_integrity(
             index_name="dw_ek_borger",
             datetime_name="timestamp",
             label=train_outcomes_df[outcome_column],
+            cat_features=[],
         )
 
         suite_results = label_checks.run(data_s)
@@ -281,6 +283,7 @@ def get_split_as_ds_dict(
         df=predictors,
         index_name="dw_ek_borger",
         datetime_name="timestamp",
+        cat_features=[],
     )
 
     return {
