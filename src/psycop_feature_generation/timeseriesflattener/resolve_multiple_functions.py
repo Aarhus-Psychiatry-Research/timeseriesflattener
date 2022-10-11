@@ -87,6 +87,6 @@ def get_change_in_value_per_day(grouped_df: DataFrame) -> DataFrame:
     # Calculate the change in value per second and then divide by 86400 to get the change per day
     return grouped_df.apply(
         lambda x: Series(
-            {"value": stats.linregress(x.value, x.timestamp_val)[0] / 86400},
+            {"value": stats.linregress(x.timestamp_val, x.value)[0] * 86400},
         ),
     )
