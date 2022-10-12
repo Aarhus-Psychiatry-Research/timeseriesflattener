@@ -42,7 +42,7 @@ def sfi_loader(
     df = df.drop_duplicates(keep="first")
 
     # Drop rows with duplicate dw_ek_borger and datotid_resultat_udfoert
-    # Data contaied rows with scores reported at the same time for the same patient but with different values
+    # Data contained rows with scores reported at the same time for the same patient but with different values
     df = df.drop_duplicates(
         subset=["datotid_resultat_udfoert", "dw_ek_borger"],
         keep="first",
