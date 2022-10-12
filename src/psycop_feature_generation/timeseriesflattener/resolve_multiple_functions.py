@@ -84,9 +84,27 @@ def get_bool_in_group(grouped_df: DataFrame) -> DataFrame:
 
 @resolve_fns.register("change_per_day")
 def get_change_in_value_per_day(grouped_df: DataFrame) -> DataFrame:
-    # Calculate the change in value per second and then divide by 86400 to get the change per day
+    """Returns the change in value per day.
+
+    Args:
+        grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
+
+    Returns:
+        DataFrame: Dataframe with value column containing the change in value per day.
+    """
+
+    # Check if some patients have mulitple values but only one timestamp
+    if any(
+        grouped_df.timestamp_val.apply(
+            lambda x: len(set(x)) == 1 and len(x) > 1,
+        ).values,
+    ):
+        raise ValueError(
+            "One or more patients only have values with identical timestamps. There may be an error in the data.",
+        )
+
     return grouped_df.apply(
         lambda x: Series(
-            {"value": stats.linregress(x.value, x.timestamp_val)[0] / 86400},
+            {"value": stats.linregress(x.timestamp_val, x.value)[0]},
         ),
     )

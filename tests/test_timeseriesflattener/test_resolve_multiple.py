@@ -228,7 +228,7 @@ def test_resolve_multiple_change_per_day():
                         1,2022-01-01 00:00:00, 1
                         1,2022-01-02 00:00:00, 2
                         2,2022-01-01 00:00:00, 1
-                        2,2022-01-08 00:00:00, 2
+                        2,2023-01-08 00:00:00, 2
                         """
 
     assert_flattened_outcome_as_expected(
