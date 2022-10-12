@@ -84,9 +84,7 @@ def get_bool_in_group(grouped_df: DataFrame) -> DataFrame:
 
 @resolve_fns.register("change_per_day")
 def get_change_in_value_per_day(grouped_df: DataFrame) -> DataFrame:
-    """Returns the change in value per day. Stats function calculates the
-    change in value per second which is then multiplied by 86400 to get the
-    change per day.
+    """Returns the change in value per day.
 
     Args:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
@@ -107,6 +105,6 @@ def get_change_in_value_per_day(grouped_df: DataFrame) -> DataFrame:
 
     return grouped_df.apply(
         lambda x: Series(
-            {"value": stats.linregress(x.timestamp_val, x.value)[0] * 86400},
+            {"value": stats.linregress(x.timestamp_val, x.value)[0]},
         ),
     )
