@@ -14,19 +14,15 @@ def admissions(
     where_clause: Optional[str] = None,
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Load admissions.
+    """Load admissions. Outputs a value column containng lenght of admission in
+    day.
 
-    Parameters
-    ----------
-    where_clause : Optional[str], optional
-        SHAK code determining which rows to keep, by default None
-    n_rows : Optional[int], optional
-        Number of rows to load, by default None
+    Args:
+        where_clause (Optional[str], optional): SHAK code determining which rows to keep, by default None
+        n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
 
-    Returns
-    -------
-    pd.DataFrame
-        Admissions data
+    Returns:
+        pd.DataFrame: Dataframe with all physical visits to psychiatry. Has columns dw_ek_borger, timestamp and value (length of admissions in days).
     """
 
     # SHAK = 6600 ≈ in psychiatry

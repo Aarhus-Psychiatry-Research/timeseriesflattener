@@ -3,6 +3,7 @@
 from ...data_checks.raw.check_predictor_lists import (  # noqa
     check_feature_combinations_return_correct_dfs,
 )
+from .load_admissions import *  # noqa
 from .load_coercion import *  # noqa
 from .load_demographic import *  # noqa
 from .load_diagnoses import *  # noqa
