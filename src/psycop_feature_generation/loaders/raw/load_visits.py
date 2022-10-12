@@ -63,7 +63,7 @@ def physical_visits(
         sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL {meta['where']}"
 
         if location_clause is not None:
-            sql += f" AND {meta['location_col']} {location_clause}"
+            sql += f" AND left({meta['location_col']}, 4) {location_clause}"
 
         if where_clause is not None:
             sql += f" {where_separator} {where_clause}"
