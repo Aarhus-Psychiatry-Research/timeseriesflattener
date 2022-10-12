@@ -81,6 +81,10 @@ def physical_visits(
         subset=["timestamp", "dw_ek_borger"],
         keep="first",
     )
+
+    # Add 'value' column with value 1
+    output_df["value"] = 1
+
     msg.good("Loaded physical visits")
 
     return output_df.reset_index(drop=True)
