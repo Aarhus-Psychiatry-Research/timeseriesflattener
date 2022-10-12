@@ -9,8 +9,9 @@ from psycop_feature_generation.loaders.raw.sql_load import sql_load
 from psycop_feature_generation.utils import data_loaders
 
 
-@data_loaders.register("physical_visits_to_psychiatry")
-def physical_visits_to_psychiatry(
+@data_loaders.register("physical_visits")
+def physical_visits(
+    location_clause: Optional[str] = None,
     where_clause: Optional[str] = None,
     where_separator: Optional[str] = "AND",
     n_rows: Optional[int] = None,
@@ -18,6 +19,7 @@ def physical_visits_to_psychiatry(
     """Load physical visits.
 
     Args:
+        location_clause (Optional[str], optional): SHAK code indicating where to keep/not keep visits from (e.g. "= '6600'"). Defaults to "= '6600".
         where_clause (Optional[str], optional): Extra where-clauses to add to the SQL call. E.g. dw_ek_borger = 1. Defaults to None. # noqa: DAR102
         where_separator (Optional[str], optional): Separator between where-clauses. Defaults to "AND".
         n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
@@ -58,7 +60,10 @@ def physical_visits_to_psychiatry(
     for meta in d.values():
         cols = f"{meta['datetime_col']}, dw_ek_borger"
 
-        sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL AND left({meta['location_col']}, 4) = '6600' {meta['where']}"
+        sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL {meta['where']}"
+
+        if location_clause is not None:
+            sql += f" AND {meta['location_col']} {location_clause}"
 
         if where_clause is not None:
             sql += f" {where_separator} {where_clause}"
@@ -79,3 +84,13 @@ def physical_visits_to_psychiatry(
     msg.good("Loaded physical visits")
 
     return output_df.reset_index(drop=True)
+
+
+@data_loaders.register("physical_visits_to_psychiatry")
+def physical_visits_to_psychiatry(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return physical_visits(location_clause="= '6600'", n_rows=n_rows)
+
+
+@data_loaders.register("physical_visits_to_somatics")
+def physical_visits_to_somatics(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return physical_visits(location_clause="!= '6600'", n_rows=n_rows)
