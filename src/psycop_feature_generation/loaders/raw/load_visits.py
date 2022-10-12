@@ -92,7 +92,7 @@ def physical_visits_to_psychiatry(n_rows: Optional[int] = None) -> pd.DataFrame:
     return physical_visits(location_clause="= '6600'", n_rows=n_rows)
 
 
-@data_loaders.register("physical_visits_to_somatics")
-def physical_visits_to_somatics(n_rows: Optional[int] = None) -> pd.DataFrame:
-    """Load physical visits to somatics."""
+@data_loaders.register("physical_visits_to_somatic")
+def physical_visits_to_somatic(n_rows: Optional[int] = None) -> pd.DataFrame:
+    """Load physical visits to somatic."""
     return physical_visits(location_clause="!= '6600'", n_rows=n_rows)
