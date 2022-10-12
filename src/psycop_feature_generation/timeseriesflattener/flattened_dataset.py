@@ -1100,7 +1100,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             DataFrame: DataFrame with one row pr. prediction time.
         """
         # Convert timestamp val to numeric that can be used for resolve_multiple functions
-        # df["timestamp_val"] = df["timestamp_val"].map(dt.datetime.toordinal)
+        # Numeric value amounts to seconds passed since 1/1/1970
         df["timestamp_val"] = (
             df["timestamp_val"] - dt.datetime(1970, 1, 1)
         ).dt.total_seconds()
