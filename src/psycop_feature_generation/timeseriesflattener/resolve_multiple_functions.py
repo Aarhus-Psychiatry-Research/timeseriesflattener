@@ -96,13 +96,10 @@ def get_change_in_value_per_day(grouped_df: DataFrame) -> DataFrame:
     """
 
     # Check if some patients have mulitple values but only one timestamp
-    if (
-        all(
-            grouped_df.timestamp_val.apply(
-                lambda x: len(set(x)) == 1 and len(x) > 1,
-            ).values,
-        )
-        is False
+    if any(
+        grouped_df.timestamp_val.apply(
+            lambda x: len(set(x)) == 1 and len(x) > 1,
+        ).values,
     ):
         raise ValueError(
             "One or more patients only have values with identical timestamps. There may be an error in the data.",
