@@ -18,7 +18,7 @@ def admissions(
     day.
 
     Args:
-        where_clause (Optional[str], optional): SHAK code determining which rows to keep, by default None
+        where_clause (Optional[str], optional): SHAK code determining which rows to keep. Defaults to None.
         n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
 
     Returns:
