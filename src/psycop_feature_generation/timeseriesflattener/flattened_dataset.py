@@ -118,6 +118,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         self.msg = Printer(timestamp=True)
 
+        if "value" in prediction_times_df.columns:
+            prediction_times_df.drop("value", axis=1, inplace=True)
+
         self.df = prediction_times_df
 
         self.check_init_df_for_errors()

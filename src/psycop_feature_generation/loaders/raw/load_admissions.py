@@ -14,8 +14,8 @@ def admissions(
     shak_sql_operator: Optional[str] = "=",
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Load admissions. Outputs a value column containing length of admission in
-    days.
+    """Load admissions. Outputs a value column containing length of admission
+    in days.
 
     Args:
         shak_sql_clause (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Defaults to None

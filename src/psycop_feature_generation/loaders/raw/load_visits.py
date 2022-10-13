@@ -17,7 +17,7 @@ def physical_visits(
     where_separator: Optional[str] = "AND",
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Load physical visits.
+    """Load pshysical visits to both somatic and psychiatry.
 
     Args:
         shak_sql_clause (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Defaults to None
