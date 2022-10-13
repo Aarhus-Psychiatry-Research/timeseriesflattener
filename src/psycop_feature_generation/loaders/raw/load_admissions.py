@@ -1,5 +1,4 @@
 """Load admissions."""
-
 from typing import Optional
 
 import pandas as pd
@@ -11,14 +10,16 @@ from psycop_feature_generation.utils import data_loaders
 
 @data_loaders.register("admissions")
 def admissions(
-    location_clause: Optional[str] = None,
+    shak_sql_clause: Optional[int] = None,
+    shak_sql_operator: Optional[str] = "=",
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Load admissions. Outputs a value column containng lenght of admission in
-    day.
+    """Load admissions. Outputs a value column containing length of admission in
+    days.
 
     Args:
-        location_clause (Optional[str], optional): SHAK code indicating where to keep/not keep visits from (e.g. "= '6600'"). Defaults to "= '6600".
+        shak_sql_clause (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Defaults to None
+        shak_sql_operator (Optional[str], optional): Operator to use whith SHAK_sql_clause. Defaults to "=".
         n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
 
     Returns:
@@ -50,8 +51,8 @@ def admissions(
 
         sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL AND {meta['value_col']} IS NOT NULL {meta['where']}"
 
-        if location_clause is not None:
-            sql += f" AND left({meta['location_col']}, 4) {location_clause}"
+        if shak_sql_clause is not None:
+            sql += f" AND left({meta['location_col']}, {len(str(shak_sql_clause))}) {shak_sql_operator} {str(shak_sql_clause)}"
 
         df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
         df.rename(
@@ -83,10 +84,10 @@ def admissions(
 @data_loaders.register("admissions_to_psychiatry")
 def admissions_to_psychiatry(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load admissions to psychiatry."""
-    return admissions(location_clause="= '6600'", n_rows=n_rows)
+    return admissions(shak_sql_clause=6600, shak_sql_operator="=", n_rows=n_rows)
 
 
 @data_loaders.register("admissions_to_somatic")
 def admissions_to_somatic(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load admissions to somatic."""
-    return admissions(location_clause="!= '6600'", n_rows=n_rows)
+    return admissions(shak_sql_clause=6600, shak_sql_operator="!=", n_rows=n_rows)

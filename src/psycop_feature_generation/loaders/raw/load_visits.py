@@ -11,7 +11,8 @@ from psycop_feature_generation.utils import data_loaders
 
 @data_loaders.register("physical_visits")
 def physical_visits(
-    location_clause: Optional[str] = None,
+    shak_sql_clause: Optional[int] = None,
+    shak_sql_operator: Optional[str] = "=",
     where_clause: Optional[str] = None,
     where_separator: Optional[str] = "AND",
     n_rows: Optional[int] = None,
@@ -19,7 +20,8 @@ def physical_visits(
     """Load physical visits.
 
     Args:
-        location_clause (Optional[str], optional): SHAK code indicating where to keep/not keep visits from (e.g. "= '6600'"). Defaults to "= '6600".
+        shak_sql_clause (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Defaults to None
+        shak_sql_operator (Optional[str], optional): Operator to use whith SHAK_sql_clause. Defaults to "=".
         where_clause (Optional[str], optional): Extra where-clauses to add to the SQL call. E.g. dw_ek_borger = 1. Defaults to None. # noqa: DAR102
         where_separator (Optional[str], optional): Separator between where-clauses. Defaults to "AND".
         n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
@@ -62,8 +64,8 @@ def physical_visits(
 
         sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL {meta['where']}"
 
-        if location_clause is not None:
-            sql += f" AND left({meta['location_col']}, 4) {location_clause}"
+        if shak_sql_clause is not None:
+            sql += f" AND left({meta['location_col']}, {len(str(shak_sql_clause))}) {shak_sql_operator} {str(shak_sql_clause)}"
 
         if where_clause is not None:
             sql += f" {where_separator} {where_clause}"
@@ -82,7 +84,6 @@ def physical_visits(
         keep="first",
     )
 
-    # Add 'value' column with value 1
     output_df["value"] = 1
 
     msg.good("Loaded physical visits")
@@ -93,10 +94,10 @@ def physical_visits(
 @data_loaders.register("physical_visits_to_psychiatry")
 def physical_visits_to_psychiatry(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load physical visits to psychiatry."""
-    return physical_visits(location_clause="= '6600'", n_rows=n_rows)
+    return physical_visits(shak_sql_clause=6600, shak_sql_operator="=", n_rows=n_rows)
 
 
 @data_loaders.register("physical_visits_to_somatic")
 def physical_visits_to_somatic(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load physical visits to somatic."""
-    return physical_visits(location_clause="!= '6600'", n_rows=n_rows)
+    return physical_visits(shak_sql_clause=6600, shak_sql_operator="!=", n_rows=n_rows)
