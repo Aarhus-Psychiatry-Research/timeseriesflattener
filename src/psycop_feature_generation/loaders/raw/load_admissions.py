@@ -1,5 +1,4 @@
 """Load admissions."""
-
 from typing import Optional
 
 import pandas as pd
@@ -11,19 +10,27 @@ from psycop_feature_generation.utils import data_loaders
 
 @data_loaders.register("admissions")
 def admissions(
-    where_clause: Optional[str] = None,
+    shak_code: Optional[int] = None,
+    shak_sql_operator: Optional[str] = "=",
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Load admissions. Outputs a value column containng lenght of admission in
-    day.
+    """Load admissions. Outputs a value column containing length of admission
+    in days.
 
     Args:
-        where_clause (Optional[str], optional): SHAK code determining which rows to keep. Defaults to None.
+        shak_code (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Combines with
+            shak_sql_operator, e.g. "!= 6600". Defaults to None, in which case all admissions are kept.
+        shak_sql_operator (Optional[str], optional): Operator to use with shak_code. Defaults to "=".
         n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
 
     Returns:
         pd.DataFrame: Dataframe with all physical visits to psychiatry. Has columns dw_ek_borger, timestamp and value (length of admissions in days).
     """
+
+    if bool(shak_code) != bool(shak_sql_operator):
+        raise ValueError(
+            "shak_code and shak_sql_operator must both be set or both be None.",
+        )
 
     # SHAK = 6600 ≈ in psychiatry
     d = {
@@ -50,8 +57,8 @@ def admissions(
 
         sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL AND {meta['value_col']} IS NOT NULL {meta['where']}"
 
-        if where_clause is not None:
-            sql += f" AND left({meta['location_col']}, 4) = {where_clause}"
+        if shak_code is not None:
+            sql += f" AND left({meta['location_col']}, {len(str(shak_code))}) {shak_sql_operator} {str(shak_code)}"
 
         df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
         df.rename(
@@ -75,6 +82,18 @@ def admissions(
         output_df["value"] - output_df["timestamp"]
     ).dt.total_seconds() / 86400
 
-    msg.good("Loaded all admissions")
+    msg.good("Loaded admissions data")
 
     return output_df.reset_index(drop=True)
+
+
+@data_loaders.register("admissions_to_psychiatry")
+def admissions_to_psychiatry(n_rows: Optional[int] = None) -> pd.DataFrame:
+    """Load admissions to psychiatry."""
+    return admissions(shak_code=6600, shak_sql_operator="=", n_rows=n_rows)
+
+
+@data_loaders.register("admissions_to_somatic")
+def admissions_to_somatic(n_rows: Optional[int] = None) -> pd.DataFrame:
+    """Load admissions to somatic."""
+    return admissions(shak_code=6600, shak_sql_operator="!=", n_rows=n_rows)
