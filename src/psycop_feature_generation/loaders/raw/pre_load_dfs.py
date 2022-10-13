@@ -97,13 +97,13 @@ def error_check_dfs(
 
 
 def pre_load_unique_dfs(
-    unique_predictor_dict_list: list[dict[str, Any]],
+    predictor_dict_list: list[dict[str, Any]],
     subset_duplicates_columns: Union[list, str] = "all",
 ) -> dict[str, pd.DataFrame]:
     """Pre-load unique dataframes to avoid duplicate loading.
 
     Args:
-        unique_predictor_dict_list (list[dict[str, Union[str, float, int]]]): list of dictionaries where the key predictor_df maps to an SQL database.
+        predictor_dict_list (list[dict[str, Union[str, float, int]]]): list of dictionaries where the key predictor_df maps to an SQL database.
         subset_duplicates_columns (Union[list, str]): Which columns to check for duplicates across. Defaults to "all".
 
     Returns:
@@ -111,15 +111,25 @@ def pre_load_unique_dfs(
     """
 
     # Get unique predictor_df values from predictor_dict_list
-    unique_dfs = {x["predictor_df"] for x in unique_predictor_dict_list}
+    unique_dfs: set[str] = set()
+
+    selected_predictor_df_specs: list[dict[str, Any]] = []
+
+    for feature_dict in predictor_dict_list:
+        if feature_dict["predictor_df"] not in unique_dfs:
+            unique_dfs.add(feature_dict["predictor_df"])
+            selected_predictor_df_specs.append(feature_dict)
 
     msg = Printer(timestamp=True)
 
     msg.info(f"Pre-loading {len(unique_dfs)} dataframes")
-    n_workers = min(len(unique_dfs), 16)
+    n_workers = min(
+        len(unique_dfs),
+        16,
+    )  # 16 subprocesses should be enough to not be IO bound
 
     with Pool(n_workers) as p:
-        pre_loaded_dfs = p.map(load_df_wrapper, unique_predictor_dict_list)
+        pre_loaded_dfs = p.map(load_df_wrapper, selected_predictor_df_specs)
 
         error_check_dfs(
             pre_loaded_dfs=pre_loaded_dfs,
