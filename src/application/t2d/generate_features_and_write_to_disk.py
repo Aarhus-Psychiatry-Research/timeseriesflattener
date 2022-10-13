@@ -8,6 +8,7 @@ import random
 import sys
 import tempfile
 import time
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -39,8 +40,30 @@ from psycop_feature_generation.utils import (
 )
 
 
-def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
+def finish_wandb(run: wandb.wandb_sdk.wandb_run.Run):
     """Log poetry lock file and file prefix to WandB for reproducibility."""
+
+    run.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
+
+    run.finish()
+
+
+def init_wandb(
+    wandb_project_name: str,
+    predictor_combinations: Iterable[dict[str, Any]],
+    save_dir: Union[Path, str],
+) -> wandb.wandb_sdk.wandb_run.Run:
+    """Initialise wandb logging. Allows to use wandb to track progress, send
+    Slack notifications if failing, and track logs.
+
+    Args:
+        wandb_project_name (str): Name of wandb project.
+        predictor_combinations (Iterable[dict[str, Any]]): List of predictor specs.
+        save_dir (Union[Path, str]): Path to save dir.
+
+    Return:
+        wandb.wandb_sdk.wandb_run.Run: WandB run.
+    """
 
     feature_settings = {
         "save_path": save_dir,
@@ -58,9 +81,8 @@ def log_to_wandb(wandb_project_name, predictor_combinations, save_dir):
         (PROJECT_ROOT / "wandb" / "debug-cli.onerm").mkdir(exist_ok=True, parents=True)
 
     run = wandb.init(project=wandb_project_name, config=feature_settings)
-    run.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
 
-    run.finish()
+    return run  # type: ignore
 
 
 def save_feature_set_description_to_disk(
@@ -418,7 +440,7 @@ def pre_load_project_dfs(
 
     # Many features will use the same dataframes, so we can load them once and reuse them.
     pre_loaded_dfs = pre_load_unique_dfs(
-        unique_predictor_dict_list=dfs_to_preload,
+        predictor_dict_list=dfs_to_preload,
     )
 
     return pre_loaded_dfs
@@ -443,11 +465,21 @@ def main(
         predictor_spec_list (list[dict[str, dict[str, Any]]]): List of predictor specs.
         lookahead_years (list[Union[int,float]]): List of lookahead years.
     """
-
     predictor_combinations, proj_path, feature_set_id = setup_for_main(
         predictor_spec_list=predictor_spec_list,
         feature_sets_path=feature_sets_path,
         proj_name=proj_name,
+    )
+
+    out_dir = create_save_dir_path(
+        feature_set_id=feature_set_id,
+        proj_path=proj_path,
+    )
+
+    run = init_wandb(
+        wandb_project_name=proj_name,
+        predictor_combinations=predictor_spec_list,
+        save_dir=out_dir,  # Save-dir as argument because we want to log the path
     )
 
     pre_loaded_dfs = pre_load_project_dfs(
@@ -465,22 +497,11 @@ def main(
         lookahead_years=lookahead_years,
     )
 
-    out_dir = create_save_dir_path(
-        feature_set_id=feature_set_id,
-        proj_path=proj_path,
-    )
-
     split_and_save_to_disk(
         flattened_df=flattened_df,
         out_dir=out_dir,
         file_prefix=feature_set_id,
         file_suffix="parquet",
-    )
-
-    log_to_wandb(
-        predictor_combinations=predictor_combinations,
-        save_dir=out_dir,  # Save-dir as argument because we want to log the path
-        wandb_project_name=proj_name,
     )
 
     save_feature_set_description_to_disk(
@@ -490,11 +511,15 @@ def main(
         file_suffix="parquet",
     )
 
+    finish_wandb(
+        run=run,
+    )
+
 
 def gen_predictor_spec_list():
     """Generate predictor spec list."""
-    resolve_multiple = ["max", "min", "mean", "latest"]
-    lookbehind_days = [365, 1825, 9999]
+    resolve_multiple = ["max", "min", "mean", "latest", "count"]
+    lookbehind_days = [30, 90, 180, 365, 730]
 
     lab_predictors = generate_feature_specification(
         dfs=(
@@ -559,5 +584,5 @@ if __name__ == "__main__":
         proj_name="t2d",
         outcome_loader_str="t2d",
         prediction_time_loader_str="physical_visits_to_psychiatry",
-        lookahead_years=[1, 3, 5],
+        lookahead_years=[1, 2, 3, 4, 5],
     )
