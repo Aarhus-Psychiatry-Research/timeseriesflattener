@@ -1052,7 +1052,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         df = FlattenedDataset.resolve_multiple_values_within_interval_days(
             resolve_multiple=resolve_multiple,
             df=df,
-            timestamp_col_name=timestamp_col_name,
             pred_time_uuid_colname=pred_time_uuid_col_name,
         )
 
@@ -1112,7 +1111,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     def resolve_multiple_values_within_interval_days(
         resolve_multiple: Callable,
         df: DataFrame,
-        timestamp_col_name: str,
         pred_time_uuid_colname: str,
     ) -> DataFrame:
         """Apply the resolve_multiple function to prediction_times where there
@@ -1121,7 +1119,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         Args:
             resolve_multiple (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
             df (DataFrame): Source dataframe with all prediction time x val combinations.
-            timestamp_col_name (str): Name of timestamp column in df.
             pred_time_uuid_colname (str): Name of uuid column in df.
 
         Returns:
