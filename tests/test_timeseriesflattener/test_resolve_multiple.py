@@ -96,8 +96,10 @@ def test_resolve_multiple_latest():
                             """
     event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:01, 1
+                        1,2022-01-01 00:00:03, 3
                         1,2022-01-01 00:00:02, 2
                         2,2022-01-01 00:00:01, 3
+                        2,2022-01-01 00:00:03, 9
                         2,2022-01-01 00:00:02, 6
                         """
 
@@ -106,7 +108,7 @@ def test_resolve_multiple_latest():
         outcome_df_str=event_times_str,
         resolve_multiple="latest",
         lookahead_days=2,
-        expected_flattened_values=[2, 6],
+        expected_flattened_values=[3, 9],
     )
 
 
@@ -151,8 +153,12 @@ def test_resolve_multiple_earliest():
                             1,2021-12-31 00:00:00
                             """
     event_times_str = """dw_ek_borger,timestamp,value,
+                        1,2022-01-01 00:00:03, 3
                         1,2022-01-01 00:00:01, 1
                         1,2022-01-01 00:00:02, 2
+                        2,2022-01-01 00:00:03, 3
+                        2,2022-01-01 00:00:01, 1
+                        2,2022-01-01 00:00:02, 2
                         """
 
     assert_flattened_outcome_as_expected(
@@ -160,7 +166,7 @@ def test_resolve_multiple_earliest():
         outcome_df_str=event_times_str,
         resolve_multiple="earliest",
         lookahead_days=2,
-        expected_flattened_values=[1],
+        expected_flattened_values=[3],
     )
 
 

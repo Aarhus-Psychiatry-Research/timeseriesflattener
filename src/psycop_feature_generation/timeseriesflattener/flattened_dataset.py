@@ -303,28 +303,46 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Check that some values in generated_df differ from fallback
         # Otherwise, comparison to cache is meaningless
         n_to_generate = 1_000
+        n_trials = 0
 
         while not any(
             generated_df[full_col_str] != kwargs_dict["fallback"],
         ):
-            self.msg.info(
-                f"{full_col_str}: Generated_df was all fallback values, regenerating",
-            )
+            if n_trials != 0:
+                self.msg.info(
+                    f"{full_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
+                )
 
             generated_df = self.flatten_temporal_values_to_df(
-                prediction_times_with_uuid_df=self.df.sample(n_to_generate),
+                prediction_times_with_uuid_df=self.df.sample(int(n_to_generate)),
                 id_col_name=self.id_col_name,
                 timestamp_col_name=self.timestamp_col_name,
                 pred_time_uuid_col_name=self.pred_time_uuid_col_name,
                 **kwargs_dict,
             )
 
+            # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
+            # in the cache. Saves on storage. Don't use them to check if cache is hit.
+            generated_df = generated_df[
+                generated_df[full_col_str] != kwargs_dict["fallback"]
+            ]
+
             n_to_generate = (
                 n_to_generate**1.5
             )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
 
+            n_trials += 1
+
         cached_suffix = "_c"
         generated_suffix = "_g"
+
+        # NAs are not interesting when comparing if computed values are identical
+        cache_df = cache_df.dropna()
+        generated_df = generated_df.dropna()
+
+        # We frequently hit rounding errors with cache hits, so we round to 3 decimal places
+        generated_df[full_col_str] = generated_df[full_col_str].round(3)
+        cache_df[full_col_str] = cache_df[full_col_str].round(3)
 
         # Merge cache_df onto generated_df
         merged_df = pd.merge(
@@ -342,6 +360,13 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             merged_df[full_col_str + cached_suffix],
         ):
             self.msg.info(f"Cache miss, computed values didn't match {file_pattern}")
+
+            # Keep this variable for easier inspection
+            unequal_rows = merged_df[  # pylint: disable=unused-variable
+                merged_df[full_col_str + generated_suffix]
+                != merged_df[full_col_str + cached_suffix]
+            ]
+
             return False
 
         # If all checks passed, return true
@@ -929,6 +954,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         new_col_name: Union[str, list],
         new_col_name_prefix: Optional[str] = None,
         loader_kwargs: Optional[dict] = None,
+        verbose: bool = False,
     ) -> DataFrame:
 
         """Create a dataframe with flattened values (either predictor or
@@ -958,6 +984,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 dataframe.
             new_col_name_prefix (str, optional): Prefix to use for new column name.
             loader_kwargs (dict, optional): Keyword arguments to pass to the loader
+            verbose (bool, optional): Whether to print progress.
 
 
         Returns:
@@ -1047,9 +1074,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             df.columns = full_col_str
             df = pd.concat([metadata_df, df], axis=1)
 
-        msg.good(
-            f"Returning {df.shape[0]} rows of flattened dataframe with {full_col_str}",
-        )
+        if verbose:
+            msg.good(
+                f"Returning {df.shape[0]} rows of flattened dataframe with {full_col_str[0]}",
+            )
 
         cols_to_return = [pred_time_uuid_col_name] + full_col_str
 
@@ -1101,12 +1129,15 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """
         # Convert timestamp val to numeric that can be used for resolve_multiple functions
         # Numeric value amounts to days passed since 1/1/1970
-        df["timestamp_val"] = (
-            df["timestamp_val"] - dt.datetime(1970, 1, 1)
-        ).dt.total_seconds() / 86400
+        try:
+            df["timestamp_val"] = (
+                df["timestamp_val"] - dt.datetime(1970, 1, 1)
+            ).dt.total_seconds() / 86400
+        except TypeError:
+            msg.info("All values are NaT, returning empty dataframe")
 
         # Sort by timestamp_pred in case resolve_multiple needs dates
-        df = df.sort_values(by=timestamp_col_name).groupby(pred_time_uuid_colname)
+        df = df.sort_values(by="timestamp_val").groupby(pred_time_uuid_colname)
 
         if isinstance(resolve_multiple, str):
             resolve_multiple = resolve_fns.get(resolve_multiple)
