@@ -11,7 +11,7 @@ from psycop_feature_generation.utils import data_loaders
 
 @data_loaders.register("physical_visits")
 def physical_visits(
-    shak_sql_clause: Optional[int] = None,
+    shak_code: Optional[int] = None,
     shak_sql_operator: Optional[str] = "=",
     where_clause: Optional[str] = None,
     where_separator: Optional[str] = "AND",
@@ -20,8 +20,9 @@ def physical_visits(
     """Load pshysical visits to both somatic and psychiatry.
 
     Args:
-        shak_sql_clause (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Defaults to None
-        shak_sql_operator (Optional[str], optional): Operator to use whith SHAK_sql_clause. Defaults to "=".
+        shak_code (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Combines with
+            shak_sql_operator, e.g. "!= 6600". Defaults to None, in which case all admissions are kept.
+        shak_sql_operator (Optional[str], optional): Operator to use with shak_code. Defaults to "=".
         where_clause (Optional[str], optional): Extra where-clauses to add to the SQL call. E.g. dw_ek_borger = 1. Defaults to None. # noqa: DAR102
         where_separator (Optional[str], optional): Separator between where-clauses. Defaults to "AND".
         n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
@@ -29,6 +30,12 @@ def physical_visits(
     Returns:
         pd.DataFrame: Dataframe with all physical visits to psychiatry. Has columns dw_ek_borger and timestamp.
     """
+
+    if bool(shak_code) != bool(shak_sql_operator):
+        raise ValueError(
+            "shak_code and shak_sql_operator must both be set or both be None.",
+        )
+
     # SHAK = 6600 ≈ in psychiatry
     d = {
         "LPR3": {
@@ -64,8 +71,8 @@ def physical_visits(
 
         sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL {meta['where']}"
 
-        if shak_sql_clause is not None:
-            sql += f" AND left({meta['location_col']}, {len(str(shak_sql_clause))}) {shak_sql_operator} {str(shak_sql_clause)}"
+        if shak_code is not None:
+            sql += f" AND left({meta['location_col']}, {len(str(shak_code))}) {shak_sql_operator} {str(shak_code)}"
 
         if where_clause is not None:
             sql += f" {where_separator} {where_clause}"
@@ -94,10 +101,10 @@ def physical_visits(
 @data_loaders.register("physical_visits_to_psychiatry")
 def physical_visits_to_psychiatry(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load physical visits to psychiatry."""
-    return physical_visits(shak_sql_clause=6600, shak_sql_operator="=", n_rows=n_rows)
+    return physical_visits(shak_code=6600, shak_sql_operator="=", n_rows=n_rows)
 
 
 @data_loaders.register("physical_visits_to_somatic")
 def physical_visits_to_somatic(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load physical visits to somatic."""
-    return physical_visits(shak_sql_clause=6600, shak_sql_operator="!=", n_rows=n_rows)
+    return physical_visits(shak_code=6600, shak_sql_operator="!=", n_rows=n_rows)

@@ -10,7 +10,7 @@ from psycop_feature_generation.utils import data_loaders
 
 @data_loaders.register("admissions")
 def admissions(
-    shak_sql_clause: Optional[int] = None,
+    shak_code: Optional[int] = None,
     shak_sql_operator: Optional[str] = "=",
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -18,13 +18,19 @@ def admissions(
     in days.
 
     Args:
-        shak_sql_clause (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Defaults to None
-        shak_sql_operator (Optional[str], optional): Operator to use whith SHAK_sql_clause. Defaults to "=".
+        shak_code (Optional[int], optional): SHAK code indicating where to keep/not keep visits from (e.g. 6600). Combines with
+            shak_sql_operator, e.g. "!= 6600". Defaults to None, in which case all admissions are kept.
+        shak_sql_operator (Optional[str], optional): Operator to use with shak_code. Defaults to "=".
         n_rows (Optional[int], optional): Number of rows to return. Defaults to None.
 
     Returns:
         pd.DataFrame: Dataframe with all physical visits to psychiatry. Has columns dw_ek_borger, timestamp and value (length of admissions in days).
     """
+
+    if bool(shak_code) != bool(shak_sql_operator):
+        raise ValueError(
+            "shak_code and shak_sql_operator must both be set or both be None.",
+        )
 
     # SHAK = 6600 ≈ in psychiatry
     d = {
@@ -51,8 +57,8 @@ def admissions(
 
         sql = f"SELECT {cols} FROM [fct].{meta['view']} WHERE {meta['datetime_col']} IS NOT NULL AND {meta['value_col']} IS NOT NULL {meta['where']}"
 
-        if shak_sql_clause is not None:
-            sql += f" AND left({meta['location_col']}, {len(str(shak_sql_clause))}) {shak_sql_operator} {str(shak_sql_clause)}"
+        if shak_code is not None:
+            sql += f" AND left({meta['location_col']}, {len(str(shak_code))}) {shak_sql_operator} {str(shak_code)}"
 
         df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
         df.rename(
@@ -84,10 +90,10 @@ def admissions(
 @data_loaders.register("admissions_to_psychiatry")
 def admissions_to_psychiatry(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load admissions to psychiatry."""
-    return admissions(shak_sql_clause=6600, shak_sql_operator="=", n_rows=n_rows)
+    return admissions(shak_code=6600, shak_sql_operator="=", n_rows=n_rows)
 
 
 @data_loaders.register("admissions_to_somatic")
 def admissions_to_somatic(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Load admissions to somatic."""
-    return admissions(shak_sql_clause=6600, shak_sql_operator="!=", n_rows=n_rows)
+    return admissions(shak_code=6600, shak_sql_operator="!=", n_rows=n_rows)
