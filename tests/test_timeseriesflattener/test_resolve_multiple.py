@@ -151,6 +151,7 @@ def test_resolve_multiple_latest_one_vlaue():
 def test_resolve_multiple_earliest():
     prediction_times_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
+                            2,2021-12-31 00:00:00
                             """
     event_times_str = """dw_ek_borger,timestamp,value,
                         1,2022-01-01 00:00:03, 3
@@ -166,7 +167,7 @@ def test_resolve_multiple_earliest():
         outcome_df_str=event_times_str,
         resolve_multiple="earliest",
         lookahead_days=2,
-        expected_flattened_values=[3],
+        expected_flattened_values=[1, 1],
     )
 
 
