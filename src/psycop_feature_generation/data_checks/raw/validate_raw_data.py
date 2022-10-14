@@ -155,7 +155,12 @@ def validate_raw_data(
         )
 
     # Deepchecks
-    d_set = Dataset(df=df, index_name=id_col_name, datetime_name=timestamp_col_name)
+    d_set = Dataset(
+        df=df,
+        index_name=id_col_name,
+        datetime_name=timestamp_col_name,
+        cat_features=[],
+    )
     integ_suite = data_integrity(timeout=0)
 
     with msg.loading("Running data integrity checks..."):
