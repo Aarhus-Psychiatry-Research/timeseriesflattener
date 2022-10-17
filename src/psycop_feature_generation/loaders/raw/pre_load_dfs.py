@@ -24,7 +24,7 @@ def load_df(predictor_df: str, values_to_load: Union[str, None] = None) -> pd.Da
 
     df = pd.DataFrame()
 
-    msg.info(f"Loading {predictor_df}")
+    msg.info(f"{predictor_df}: Loading")
 
     loader_fns = data_loaders.get_all()
 
@@ -41,7 +41,7 @@ def load_df(predictor_df: str, values_to_load: Union[str, None] = None) -> pd.Da
     if df.shape[0] == 0:
         raise ValueError(f"Loaded dataframe {predictor_df} is empty.")
 
-    msg.info(f"Loaded {predictor_df} with {len(df)} rows")
+    msg.info(f"{predictor_df}: Loaded with {len(df)} rows")
     return df
 
 

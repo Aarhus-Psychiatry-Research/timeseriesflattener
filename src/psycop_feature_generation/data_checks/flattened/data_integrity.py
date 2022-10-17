@@ -358,6 +358,7 @@ def run_validation_requiring_split_comparison(
                         index_name="dw_ek_borger",
                         datetime_name="timestamp",
                         label=split_dicts["train"]["outcomes"][outcome_col],
+                        cat_features=[],
                     ),
                 },
                 split_name: {
@@ -366,6 +367,7 @@ def run_validation_requiring_split_comparison(
                         index_name="dw_ek_borger",
                         datetime_name="timestamp",
                         label=split_contents["outcomes"][outcome_col],
+                        cat_features=[],
                     ),
                 },
             }

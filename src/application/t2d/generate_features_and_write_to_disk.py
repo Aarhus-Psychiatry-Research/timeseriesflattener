@@ -41,7 +41,7 @@ from psycop_feature_generation.utils import (
 
 
 def finish_wandb(run: wandb.wandb_sdk.wandb_run.Run):
-    """Log poetry lock file and file prefix to WandB for reproducibility."""
+    """Log artifacts and finish the run."""
 
     run.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
 
