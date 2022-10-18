@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.3 (2022-10-18)
+### Fix
+* Remove shak_code + operator check ([`f97aee8`](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/commit/f97aee8ff932270abed737308591cc87678062a8))
+
 ## v0.6.2 (2022-10-17)
 ### Fix
 * Ignore cat_features ([`2052505`](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/commit/20525056d6e97aceb277a5e05cde3d8e701650e3))
