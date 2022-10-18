@@ -31,11 +31,6 @@ def physical_visits(
         pd.DataFrame: Dataframe with all physical visits to psychiatry. Has columns dw_ek_borger and timestamp.
     """
 
-    if bool(shak_code) != bool(shak_sql_operator):
-        raise ValueError(
-            "shak_code and shak_sql_operator must both be set or both be None.",
-        )
-
     # SHAK = 6600 ≈ in psychiatry
     d = {
         "LPR3": {
