@@ -8,6 +8,7 @@ from multiprocessing import Pool
 from pathlib import Path
 from typing import Any, Optional, Union
 
+import dask
 import dask.dataframe as dd
 import numpy as np
 import pandas as pd
@@ -380,7 +381,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self,
         kwargs_dict: dict,
         file_suffix: str = "parquet",
-    ) -> DataFrame:
+    ) -> dask.DataFrame:
         """Get features. Either load from cache, or generate if necessary.
 
         Args:
@@ -388,7 +389,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             file_suffix (str, optional): File suffix for the cache lookup. Defaults to "parquet".
 
         Returns:
-            DataFrame: DataFrame generates with create_flattened_df
+            dask.DataFrame: DataFrame generates with create_flattened_df
         """
         full_col_str = generate_feature_colname(
             prefix=kwargs_dict["new_col_name_prefix"],
@@ -416,7 +417,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     file_suffix=file_suffix,
                 )
 
-                return df
+                return dd.from_pandas(df=df)
         else:
             msg.info("No cache dir specified, not attempting load")
 
@@ -451,7 +452,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 / f"{file_pattern}_{timestamp}.parquet",
             )
 
-        return df
+        return dd.from_pandas(df=df)
 
     def _check_and_prune_to_required_arg_dict_keys(self, processed_arg_dicts, arg_dict):
         """Check if arg_dict has all required keys, and prune to only required
@@ -648,25 +649,17 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self._validate_processed_arg_dicts(processed_arg_dicts)
 
         with Pool(self.n_workers) as p:
-            flattened_predictor_dfs = p.map(
+            flattened_predictor_dds = p.map(
                 self._get_feature,
                 processed_arg_dicts,
             )
 
-        flattened_predictor_dfs = [
-            df.set_index(self.pred_time_uuid_col_name) for df in flattened_predictor_dfs
-        ]
-
         msg.info("Feature generation complete, concatenating")
-
-        flattened_predictor_dds = [
-            dd.from_pandas(df, npartitions=6) for df in flattened_predictor_dfs
-        ]
 
         # Concatenate with dask, and show progress bar
         with TqdmCallback(desc="compute"):
             concatenated_dfs = (
-                dd.concat(flattened_predictor_dds, axis=1, interleave_partitions=True)
+                dd.concat(dfs=flattened_predictor_dds, axis=1)
                 .compute()  # Converts to pandas dataframe
                 .reset_index()
             )
@@ -1195,9 +1188,3 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             ["is_in_interval", "time_from_pred_to_val_in_days"],
             axis=1,
         )
-
-
-__all__ = [
-    "FlattenedDataset",
-    "select_and_assert_keys",
-]
