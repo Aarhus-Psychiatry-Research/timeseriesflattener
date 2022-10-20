@@ -663,7 +663,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Concatenate with dask, and show progress bar
         with TqdmCallback(desc="compute"):
             concatenated_dfs = (
-                dd.concat(dfs=flattened_predictor_dds, axis=1)
+                dd.concat(
+                    dfs=flattened_predictor_dds,
+                    axis=1,
+                )
                 .compute()  # Converts to pandas dataframe
                 .reset_index()
             )

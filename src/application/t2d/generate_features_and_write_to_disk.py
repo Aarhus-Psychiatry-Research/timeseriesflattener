@@ -524,10 +524,10 @@ def gen_predictor_spec_list():
     predictor_spec_list = []
 
     predictor_spec_list += generate_feature_specification(
-        dfs=("hba1c"),
+        dfs=("hba1c",),
         fallback=np.nan,
         values_to_load="numerical_and_coerce",
-        lookbehind_days=9999,
+        lookbehind_days=(9999,),
         resolve_multiple="count",
     )
 
