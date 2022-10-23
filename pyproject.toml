@@ -24,7 +24,7 @@ numpy = ">=1.23.3,<1.23.5"
 torch = "^1.12.1"
 transformers = "^4.22.2"
 pyarrow = ">=9.0.0,<9.1.0"
-protobuf = "3.19.4" # Other versions cause errors with pyarrow. If causing conflicts, try expanding.
+protobuf = "4.21.8" # Other versions cause errors with pyarrow. If causing conflicts, try expanding.
 psycopmlutils = ">=0.2.4, <0.3.0"
 
 [tool.poetry.dev-dependencies]
@@ -36,7 +36,7 @@ flake8 = ">=5.0.0, <5.0.6"
 docformatter = ">=1.5.0, <1.5.2"
 mypy = ">=0.971,<0.983"
 pytest-xdist = ">=2.4.0, <2.5.2"
-protobuf = "3.19.4" # Other versions give errors with pytest, super weird!
+protobuf = "4.21.8" # Other versions give errors with pytest, super weird!
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
