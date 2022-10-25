@@ -37,6 +37,11 @@ def generate_feature_specification(  # pylint: disable=dangerous-default-value
     Returns:
         list[dict[str, Any]]: List of feature specifications.
     """
+
+    if isinstance(dfs, str):
+        # To avoid iterating over the chars in the string, convert to a tuple instead
+        dfs = (dfs,)
+
     non_permuted = [
         {
             "predictor_df": df,

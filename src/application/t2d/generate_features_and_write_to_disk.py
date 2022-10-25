@@ -521,7 +521,17 @@ def gen_predictor_spec_list():
     resolve_multiple = ["max", "min", "mean", "latest", "count"]
     lookbehind_days = [30, 90, 180, 365, 730]
 
-    lab_predictors = generate_feature_specification(
+    predictor_spec_list = []
+
+    predictor_spec_list += generate_feature_specification(
+        dfs=("hba1c",),
+        fallback=np.nan,
+        values_to_load="numerical_and_coerce",
+        lookbehind_days=(9999,),
+        resolve_multiple="count",
+    )
+
+    predictor_spec_list += generate_feature_specification(
         dfs=(
             "hba1c",
             "alat",
@@ -541,7 +551,7 @@ def gen_predictor_spec_list():
         values_to_load="numerical_and_coerce",
     )
 
-    diagnosis_predictors = generate_feature_specification(
+    predictor_spec_list += generate_feature_specification(
         dfs=(
             "essential_hypertension",
             "hyperlipidemia",
@@ -553,26 +563,21 @@ def gen_predictor_spec_list():
         fallback=0,
     )
 
-    medication_predictors = generate_feature_specification(
+    predictor_spec_list += generate_feature_specification(
         dfs=("antipsychotics",),
         lookbehind_days=lookbehind_days,
         resolve_multiple=resolve_multiple,
         fallback=0,
     )
 
-    demographic_predictors = generate_feature_specification(
+    predictor_spec_list += generate_feature_specification(
         dfs=("weight_in_kg", "height_in_cm", "bmi"),
         lookbehind_days=lookbehind_days,
         resolve_multiple=["latest"],
         fallback=np.nan,
     )
 
-    return (
-        lab_predictors
-        + diagnosis_predictors
-        + medication_predictors
-        + demographic_predictors
-    )
+    return predictor_spec_list
 
 
 if __name__ == "__main__":
