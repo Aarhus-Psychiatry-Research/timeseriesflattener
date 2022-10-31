@@ -214,7 +214,6 @@ def split_and_save_to_disk(
 
 
 def add_metadata(
-    outcome_loader_str: str,
     pre_loaded_dfs: dict[str, pd.DataFrame],
     flattened_dataset: FlattenedDataset,
 ) -> FlattenedDataset:
@@ -231,10 +230,17 @@ def add_metadata(
 
     # Add timestamp from outcomes
     flattened_dataset.add_static_info(
-        info_df=pre_loaded_dfs[outcome_loader_str],
+        info_df=pre_loaded_dfs["t2d"],
         prefix="",
         input_col_name="timestamp",
-        output_col_name="timestamp_first_t2d",
+        output_col_name="timestamp_first_t2d_hba1c",
+    )
+
+    flattened_dataset.add_static_info(
+        info_df=pre_loaded_dfs["timestamp_exclusion"],
+        prefix="",
+        input_col_name="timestamp",
+        output_col_name="timestamp_exclusion",
     )
 
     return flattened_dataset
@@ -356,6 +362,11 @@ def create_full_flattened_dataset(
     )
 
     # Outcome
+    flattened_dataset = add_metadata(
+        pre_loaded_dfs=pre_loaded_dfs,
+        flattened_dataset=flattened_dataset,
+    )
+
     flattened_dataset = add_outcomes(
         pre_loaded_dfs=pre_loaded_dfs,
         outcome_loader_str=outcome_loader_str,
@@ -367,16 +378,6 @@ def create_full_flattened_dataset(
         pre_loaded_dfs=pre_loaded_dfs,
         predictor_combinations=predictor_combinations,
         flattened_dataset=flattened_dataset,
-    )
-
-    flattened_dataset = add_metadata(
-        pre_loaded_dfs=pre_loaded_dfs,
-        outcome_loader_str=outcome_loader_str,
-        flattened_dataset=flattened_dataset,
-    )
-
-    msg.info(
-        f"Dataframe size is {int(flattened_dataset.df.memory_usage(index=True, deep=True).sum() / 1024 / 1024)} MiB",  # type: ignore
     )
 
     return flattened_dataset.df
@@ -436,6 +437,7 @@ def pre_load_project_dfs(
         {"predictor_df": prediction_time_loader_str},
         {"predictor_df": "birthdays"},
         {"predictor_df": "sex_female"},
+        {"predictor_df": "timestamp_exclusion"},
     ]
 
     # Many features will use the same dataframes, so we can load them once and reuse them.

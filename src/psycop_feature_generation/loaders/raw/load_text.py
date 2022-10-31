@@ -85,7 +85,7 @@ def _load_notes_for_year(
 
 def _tfidf_featurize(
     df: pd.DataFrame,
-    tfidf_path: Optional[Path],
+    tfidf_path: Path,
     text_col: str = "text",
 ) -> pd.DataFrame:
     """TF-IDF featurize text. Assumes `df` to have a column named `text`.
