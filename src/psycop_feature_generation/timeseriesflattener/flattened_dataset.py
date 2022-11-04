@@ -473,9 +473,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         generated_df[value_col_str] = generated_df[value_col_str].round(3)
         cache_df[value_col_str] = cache_df[value_col_str].round(3)
 
-        generated_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
-        cache_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
-
         # Merge cache_df onto generated_df
         merged_df = pd.merge(
             left=generated_df,

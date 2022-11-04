@@ -450,8 +450,8 @@ def test_add_temporal_predictors_then_temporal_outcome():
                         """
 
     expected_df_str = """dw_ek_borger,timestamp,prediction_time_uuid
-                            1,2021-11-05,1-2021-11-05-00-00-00
                             2,2021-11-05,2-2021-11-05-00-00-00
+                            1,2021-11-05,1-2021-11-05-00-00-00
                         """
 
     prediction_times_df = str_to_df(prediction_times_str)
@@ -492,12 +492,10 @@ def test_add_temporal_predictors_then_temporal_outcome():
 
     outcome_df = flattened_dataset.df
 
-    for col in (
-        "dw_ek_borger",
-        "timestamp",
-        "prediction_time_uuid",
-    ):
-        pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
+    for col in expected_df.columns:
+        pd.testing.assert_series_equal(
+            outcome_df[col], expected_df[col], check_index=False, check_dtype=False
+        )
 
 
 def test_add_temporal_incident_binary_outcome():
