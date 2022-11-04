@@ -58,7 +58,7 @@ def load_df_wrapper(spec: MinSpec) -> dict[str, pd.DataFrame]:
     return {
         spec.values_df: load_df(
             predictor_df=spec.values_df,
-            values_to_load=spec.medication_values_to_load if spec.medications else None,
+            values_to_load=spec.lab_values_to_load if spec.medications else None,
         ),
     }
 
