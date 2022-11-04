@@ -32,7 +32,7 @@ class MinSpec(BaseModel):
     # Resolving
     interval_days: Union[int, float]
     resolve_multiple: str
-    fallback: Union[Callable, str]
+    fallback: Union[Callable, int, float, str]
 
     # Testing
     allowed_nan_value_prop: float = 0.0

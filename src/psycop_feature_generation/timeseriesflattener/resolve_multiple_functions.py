@@ -4,6 +4,7 @@ value."""
 # pylint: disable=missing-function-docstring
 
 import catalogue
+import numpy as np
 from pandas import DataFrame, Series
 from scipy import stats
 
@@ -77,8 +78,14 @@ def get_bool_in_group(grouped_df: DataFrame) -> DataFrame:
     Returns:
         DataFrame: Dataframe with value column containing only 0 or 1s.
     """
-    grouped_df = grouped_df.count().reset_index()
-    grouped_df[grouped_df["value"] > 0] = grouped_df.assign(value=1)
+    grouped_df = (
+        grouped_df["timestamp_val"]
+        .apply(lambda x: (~x.isna()).sum())
+        .reset_index(name="value")
+    )
+
+    grouped_df.loc[grouped_df["value"] > 0, "value"] = 1
+
     return grouped_df
 
 

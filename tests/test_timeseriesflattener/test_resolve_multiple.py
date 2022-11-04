@@ -290,6 +290,8 @@ def test_resolve_multiple_change_per_day():
             values_df=str_to_df(event_times_str),
             resolve_multiple="change_per_day",
             interval_days=4,
+            fallback=np.NaN,
+            incident=True,
         ),
         expected_values=[1, np.NaN],
     )
@@ -313,6 +315,8 @@ def test_resolve_multiple_change_per_day_unordered():
             values_df=str_to_df(event_times_str),
             resolve_multiple="change_per_day",
             interval_days=4,
+            fallback=np.NaN,
+            incident=True,
         ),
         expected_values=[1, 1],
     )
@@ -336,6 +340,8 @@ def test_resolve_multiple_change_per_day_negative():
             values_df=str_to_df(event_times_str),
             resolve_multiple="change_per_day",
             interval_days=4,
+            fallback=np.NaN,
+            incident=True,
         ),
         expected_values=[1, -1],
     )
@@ -359,34 +365,10 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
             values_df=str_to_df(event_times_str),
             resolve_multiple="change_per_day",
             interval_days=4,
+            fallback=99999,
+            incident=True,
         ),
         expected_values=[1, 99999],
-        fallback=99999,
-    )
-
-
-def test_resolve_multiple_mean_of_multiple_columns():
-    prediction_times_str = """dw_ek_borger,timestamp,
-                            1,2021-12-31 00:00:00
-                            2,2021-12-31 00:00:00
-                            """
-    event_times_str = """dw_ek_borger,timestamp,val1,val2
-                        1,2022-01-01 00:00:00,1,2
-                        1,2022-01-02 00:00:00,2,3
-                        2,2022-01-01 00:00:00,3,4
-                        2,2022-01-08 00:00:00,4,5
-                        """
-
-    assert_flattened_data_as_expected(
-        prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="mean",
-            interval_days=4,
-        ),
-        expected_values=[[1.5, 2.5], [3.0, 4.0]],
-        fallback=99999,
-        values_colname=["val1", "val2"],
     )
 
 
@@ -408,6 +390,8 @@ def test_resolve_multiple_variance():
             values_df=str_to_df(event_times_str),
             resolve_multiple="variance",
             interval_days=4,
+            fallback=np.NaN,
+            incident=True,
         ),
         expected_values=[0.5, np.NaN],
     )
