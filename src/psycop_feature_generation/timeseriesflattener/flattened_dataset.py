@@ -556,13 +556,16 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Concatenate with dask, and show progress bar
         with TqdmCallback(desc="compute"):
             merged_dfs = None
+
             for df in flattened_predictor_dds:
                 if merged_dfs is None:
                     merged_dfs = df
                 else:
-                    merged_dfs.merge(right=df, on=self.pred_time_uuid_col_name)
+                    merged_dfs = merged_dfs.merge(
+                        right=df, on=self.pred_time_uuid_col_name
+                    )
 
-            self.df = merged_dfs.merge( # type: ignore
+            self.df = merged_dfs.merge(  # type: ignore
                 right=self.df, on=self.pred_time_uuid_col_name
             ).compute()
 
