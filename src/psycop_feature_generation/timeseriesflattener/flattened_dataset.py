@@ -562,7 +562,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 else:
                     merged_dfs.merge(right=df, on=self.pred_time_uuid_col_name)
 
-            self.df = merged_dfs.merge(
+            self.df = merged_dfs.merge( # type: ignore
                 right=self.df, on=self.pred_time_uuid_col_name
             ).compute()
 

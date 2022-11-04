@@ -119,17 +119,15 @@ def create_flattened_df(
     return flat_ds.df
 
 
-# @pytest.mark.parametrize(
-#     "predictor_specs",
-#     [base_float_predictor_combinations, base_binary_predictor_combinations],
-# )
+@pytest.mark.parametrize(
+    "predictor_specs",
+    [base_float_predictor_combinations, base_binary_predictor_combinations],
+)
 def test_cache_hitting(
     tmp_path,
     synth_prediction_times,
-    # predictor_specs,
+    predictor_specs,
 ):
-    """Test that the cache is hit when the same data is requested twice."""
-    predictor_specs = base_float_predictor_combinations
 
     # Create the cache
     first_df = create_flattened_df(
