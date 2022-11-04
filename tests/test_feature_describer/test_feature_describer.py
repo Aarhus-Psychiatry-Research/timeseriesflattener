@@ -7,29 +7,30 @@ from psycop_feature_generation.data_checks.flattened.feature_describer import (
     generate_feature_description_df,
     generate_feature_description_row,
 )
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    PredictorSpec,
+)
 from psycop_feature_generation.utils import generate_feature_colname
 
 # pylint: disable=redefined-outer-name, missing-function-docstring
 
 
 @pytest.fixture()
-def predictor_dicts():
-    predictor_dicts = [
-        {
-            "predictor_df": "hba1c",
-            "lookbehind_days": 100,
-            "resolve_multiple": "max",
-            "fallback": np.nan,
-        },
-        {
-            "predictor_df": "hdl",
-            "lookbehind_days": 100,
-            "resolve_multiple": "max",
-            "fallback": np.nan,
-        },
+def predictor_specs():
+    return [
+        PredictorSpec(
+            values_df="hba1c",
+            interval_days=100,
+            resolve_multiple="max",
+            fallback=np.nan,
+        ),
+        PredictorSpec(
+            values_df="hdl",
+            interval_days=100,
+            resolve_multiple="max",
+            fallback=np.nan,
+        ),
     ]
-
-    return predictor_dicts
 
 
 @pytest.fixture()
@@ -45,17 +46,11 @@ def test_load_dataset(df):
     assert df.shape[0] == 10_000
 
 
-def test_generate_feature_description_row(df, predictor_dicts):
-    d = predictor_dicts[0]
+def test_generate_feature_description_row(df, predictor_specs: list[PredictorSpec]):
+    spec = predictor_specs[0]
 
-    column_name = generate_feature_colname(
-        prefix="pred",
-        out_col_name=d["predictor_df"],
-        interval_days=d["lookbehind_days"],
-        resolve_multiple=d["resolve_multiple"],
-        fallback=d["fallback"],
-    )
+    column_name = spec.get_col_str()
 
-    generate_feature_description_row(series=df[column_name], predictor_spec=d)
+    generate_feature_description_row(series=df[column_name], predictor_spec=spec)
 
-    generate_feature_description_df(df, predictor_dicts)
+    generate_feature_description_df(df=df, predictor_specs=predictor_specs)
