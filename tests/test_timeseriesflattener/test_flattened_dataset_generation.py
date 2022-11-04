@@ -181,7 +181,7 @@ def test_all_non_online_elements_in_pipeline(
             resolve_multiple="max",
             fallback=0,
             incident=True,
-        )
+        ),
     )
 
     flattened_df = flattened_ds.df

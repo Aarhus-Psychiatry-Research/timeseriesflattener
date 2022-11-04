@@ -15,43 +15,6 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
 from psycop_feature_generation.utils import data_loaders
 
 
-def assert_flattened_data_as_expected(
-    prediction_times_df: Union[pd.DataFrame, str],
-    output_spec: Union[PredictorSpec, PredictorSpec],
-    expected_df: Optional[pd.DataFrame] = None,
-    expected_values: Optional[Sequence[Any]] = None,
-):
-    if isinstance(prediction_times_df, str):
-        prediction_times_df = str_to_df(prediction_times_df)
-
-    if isinstance(output_spec.values_df, str):
-        output_spec.values_df = str_to_df(output_spec.values_df)
-
-    flattened_ds = FlattenedDataset(
-        prediction_times_df=prediction_times_df, n_workers=4
-    )
-
-    flattened_ds.add_temporal_col_to_flattened_dataset(output_spec=output_spec)
-
-    if expected_df:
-        for col in expected_df.columns:
-            assert_series_equal(
-                left=flattened_ds.df[col], right=expected_df[col], check_dtype=False
-            )
-    elif expected_values:
-        output = flattened_ds.df[output_spec.get_col_str()].values.tolist()
-        expected = list(expected_values)
-
-        for i, expected_val in enumerate(expected):
-            # NaN != NaN, hence specific handling
-            if np.isnan(expected_val):
-                assert np.isnan(output[i])
-            else:
-                assert expected_val == output[i]
-    else:
-        raise ValueError("Must provide an expected set of data")
-
-
 def convert_cols_with_matching_colnames_to_datetime(
     df: DataFrame,
     colname_substr: str,
@@ -105,6 +68,46 @@ def str_to_df(
 
     # Drop "Unnamed" cols
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
+
+
+def assert_flattened_data_as_expected(
+    prediction_times_df: Union[pd.DataFrame, str],
+    output_spec: Union[PredictorSpec, PredictorSpec],
+    expected_df: Optional[pd.DataFrame] = None,
+    expected_values: Optional[Sequence[Any]] = None,
+):
+    if isinstance(prediction_times_df, str):
+        prediction_times_df = str_to_df(prediction_times_df)
+
+    if isinstance(output_spec.values_df, str):
+        output_spec.values_df = str_to_df(output_spec.values_df)
+
+    flattened_ds = FlattenedDataset(
+        prediction_times_df=prediction_times_df,
+        n_workers=4,
+    )
+
+    flattened_ds.add_temporal_col_to_flattened_dataset(output_spec=output_spec)
+
+    if expected_df:
+        for col in expected_df.columns:
+            assert_series_equal(
+                left=flattened_ds.df[col],
+                right=expected_df[col],
+                check_dtype=False,
+            )
+    elif expected_values:
+        output = flattened_ds.df[output_spec.get_col_str()].values.tolist()
+        expected = list(expected_values)
+
+        for i, expected_val in enumerate(expected):
+            # NaN != NaN, hence specific handling
+            if np.isnan(expected_val):
+                assert np.isnan(output[i])
+            else:
+                assert expected_val == output[i]
+    else:
+        raise ValueError("Must provide an expected set of data")
 
 
 @data_loaders.register("load_event_times")

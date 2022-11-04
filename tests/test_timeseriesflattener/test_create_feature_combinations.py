@@ -18,7 +18,7 @@ def test_skip_all_if_no_need_to_process():
                 resolve_multiple=["max"],
                 fallback=[0],
                 allowed_nan_value_prop=[0.5],
-            ).create_combinations()
+            ).create_combinations(),
         )
         == 1
     )

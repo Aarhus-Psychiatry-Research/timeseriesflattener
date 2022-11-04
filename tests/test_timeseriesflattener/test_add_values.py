@@ -30,12 +30,12 @@ def test_predictor_after_prediction_time():
     prediction_times_df = str_to_df(
         """dw_ek_borger,timestamp,
     1,2021-12-31 00:00:00
-    """
+    """,
     )
     predictor_df = str_to_df(
         """dw_ek_borger,timestamp,value,
     1,2022-01-01 00:00:01, 1.0
-    """
+    """,
     )
 
     assert_flattened_data_as_expected(
@@ -169,7 +169,7 @@ def test_raise_error_if_timestamp_col_not_timestamp_type():
                 interval_days=5,
                 resolve_multiple="max",
                 fallback=0,
-            )
+            ),
         )
 
 
@@ -344,14 +344,16 @@ def test_incident_outcome_removing_prediction_times():
             fallback=np.NaN,
             resolve_multiple="max",
             col_main="value",
-        )
+        ),
     )
 
     outcome_df = flattened_dataset.df.reset_index(drop=True)
 
     for col in expected_df.columns:
         pd.testing.assert_series_equal(
-            outcome_df[col], expected_df[col], check_dtype=False
+            outcome_df[col],
+            expected_df[col],
+            check_dtype=False,
         )
 
 
@@ -424,7 +426,9 @@ def test_add_multiple_static_predictors():
         "pred_male",
     ):
         pd.testing.assert_series_equal(
-            outcome_df[col], expected_df[col], check_dtype=False
+            outcome_df[col],
+            expected_df[col],
+            check_dtype=False,
         )
 
 
@@ -530,7 +534,7 @@ def test_add_temporal_incident_binary_outcome():
             fallback=np.NaN,
             resolve_multiple="max",
             col_main="t2d",
-        )
+        ),
     )
 
     outcome_df = flattened_dataset.df

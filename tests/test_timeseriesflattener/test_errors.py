@@ -56,7 +56,7 @@ def test_col_does_not_exist():
                 interval_days=2,
                 resolve_multiple="max",
                 fallback=2,
-            )
+            ),
         )
 
 

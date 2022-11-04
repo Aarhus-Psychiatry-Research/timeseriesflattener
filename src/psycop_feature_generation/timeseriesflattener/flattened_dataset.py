@@ -39,6 +39,48 @@ ProgressBar().register()
 class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     """Turn a set of time-series into tabular prediction-time data."""
 
+    def _check_timestamp_col_type(self):
+        """Check that the timestamp column is of type datetime."""
+        timestamp_col_type = type(self.df[self.timestamp_col_name][0]).__name__
+
+        if timestamp_col_type not in ["Timestamp"]:
+            try:
+                self.df[self.timestamp_col_name] = pd.to_datetime(
+                    self.df[self.timestamp_col_name],
+                )
+            except Exception as exc:
+                raise ValueError(
+                    f"prediction_times_df: {self.timestamp_col_name} is of type {timestamp_col_type}, and could not be converted to 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset. More info: {exc}",
+                ) from exc
+
+    def _check_for_duplicate_rows(self):
+        """Check that there are no duplicate rows in the initial dataframe."""
+        if df_contains_duplicates(
+            df=self.df,
+            col_subset=[self.id_col_name, self.timestamp_col_name],
+        ):
+            raise ValueError(
+                "Duplicate patient/timestamp combinations in prediction_times_df, aborting",
+            )
+
+    def _check_that_timestamp_and_id_columns_exist(self):
+        """Check that the required columns are present in the initial
+        dataframe."""
+
+        for col_name in (self.timestamp_col_name, self.id_col_name):
+            if col_name not in self.df.columns:
+                raise ValueError(
+                    f"{col_name} does not exist in prediction_times_df, change the df or set another argument",
+                )
+
+    def _check_init_df_for_errors(self):
+        """Run checks on the initial dataframe."""
+
+        # Check that colnames are present
+        self._check_that_timestamp_and_id_columns_exist()
+        self._check_for_duplicate_rows()
+        self._check_timestamp_col_type()
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
@@ -121,54 +163,12 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             str,
         ) + self.df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
-    def _check_init_df_for_errors(self):
-        """Run checks on the initial dataframe."""
-
-        # Check that colnames are present
-        self._check_that_timestamp_and_id_columns_exist()
-        self._check_for_duplicate_rows()
-        self._check_timestamp_col_type()
-
-    def _check_timestamp_col_type(self):
-        """Check that the timestamp column is of type datetime."""
-        timestamp_col_type = type(self.df[self.timestamp_col_name][0]).__name__
-
-        if timestamp_col_type not in ["Timestamp"]:
-            try:
-                self.df[self.timestamp_col_name] = pd.to_datetime(
-                    self.df[self.timestamp_col_name],
-                )
-            except Exception as exc:
-                raise ValueError(
-                    f"prediction_times_df: {self.timestamp_col_name} is of type {timestamp_col_type}, and could not be converted to 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset. More info: {exc}",
-                ) from exc
-
-    def _check_for_duplicate_rows(self):
-        """Check that there are no duplicate rows in the initial dataframe."""
-        if df_contains_duplicates(
-            df=self.df,
-            col_subset=[self.id_col_name, self.timestamp_col_name],
-        ):
-            raise ValueError(
-                "Duplicate patient/timestamp combinations in prediction_times_df, aborting",
-            )
-
-    def _check_that_timestamp_and_id_columns_exist(self):
-        """Check that the required columns are present in the initial
-        dataframe."""
-
-        for col_name in (self.timestamp_col_name, self.id_col_name):
-            if col_name not in self.df.columns:
-                raise ValueError(
-                    f"{col_name} does not exist in prediction_times_df, change the df or set another argument",
-                )
-
     def _validate_processed_min_specs(self, pred_specs: list[MinSpec]):
         warnings = []
 
         for pred_spec in pred_specs:
             if not isinstance(pred_spec.values_df, DataFrame) and not callable(
-                pred_spec.values_df
+                pred_spec.values_df,
             ):
                 warnings.append(
                     f"predictor_df has not bee resolved to either a Callable or DataFrame: {pred_spec.values_df}",
@@ -251,548 +251,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         df[full_col_str] = df[full_col_str].fillna(fallback)
 
         return df
-
-    def _cache_is_hit(
-        self,
-        output_spec: Union[PredictorSpec, PredictorSpec],
-        file_pattern: str,
-        file_suffix: str,
-    ) -> bool:
-        """Check if cache is hit.
-
-        Args:
-            kwargs_dict (dict): dictionary of kwargs
-            file_pattern (str): File pattern to match. Looks for *file_pattern* in cache dir.
-            e.g. "*feature_name*_uuids*.file_suffix"
-            full_col_str (str): Full column string. e.g. "feature_name_ahead_interval_days_resolve_multiple_fallback"
-            file_suffix (str): File suffix to match. e.g. "csv"
-
-        Returns:
-            bool: True if cache is hit, False otherwise
-        """
-        # Check that file exists
-        file_pattern_hits = list(
-            self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"),
-        )
-
-        if len(file_pattern_hits) == 0:
-            self.msg.info(f"Cache miss, {file_pattern} didn't exist")
-            return False
-
-        value_col_str = output_spec.get_col_str()
-
-        # Check that file contents match expected
-        # NAs are not interesting when comparing if computed values are identical
-        cache_df = self._load_most_recent_df_matching_pattern(
-            dir_path=self.feature_cache_dir,
-            file_pattern=file_pattern,
-            file_suffix=file_suffix,
-        )
-
-        generated_df = self._generate_values_for_cache_checking(
-            output_spec=output_spec, value_col_str=value_col_str
-        )
-
-        cached_suffix = "_c"
-        generated_suffix = "_g"
-
-        # We frequently hit rounding errors with cache hits, so we round to 3 decimal places
-        generated_df[value_col_str] = generated_df[value_col_str].round(3)
-        cache_df[value_col_str] = cache_df[value_col_str].round(3)
-
-        generated_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
-        cache_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
-
-        # Merge cache_df onto generated_df
-        merged_df = pd.merge(
-            left=generated_df,
-            right=cache_df,
-            how="left",
-            on=self.pred_time_uuid_col_name,
-            suffixes=(generated_suffix, cached_suffix),
-            validate="1:1",
-            indicator=True,
-        )
-
-        # Check that all rows in generated_df are in cache_df
-        if not merged_df[value_col_str + generated_suffix].equals(
-            merged_df[value_col_str + cached_suffix],
-        ):
-            self.msg.info(f"Cache miss, computed values didn't match {file_pattern}")
-
-            # Keep this variable for easier inspection
-            unequal_rows = merged_df[  # pylint: disable=unused-variable
-                merged_df[value_col_str + generated_suffix]
-                != merged_df[value_col_str + cached_suffix]
-            ]
-
-            return False
-
-        # If all checks passed, return true
-        msg.good(f"Cache hit for {value_col_str}")
-        return True
-
-    def _generate_values_for_cache_checking(
-        self,
-        output_spec: MinSpec,
-        value_col_str: str,
-        n_to_generate: int = 100_000,
-    ):
-        generated_df = pd.DataFrame({value_col_str: []})
-
-        # Check that some values in generated_df differ from fallback
-        # Otherwise, comparison to cache is meaningless
-        n_trials = 0
-
-        while not any(
-            generated_df[value_col_str] != output_spec.fallback,
-        ):
-            if n_trials != 0:
-                self.msg.info(
-                    f"{value_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
-                )
-
-            n_to_generate = int(min(n_to_generate, len(self.df)))
-
-            generated_df = self._flatten_temporal_values_to_df(
-                prediction_times_with_uuid_df=self.df.sample(
-                    n=n_to_generate, replace=False
-                ),
-                id_col_name=self.id_col_name,
-                timestamp_col_name=self.timestamp_col_name,
-                pred_time_uuid_col_name=self.pred_time_uuid_col_name,
-                output_spec=output_spec,
-                loader_kwargs=output_spec.loader_kwargs,
-            ).dropna()
-
-            # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
-            # in the cache. Saves on storage. Don't use them to check if cache is hit.
-            if not np.isnan(output_spec.fallback):
-                generated_df = generated_df[
-                    generated_df[value_col_str] != output_spec.fallback
-                ]
-
-            n_to_generate = (
-                n_to_generate**1.5
-            )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
-
-            n_trials += 1
-
-        return generated_df
-
-    def _get_feature(
-        self,
-        predictor_spec: PredictorSpec,
-        file_suffix: str = "parquet",
-    ) -> dask.dataframe.DataFrame:
-        """Get feature. Either load from cache, or generate if necessary.
-
-        Args:
-            file_suffix (str, optional): File suffix for the cache lookup. Defaults to "parquet".
-
-        Returns:
-            dask.dataframe: DataFrame generates with create_flattened_df
-        """
-        file_name = f"{predictor_spec.get_col_str()}_{self.n_uuids}_uuids"
-
-        n_partitions = 6
-
-        if hasattr(self, "feature_cache_dir"):
-            if self._cache_is_hit(
-                file_pattern=file_name,
-                output_spec=predictor_spec,
-                file_suffix="parquet",
-            ):
-                df = self._load_cached_df_and_expand_fallback(
-                    file_pattern=file_name,
-                    full_col_str=predictor_spec.get_col_str(),
-                    fallback=predictor_spec.fallback,
-                    file_suffix=file_suffix,
-                )
-
-                return dd.from_pandas(data=df, npartitions=n_partitions)
-        else:
-            msg.info("No cache dir specified, not attempting load")
-
-        df = self._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self.df[
-                [
-                    self.pred_time_uuid_col_name,
-                    self.id_col_name,
-                    self.timestamp_col_name,
-                ]
-            ],
-            id_col_name=self.id_col_name,
-            timestamp_col_name=self.timestamp_col_name,
-            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
-            output_spec=predictor_spec,
-            loader_kwargs=predictor_spec.loader_kwargs,
-        )
-
-        # Write df to cache if exists
-        if hasattr(self, "feature_cache_dir"):
-            self._write_feature_to_cache(
-                predictor_spec=predictor_spec,
-                file_name=file_name,
-                values_df=df,
-            )
-
-        return dd.from_pandas(
-            data=df,
-            npartitions=n_partitions,
-        )
-
-    def _write_feature_to_cache(
-        self,
-        values_df: pd.DataFrame,
-        predictor_spec: PredictorSpec,
-        file_name: str,
-    ):
-        """Write feature to cache"""
-        out_df = values_df
-
-        # Drop rows containing fallback, since it's non-informative
-        out_df = out_df[
-            out_df[predictor_spec.get_col_str()] != predictor_spec.fallback
-        ].dropna()
-
-        # Write df to cache
-        timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-        # Write df to cache
-        write_df_to_file(
-            df=out_df,
-            file_path=self.feature_cache_dir / f"{file_name}_{timestamp}.parquet",
-        )
-
-    def _resolve_str_to_predictor_df(
-        self,
-        df_name: str,
-        preloaded_dfs: Optional[dict[str, pd.DataFrame]] = None,
-    ) -> PredictorSpec:
-        """Resolve df_name to either a dataframe from preloaded_dfs
-        or a callable from the registry."""
-
-        loader_fns = data_loaders.get_all()
-
-        try:
-            if preloaded_dfs is not None and df_name in preloaded_dfs:
-                df = preloaded_dfs[df_name].copy()
-            else:
-                df = loader_fns[df_name]
-        except LookupError:
-            # Error handling in _validate_processed_arg_dicts
-            # to handle in bulk
-            pass
-
-        return df
-
-    def _check_if_resolve_multiple_can_convert_to_callable(
-        self,
-        resolve_multiple_fns: Optional[dict[str, Callable]],
-        pred_spec: PredictorSpec,
-    ):
-        """Check if resolve_multiple is a string, if so, see if possible to
-        resolve to a Callable.
-
-        Args:
-            resolve_multiple_fns (dict[str, Callable]): A dictionary mapping the resolve_multiple string to a Callable object.
-            arg_dict (dict[str, str]): A dictionary describing the prediction_features you'd like to generate.
-        """
-        if isinstance(pred_spec.resolve_multiple, str):
-            # Try from resolve_multiple_fns
-            resolved_func = None
-
-            if resolve_multiple_fns is not None:
-                resolved_func = resolve_multiple_fns.get(
-                    pred_spec.resolve_multiple,
-                )
-
-            if not callable(resolved_func):
-                resolved_func = resolve_fns.get(pred_spec.resolve_multiple)
-
-            if not callable(resolved_func):
-                raise ValueError(
-                    f"Value of resolve_multiple {pred_spec.resolve_multiple} neither is nor could be resolved to a Callable",
-                )
-
-    def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
-        self,
-        predictor_specs: list[PredictorSpec],
-        resolve_multiple_fns: Optional[dict[str, Callable]] = None,
-        preloaded_predictor_dfs: Optional[dict[str, DataFrame]] = None,
-    ):
-        """Add predictors to the flattened dataframe from a list."""
-
-        # Replace strings with objects as relevant
-        for pred_spec in predictor_specs:
-            # If resolve_multiple is a string, see if possible to resolve to a Callable
-            self._check_if_resolve_multiple_can_convert_to_callable(
-                resolve_multiple_fns=resolve_multiple_fns,
-                pred_spec=pred_spec,
-            )
-
-            # Resolve values_df to either a dataframe from predictor_dfs_dict or a callable from the registry
-            if not (
-                isinstance(pred_spec.values_df, pd.DataFrame)
-                or callable(pred_spec.values_df)
-            ):
-                pred_spec.values_df = self._resolve_str_to_predictor_df(
-                    preloaded_dfs=preloaded_predictor_dfs,
-                    df_name=pred_spec.values_df,
-                )
-
-        # Validate dicts before starting pool, saves time if errors!
-        self._validate_processed_min_specs(pred_specs=predictor_specs)
-
-        with Pool(self.n_workers) as p:
-            flattened_predictor_dds = p.map(
-                func=self._get_feature,
-                iterable=predictor_specs,
-            )
-
-        msg.info("Feature generation complete, concatenating")
-
-        # Concatenate with dask, and show progress bar
-        with TqdmCallback(desc="compute"):
-            merged_dfs = None
-
-            for df in flattened_predictor_dds:
-                if merged_dfs is None:
-                    merged_dfs = df
-                else:
-                    merged_dfs = merged_dfs.merge(
-                        right=df, on=self.pred_time_uuid_col_name
-                    )
-
-            self.df = merged_dfs.merge(  # type: ignore
-                right=self.df, on=self.pred_time_uuid_col_name
-            ).compute()
-
-    def add_age(
-        self,
-        id2date_of_birth: DataFrame,
-        date_of_birth_col_name: Optional[str] = "date_of_birth",
-    ):
-        """Add age at prediction time to each prediction time.
-
-        Args:
-            id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
-            date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
-            Defaults to "date_of_birth".
-
-        Raises:
-            ValueError: _description_
-        """
-        if id2date_of_birth[date_of_birth_col_name].dtype != "<M8[ns]":
-            try:
-                id2date_of_birth[date_of_birth_col_name] = pd.to_datetime(
-                    id2date_of_birth[date_of_birth_col_name],
-                    format="%Y-%m-%d",
-                )
-            except Exception as e:
-                raise ValueError(
-                    f"Conversion of {date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
-                ) from e
-
-        self.add_static_info(
-            info_df=id2date_of_birth,
-            input_col_name_override=date_of_birth_col_name,
-        )
-
-        age = (
-            (
-                self.df[self.timestamp_col_name]
-                - self.df[f"{self.predictor_col_name_prefix}_{date_of_birth_col_name}"]
-            ).dt.days
-            / (365.25)
-        ).round(2)
-
-        self.df.drop(
-            f"{self.predictor_col_name_prefix}_{date_of_birth_col_name}",
-            axis=1,
-            inplace=True,
-        )
-
-        self.df[f"{self.predictor_col_name_prefix}_age_in_years"] = age
-
-    def add_static_info(
-        self,
-        info_df: DataFrame,
-        input_col_name_override: Optional[str] = None,
-        prefix_override: Optional[str] = None,
-        output_col_name_override: Optional[str] = None,
-    ):
-        """Add static info to each prediction time, e.g. age, sex etc.
-
-        Args:
-            info_df (DataFrame): Contains an id_column and a value column.
-            prefix_override (str, optional): Prefix for column. Defaults to self.predictor_col_name_prefix.
-            input_col_name_override (str, optional): Column names for the values you want to add. Defaults to "value".
-            output_col_name_override (str, optional): Name of the output column. Defaults to None.
-
-        Raises:
-            ValueError: If input_col_name does not match a column in info_df.
-        """
-
-        # Try to infer value col name if not provided
-        if input_col_name_override is None:
-            possible_value_cols = [
-                col for col in info_df.columns if col not in self.id_col_name
-            ]
-
-            if len(possible_value_cols) == 1:
-                value_col_name = possible_value_cols[0]
-            elif len(possible_value_cols) > 1:
-                raise ValueError(
-                    f"Only one value column can be added to static info, found multiple: {possible_value_cols}",
-                )
-            elif len(possible_value_cols) == 0:
-                raise ValueError("No value column found in info_df, please check.")
-        else:
-            value_col_name = input_col_name_override
-
-        # Check for prefix override
-        prefix = (
-            prefix_override
-            if prefix_override is not None
-            else self.predictor_col_name_prefix
-        )
-
-        if output_col_name_override is None:
-            output_col_name = f"{prefix}_{value_col_name}"
-        else:
-            output_col_name = f"{prefix}_{output_col_name_override}"
-
-        df = pd.DataFrame(
-            {
-                self.id_col_name: info_df[self.id_col_name],
-                output_col_name: info_df[value_col_name],
-            },
-        )
-
-        self.df = pd.merge(
-            self.df,
-            df,
-            how="left",
-            on=self.id_col_name,
-            suffixes=("", ""),
-            validate="m:1",
-        )
-
-    def add_temporal_outcome(
-        self,
-        output_spec: OutcomeSpec,
-    ):
-        """Add an outcome-column to the dataset.
-
-        Args:
-            output_spec (OutcomeSpec): OutcomeSpec object.
-        """
-
-        if output_spec.incident:
-            self._add_incident_outcome(
-                outcome_spec=output_spec,
-            )
-
-        else:
-            self.add_temporal_col_to_flattened_dataset(
-                output_spec=output_spec,
-            )
-
-    def _add_incident_outcome(
-        self,
-        outcome_spec: OutcomeSpec,
-    ):
-        """Add incident outcomes. Can be done vectorized, hence the separate function."""
-        prediction_timestamp_col_name = f"{self.timestamp_col_name}_prediction"
-        outcome_timestamp_col_name = f"{self.timestamp_col_name}_outcome"
-
-        df = pd.merge(
-            self.df,
-            outcome_spec.values_df,
-            how="left",
-            on=self.id_col_name,
-            suffixes=("_prediction", "_outcome"),
-            validate="m:1",
-        )
-
-        df = df.drop(
-            df[
-                df[outcome_timestamp_col_name] < df[prediction_timestamp_col_name]
-            ].index,
-        )
-
-        if outcome_spec.is_dichotomous():
-            full_col_str = f"{outcome_spec.prefix}_dichotomous_{outcome_spec.col_main}_within_{outcome_spec.interval_days}_days_{outcome_spec.resolve_multiple}_fallback_{outcome_spec.fallback}"
-
-            df[full_col_str] = (
-                df[prediction_timestamp_col_name]
-                + timedelta(days=outcome_spec.interval_days)
-                > df[outcome_timestamp_col_name]
-            ).astype(int)
-
-        df.rename(
-            {prediction_timestamp_col_name: "timestamp"},
-            axis=1,
-            inplace=True,
-        )
-        df.drop([outcome_timestamp_col_name], axis=1, inplace=True)
-
-        df.drop(["value"], axis=1, inplace=True)
-
-        self.df = df
-
-    def add_temporal_predictor(
-        self,
-        output_spec: PredictorSpec,
-    ):
-        """Add a column with predictor values to the flattened dataset (e.g.
-        "average value of bloodsample within n days").
-
-        Args:
-            output_spec (Union[PredictorSpec]): Specification of the output column.
-        """
-        self.add_temporal_col_to_flattened_dataset(
-            output_spec=output_spec,
-        )
-
-    def add_temporal_col_to_flattened_dataset(
-        self,
-        output_spec: Union[PredictorSpec, PredictorSpec],
-    ):
-        """Add a column to the dataset (either predictor or outcome depending
-        on the value of "direction").
-
-        Args:
-            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
-        """
-        timestamp_col_type = output_spec.values_df[self.timestamp_col_name].dtype
-
-        if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
-            # Convert dtype to timestamp
-            raise ValueError(
-                f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset.",
-            )
-
-        df = FlattenedDataset._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self.df[
-                [
-                    self.id_col_name,
-                    self.timestamp_col_name,
-                    self.pred_time_uuid_col_name,
-                ]
-            ],
-            output_spec=output_spec,
-            id_col_name=self.id_col_name,
-            timestamp_col_name=self.timestamp_col_name,
-            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
-        )
-
-        self.df = pd.concat(
-            objs=[self.df, df],
-            axis=1,
-        )
 
     @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
@@ -916,6 +374,555 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             )
 
         return df[[pred_time_uuid_col_name] + value_cols]
+
+    def _generate_values_for_cache_checking(
+        self,
+        output_spec: MinSpec,
+        value_col_str: str,
+        n_to_generate: int = 100_000,
+    ):
+        generated_df = pd.DataFrame({value_col_str: []})
+
+        # Check that some values in generated_df differ from fallback
+        # Otherwise, comparison to cache is meaningless
+        n_trials = 0
+
+        while not any(
+            generated_df[value_col_str] != output_spec.fallback,
+        ):
+            if n_trials != 0:
+                self.msg.info(
+                    f"{value_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
+                )
+
+            n_to_generate = int(min(n_to_generate, len(self.df)))
+
+            generated_df = self._flatten_temporal_values_to_df(
+                prediction_times_with_uuid_df=self.df.sample(
+                    n=n_to_generate,
+                    replace=False,
+                ),
+                id_col_name=self.id_col_name,
+                timestamp_col_name=self.timestamp_col_name,
+                pred_time_uuid_col_name=self.pred_time_uuid_col_name,
+                output_spec=output_spec,
+                loader_kwargs=output_spec.loader_kwargs,
+            ).dropna()
+
+            # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
+            # in the cache. Saves on storage. Don't use them to check if cache is hit.
+            if not np.isnan(output_spec.fallback):
+                generated_df = generated_df[
+                    generated_df[value_col_str] != output_spec.fallback
+                ]
+
+            n_to_generate = (
+                n_to_generate**1.5
+            )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
+
+            n_trials += 1
+
+        return generated_df
+
+    def _cache_is_hit(
+        self,
+        output_spec: Union[PredictorSpec, PredictorSpec],
+        file_pattern: str,
+        file_suffix: str,
+    ) -> bool:
+        """Check if cache is hit.
+
+        Args:
+            kwargs_dict (dict): dictionary of kwargs
+            file_pattern (str): File pattern to match. Looks for *file_pattern* in cache dir.
+            e.g. "*feature_name*_uuids*.file_suffix"
+            full_col_str (str): Full column string. e.g. "feature_name_ahead_interval_days_resolve_multiple_fallback"
+            file_suffix (str): File suffix to match. e.g. "csv"
+
+        Returns:
+            bool: True if cache is hit, False otherwise
+        """
+        # Check that file exists
+        file_pattern_hits = list(
+            self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"),
+        )
+
+        if len(file_pattern_hits) == 0:
+            self.msg.info(f"Cache miss, {file_pattern} didn't exist")
+            return False
+
+        value_col_str = output_spec.get_col_str()
+
+        # Check that file contents match expected
+        # NAs are not interesting when comparing if computed values are identical
+        cache_df = self._load_most_recent_df_matching_pattern(
+            dir_path=self.feature_cache_dir,
+            file_pattern=file_pattern,
+            file_suffix=file_suffix,
+        )
+
+        generated_df = self._generate_values_for_cache_checking(
+            output_spec=output_spec,
+            value_col_str=value_col_str,
+        )
+
+        cached_suffix = "_c"
+        generated_suffix = "_g"
+
+        # We frequently hit rounding errors with cache hits, so we round to 3 decimal places
+        generated_df[value_col_str] = generated_df[value_col_str].round(3)
+        cache_df[value_col_str] = cache_df[value_col_str].round(3)
+
+        generated_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
+        cache_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
+
+        # Merge cache_df onto generated_df
+        merged_df = pd.merge(
+            left=generated_df,
+            right=cache_df,
+            how="left",
+            on=self.pred_time_uuid_col_name,
+            suffixes=(generated_suffix, cached_suffix),
+            validate="1:1",
+            indicator=True,
+        )
+
+        # Check that all rows in generated_df are in cache_df
+        if not merged_df[value_col_str + generated_suffix].equals(
+            merged_df[value_col_str + cached_suffix],
+        ):
+            self.msg.info(f"Cache miss, computed values didn't match {file_pattern}")
+
+            # Keep this variable for easier inspection
+            unequal_rows = merged_df[  # pylint: disable=unused-variable
+                merged_df[value_col_str + generated_suffix]
+                != merged_df[value_col_str + cached_suffix]
+            ]
+
+            return False
+
+        # If all checks passed, return true
+        msg.good(f"Cache hit for {value_col_str}")
+        return True
+
+    def _write_feature_to_cache(
+        self,
+        values_df: pd.DataFrame,
+        predictor_spec: PredictorSpec,
+        file_name: str,
+    ):
+        """Write feature to cache."""
+        out_df = values_df
+
+        # Drop rows containing fallback, since it's non-informative
+        out_df = out_df[
+            out_df[predictor_spec.get_col_str()] != predictor_spec.fallback
+        ].dropna()
+
+        # Write df to cache
+        timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        # Write df to cache
+        write_df_to_file(
+            df=out_df,
+            file_path=self.feature_cache_dir / f"{file_name}_{timestamp}.parquet",
+        )
+
+    def _get_feature(
+        self,
+        predictor_spec: PredictorSpec,
+        file_suffix: str = "parquet",
+    ) -> dask.dataframe.DataFrame:
+        """Get feature. Either load from cache, or generate if necessary.
+
+        Args:
+            file_suffix (str, optional): File suffix for the cache lookup. Defaults to "parquet".
+
+        Returns:
+            dask.dataframe: DataFrame generates with create_flattened_df
+        """
+        file_name = f"{predictor_spec.get_col_str()}_{self.n_uuids}_uuids"
+
+        n_partitions = 6
+
+        if hasattr(self, "feature_cache_dir"):
+            if self._cache_is_hit(
+                file_pattern=file_name,
+                output_spec=predictor_spec,
+                file_suffix="parquet",
+            ):
+                df = self._load_cached_df_and_expand_fallback(
+                    file_pattern=file_name,
+                    full_col_str=predictor_spec.get_col_str(),
+                    fallback=predictor_spec.fallback,
+                    file_suffix=file_suffix,
+                )
+
+                return dd.from_pandas(data=df, npartitions=n_partitions)
+        else:
+            msg.info("No cache dir specified, not attempting load")
+
+        df = self._flatten_temporal_values_to_df(
+            prediction_times_with_uuid_df=self.df[
+                [
+                    self.pred_time_uuid_col_name,
+                    self.id_col_name,
+                    self.timestamp_col_name,
+                ]
+            ],
+            id_col_name=self.id_col_name,
+            timestamp_col_name=self.timestamp_col_name,
+            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
+            output_spec=predictor_spec,
+            loader_kwargs=predictor_spec.loader_kwargs,
+        )
+
+        # Write df to cache if exists
+        if hasattr(self, "feature_cache_dir"):
+            self._write_feature_to_cache(
+                predictor_spec=predictor_spec,
+                file_name=file_name,
+                values_df=df,
+            )
+
+        return dd.from_pandas(
+            data=df,
+            npartitions=n_partitions,
+        )
+
+    def _resolve_str_to_predictor_df(
+        self,
+        df_name: str,
+        preloaded_dfs: Optional[dict[str, pd.DataFrame]] = None,
+    ) -> PredictorSpec:
+        """Resolve df_name to either a dataframe from preloaded_dfs or a
+        callable from the registry."""
+
+        loader_fns = data_loaders.get_all()
+
+        try:
+            if preloaded_dfs is not None and df_name in preloaded_dfs:
+                df = preloaded_dfs[df_name].copy()
+            else:
+                df = loader_fns[df_name]
+        except LookupError:
+            # Error handling in _validate_processed_arg_dicts
+            # to handle in bulk
+            pass
+
+        return df
+
+    def _check_if_resolve_multiple_can_convert_to_callable(
+        self,
+        resolve_multiple_fns: Optional[dict[str, Callable]],
+        pred_spec: PredictorSpec,
+    ):
+        """Check if resolve_multiple is a string, if so, see if possible to
+        resolve to a Callable.
+
+        Args:
+            resolve_multiple_fns (dict[str, Callable]): A dictionary mapping the resolve_multiple string to a Callable object.
+            arg_dict (dict[str, str]): A dictionary describing the prediction_features you'd like to generate.
+        """
+        if isinstance(pred_spec.resolve_multiple, str):
+            # Try from resolve_multiple_fns
+            resolved_func = None
+
+            if resolve_multiple_fns is not None:
+                resolved_func = resolve_multiple_fns.get(
+                    pred_spec.resolve_multiple,
+                )
+
+            if not callable(resolved_func):
+                resolved_func = resolve_fns.get(pred_spec.resolve_multiple)
+
+            if not callable(resolved_func):
+                raise ValueError(
+                    f"Value of resolve_multiple {pred_spec.resolve_multiple} neither is nor could be resolved to a Callable",
+                )
+
+    def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
+        self,
+        predictor_specs: list[PredictorSpec],
+        resolve_multiple_fns: Optional[dict[str, Callable]] = None,
+        preloaded_predictor_dfs: Optional[dict[str, DataFrame]] = None,
+    ):
+        """Add predictors to the flattened dataframe from a list."""
+
+        # Replace strings with objects as relevant
+        for pred_spec in predictor_specs:
+            # If resolve_multiple is a string, see if possible to resolve to a Callable
+            self._check_if_resolve_multiple_can_convert_to_callable(
+                resolve_multiple_fns=resolve_multiple_fns,
+                pred_spec=pred_spec,
+            )
+
+            # Resolve values_df to either a dataframe from predictor_dfs_dict or a callable from the registry
+            if not (
+                isinstance(pred_spec.values_df, pd.DataFrame)
+                or callable(pred_spec.values_df)
+            ):
+                pred_spec.values_df = self._resolve_str_to_predictor_df(
+                    preloaded_dfs=preloaded_predictor_dfs,
+                    df_name=pred_spec.values_df,
+                )
+
+        # Validate dicts before starting pool, saves time if errors!
+        self._validate_processed_min_specs(pred_specs=predictor_specs)
+
+        with Pool(self.n_workers) as p:
+            flattened_predictor_dds = p.map(
+                func=self._get_feature,
+                iterable=predictor_specs,
+            )
+
+        msg.info("Feature generation complete, concatenating")
+
+        # Concatenate with dask, and show progress bar
+        with TqdmCallback(desc="compute"):
+            merged_dfs = None
+
+            for df in flattened_predictor_dds:
+                if merged_dfs is None:
+                    merged_dfs = df
+                else:
+                    merged_dfs = merged_dfs.merge(
+                        right=df,
+                        on=self.pred_time_uuid_col_name,
+                    )
+
+            self.df = merged_dfs.merge(  # type: ignore
+                right=self.df,
+                on=self.pred_time_uuid_col_name,
+            ).compute()
+
+    def add_age(
+        self,
+        id2date_of_birth: DataFrame,
+        date_of_birth_col_name: Optional[str] = "date_of_birth",
+    ):
+        """Add age at prediction time to each prediction time.
+
+        Args:
+            id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
+            date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
+            Defaults to "date_of_birth".
+
+        Raises:
+            ValueError: _description_
+        """
+        if id2date_of_birth[date_of_birth_col_name].dtype != "<M8[ns]":
+            try:
+                id2date_of_birth[date_of_birth_col_name] = pd.to_datetime(
+                    id2date_of_birth[date_of_birth_col_name],
+                    format="%Y-%m-%d",
+                )
+            except Exception as e:
+                raise ValueError(
+                    f"Conversion of {date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
+                ) from e
+
+        self.add_static_info(
+            info_df=id2date_of_birth,
+            input_col_name_override=date_of_birth_col_name,
+        )
+
+        age = (
+            (
+                self.df[self.timestamp_col_name]
+                - self.df[f"{self.predictor_col_name_prefix}_{date_of_birth_col_name}"]
+            ).dt.days
+            / (365.25)
+        ).round(2)
+
+        self.df.drop(
+            f"{self.predictor_col_name_prefix}_{date_of_birth_col_name}",
+            axis=1,
+            inplace=True,
+        )
+
+        self.df[f"{self.predictor_col_name_prefix}_age_in_years"] = age
+
+    def add_static_info(
+        self,
+        info_df: DataFrame,
+        input_col_name_override: Optional[str] = None,
+        prefix_override: Optional[str] = None,
+        output_col_name_override: Optional[str] = None,
+    ):
+        """Add static info to each prediction time, e.g. age, sex etc.
+
+        Args:
+            info_df (DataFrame): Contains an id_column and a value column.
+            prefix_override (str, optional): Prefix for column. Defaults to self.predictor_col_name_prefix.
+            input_col_name_override (str, optional): Column names for the values you want to add. Defaults to "value".
+            output_col_name_override (str, optional): Name of the output column. Defaults to None.
+
+        Raises:
+            ValueError: If input_col_name does not match a column in info_df.
+        """
+
+        # Try to infer value col name if not provided
+        if input_col_name_override is None:
+            possible_value_cols = [
+                col for col in info_df.columns if col not in self.id_col_name
+            ]
+
+            if len(possible_value_cols) == 1:
+                value_col_name = possible_value_cols[0]
+            elif len(possible_value_cols) > 1:
+                raise ValueError(
+                    f"Only one value column can be added to static info, found multiple: {possible_value_cols}",
+                )
+            elif len(possible_value_cols) == 0:
+                raise ValueError("No value column found in info_df, please check.")
+        else:
+            value_col_name = input_col_name_override
+
+        # Check for prefix override
+        prefix = (
+            prefix_override
+            if prefix_override is not None
+            else self.predictor_col_name_prefix
+        )
+
+        if output_col_name_override is None:
+            output_col_name = f"{prefix}_{value_col_name}"
+        else:
+            output_col_name = f"{prefix}_{output_col_name_override}"
+
+        df = pd.DataFrame(
+            {
+                self.id_col_name: info_df[self.id_col_name],
+                output_col_name: info_df[value_col_name],
+            },
+        )
+
+        self.df = pd.merge(
+            self.df,
+            df,
+            how="left",
+            on=self.id_col_name,
+            suffixes=("", ""),
+            validate="m:1",
+        )
+
+    def _add_incident_outcome(
+        self,
+        outcome_spec: OutcomeSpec,
+    ):
+        """Add incident outcomes.
+
+        Can be done vectorized, hence the separate function.
+        """
+        prediction_timestamp_col_name = f"{self.timestamp_col_name}_prediction"
+        outcome_timestamp_col_name = f"{self.timestamp_col_name}_outcome"
+
+        df = pd.merge(
+            self.df,
+            outcome_spec.values_df,
+            how="left",
+            on=self.id_col_name,
+            suffixes=("_prediction", "_outcome"),
+            validate="m:1",
+        )
+
+        df = df.drop(
+            df[
+                df[outcome_timestamp_col_name] < df[prediction_timestamp_col_name]
+            ].index,
+        )
+
+        if outcome_spec.is_dichotomous():
+            full_col_str = f"{outcome_spec.prefix}_dichotomous_{outcome_spec.col_main}_within_{outcome_spec.interval_days}_days_{outcome_spec.resolve_multiple}_fallback_{outcome_spec.fallback}"
+
+            df[full_col_str] = (
+                df[prediction_timestamp_col_name]
+                + timedelta(days=outcome_spec.interval_days)
+                > df[outcome_timestamp_col_name]
+            ).astype(int)
+
+        df.rename(
+            {prediction_timestamp_col_name: "timestamp"},
+            axis=1,
+            inplace=True,
+        )
+        df.drop([outcome_timestamp_col_name], axis=1, inplace=True)
+
+        df.drop(["value"], axis=1, inplace=True)
+
+        self.df = df
+
+    def add_temporal_outcome(
+        self,
+        output_spec: OutcomeSpec,
+    ):
+        """Add an outcome-column to the dataset.
+
+        Args:
+            output_spec (OutcomeSpec): OutcomeSpec object.
+        """
+
+        if output_spec.incident:
+            self._add_incident_outcome(
+                outcome_spec=output_spec,
+            )
+
+        else:
+            self.add_temporal_col_to_flattened_dataset(
+                output_spec=output_spec,
+            )
+
+    def add_temporal_predictor(
+        self,
+        output_spec: PredictorSpec,
+    ):
+        """Add a column with predictor values to the flattened dataset (e.g.
+        "average value of bloodsample within n days").
+
+        Args:
+            output_spec (Union[PredictorSpec]): Specification of the output column.
+        """
+        self.add_temporal_col_to_flattened_dataset(
+            output_spec=output_spec,
+        )
+
+    def add_temporal_col_to_flattened_dataset(
+        self,
+        output_spec: Union[PredictorSpec, PredictorSpec],
+    ):
+        """Add a column to the dataset (either predictor or outcome depending
+        on the value of "direction").
+
+        Args:
+            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
+        """
+        timestamp_col_type = output_spec.values_df[self.timestamp_col_name].dtype
+
+        if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
+            # Convert dtype to timestamp
+            raise ValueError(
+                f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset.",
+            )
+
+        df = FlattenedDataset._flatten_temporal_values_to_df(
+            prediction_times_with_uuid_df=self.df[
+                [
+                    self.id_col_name,
+                    self.timestamp_col_name,
+                    self.pred_time_uuid_col_name,
+                ]
+            ],
+            output_spec=output_spec,
+            id_col_name=self.id_col_name,
+            timestamp_col_name=self.timestamp_col_name,
+            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
+        )
+
+        self.df = pd.concat(
+            objs=[self.df, df],
+            axis=1,
+        )
 
     @staticmethod
     def _add_back_prediction_times_without_value(

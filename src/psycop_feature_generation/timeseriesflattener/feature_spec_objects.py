@@ -20,8 +20,8 @@ class BaseModel(PydanticBaseModel):
 
 
 class MinSpec(BaseModel):
-    """
-    The minimum specification required for all collapsed time series, whether looking ahead or behind.
+    """The minimum specification required for all collapsed time series,
+    whether looking ahead or behind.
 
     Mostly used for inheritance below.
     """
@@ -86,28 +86,6 @@ class MinSpec(BaseModel):
         return f"{self.prefix}_{col_main}_within_{self.interval_days}_days_{self.resolve_multiple}_fallback_{self.fallback}"
 
 
-class FlattenInDirectionSpec(MinSpec):
-    """Specification for a single feature."""
-
-    def __init__(
-        self,
-        direction: Literal["ahead", "behind"],
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-        self.direction = direction
-        self.construct()
-
-    def construct(self):
-        """Construct the specification"""
-        if self.direction == "ahead":
-            return OutcomeSpec(**self.dict())
-        elif self.direction == "behind":
-            return PredictorSpec(**self.dict())
-        else:
-            raise ValueError("direction must be either 'forward' or 'backward'.")
-
-
 class PredictorSpec(MinSpec):
     """Specification for a single predictor."""
 
@@ -127,12 +105,35 @@ class OutcomeSpec(MinSpec):
             return len(self.values_df["value"].unique()) <= 2
 
         raise TypeError(
-            "values_df must be a pandas DataFrame to check if dichotomous. Resolve before checking."
+            "values_df must be a pandas DataFrame to check if dichotomous. Resolve before checking.",
         )
 
 
+class FlattenInDirectionSpec(MinSpec):
+    """Specification for a single feature."""
+
+    def __init__(
+        self,
+        direction: Literal["ahead", "behind"],
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.direction = direction
+        self.construct()
+
+    def construct(self):
+        """Construct the specification."""
+        if self.direction == "ahead":
+            return OutcomeSpec(**self.dict())
+        elif self.direction == "behind":
+            return PredictorSpec(**self.dict())
+        else:
+            raise ValueError("direction must be either 'forward' or 'backward'.")
+
+
 class MinGroupSpec(BaseModel):
-    """Minimum specification for a group of features, whether they're looking ahead or behind."""
+    """Minimum specification for a group of features, whether they're looking
+    ahead or behind."""
 
     values_df: Sequence[Union[pd.DataFrame, str]]
     interval_days: Sequence[Union[int, float]]
@@ -156,11 +157,11 @@ class MinGroupSpec(BaseModel):
 
 
 class PredictorGroupSpec(MinGroupSpec):
-    """Specification for a group of predictors"""
+    """Specification for a group of predictors."""
 
 
 class OutcomeGroupSpec(MinGroupSpec):
-    """Specificaiton for a group of outcomes"""
+    """Specificaiton for a group of outcomes."""
 
 
 def create_feature_combinations_from_dict(

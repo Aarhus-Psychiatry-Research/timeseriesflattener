@@ -142,8 +142,9 @@ def generate_feature_description_df(
 
         rows.append(
             generate_feature_description_row(
-                series=df[column_name], predictor_spec=spec
-            )
+                series=df[column_name],
+                predictor_spec=spec,
+            ),
         )
 
     # Convert to dataframe
