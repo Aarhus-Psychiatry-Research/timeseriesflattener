@@ -104,7 +104,7 @@ def _tfidf_featurize(
     vocab = ["tfidf-" + word for word in tfidf.get_feature_names()]
 
     text = df[text_col].values
-    df = df.drop(text_col, axis=1)
+    df = df.drop(text_col, axis=1).reset_index(drop=True)
 
     text = tfidf.transform(text)
     text = pd.DataFrame(text.toarray(), columns=vocab)
@@ -439,7 +439,9 @@ def load_synth_notes(featurizer: str, **featurizer_kwargs) -> pd.DataFrame:
         pd.DataFrame: (Featurized) synthetic notes
     """
     p = Path("tests") / "test_data"
-    df = pd.read_csv(p / "raw" / "synth_txt_data.csv")
+    df = pd.read_csv(
+        p / "raw" / "synth_txt_data.csv",
+    ).drop("Unnamed: 0", axis=1)
     df = df.dropna()
     df["timestamp"] = pd.to_datetime(df["timestamp"])
 

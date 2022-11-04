@@ -3,9 +3,11 @@
 May want to refactor into a test_flattened_dataset module.
 """
 import pandas as pd
-from utils_for_testing import str_to_df  # pylint: disable=import-error
 
 from psycop_feature_generation.timeseriesflattener import FlattenedDataset
+from psycop_feature_generation.utils_for_testing import (
+    str_to_df,  # pylint: disable=import-error
+)
 
 
 def test_min_date():

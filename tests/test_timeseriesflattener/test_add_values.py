@@ -5,59 +5,69 @@
 import numpy as np
 import pandas as pd
 import pytest
-from utils_for_testing import (  # pylint: disable=import-error
-    assert_flattened_outcome_as_expected,
-    assert_flattened_predictor_as_expected,
-    str_to_df,
-)
 
 from psycop_feature_generation.loaders.raw.load_text import (  # noqa pylint: disable=unused-import; load_synth_notes,
     _chunk_text,
 )
-from psycop_feature_generation.timeseriesflattener import (
-    FlattenedDataset,
-    create_feature_combinations,
+from psycop_feature_generation.timeseriesflattener import FlattenedDataset
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    OutcomeSpec,
+    PredictorGroupSpec,
+    PredictorSpec,
+)
+from psycop_feature_generation.utils_for_testing import (
+    assert_flattened_data_as_expected,
+    str_to_df,
 )
 
 # pylint: disable=import-error
 # from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
-from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
+# from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
 
 
 # Predictors
 def test_predictor_after_prediction_time():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
-                            1,2021-12-31 00:00:00
-                            """
-    predictor_df_str = """dw_ek_borger,timestamp,value,
-                        1,2022-01-01 00:00:01, 1.0
-                        """
+    prediction_times_df = str_to_df(
+        """dw_ek_borger,timestamp,
+    1,2021-12-31 00:00:00
+    """
+    )
+    predictor_df = str_to_df(
+        """dw_ek_borger,timestamp,value,
+    1,2022-01-01 00:00:01, 1.0
+    """
+    )
 
-    assert_flattened_predictor_as_expected(
-        prediction_times_df_str=prediction_times_df_str,
-        predictor_df_str=predictor_df_str,
-        lookbehind_days=2,
-        resolve_multiple="max",
-        expected_flattened_values=[np.NaN],
-        fallback=np.NaN,
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df,
+        output_spec=PredictorSpec(
+            values_df=predictor_df,
+            interval_days=2,
+            resolve_multiple="max",
+            fallback=np.NaN,
+            feature_content_for_naming="value",
+        ),
+        expected_values=[np.NaN],
     )
 
 
 def test_predictor_before_prediction():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             """
     predictor_df_str = """dw_ek_borger,timestamp,value,
                         1,2021-12-30 22:59:59, 1
                         """
 
-    assert_flattened_predictor_as_expected(
-        prediction_times_df_str=prediction_times_df_str,
-        predictor_df_str=predictor_df_str,
-        lookbehind_days=2,
-        resolve_multiple="max",
-        expected_flattened_values=[1],
-        fallback=np.NaN,
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df,
+        output_spec=PredictorSpec(
+            values_df=str_to_df(predictor_df_str),
+            interval_days=2,
+            resolve_multiple="max",
+            fallback=np.NaN,
+        ),
+        expected_values=[1],
     )
 
 
@@ -77,13 +87,15 @@ def test_multiple_citizens_predictor():
                         7,2022-01-05 00:00:00, 5
                         """
 
-    assert_flattened_predictor_as_expected(
-        prediction_times_df_str=prediction_times_df_str,
-        predictor_df_str=predictor_df_str,
-        lookbehind_days=2,
-        resolve_multiple="max",
-        expected_flattened_values=[0, 1, 0, 2, np.NaN],
-        fallback=np.NaN,
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=PredictorSpec(
+            values_df=str_to_df(predictor_df_str),
+            interval_days=2,
+            fallback=np.NaN,
+            resolve_multiple="max",
+        ),
+        expected_values=[0, 1, 0, 2, np.NaN],
     )
 
 
@@ -96,12 +108,16 @@ def test_event_after_prediction_time():
                         1,2022-01-01 00:00:01, 1
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_df_str,
-        outcome_df_str=outcome_df_str,
-        lookahead_days=2,
-        resolve_multiple="max",
-        expected_flattened_values=[1],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(outcome_df_str),
+            interval_days=2,
+            resolve_multiple="max",
+            incident=True,
+            fallback=np.NaN,
+        ),
+        expected_values=[1],
     )
 
 
@@ -113,12 +129,16 @@ def test_event_before_prediction():
                         1,2021-12-30 23:59:59, 1.0
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_df_str,
-        outcome_df_str=outcome_df_str,
-        lookahead_days=2,
-        resolve_multiple="max",
-        expected_flattened_values=[np.NaN],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(outcome_df_str),
+            interval_days=2,
+            resolve_multiple="max",
+            incident=True,
+            fallback=np.NaN,
+        ),
+        expected_values=[np.NaN],
     )
 
 
@@ -144,10 +164,12 @@ def test_raise_error_if_timestamp_col_not_timestamp_type():
 
     with pytest.raises(ValueError):
         dataset.add_temporal_outcome(
-            df_event_times,
-            lookahead_days=5,
-            resolve_multiple="max",
-            fallback=0,
+            OutcomeSpec(
+                values_df=df_event_times,
+                interval_days=5,
+                resolve_multiple="max",
+                fallback=0,
+            )
         )
 
 
@@ -165,12 +187,16 @@ def test_multiple_citizens_outcome():
                         5,2022-01-05 00:00:01, 1.0
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_df_str,
-        outcome_df_str=outcome_df_str,
-        lookahead_days=2,
-        resolve_multiple="max",
-        expected_flattened_values=[1, np.NaN, 1, np.NaN],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(outcome_df_str),
+            interval_days=2,
+            resolve_multiple="max",
+            incident=True,
+            fallback=np.NaN,
+        ),
+        expected_values=[1, np.NaN, 1, np.NaN],
     )
 
 
@@ -182,18 +208,21 @@ def test_citizen_without_outcome():
                         0,2021-12-31 00:00:01, 1.0
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_df_str,
-        outcome_df_str=outcome_df_str,
-        lookahead_days=2,
-        resolve_multiple="max",
-        fallback=np.NaN,
-        expected_flattened_values=[np.NaN],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(outcome_df_str),
+            interval_days=2,
+            resolve_multiple="max",
+            incident=True,
+            fallback=np.NaN,
+        ),
+        expected_values=[np.NaN],
     )
 
 
 def test_static_predictor():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             1,2021-12-31 00:00:01
                             1,2021-12-31 00:00:02
@@ -202,7 +231,7 @@ def test_static_predictor():
                         1,1994-12-31 00:00:01
                         """
 
-    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df_str))
+    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
     dataset.add_static_info(
         info_df=str_to_df(static_predictor),
     )
@@ -225,7 +254,7 @@ def test_static_predictor():
 
 
 def test_add_age():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df = """dw_ek_borger,timestamp,
                             1,1994-12-31 00:00:00
                             1,2021-12-30 00:00:00
                             1,2021-12-31 00:00:00
@@ -234,7 +263,7 @@ def test_add_age():
                         1,1994-12-31 00:00:00
                         """
 
-    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df_str))
+    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
     dataset.add_age(
         id2date_of_birth=str_to_df(static_predictor),
         date_of_birth_col_name="date_of_birth",
@@ -258,7 +287,7 @@ def test_add_age():
 
 
 def test_add_age_error():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df = """dw_ek_borger,timestamp,
                             1,1994-12-31 00:00:00
                             1,2021-11-28 00:00:00
                             1,2021-12-31 00:00:00
@@ -267,7 +296,7 @@ def test_add_age_error():
                         1,94-12-31 00:00:00
                         """
 
-    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df_str))
+    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
 
     with pytest.raises(ValueError):
         dataset.add_age(
@@ -290,7 +319,7 @@ def test_incident_outcome_removing_prediction_times():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_max_fallback_0,
+    expected_df_str = """dw_ek_borger,timestamp,outc_dichotomous_value_within_2_days_max_fallback_nan,
                         1,2021-12-31 00:00:00, 1.0
                         2,2021-12-31 00:00:00, 1.0
                         3,2023-12-31 00:00:00, 0.0
@@ -308,17 +337,22 @@ def test_incident_outcome_removing_prediction_times():
     )
 
     flattened_dataset.add_temporal_outcome(
-        outcome_df=event_times_df,
-        lookahead_days=2,
-        incident=True,
-        resolve_multiple="max",
-        fallback=0,
+        output_spec=PredictorSpec(
+            values_df=event_times_df,
+            interval_days=2,
+            incident=True,
+            fallback=np.NaN,
+            resolve_multiple="max",
+            col_main="value",
+        )
     )
 
-    outcome_df = flattened_dataset.df
+    outcome_df = flattened_dataset.df.reset_index(drop=True)
 
-    for col in ["dw_ek_borger", "timestamp", "outc_value_within_2_days_max_fallback_0"]:
-        pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
+    for col in expected_df.columns:
+        pd.testing.assert_series_equal(
+            outcome_df[col], expected_df[col], check_dtype=False
+        )
 
 
 def test_add_multiple_static_predictors():
@@ -335,7 +369,7 @@ def test_add_multiple_static_predictors():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_max_fallback_0,pred_age_in_years,pred_male
+    expected_df_str = """dw_ek_borger,timestamp,outc_dichotomous_value_within_2_days_max_fallback_0,pred_age_in_years,pred_male
                         1,2021-12-31 00:00:00, 1.0,22.00,1
                         2,2021-12-31 00:00:00, 1.0,22.00,0
                         3,2023-12-31 00:00:00, 0.0,23.99,1
@@ -364,12 +398,17 @@ def test_add_multiple_static_predictors():
         n_workers=4,
     )
 
-    flattened_dataset.add_temporal_outcome(
-        outcome_df=event_times_df,
-        lookahead_days=2,
-        incident=True,
+    output_spec = PredictorSpec(
+        col_main="value",
+        values_df=event_times_df,
+        interval_days=2,
         resolve_multiple="max",
         fallback=0,
+        incident=True,
+    )
+
+    flattened_dataset.add_temporal_outcome(
+        output_spec=output_spec,
     )
 
     flattened_dataset.add_age(birthdates_df)
@@ -377,14 +416,16 @@ def test_add_multiple_static_predictors():
 
     outcome_df = flattened_dataset.df
 
-    for col in [
+    for col in (
         "dw_ek_borger",
         "timestamp",
-        "outc_value_within_2_days_max_fallback_0",
+        "outc_dichotomous_value_within_2_days_max_fallback_0",
         "pred_age_in_years",
         "pred_male",
-    ]:
-        pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
+    ):
+        pd.testing.assert_series_equal(
+            outcome_df[col], expected_df[col], check_dtype=False
+        )
 
 
 def test_add_temporal_predictors_then_temporal_outcome():
@@ -421,37 +462,37 @@ def test_add_temporal_predictors_then_temporal_outcome():
         n_workers=4,
     )
 
-    predictor_spec_list = create_feature_combinations(
-        [
-            {
-                "predictor_df": "predictors",
-                "lookbehind_days": [1, 365, 720],
-                "resolve_multiple": "min",
-                "fallback": np.nan,
-            },
-        ],
-    )
+    predictor_spec_list = PredictorGroupSpec(
+        values_df=["predictors"],
+        interval_days=[1, 365, 720],
+        resolve_multiple=["min"],
+        fallback=[np.nan],
+        allowed_nan_value_prop=[0],
+    ).create_combinations()
 
-    flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
-        predictors=predictor_spec_list,
-        predictor_dfs={"predictors": predictors_df},
+    flattened_dataset.add_temporal_predictors_from_pred_specs(
+        predictor_specs=predictor_spec_list,
+        preloaded_predictor_dfs={"predictors": predictors_df},
     )
 
     flattened_dataset.add_temporal_outcome(
-        outcome_df=event_times_df,
-        lookahead_days=2,
-        incident=True,
-        resolve_multiple="max",
-        fallback=0,
+        output_spec=PredictorSpec(
+            col_main="value",
+            values_df=event_times_df,
+            interval_days=2,
+            resolve_multiple="max",
+            fallback=0,
+            incident=True,
+        ),
     )
 
     outcome_df = flattened_dataset.df
 
-    for col in [
+    for col in (
         "dw_ek_borger",
         "timestamp",
         "prediction_time_uuid",
-    ]:
+    ):
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
 
 
@@ -466,7 +507,7 @@ def test_add_temporal_incident_binary_outcome():
                         1,2021-11-06 00:00:01, 1
                         """
 
-    expected_df_str = """outc_dichotomous_t2d_within_2_days_max_fallback_0,
+    expected_df_str = """outc_dichotomous_t2d_within_2_days_max_fallback_nan,
     1
     0"""
 
@@ -482,18 +523,19 @@ def test_add_temporal_incident_binary_outcome():
     )
 
     flattened_dataset.add_temporal_outcome(
-        outcome_df=event_times_df,
-        lookahead_days=2,
-        incident=True,
-        dichotomous=True,
-        resolve_multiple="max",
-        fallback=0,
-        pred_name="t2d",
+        output_spec=PredictorSpec(
+            values_df=event_times_df,
+            interval_days=2,
+            incident=True,
+            fallback=np.NaN,
+            resolve_multiple="max",
+            col_main="t2d",
+        )
     )
 
     outcome_df = flattened_dataset.df
 
-    for col in ("outc_dichotomous_t2d_within_2_days_max_fallback_0",):
+    for col in [c for c in expected_df.columns if "outc" in c]:
         for df in (outcome_df, expected_df):
             # Windows and Linux have different default dtypes for ints,
             # which is not a meaningful error here. So we force the dtype.
@@ -517,21 +559,17 @@ def test_add_tfidf_text_data():
         n_workers=4,
     )
 
-    predictor_list = create_feature_combinations(
-        [
-            {
-                "predictor_df": "synth_notes",
-                "lookbehind_days": [1, 365, 720],
-                "resolve_multiple": "min",
-                "fallback": np.nan,
-                "loader_kwargs": {"featurizer": "tfidf"},
-                "new_col_name": [TEST_TFIDF_VOCAB],
-            },
-        ],
-    )
+    predictor_specs = PredictorGroupSpec(
+        values_df=["synth_notes"],
+        interval_days=[1, 365, 720],
+        resolve_multiple=["min"],
+        fallback=[np.nan],
+        allowed_nan_value_prop=[0],
+        loader_kwargs=[{"featurizer": "tfidf"}],
+    ).create_combinations()
 
-    flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
-        predictors=predictor_list,
+    flattened_dataset.add_temporal_predictors_from_pred_specs(
+        predictor_specs=predictor_specs,
     )
 
     outcome_df = flattened_dataset.df

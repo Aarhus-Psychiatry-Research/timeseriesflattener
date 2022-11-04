@@ -2,17 +2,21 @@
 # pylint: disable=missing-function-docstring
 
 import numpy as np
-from utils_for_testing import (  # pylint: disable=import-error
-    assert_flattened_outcome_as_expected,
-    assert_flattened_predictor_as_expected,
-)
 
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    OutcomeSpec,
+    PredictorSpec,
+)
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: disable=unused-import
     get_earliest_value_in_group,
     get_latest_value_in_group,
     get_max_in_group,
     get_mean_in_group,
     get_min_in_group,
+)
+from psycop_feature_generation.utils_for_testing import (
+    assert_flattened_data_as_expected,
+    str_to_df,
 )
 
 
@@ -26,12 +30,16 @@ def test_resolve_multiple_catalogue():
                         1,2022-01-01 00:00:02, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="min",
-        lookahead_days=2,
-        expected_flattened_values=[1],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="min",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[1],
     )
 
 
@@ -44,12 +52,16 @@ def test_resolve_multiple_max():
                         1,2022-01-01 00:00:02, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="max",
-        lookahead_days=2,
-        expected_flattened_values=[2],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="max",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[2],
     )
 
 
@@ -62,12 +74,16 @@ def test_resolve_multiple_min():
                         1,2022-01-01 00:00:02, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="min",
-        lookahead_days=2,
-        expected_flattened_values=[1],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="min",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[1],
     )
 
 
@@ -80,12 +96,15 @@ def test_resolve_multiple_avg():
                         1,2021-12-30 00:00:02, 2
                         """
 
-    assert_flattened_predictor_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        predictor_df_str=predictor_df_str,
-        resolve_multiple="mean",
-        lookbehind_days=2,
-        expected_flattened_values=[1.5],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=PredictorSpec(
+            values_df=str_to_df(predictor_df_str),
+            resolve_multiple="mean",
+            interval_days=2,
+            fallback=0,
+        ),
+        expected_values=[1.5],
     )
 
 
@@ -103,12 +122,16 @@ def test_resolve_multiple_latest():
                         2,2022-01-01 00:00:02, 6
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="latest",
-        lookahead_days=2,
-        expected_flattened_values=[3, 9],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="latest",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[3, 9],
     )
 
 
@@ -122,12 +145,16 @@ def test_resolve_multiple_latest_no_values():
                         1,2022-01-01 00:00:02, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="latest",
-        lookahead_days=2,
-        expected_flattened_values=[2, np.nan],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="latest",
+            interval_days=2,
+            fallback=np.nan,
+            incident=True,
+        ),
+        expected_values=[2, np.nan],
     )
 
 
@@ -139,12 +166,16 @@ def test_resolve_multiple_latest_one_vlaue():
                         1,2022-01-01 00:00:01, 1
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="latest",
-        lookahead_days=2,
-        expected_flattened_values=[1],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="latest",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[1],
     )
 
 
@@ -162,12 +193,16 @@ def test_resolve_multiple_earliest():
                         2,2022-01-01 00:00:02, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="earliest",
-        lookahead_days=2,
-        expected_flattened_values=[1, 1],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="earliest",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[1, 1],
     )
 
 
@@ -180,12 +215,15 @@ def test_resolve_multiple_sum():
                         1,2021-12-30 00:00:02, 2
                         """
 
-    assert_flattened_predictor_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        predictor_df_str=predictor_df_str,
-        resolve_multiple="sum",
-        lookbehind_days=2,
-        expected_flattened_values=[3],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=PredictorSpec(
+            values_df=str_to_df(predictor_df_str),
+            resolve_multiple="sum",
+            interval_days=2,
+            fallback=0,
+        ),
+        expected_values=[3],
     )
 
 
@@ -198,12 +236,16 @@ def test_resolve_multiple_count():
                         1,2022-01-01 00:00:02, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="count",
-        lookahead_days=2,
-        expected_flattened_values=[2],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="count",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[2],
     )
 
 
@@ -217,12 +259,16 @@ def test_resolve_multiple_bool():
                         1,2022-01-01 00:00:02, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="bool",
-        lookahead_days=2,
-        expected_flattened_values=[1, 0],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="bool",
+            interval_days=2,
+            fallback=0,
+            incident=True,
+        ),
+        expected_values=[1, 0],
     )
 
 
@@ -238,12 +284,14 @@ def test_resolve_multiple_change_per_day():
                         2,2023-01-08 00:00:00, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="change_per_day",
-        lookahead_days=4,
-        expected_flattened_values=[1, np.NaN],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="change_per_day",
+            interval_days=4,
+        ),
+        expected_values=[1, np.NaN],
     )
 
 
@@ -259,12 +307,14 @@ def test_resolve_multiple_change_per_day_unordered():
                         2,2022-01-01 00:00:00, 1
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="change_per_day",
-        lookahead_days=4,
-        expected_flattened_values=[1, 1],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="change_per_day",
+            interval_days=4,
+        ),
+        expected_values=[1, 1],
     )
 
 
@@ -280,12 +330,14 @@ def test_resolve_multiple_change_per_day_negative():
                         2,2022-01-01 00:00:00, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="change_per_day",
-        lookahead_days=4,
-        expected_flattened_values=[1, -1],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="change_per_day",
+            interval_days=4,
+        ),
+        expected_values=[1, -1],
     )
 
 
@@ -301,12 +353,14 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
                         2,2022-01-08 00:00:00, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="change_per_day",
-        lookahead_days=4,
-        expected_flattened_values=[1, 99999],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="change_per_day",
+            interval_days=4,
+        ),
+        expected_values=[1, 99999],
         fallback=99999,
     )
 
@@ -323,12 +377,14 @@ def test_resolve_multiple_mean_of_multiple_columns():
                         2,2022-01-08 00:00:00,4,5
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="mean",
-        lookahead_days=4,
-        expected_flattened_values=[[1.5, 2.5], [3.0, 4.0]],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="mean",
+            interval_days=4,
+        ),
+        expected_values=[[1.5, 2.5], [3.0, 4.0]],
         fallback=99999,
         values_colname=["val1", "val2"],
     )
@@ -346,10 +402,12 @@ def test_resolve_multiple_variance():
                         2,2022-01-08 00:00:00, 2
                         """
 
-    assert_flattened_outcome_as_expected(
-        prediction_times_df_str=prediction_times_str,
-        outcome_df_str=event_times_str,
-        resolve_multiple="variance",
-        lookahead_days=4,
-        expected_flattened_values=[0.5, np.NaN],
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            values_df=str_to_df(event_times_str),
+            resolve_multiple="variance",
+            interval_days=4,
+        ),
+        expected_values=[0.5, np.NaN],
     )

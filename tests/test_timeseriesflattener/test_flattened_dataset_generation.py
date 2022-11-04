@@ -3,6 +3,7 @@
 # pylint: disable=unused-import, redefined-outer-name
 
 from pathlib import Path
+from typing import Iterable
 
 import numpy as np
 import pandas as pd
@@ -15,6 +16,10 @@ from application.t2d.generate_features_and_write_to_disk import (
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
+)
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    MinSpec,
+    PredictorGroupSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
@@ -33,40 +38,21 @@ def synth_outcome():
     return load_synth_outcome()
 
 
-base_float_predictor_combinations = [
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 365,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 730,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-]
+base_float_predictor_combinations = PredictorGroupSpec(
+    values_df=["synth_predictor_float"],
+    interval_days=[365, 730],
+    resolve_multiple=["mean"],
+    fallback=[np.NaN],
+    allowed_nan_value_prop=[0.0],
+).create_combinations()
 
-
-base_binary_predictor_combinations = [
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 365,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 730,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-]
+base_binary_predictor_combinations = PredictorGroupSpec(
+    values_df=["synth_predictor_float"],
+    interval_days=[365, 730],
+    resolve_multiple=["max"],
+    fallback=[np.NaN],
+    allowed_nan_value_prop=[0.0],
+).create_combinations()
 
 
 def check_dfs_have_same_contents_by_column(df1, df2):
@@ -114,51 +100,52 @@ def check_dfs_have_same_contents_by_column(df1, df2):
         assert len(diff_rows) == 0
 
 
-def create_flattened_df(cache_dir, predictor_combinations, prediction_times_df):
+def create_flattened_df(
+    cache_dir: Path,
+    predictor_specs: Iterable[MinSpec],
+    prediction_times_df: pd.DataFrame,
+):
     """Create a dataset df for testing."""
     first_df = FlattenedDataset(
         prediction_times_df=prediction_times_df,
         n_workers=4,
         feature_cache_dir=cache_dir,
     )
-    first_df.add_temporal_predictors_from_list_of_argument_dictionaries(
-        predictor_combinations,
+
+    first_df.add_temporal_predictors_from_pred_specs(
+        predictor_specs=predictor_specs,
     )
 
     return first_df.df
 
 
 @pytest.mark.parametrize(
-    "predictor_combinations",
+    "predictor_specs",
     [base_float_predictor_combinations, base_binary_predictor_combinations],
 )
 def test_cache_hitting(
     tmp_path,
     synth_prediction_times,
-    predictor_combinations,
+    predictor_specs,
 ):
     """Test that the cache is hit when the same data is requested twice."""
-
-    if callable(predictor_combinations):
-        predictor_combinations = predictor_combinations()
-
     # Create the cache
     first_df = create_flattened_df(
         cache_dir=tmp_path,
-        predictor_combinations=predictor_combinations,
+        predictor_specs=predictor_specs,
         prediction_times_df=synth_prediction_times,
     )
 
     # Load the cache
     cache_df = create_flattened_df(
         cache_dir=tmp_path,
-        predictor_combinations=predictor_combinations,
+        predictor_specs=predictor_specs,
         prediction_times_df=synth_prediction_times,
     )
 
     # If cache_df doesn't hit the cache, it creates its own files
     # Thus, number of files is an indicator of whether the cache was hit
-    assert len(list(tmp_path.glob("*"))) == len(predictor_combinations)
+    assert len(list(tmp_path.glob("*"))) == len(predictor_specs)
 
     # Assert that each column has the same contents
     check_dfs_have_same_contents_by_column(first_df, cache_df)
@@ -182,7 +169,7 @@ def test_all_non_online_elements_in_pipeline(
         feature_cache_dir=None,
     )
 
-    flattened_ds.add_temporal_predictors_from_list_of_argument_dictionaries(
+    flattened_ds.add_temporal_predictors_from_pred_specs(
         predictor_combinations,
     )
 

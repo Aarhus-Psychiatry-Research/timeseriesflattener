@@ -19,7 +19,6 @@ import wandb
 from wasabi import Printer
 
 import psycop_feature_generation.loaders.raw  # noqa
-from application.t2d.feature_spec_generator import generate_feature_specification
 from psycop_feature_generation.data_checks.flattened.data_integrity import (
     save_feature_set_integrity_from_dir,
 )
@@ -27,9 +26,6 @@ from psycop_feature_generation.data_checks.flattened.feature_describer import (
     save_feature_description_from_dir,
 )
 from psycop_feature_generation.loaders.raw.pre_load_dfs import pre_load_unique_dfs
-from psycop_feature_generation.timeseriesflattener.create_feature_combinations import (
-    create_feature_combinations,
-)
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
@@ -231,16 +227,16 @@ def add_metadata(
     # Add timestamp from outcomes
     flattened_dataset.add_static_info(
         info_df=pre_loaded_dfs["t2d"],
-        prefix="",
-        input_col_name="timestamp",
-        output_col_name="timestamp_first_t2d_hba1c",
+        prefix_override="",
+        input_col_name_override="timestamp",
+        output_col_name_override="timestamp_first_t2d_hba1c",
     )
 
     flattened_dataset.add_static_info(
         info_df=pre_loaded_dfs["timestamp_exclusion"],
-        prefix="",
-        input_col_name="timestamp",
-        output_col_name="timestamp_exclusion",
+        prefix_override="",
+        input_col_name_override="timestamp",
+        output_col_name_override="timestamp_exclusion",
     )
 
     return flattened_dataset
@@ -303,16 +299,16 @@ def add_predictors(
     msg.info("Adding static predictors")
     flattened_dataset.add_static_info(
         info_df=pre_loaded_dfs["sex_female"],
-        input_col_name="sex_female",
+        input_col_name_override="sex_female",
     )
     flattened_dataset.add_age(pre_loaded_dfs["birthdays"])
 
     start_time = time.time()
 
     msg.info("Adding temporal predictors")
-    flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
-        predictors=predictor_combinations,
-        predictor_dfs=pre_loaded_dfs,
+    flattened_dataset.add_temporal_predictors_from_pred_specs(
+        predictor_specs=predictor_combinations,
+        preloaded_predictor_dfs=pre_loaded_dfs,
     )
 
     end_time = time.time()
