@@ -337,7 +337,7 @@ def test_incident_outcome_removing_prediction_times():
     )
 
     flattened_dataset.add_temporal_outcome(
-        output_spec=PredictorSpec(
+        output_spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
             incident=True,
@@ -398,7 +398,7 @@ def test_add_multiple_static_predictors():
         n_workers=4,
     )
 
-    output_spec = PredictorSpec(
+    output_spec = OutcomeSpec(
         col_main="value",
         values_df=event_times_df,
         interval_days=2,
@@ -476,7 +476,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
     )
 
     flattened_dataset.add_temporal_outcome(
-        output_spec=PredictorSpec(
+        output_spec=OutcomeSpec(
             col_main="value",
             values_df=event_times_df,
             interval_days=2,
@@ -523,7 +523,7 @@ def test_add_temporal_incident_binary_outcome():
     )
 
     flattened_dataset.add_temporal_outcome(
-        output_spec=PredictorSpec(
+        output_spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
             incident=True,
