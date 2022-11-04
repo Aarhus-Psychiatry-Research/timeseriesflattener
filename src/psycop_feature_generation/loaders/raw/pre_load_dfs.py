@@ -1,12 +1,13 @@
 """Pre-load dataframes to avoid duplicate loading."""
 
 from multiprocessing import Pool
-from typing import Any, Union
+from typing import Union
 
 import pandas as pd
 from wasabi import Printer
 
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import MinSpec
 from psycop_feature_generation.utils import data_loaders
 
 
@@ -45,19 +46,19 @@ def load_df(predictor_df: str, values_to_load: Union[str, None] = None) -> pd.Da
     return df
 
 
-def load_df_wrapper(predictor_dict: dict[str, Any]) -> dict[str, pd.DataFrame]:
+def load_df_wrapper(spec: MinSpec) -> dict[str, pd.DataFrame]:
     """Wrapper to load a dataframe from a dictionary.
 
     Args:
-        predictor_dict (dict[str, Any]): dictionary where the key predictor_df maps to an SQL database.
+        spec (MinSpec): A MinSpec object.
 
     Returns:
         pd.DataFrame: The loaded dataframe.
     """
     return {
-        predictor_dict["predictor_df"]: load_df(
-            predictor_df=predictor_dict["predictor_df"],
-            values_to_load=predictor_dict.get("values_to_load"),
+        spec.values_df: load_df(
+            predictor_df=spec.values_df,
+            values_to_load=spec.medication_values_to_load if spec.medications else None,
         ),
     }
 
@@ -97,13 +98,13 @@ def error_check_dfs(
 
 
 def pre_load_unique_dfs(
-    predictor_dict_list: list[dict[str, Any]],
+    specs: list[MinSpec],
     subset_duplicates_columns: Union[list, str] = "all",
 ) -> dict[str, pd.DataFrame]:
     """Pre-load unique dataframes to avoid duplicate loading.
 
     Args:
-        predictor_dict_list (list[dict[str, Union[str, float, int]]]): list of dictionaries where the key predictor_df maps to an SQL database.
+        specs (list): A list of MinSpec objects.
         subset_duplicates_columns (Union[list, str]): Which columns to check for duplicates across. Defaults to "all".
 
     Returns:
@@ -111,25 +112,25 @@ def pre_load_unique_dfs(
     """
 
     # Get unique predictor_df values from predictor_dict_list
-    unique_dfs: set[str] = set()
+    selected_df_names = []
+    selected_specs = []
 
-    selected_predictor_df_specs: list[dict[str, Any]] = []
-
-    for feature_dict in predictor_dict_list:
-        if feature_dict["predictor_df"] not in unique_dfs:
-            unique_dfs.add(feature_dict["predictor_df"])
-            selected_predictor_df_specs.append(feature_dict)
+    for spec in specs:
+        if not spec.values_df in selected_df_names:
+            selected_df_names += spec.values_df
+            selected_specs += spec
 
     msg = Printer(timestamp=True)
 
-    msg.info(f"Pre-loading {len(unique_dfs)} dataframes")
+    msg.info(f"Pre-loading {len(selected_specs)} dataframes")
+
     n_workers = min(
-        len(unique_dfs),
+        len(selected_specs),
         16,
     )  # 16 subprocesses should be enough to not be IO bound
 
     with Pool(n_workers) as p:
-        pre_loaded_dfs = p.map(load_df_wrapper, selected_predictor_df_specs)
+        pre_loaded_dfs = p.map(func=load_df_wrapper, iterable=selected_specs)
 
         error_check_dfs(
             pre_loaded_dfs=pre_loaded_dfs,

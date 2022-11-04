@@ -143,7 +143,7 @@ class MinGroupSpec(BaseModel):
 
     allowed_nan_value_prop: Sequence[float]
 
-    medication_values_to_load: Optional[
+    lab_values_to_load: Optional[
         Sequence[Literal["all", "numerical", "numerical_and_coerce"]]
     ]
     # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
@@ -156,12 +156,14 @@ class MinGroupSpec(BaseModel):
         return create_feature_combinations(self)
 
 
-class PredictorGroupSpec(MinGroupSpec):
+class PredictorSpec(MinGroupSpec):
     """Specification for a group of predictors."""
 
 
 class OutcomeGroupSpec(MinGroupSpec):
     """Specificaiton for a group of outcomes."""
+
+    incident: Sequence[bool]
 
 
 def create_feature_combinations_from_dict(
@@ -196,7 +198,7 @@ def create_feature_combinations(
 
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
 
-    if isinstance(feature_group_spec, PredictorGroupSpec):
+    if isinstance(feature_group_spec, PredictorSpec):
         return [PredictorSpec(**d) for d in permuted_dicts]
     elif isinstance(feature_group_spec, OutcomeGroupSpec):
         return [OutcomeSpec(**d) for d in permuted_dicts]
