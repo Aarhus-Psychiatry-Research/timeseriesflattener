@@ -287,43 +287,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             dir_path=self.feature_cache_dir,
             file_pattern=file_pattern,
             file_suffix=file_suffix,
-        ).dropna()
+        )
 
-        generated_df = pd.DataFrame({value_col_str: []})
-
-        # Check that some values in generated_df differ from fallback
-        # Otherwise, comparison to cache is meaningless
-        n_to_generate = 1_000
-        n_trials = 0
-
-        while not any(
-            generated_df[value_col_str] != output_spec.fallback,
-        ):
-            if n_trials != 0:
-                self.msg.info(
-                    f"{value_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
-                )
-
-            generated_df = self._flatten_temporal_values_to_df(
-                prediction_times_with_uuid_df=self.df.sample(int(n_to_generate)),
-                id_col_name=self.id_col_name,
-                timestamp_col_name=self.timestamp_col_name,
-                pred_time_uuid_col_name=self.pred_time_uuid_col_name,
-                output_spec=output_spec,
-            ).dropna()
-
-            # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
-            # in the cache. Saves on storage. Don't use them to check if cache is hit.
-            if not np.isnan(output_spec.fallback):
-                generated_df = generated_df[
-                    generated_df[value_col_str] != output_spec.fallback
-                ]
-
-            n_to_generate = (
-                n_to_generate**1.5
-            )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
-
-            n_trials += 1
+        generated_df = self._generate_values_for_cache_checking(
+            output_spec=output_spec, value_col_str=value_col_str
+        )
 
         cached_suffix = "_c"
         generated_suffix = "_g"
@@ -331,6 +299,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # We frequently hit rounding errors with cache hits, so we round to 3 decimal places
         generated_df[value_col_str] = generated_df[value_col_str].round(3)
         cache_df[value_col_str] = cache_df[value_col_str].round(3)
+
+        generated_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
+        cache_df.sort_values(self.pred_time_uuid_col_name, inplace=True)
 
         # Merge cache_df onto generated_df
         merged_df = pd.merge(
@@ -361,6 +332,54 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         msg.good(f"Cache hit for {value_col_str}")
         return True
 
+    def _generate_values_for_cache_checking(
+        self,
+        output_spec: MinSpec,
+        value_col_str: str,
+        n_to_generate: int = 100_000,
+    ):
+        generated_df = pd.DataFrame({value_col_str: []})
+
+        # Check that some values in generated_df differ from fallback
+        # Otherwise, comparison to cache is meaningless
+        n_trials = 0
+
+        while not any(
+            generated_df[value_col_str] != output_spec.fallback,
+        ):
+            if n_trials != 0:
+                self.msg.info(
+                    f"{value_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
+                )
+
+            n_to_generate = int(min(n_to_generate, len(self.df)))
+
+            generated_df = self._flatten_temporal_values_to_df(
+                prediction_times_with_uuid_df=self.df.sample(
+                    n=n_to_generate, replace=False
+                ),
+                id_col_name=self.id_col_name,
+                timestamp_col_name=self.timestamp_col_name,
+                pred_time_uuid_col_name=self.pred_time_uuid_col_name,
+                output_spec=output_spec,
+                loader_kwargs=output_spec.loader_kwargs,
+            ).dropna()
+
+            # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
+            # in the cache. Saves on storage. Don't use them to check if cache is hit.
+            if not np.isnan(output_spec.fallback):
+                generated_df = generated_df[
+                    generated_df[value_col_str] != output_spec.fallback
+                ]
+
+            n_to_generate = (
+                n_to_generate**1.5
+            )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
+
+            n_trials += 1
+
+        return generated_df
+
     def _get_feature(
         self,
         predictor_spec: PredictorSpec,
@@ -376,6 +395,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """
         file_name = f"{predictor_spec.get_col_str()}_{self.n_uuids}_uuids"
 
+        n_partitions = 6
+
         if hasattr(self, "feature_cache_dir"):
             if self._cache_is_hit(
                 file_pattern=file_name,
@@ -389,9 +410,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     file_suffix=file_suffix,
                 )
 
-                return dd.from_pandas(data=df, npartitions=1).set_index(
-                    self.pred_time_uuid_col_name
-                )
+                return dd.from_pandas(data=df, npartitions=n_partitions)
         else:
             msg.info("No cache dir specified, not attempting load")
 
@@ -415,40 +434,34 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             self._write_feature_to_cache(
                 predictor_spec=predictor_spec,
                 file_name=file_name,
-                df=df,
+                values_df=df,
             )
 
         return dd.from_pandas(
-            data=df.drop(self.pred_time_uuid_col_name, axis=1),
-            npartitions=6,
+            data=df,
+            npartitions=n_partitions,
         )
 
     def _write_feature_to_cache(
         self,
-        df: pd.DataFrame,
+        values_df: pd.DataFrame,
         predictor_spec: PredictorSpec,
         file_name: str,
     ):
         """Write feature to cache"""
-        cache_df = pd.concat(
-            objs=[
-                df[predictor_spec.get_col_str()],
-                self.df[self.pred_time_uuid_col_name],
-            ],
-            axis=1,
-        )
+        out_df = values_df
 
         # Drop rows containing fallback, since it's non-informative
-        cache_df = cache_df[
-            cache_df[predictor_spec.get_col_str()] != predictor_spec.fallback
-        ]
+        out_df = out_df[
+            out_df[predictor_spec.get_col_str()] != predictor_spec.fallback
+        ].dropna()
 
         # Write df to cache
         timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         # Write df to cache
         write_df_to_file(
-            df=cache_df,
+            df=out_df,
             file_path=self.feature_cache_dir / f"{file_name}_{timestamp}.parquet",
         )
 
@@ -542,23 +555,16 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         # Concatenate with dask, and show progress bar
         with TqdmCallback(desc="compute"):
-            concatenated_dfs = dd.concat(
-                dfs=flattened_predictor_dds,
-                axis=1,
+            merged_dfs = None
+            for df in flattened_predictor_dds:
+                if merged_dfs is None:
+                    merged_dfs = df
+                else:
+                    merged_dfs.merge(right=df, on=self.pred_time_uuid_col_name)
+
+            self.df = merged_dfs.merge(
+                right=self.df, on=self.pred_time_uuid_col_name
             ).compute()
-            # Converts to pandas dataframe
-
-            # Drop all duplicate columns but keep the first
-
-        self.df = pd.concat(
-            objs=[
-                self.df,
-                concatenated_dfs,
-            ],
-            axis=1,
-        )
-
-        self.df = self.df.copy()
 
     def add_age(
         self,

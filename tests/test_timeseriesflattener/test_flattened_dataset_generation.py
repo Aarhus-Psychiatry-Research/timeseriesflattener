@@ -106,49 +106,51 @@ def create_flattened_df(
     prediction_times_df: pd.DataFrame,
 ):
     """Create a dataset df for testing."""
-    first_df = FlattenedDataset(
+    flat_ds = FlattenedDataset(
         prediction_times_df=prediction_times_df,
-        n_workers=4,
+        n_workers=1,
         feature_cache_dir=cache_dir,
     )
 
-    first_df.add_temporal_predictors_from_pred_specs(
+    flat_ds.add_temporal_predictors_from_pred_specs(
         predictor_specs=predictor_specs,
     )
 
-    return first_df.df
+    return flat_ds.df
 
 
-@pytest.mark.parametrize(
-    "predictor_specs",
-    [base_float_predictor_combinations, base_binary_predictor_combinations],
-)
+# @pytest.mark.parametrize(
+#     "predictor_specs",
+#     [base_float_predictor_combinations, base_binary_predictor_combinations],
+# )
 def test_cache_hitting(
     tmp_path,
     synth_prediction_times,
-    predictor_specs,
+    # predictor_specs,
 ):
     """Test that the cache is hit when the same data is requested twice."""
+    predictor_specs = base_float_predictor_combinations
+
     # Create the cache
     first_df = create_flattened_df(
         cache_dir=tmp_path,
-        predictor_specs=predictor_specs,
+        predictor_specs=predictor_specs.copy(),
         prediction_times_df=synth_prediction_times,
     )
 
     # Load the cache
     cache_df = create_flattened_df(
         cache_dir=tmp_path,
-        predictor_specs=predictor_specs,
+        predictor_specs=predictor_specs.copy(),
         prediction_times_df=synth_prediction_times,
     )
+
+    # Assert that each column has the same contents
+    check_dfs_have_same_contents_by_column(df1=first_df, df2=cache_df)
 
     # If cache_df doesn't hit the cache, it creates its own files
     # Thus, number of files is an indicator of whether the cache was hit
     assert len(list(tmp_path.glob("*"))) == len(predictor_specs)
-
-    # Assert that each column has the same contents
-    check_dfs_have_same_contents_by_column(first_df, cache_df)
 
 
 @pytest.mark.parametrize(
