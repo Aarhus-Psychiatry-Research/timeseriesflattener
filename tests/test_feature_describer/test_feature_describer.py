@@ -56,6 +56,6 @@ def test_generate_feature_description_row(df, predictor_dicts):
         fallback=d["fallback"],
     )
 
-    generate_feature_description_row(series=df[column_name], predictor_dict=d)
+    generate_feature_description_row(series=df[column_name], predictor_spec=d)
 
     generate_feature_description_df(df, predictor_dicts)

@@ -104,7 +104,7 @@ def save_feature_set_description_to_disk(
     if describe_splits:
         save_feature_description_from_dir(
             feature_set_dir=flattened_dataset_file_dir,
-            predictor_dicts=predictor_combinations,
+            predictor_combinations=predictor_combinations,
             splits=["train"],
             out_dir=out_dir,
             file_suffix=file_suffix,

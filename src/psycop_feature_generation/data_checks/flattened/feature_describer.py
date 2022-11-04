@@ -11,6 +11,9 @@ from psycop_feature_generation.data_checks.utils import save_df_to_pretty_html_t
 from psycop_feature_generation.loaders.flattened.local_feature_loaders import (
     load_split_predictors,
 )
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    PredictorSpec,
+)
 from psycop_feature_generation.utils import generate_feature_colname
 
 UNICODE_HIST = {
@@ -86,30 +89,29 @@ def create_unicode_hist(series: pd.Series) -> pd.Series:
 
 def generate_feature_description_row(
     series: pd.Series,
-    predictor_dict: dict[str, str],
+    predictor_spec: PredictorSpec,
 ) -> dict:
     """Generate a row with feature description.
 
     Args:
         series (pd.Series): Series with data to describe.
-        predictor_dict (dict[str, str]): dictionary with predictor information.
 
     Returns:
         dict: dictionary with feature description.
     """
 
     d = {
-        "Predictor df": predictor_dict["predictor_df"],
-        "Lookbehind days": predictor_dict["lookbehind_days"],
-        "Resolve multiple": predictor_dict["resolve_multiple"],
+        "Predictor df": predictor_spec.feature_content_for_naming,
+        "Lookbehind days": predictor_spec.interval_days,
+        "Resolve multiple": predictor_spec.resolve_multiple,
         "N unique": series.nunique(),
-        "Fallback strategy": predictor_dict["fallback"],
+        "Fallback strategy": predictor_spec.fallback,
         "Proportion missing": series.isna().mean(),
         "Mean": round(series.mean(), 2),
         "Histogram": create_unicode_hist(series),
         "Proportion using fallback": get_value_proportion(
             series,
-            predictor_dict["fallback"],
+            predictor_spec.fallback,
         ),
     }
 
@@ -122,13 +124,12 @@ def generate_feature_description_row(
 
 def generate_feature_description_df(
     df: pd.DataFrame,
-    predictor_dicts: list[dict[str, str]],
+    predictor_specs: list[PredictorSpec],
 ) -> pd.DataFrame:
     """Generate a data frame with feature descriptions.
 
     Args:
         df (pd.DataFrame): Data frame with data to describe.
-        predictor_dicts (list[dict[str, str]]): list of dictionaries with predictor information.
 
     Returns:
         pd.DataFrame: Data frame with feature descriptions.
@@ -136,17 +137,14 @@ def generate_feature_description_df(
 
     rows = []
 
-    for d in predictor_dicts:
-        column_name = generate_feature_colname(
-            prefix="pred",
-            out_col_name=d["predictor_df"],
-            interval_days=d["lookbehind_days"],
-            resolve_multiple=d["resolve_multiple"],
-            fallback=d["fallback"],
-            loader_kwargs=d.get("loader_kwargs", None),
-        )
+    for spec in predictor_specs:
+        column_name = spec.get_col_str()
 
-        rows.append(generate_feature_description_row(df[column_name], d))
+        rows.append(
+            generate_feature_description_row(
+                series=df[column_name], predictor_spec=spec
+            )
+        )
 
     # Convert to dataframe
     feature_description_df = pd.DataFrame(rows)
@@ -159,7 +157,7 @@ def generate_feature_description_df(
 
 def save_feature_description_from_dir(
     feature_set_dir: Path,
-    predictor_dicts: list[dict[str, str]],
+    predictor_combinations: list[PredictorSpec],
     file_suffix: str,
     splits: tuple[str] = ("train",),
     out_dir: Path = None,
@@ -195,9 +193,10 @@ def save_feature_description_from_dir(
         )
 
         msg.info(f"{split}: Generating feature description dataframe")
+
         feature_description_df = generate_feature_description_df(
             df=predictors,
-            predictor_dicts=predictor_dicts,
+            predictor_specs=predictor_combinations,
         )
 
         msg.info(f"{split}: Writing feature description to disk")

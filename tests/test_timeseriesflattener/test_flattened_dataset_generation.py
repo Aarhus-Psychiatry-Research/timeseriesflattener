@@ -19,6 +19,7 @@ from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
 )
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     MinSpec,
+    OutcomeSpec,
     PredictorGroupSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
@@ -174,12 +175,13 @@ def test_all_non_online_elements_in_pipeline(
     )
 
     flattened_ds.add_temporal_outcome(
-        outcome_df=synth_outcome,
-        lookahead_days=365,
-        resolve_multiple="max",
-        fallback=0,
-        incident=True,
-        dichotomous=True,
+        output_spec=OutcomeSpec(
+            values_df=synth_outcome,
+            interval_days=365,
+            resolve_multiple="max",
+            fallback=0,
+            incident=True,
+        )
     )
 
     flattened_df = flattened_ds.df
