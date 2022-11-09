@@ -142,7 +142,7 @@ def concat_from_physical_visits(
     dfs = [
         _load(
             icd_code=icd_codes,
-            output_col_name=output_col_name,
+            output_col_name_override=output_col_name,
             wildcard_icd_code=wildcard_icd_code,
             n_rows=n_rows,
             **kwargs,

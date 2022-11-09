@@ -14,7 +14,6 @@ from psycop_feature_generation.loaders.flattened.local_feature_loaders import (
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
 )
-from psycop_feature_generation.utils import generate_feature_colname
 
 UNICODE_HIST = {
     0: " ",
@@ -95,6 +94,7 @@ def generate_feature_description_row(
 
     Args:
         series (pd.Series): Series with data to describe.
+        predictor_spec (PredictorSpec): Predictor specification.
 
     Returns:
         dict: dictionary with feature description.
@@ -130,6 +130,7 @@ def generate_feature_description_df(
 
     Args:
         df (pd.DataFrame): Data frame with data to describe.
+        predictor_specs (PredictorSpec): Predictor specifications.
 
     Returns:
         pd.DataFrame: Data frame with feature descriptions.
@@ -158,7 +159,7 @@ def generate_feature_description_df(
 
 def save_feature_description_from_dir(
     feature_set_dir: Path,
-    predictor_combinations: list[PredictorSpec],
+    feature_specs: list[PredictorSpec],
     file_suffix: str,
     splits: tuple[str] = ("train",),
     out_dir: Path = None,
@@ -167,7 +168,7 @@ def save_feature_description_from_dir(
 
     Args:
         feature_set_dir (Path): Path to directory with data frames.
-        predictor_dicts (list[dict[str, str]]): list of dictionaries with predictor information.
+        feature_specs (list[PredictorSpec]): List of feature specifications.
         file_suffix (str): Suffix of the data frames to load. Must be either ".csv" or ".parquet".
         splits (tuple[str]): tuple of splits to include in the description. Defaults to ("train").
         out_dir (Path): Path to directory where to save the feature description. Defaults to None.
@@ -197,7 +198,7 @@ def save_feature_description_from_dir(
 
         feature_description_df = generate_feature_description_df(
             df=predictors,
-            predictor_specs=predictor_combinations,
+            predictor_specs=feature_specs,
         )
 
         msg.info(f"{split}: Writing feature description to disk")

@@ -44,7 +44,7 @@ def test_skip_one_if_no_need_to_process():
             resolve_multiple_fn_name="max",
             fallback=0,
             allowed_nan_value_prop=0,
-            source_values_col_name="val",
+            input_col_name_override="val",
         ),
         PredictorSpec(
             values_df=synth_predictor_float(),
@@ -52,7 +52,7 @@ def test_skip_one_if_no_need_to_process():
             resolve_multiple_fn_name="max",
             fallback=0,
             allowed_nan_value_prop=0,
-            source_values_col_name="val",
+            input_col_name_override="val",
         ),
         PredictorSpec(
             values_df=synth_predictor_float(),
@@ -60,7 +60,7 @@ def test_skip_one_if_no_need_to_process():
             resolve_multiple_fn_name="min",
             fallback=0,
             allowed_nan_value_prop=0,
-            source_values_col_name="val",
+            input_col_name_override="val",
         ),
         PredictorSpec(
             values_df=synth_predictor_float(),
@@ -68,7 +68,7 @@ def test_skip_one_if_no_need_to_process():
             resolve_multiple_fn_name="min",
             fallback=0,
             allowed_nan_value_prop=0,
-            source_values_col_name="val",
+            input_col_name_override="val",
         ),
     ]
 

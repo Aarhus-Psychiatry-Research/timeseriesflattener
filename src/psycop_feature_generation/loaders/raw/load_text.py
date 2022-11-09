@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import dill as pkl
-import numpy as np
 import pandas as pd
 import torch
 from transformers import AutoModel, AutoTokenizer

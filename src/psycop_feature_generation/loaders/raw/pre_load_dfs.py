@@ -9,7 +9,6 @@ from wasabi import Printer
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     AnySpec,
-    StaticSpec,
     TemporalSpec,
 )
 from psycop_feature_generation.utils import data_loaders

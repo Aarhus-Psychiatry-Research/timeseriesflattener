@@ -41,7 +41,8 @@ def test_load_dataset(df):
 
 
 def test_generate_feature_description_row(
-    df: pd.DataFrame, predictor_specs: list[PredictorSpec]
+    df: pd.DataFrame,
+    predictor_specs: list[PredictorSpec],
 ):
     spec = predictor_specs[0]
 

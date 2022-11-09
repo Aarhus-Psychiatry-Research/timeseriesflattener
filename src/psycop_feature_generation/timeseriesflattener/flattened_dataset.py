@@ -568,26 +568,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             npartitions=n_partitions,
         )
 
-    def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
-        self,
-        predictor_specs: list[PredictorSpec],
-    ):
-        """Add predictors to the flattened dataframe from a list."""
-
-        with Pool(self.n_workers) as p:
-            flattened_predictor_dds = p.map(
-                func=self._get_feature,
-                iterable=predictor_specs,
-            )
-
-        msg.info("Feature generation complete, concatenating")
-
-        self._concatenated_flattened_timeseries(flattened_predictor_dds)
-
     def _concatenated_flattened_timeseries(
-        self, flattened_predictor_dds: list[dd.DataFrame]
+        self,
+        flattened_predictor_dds: list[dd.DataFrame],
     ):
-        """Concatenate with dask, and show progress bar"""
+        """Concatenate with dask, and show progress bar."""
         with TqdmCallback(desc="compute"):
             merged_dfs = None
 
@@ -604,6 +589,22 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 right=self.df,
                 on=self.pred_time_uuid_col_name,
             ).compute()
+
+    def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
+        self,
+        predictor_specs: list[PredictorSpec],
+    ):
+        """Add predictors to the flattened dataframe from a list."""
+
+        with Pool(self.n_workers) as p:
+            flattened_predictor_dds = p.map(
+                func=self._get_feature,
+                iterable=predictor_specs,
+            )
+
+        msg.info("Feature generation complete, concatenating")
+
+        self._concatenated_flattened_timeseries(flattened_predictor_dds)
 
     def add_age(
         self,

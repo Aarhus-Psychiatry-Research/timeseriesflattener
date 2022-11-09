@@ -10,6 +10,9 @@ from pydantic import Extra
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_fns,
 )
+from psycop_feature_generation.timeseriesflattener.unresolved_feature_spec_objects import (
+    UnresolvedOutcomeGroupSpec,
+)
 
 
 class BaseModel(PydanticBaseModel):
@@ -24,13 +27,18 @@ class BaseModel(PydanticBaseModel):
 
 
 class AnySpec(BaseModel):
-    """A base class for all feature specifications. Allows for easier type hinting."""
+    """A base class for all feature specifications.
+
+    Allows for easier type hinting.
+    """
+
+    values_df: pd.DataFrame
+    input_col_name_override: Optional[str]
+    output_col_name_override: Optional[str] = None
 
 
 class StaticSpec(AnySpec):
     """Specification for a static feature."""
-
-    values_df: Union[pd.DataFrame, str]
 
 
 class TemporalSpec(AnySpec):
@@ -39,9 +47,6 @@ class TemporalSpec(AnySpec):
 
     Mostly used for inheritance below.
     """
-
-    # Input data
-    values_df: pd.DataFrame
 
     # Resolving
     interval_days: Union[int, float]
@@ -62,8 +67,6 @@ class TemporalSpec(AnySpec):
     prefix: Optional[str] = None
     id_col_name: str = "dw_ek_borger"
     timestamp_col_name: str = "timestamp"
-    source_values_col_name: Optional[str]
-    out_col_name_override: Optional[str] = None
 
     # Output col names
     feature_name: Optional[str] = None
@@ -91,6 +94,21 @@ class TemporalSpec(AnySpec):
                 if c not in [self.timestamp_col_name, self.id_col_name]
             ][0]
 
+    def get_col_str(self, col_main_override: Optional[str] = None) -> str:
+        """."""
+        if self.output_col_name_override:
+            return self.output_col_name_override
+
+        col_main = col_main_override if col_main_override else self.feature_name
+
+        col_str = f"{self.prefix}_{col_main}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
+
+        if isinstance(self, OutcomeSpec):
+            if self.is_dichotomous():
+                col_str += "_dichotomous"
+
+        return col_str
+
     def __eq__(self, other):
         # "combination in list_of_combinations" works for all attributes
         # except for values_df, since the truth value of a dataframe is
@@ -109,27 +127,15 @@ class TemporalSpec(AnySpec):
 
         return other_attributes_equal and dfs_equal
 
-    def get_col_str(self, col_main_override: Optional[str] = None) -> str:
-        """."""
-        col_main = col_main_override if col_main_override else self.feature_name
-
-        col_str = f"{self.prefix}_{col_main}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
-
-        if isinstance(self, OutcomeSpec):
-            if self.is_dichotomous():
-                col_str += "_dichotomous"
-
-        return col_str
-
 
 class PredictorSpec(TemporalSpec):
-    """Specification for a single predictor, where the df has been resolved"""
+    """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "pred"
 
 
 class OutcomeSpec(TemporalSpec):
-    """Specification for a single predictor, where the df has been resolved"""
+    """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "outc"
     col_main: str = "value"
@@ -161,18 +167,25 @@ class MinGroupSpec(BaseModel):
 
     loader_kwargs: Optional[Sequence[dict]] = None
 
-    def create_combinations(self):
-        return create_feature_combinations(self)
-
 
 class PredictorGroupSpec(MinGroupSpec):
     """Specification for a group of predictors."""
+
+    def create_combinations(self):
+        return create_specs_from_group(
+            feature_group_spec=self, output_class=PredictorSpec
+        )
 
 
 class OutcomeGroupSpec(MinGroupSpec):
     """Specificaiton for a group of outcomes."""
 
     incident: Sequence[bool]
+
+    def create_combinations(self):
+        return create_specs_from_group(
+            feature_group_spec=self, output_class=OutcomeSpec
+        )
 
 
 def create_feature_combinations_from_dict(
@@ -196,20 +209,14 @@ def create_feature_combinations_from_dict(
     return permutations_dicts
 
 
-def create_feature_combinations(
+def create_specs_from_group(
     feature_group_spec: MinGroupSpec,
-) -> list[TemporalSpec]:
-    """Create feature combinations from a FeatureGroupSpec."""
+    output_class: AnySpec,
+) -> list[AnySpec]:
 
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
     feature_group_spec_dict = feature_group_spec.__dict__
-
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
 
-    if isinstance(feature_group_spec, PredictorGroupSpec):
-        return [PredictorSpec(**d) for d in permuted_dicts]
-    elif isinstance(feature_group_spec, OutcomeGroupSpec):
-        return [OutcomeSpec(**d) for d in permuted_dicts]
-    else:
-        raise ValueError(f"{type(feature_group_spec)} is not a valid GroupSpec.")
+    return [output_class(**d) for d in permuted_dicts]

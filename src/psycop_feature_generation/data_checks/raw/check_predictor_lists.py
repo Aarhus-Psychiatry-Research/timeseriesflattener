@@ -20,7 +20,8 @@ def check_df_conforms_to_feature_spec(
     arg_dict: dict,
     allowed_nan_value_prop: float = 0.01,
 ):
-    """Check that a loaded df conforms to to a given feature specification. Useful when creating loaders
+    """Check that a loaded df conforms to to a given feature specification.
+    Useful when creating loaders.
 
     Args:
         df (pd.DataFrame): Dataframe to check.

@@ -463,7 +463,10 @@ def test_add_temporal_predictors_then_temporal_outcome():
 
     for col in expected_df.columns:
         pd.testing.assert_series_equal(
-            outcome_df[col], expected_df[col], check_index=False, check_dtype=False
+            outcome_df[col],
+            expected_df[col],
+            check_index=False,
+            check_dtype=False,
         )
 
 
