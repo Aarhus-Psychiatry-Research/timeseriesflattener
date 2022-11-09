@@ -509,7 +509,7 @@ def test_add_temporal_incident_binary_outcome():
                         1,2021-11-06 00:00:01, 1
                         """
 
-    expected_df_str = """outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """outc_dichotomous_t2d_within_2_days_max_fallback_nan,
     1
     0"""
 
