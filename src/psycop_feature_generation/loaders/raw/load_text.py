@@ -114,7 +114,7 @@ def _tfidf_featurize(
 def _mean_pooling(
     model_output: BaseModelOutputWithPoolingAndCrossAttentions,
     attention_mask: torch.Tensor,
-) -> np.ndarray:
+) -> torch.Tensor:
     """Mean Pooling - take attention mask into account for correct averaging.
 
     Args:
@@ -220,7 +220,7 @@ def _huggingface_featurize(
         embedding = _mean_pooling(model_output, encoded_input["attention_mask"])
 
         if len(chunks) > 1:
-            list_of_embeddings.append(torch.mean(embedding, axis=0).numpy())
+            list_of_embeddings.append(torch.mean(embedding, axis=0).numpy())  # type: ignore
         else:
             list_of_embeddings.append(embedding.numpy()[0])
 
@@ -328,13 +328,14 @@ def load_and_featurize_notes(
 
     with Pool(processes=len(years)) as p:
         dfs = p.map(load_and_featurize, [str(y) for y in years])
-    dfs = pd.concat(dfs)
 
-    dfs = dfs.rename(
+    df = pd.concat(dfs)
+
+    df = df.rename(
         {"datotid_senest_aendret_i_sfien": "timestamp", "fritekst": "text"},
         axis=1,
     )
-    return dfs
+    return df
 
 
 @data_loaders.register("all_notes")
