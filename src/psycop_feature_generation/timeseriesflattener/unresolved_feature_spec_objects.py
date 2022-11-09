@@ -52,28 +52,6 @@ class UnresolvedGroupSpec(MinGroupSpec):
     values_df: Optional[Sequence[pd.DataFrame]]
 
 
-class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, PredictorGroupSpec):
-    """Specification for a group of predictors, where the df has not been resolved."""
-
-    def create_combinations(self):
-        return create_specs_from_group(
-            feature_group_spec=self, output_class=UnresolvedPredictorSpec
-        )
-
-
-class UnresolvedOutcomeGroupSpec(UnresolvedGroupSpec, OutcomeGroupSpec):
-    """Specification for a group of predictors, where the df has not been resolved."""
-
-    def create_combinations(self):
-        return create_specs_from_group(
-            feature_group_spec=self, output_class=UnresolvedOutcomeSpec
-        )
-
-
-class UnresolvedStaticSpec(UnresolvedAnySpec):
-    """Specification for a static feature, where the df has not been resolved."""
-
-
 class UnresolvedTemporalSpec(UnresolvedAnySpec):
     resolve_multiple_fn_name: str
 
@@ -84,9 +62,36 @@ class UnresolvedPredictorSpec(UnresolvedTemporalSpec):
     prefix: str = "pred"
 
 
+class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, PredictorGroupSpec):
+    """Specification for a group of predictors, where the df has not been
+    resolved."""
+
+    def create_combinations(self):
+        return create_specs_from_group(
+            feature_group_spec=self,
+            output_class=UnresolvedPredictorSpec,
+        )
+
+
 class UnresolvedOutcomeSpec(UnresolvedTemporalSpec):
     """Specification for a single outcome."""
 
     prefix: str = "outc"
     col_main: str = "value"
     incident: bool
+
+
+class UnresolvedOutcomeGroupSpec(UnresolvedGroupSpec, OutcomeGroupSpec):
+    """Specification for a group of predictors, where the df has not been
+    resolved."""
+
+    def create_combinations(self):
+        return create_specs_from_group(
+            feature_group_spec=self,
+            output_class=UnresolvedOutcomeSpec,
+        )
+
+
+class UnresolvedStaticSpec(UnresolvedAnySpec):
+    """Specification for a static feature, where the df has not been
+    resolved."""

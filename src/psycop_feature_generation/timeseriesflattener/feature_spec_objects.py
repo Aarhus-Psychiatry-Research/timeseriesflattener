@@ -165,26 +165,6 @@ class MinGroupSpec(BaseModel):
     loader_kwargs: Optional[Sequence[dict]] = None
 
 
-class PredictorGroupSpec(MinGroupSpec):
-    """Specification for a group of predictors."""
-
-    def create_combinations(self):
-        return create_specs_from_group(
-            feature_group_spec=self, output_class=PredictorSpec
-        )
-
-
-class OutcomeGroupSpec(MinGroupSpec):
-    """Specificaiton for a group of outcomes."""
-
-    incident: Sequence[bool]
-
-    def create_combinations(self):
-        return create_specs_from_group(
-            feature_group_spec=self, output_class=OutcomeSpec
-        )
-
-
 def create_feature_combinations_from_dict(
     d: dict[str, Union[str, list]],
 ) -> list[dict[str, Union[str, float, int]]]:
@@ -217,3 +197,25 @@ def create_specs_from_group(
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
 
     return [output_class(**d) for d in permuted_dicts]
+
+
+class PredictorGroupSpec(MinGroupSpec):
+    """Specification for a group of predictors."""
+
+    def create_combinations(self):
+        return create_specs_from_group(
+            feature_group_spec=self,
+            output_class=PredictorSpec,
+        )
+
+
+class OutcomeGroupSpec(MinGroupSpec):
+    """Specificaiton for a group of outcomes."""
+
+    incident: Sequence[bool]
+
+    def create_combinations(self):
+        return create_specs_from_group(
+            feature_group_spec=self,
+            output_class=OutcomeSpec,
+        )
