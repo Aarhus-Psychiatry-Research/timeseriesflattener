@@ -12,7 +12,7 @@ from psycop_feature_generation.loaders.flattened.local_feature_loaders import (
     load_split_predictors,
 )
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    PredictorSpec,
+    UnresolvedPredictorSpec,
 )
 from psycop_feature_generation.utils import generate_feature_colname
 
@@ -89,7 +89,7 @@ def create_unicode_hist(series: pd.Series) -> pd.Series:
 
 def generate_feature_description_row(
     series: pd.Series,
-    predictor_spec: PredictorSpec,
+    predictor_spec: UnresolvedPredictorSpec,
 ) -> dict:
     """Generate a row with feature description.
 
@@ -101,9 +101,9 @@ def generate_feature_description_row(
     """
 
     d = {
-        "Predictor df": predictor_spec.feature_content_for_naming,
+        "Predictor df": predictor_spec.feature_name,
         "Lookbehind days": predictor_spec.interval_days,
-        "Resolve multiple": predictor_spec.resolve_multiple,
+        "Resolve multiple": predictor_spec.resolve_multiple_fn,
         "N unique": series.nunique(),
         "Fallback strategy": predictor_spec.fallback,
         "Proportion missing": series.isna().mean(),
@@ -124,7 +124,7 @@ def generate_feature_description_row(
 
 def generate_feature_description_df(
     df: pd.DataFrame,
-    predictor_specs: list[PredictorSpec],
+    predictor_specs: list[UnresolvedPredictorSpec],
 ) -> pd.DataFrame:
     """Generate a data frame with feature descriptions.
 
@@ -158,7 +158,7 @@ def generate_feature_description_df(
 
 def save_feature_description_from_dir(
     feature_set_dir: Path,
-    predictor_combinations: list[PredictorSpec],
+    predictor_combinations: list[UnresolvedPredictorSpec],
     file_suffix: str,
     splits: tuple[str] = ("train",),
     out_dir: Path = None,

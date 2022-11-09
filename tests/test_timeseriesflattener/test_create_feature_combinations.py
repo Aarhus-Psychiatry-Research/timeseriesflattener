@@ -4,7 +4,7 @@
 
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
-    PredictorSpec,
+    UnresolvedPredictorSpec,
 )
 
 
@@ -12,7 +12,7 @@ def test_skip_all_if_no_need_to_process():
     assert (
         len(
             PredictorGroupSpec(
-                values_df=["prediction_times_df"],
+                values_lookup_name=["prediction_times_df"],
                 source_values_col_name=["val"],
                 interval_days=[1],
                 resolve_multiple=["max"],
@@ -26,7 +26,7 @@ def test_skip_all_if_no_need_to_process():
 
 def test_skip_one_if_no_need_to_process():
     created_combinations = PredictorGroupSpec(
-        values_df=["prediction_times_df"],
+        values_lookup_name=["prediction_times_df"],
         source_values_col_name=["val"],
         interval_days=[1, 2],
         resolve_multiple=["max", "min"],
@@ -35,34 +35,34 @@ def test_skip_one_if_no_need_to_process():
     ).create_combinations()
 
     expected_combinations = [
-        PredictorSpec(
-            values_df="prediction_times_df",
+        UnresolvedPredictorSpec(
+            values_lookup_name="prediction_times_df",
             interval_days=1,
-            resolve_multiple="max",
+            resolve_multiple_fn="max",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",
         ),
-        PredictorSpec(
-            values_df="prediction_times_df",
+        UnresolvedPredictorSpec(
+            values_lookup_name="prediction_times_df",
             interval_days=2,
-            resolve_multiple="max",
+            resolve_multiple_fn="max",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",
         ),
-        PredictorSpec(
-            values_df="prediction_times_df",
+        UnresolvedPredictorSpec(
+            values_lookup_name="prediction_times_df",
             interval_days=1,
-            resolve_multiple="min",
+            resolve_multiple_fn="min",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",
         ),
-        PredictorSpec(
-            values_df="prediction_times_df",
+        UnresolvedPredictorSpec(
+            values_lookup_name="prediction_times_df",
             interval_days=2,
-            resolve_multiple="min",
+            resolve_multiple_fn="min",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",

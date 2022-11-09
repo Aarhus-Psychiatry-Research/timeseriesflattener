@@ -73,11 +73,11 @@ if __name__ == "__main__":
                 pkl.dump(vectorizer, f)
 
             vocab = ["tfidf-" + word for word in vectorizer.get_feature_names()]
-            with open(  # pylint: disable=unspecified-encoding
+            with open(  # type: ignore # pylint: disable=unspecified-encoding
                 FEATURIZERS_PATH / f"tfidf_{n_features}_vocab.txt",
                 "w",
             ) as f:
-                f.write("\n".join(vocab))
+                f.write("\n".join(vocab))  # type: ignore
 
     # train TF-IDF on synthetic data
     if SYNTHETIC:

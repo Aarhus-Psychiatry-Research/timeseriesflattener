@@ -18,7 +18,7 @@ def _load(
     icd_code: Union[list[str], str],
     source_timestamp_col_name: str,
     fct: str,
-    output_col_name: Optional[str] = None,
+    output_col_name_override: Optional[str] = None,
     wildcard_icd_code: Optional[bool] = True,
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -32,8 +32,7 @@ def _load(
         source_timestamp_col_name (str): Name of the timestamp column in the SQL
             view.
         fct (str): Name of the SQL view to load from.
-        output_col_name (str, optional): Name of new column string. Defaults to
-            None.
+        output_col_name_override (str, optional): Name of new column string. If not specified, defaults to the icd_code.
         wildcard_icd_code (bool, optional): Whether to match on icd_code*.
             Defaults to true.
         n_rows: Number of rows to return. Defaults to None.
@@ -86,7 +85,7 @@ def _load(
 
     df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
 
-    if output_col_name is None:
+    if output_col_name_override is None:
         output_col_name = icd_code
 
     df[output_col_name] = 1

@@ -4,8 +4,8 @@
 import numpy as np
 
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    OutcomeSpec,
-    PredictorSpec,
+    UnresolvedOutcomeSpec,
+    UnresolvedPredictorSpec,
 )
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: disable=unused-import
     get_earliest_value_in_group,
@@ -32,9 +32,9 @@ def test_resolve_multiple_catalogue():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="min",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -54,9 +54,9 @@ def test_resolve_multiple_max():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="max",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="max",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -76,9 +76,9 @@ def test_resolve_multiple_min():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="min",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -98,9 +98,9 @@ def test_resolve_multiple_avg():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=PredictorSpec(
-            values_df=str_to_df(predictor_df_str),
-            resolve_multiple="mean",
+        output_spec=UnresolvedPredictorSpec(
+            values_lookup_name=str_to_df(predictor_df_str),
+            resolve_multiple_fn="mean",
             interval_days=2,
             fallback=0,
         ),
@@ -124,9 +124,9 @@ def test_resolve_multiple_latest():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="latest",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="latest",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -147,9 +147,9 @@ def test_resolve_multiple_latest_no_values():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="latest",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="latest",
             interval_days=2,
             fallback=np.nan,
             incident=True,
@@ -168,9 +168,9 @@ def test_resolve_multiple_latest_one_vlaue():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="latest",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="latest",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -195,9 +195,9 @@ def test_resolve_multiple_earliest():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="earliest",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="earliest",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -217,9 +217,9 @@ def test_resolve_multiple_sum():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=PredictorSpec(
-            values_df=str_to_df(predictor_df_str),
-            resolve_multiple="sum",
+        output_spec=UnresolvedPredictorSpec(
+            values_lookup_name=str_to_df(predictor_df_str),
+            resolve_multiple_fn="sum",
             interval_days=2,
             fallback=0,
         ),
@@ -238,9 +238,9 @@ def test_resolve_multiple_count():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="count",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="count",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -261,9 +261,9 @@ def test_resolve_multiple_bool():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="bool",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="bool",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -286,9 +286,9 @@ def test_resolve_multiple_change_per_day():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="change_per_day",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
             incident=True,
@@ -311,9 +311,9 @@ def test_resolve_multiple_change_per_day_unordered():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="change_per_day",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
             incident=True,
@@ -336,9 +336,9 @@ def test_resolve_multiple_change_per_day_negative():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="change_per_day",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
             incident=True,
@@ -361,9 +361,9 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="change_per_day",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=99999,
             incident=True,
@@ -386,9 +386,9 @@ def test_resolve_multiple_variance():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            values_df=str_to_df(event_times_str),
-            resolve_multiple="variance",
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=str_to_df(event_times_str),
+            resolve_multiple_fn="variance",
             interval_days=4,
             fallback=np.NaN,
             incident=True,

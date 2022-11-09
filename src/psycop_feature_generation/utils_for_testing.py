@@ -10,7 +10,9 @@ from pandas.testing import assert_series_equal
 
 from psycop_feature_generation.timeseriesflattener import FlattenedDataset
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    OutcomeSpec,
     PredictorSpec,
+    TemporalSpec,
 )
 from psycop_feature_generation.utils import data_loaders
 
@@ -72,15 +74,12 @@ def str_to_df(
 
 def assert_flattened_data_as_expected(
     prediction_times_df: Union[pd.DataFrame, str],
-    output_spec: Union[PredictorSpec, PredictorSpec],
+    output_spec: TemporalSpec,
     expected_df: Optional[pd.DataFrame] = None,
     expected_values: Optional[Sequence[Any]] = None,
 ):
     if isinstance(prediction_times_df, str):
         prediction_times_df = str_to_df(prediction_times_df)
-
-    if isinstance(output_spec.values_df, str):
-        output_spec.values_df = str_to_df(output_spec.values_df)
 
     flattened_ds = FlattenedDataset(
         prediction_times_df=prediction_times_df,

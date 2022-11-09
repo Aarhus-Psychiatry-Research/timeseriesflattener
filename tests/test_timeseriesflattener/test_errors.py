@@ -3,7 +3,7 @@
 import pytest
 
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    PredictorSpec,
+    UnresolvedPredictorSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
@@ -51,10 +51,10 @@ def test_col_does_not_exist():
 
     with pytest.raises(KeyError):
         flattened_df.add_temporal_predictor(
-            output_spec=PredictorSpec(
-                values_df=event_times_df,
+            output_spec=UnresolvedPredictorSpec(
+                values_lookup_name=event_times_df,
                 interval_days=2,
-                resolve_multiple="max",
+                resolve_multiple_fn="max",
                 fallback=2,
             ),
         )

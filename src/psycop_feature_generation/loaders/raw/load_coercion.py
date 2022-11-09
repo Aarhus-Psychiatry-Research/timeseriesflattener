@@ -83,9 +83,9 @@ def _concatenate_coercion(
                 f'{d} does not contain either "coercion_type"  or "reason_for_coercion". At least one is required.',
             )
         if "coercion_type" not in d:
-            d["coercion_type"] = None
+            d["coercion_type"] = None  # type: ignore
         if "reason_for_coercion" not in d:
-            d["reason_for_coercion"] = None
+            d["reason_for_coercion"] = None  # type: ignore
 
     dfs = [
         coercion_duration(

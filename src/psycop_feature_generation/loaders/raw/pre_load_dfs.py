@@ -7,7 +7,11 @@ import pandas as pd
 from wasabi import Printer
 
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import MinSpec
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    AnySpec,
+    StaticSpec,
+    TemporalSpec,
+)
 from psycop_feature_generation.utils import data_loaders
 
 
@@ -46,7 +50,7 @@ def load_df(predictor_df: str, values_to_load: Union[str, None] = None) -> pd.Da
     return df
 
 
-def load_df_wrapper(spec: MinSpec) -> dict[str, pd.DataFrame]:
+def load_df_wrapper(spec: TemporalSpec) -> dict[str, pd.DataFrame]:
     """Wrapper to load a dataframe from a dictionary.
 
     Args:
@@ -56,8 +60,8 @@ def load_df_wrapper(spec: MinSpec) -> dict[str, pd.DataFrame]:
         pd.DataFrame: The loaded dataframe.
     """
     return {
-        spec.values_df: load_df(
-            predictor_df=spec.values_df,
+        spec.values_lookup_name: load_df(
+            predictor_df=spec.values_lookup_name,
             values_to_load=spec.lab_values_to_load if spec.medications else None,
         ),
     }
@@ -98,7 +102,7 @@ def error_check_dfs(
 
 
 def pre_load_unique_dfs(
-    specs: list[MinSpec],
+    specs: list[AnySpec],
     subset_duplicates_columns: Union[list, str] = "all",
 ) -> dict[str, pd.DataFrame]:
     """Pre-load unique dataframes to avoid duplicate loading.

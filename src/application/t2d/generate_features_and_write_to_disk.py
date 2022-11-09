@@ -26,10 +26,11 @@ from psycop_feature_generation.data_checks.flattened.feature_describer import (
 )
 from psycop_feature_generation.loaders.raw.pre_load_dfs import pre_load_unique_dfs
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    MinSpec,
     OutcomeGroupSpec,
-    OutcomeSpec,
-    PredictorSpec,
+    StaticSpec,
+    TemporalSpec,
+    UnresolvedOutcomeSpec,
+    UnresolvedPredictorSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
@@ -51,7 +52,7 @@ def finish_wandb(run: wandb.wandb_sdk.wandb_run.Run):
 
 def init_wandb(
     wandb_project_name: str,
-    predictor_specs: Sequence[PredictorSpec],
+    predictor_specs: Sequence[UnresolvedPredictorSpec],
     save_dir: Union[Path, str],
 ) -> wandb.wandb_sdk.wandb_run.Run:
     """Initialise wandb logging. Allows to use wandb to track progress, send
@@ -87,7 +88,7 @@ def init_wandb(
 
 
 def save_feature_set_description_to_disk(
-    predictor_combinations: list,
+    predictor_specs: list,
     flattened_dataset_file_dir: Path,
     out_dir: Path,
     file_suffix: str,
@@ -97,7 +98,7 @@ def save_feature_set_description_to_disk(
     """Describe output.
 
     Args:
-        predictor_combinations (list): List of predictor specs.
+        predictor_specs (list): List of predictor specs.
         flattened_dataset_file_dir (Path): Path to dir containing flattened time series files.
         out_dir (Path): Path to output dir.
         file_suffix (str): File suffix.
@@ -109,7 +110,7 @@ def save_feature_set_description_to_disk(
     if describe_splits:
         save_feature_description_from_dir(
             feature_set_dir=flattened_dataset_file_dir,
-            predictor_combinations=predictor_combinations,
+            predictor_combinations=predictor_specs,
             splits=["train"],
             out_dir=out_dir,
             file_suffix=file_suffix,
@@ -248,10 +249,9 @@ def add_metadata(
 
 
 def add_outcomes(
-    outcome_loader_str: str,
     pre_loaded_dfs: dict[str, pd.DataFrame],
     flattened_dataset: FlattenedDataset,
-    lookahead_years: list[Union[int, float]],
+    outcome_specs: list[UnresolvedOutcomeSpec],
 ) -> FlattenedDataset:
     """Add outcomes.
 
@@ -266,53 +266,51 @@ def add_outcomes(
     """
 
     msg = Printer(timestamp=True)
-    msg.info("Adding outcome")
+    msg.info("Adding outcomes")
 
-    for i in lookahead_years:
-        lookahead_days = int(i * 365)
-        msg.info(f"Adding outcome with {lookahead_days} days of lookahead")
+    for spec in outcome_specs:
+        msg.info(f"Adding outcome with {spec.interval_days} days of lookahead")
+
+        spec.values_lookup_name = pre_loaded_dfs[spec.outcome_name]
+
         flattened_dataset.add_temporal_outcome(
-            outcome_df=pre_loaded_dfs[outcome_loader_str],
-            lookahead_days=lookahead_days,
-            resolve_multiple="max",
-            fallback=0,
-            pred_name="t2d",
-            incident=True,
-            dichotomous=True,
+            output_spec=spec,
         )
 
-    msg.good("Finished adding outcome")
+    msg.good("Finished adding outcomes")
 
     return flattened_dataset
 
 
 def add_predictors(
     pre_loaded_dfs: dict[str, pd.DataFrame],
-    predictor_combinations: list[dict[str, Any]],
+    predictor_specs: list[UnresolvedPredictorSpec],
     flattened_dataset: FlattenedDataset,
 ):
     """Add predictors.
 
     Args:
         pre_loaded_dfs (dict[str, pd.DataFrame]): Dictionary of pre-loaded dataframes.
-        predictor_combinations (list[dict[str, dict[str, Any]]]): List of predictor combinations.
+        predictor_specs (list[PredictorSpec]): List of predictor specs.
         flattened_dataset (FlattenedDataset): Flattened dataset.
     """
 
     msg = Printer(timestamp=True)
 
     msg.info("Adding static predictors")
+
     flattened_dataset.add_static_info(
         info_df=pre_loaded_dfs["sex_female"],
         input_col_name_override="sex_female",
     )
+
     flattened_dataset.add_age(pre_loaded_dfs["birthdays"])
 
     start_time = time.time()
 
     msg.info("Adding temporal predictors")
     flattened_dataset.add_temporal_predictors_from_pred_specs(
-        predictor_specs=predictor_combinations,
+        predictor_specs=predictor_specs,
         preloaded_predictor_dfs=pre_loaded_dfs,
     )
 
@@ -320,24 +318,23 @@ def add_predictors(
 
     # Finish
     msg.good(
-        f"Finished adding {len(predictor_combinations)} predictors, took {round((end_time - start_time)/60, 1)} minutes",
+        f"Finished adding {len(predictor_specs)} predictors, took {round((end_time - start_time)/60, 1)} minutes",
     )
 
     return flattened_dataset
 
 
 def create_full_flattened_dataset(
-    outcome_loader_str: str,
+    outcome_specs: list[UnresolvedOutcomeSpec],
     prediction_time_loader_str: str,
     pre_loaded_dfs: dict[str, pd.DataFrame],
     predictor_specs: list[dict[str, dict[str, Any]]],
     proj_path: Path,
-    lookahead_years: list[Union[int, float]],
 ) -> pd.DataFrame:
     """Create flattened dataset.
 
     Args:
-        outcome_loader_str (str): String to lookup in catalogue to load outcome.
+        outcome_specs (list[OutcomeSpec]): List of outcome specs.
         prediction_time_loader_str (str): String to lookup in catalogue to load prediction time.
         pre_loaded_dfs (dict[str, pd.DataFrame]): Dictionary of pre-loaded dataframes.
         predictor_combinations (list[dict[str, dict[str, Any]]]): List of predictor combinations.
@@ -370,14 +367,13 @@ def create_full_flattened_dataset(
 
     flattened_dataset = add_outcomes(
         pre_loaded_dfs=pre_loaded_dfs,
-        outcome_loader_str=outcome_loader_str,
+        outcome_specs=outcome_specs,
         flattened_dataset=flattened_dataset,
-        lookahead_years=lookahead_years,
     )
 
     flattened_dataset = add_predictors(
         pre_loaded_dfs=pre_loaded_dfs,
-        predictor_combinations=predictor_specs,
+        predictor_specs=predictor_specs,
         flattened_dataset=flattened_dataset,
     )
 
@@ -385,7 +381,7 @@ def create_full_flattened_dataset(
 
 
 def setup_for_main(
-    predictor_specs: list[PredictorSpec],
+    predictor_specs: list[UnresolvedPredictorSpec],
     feature_sets_path: Path,
     proj_name: str,
 ) -> tuple[Path, str]:
@@ -415,7 +411,7 @@ def setup_for_main(
 
 
 def pre_load_project_dfs(
-    specs: list[MinSpec],
+    specs: list[Union[TemporalSpec, StaticSpec]],
     outcome_loader_str: str,
     prediction_time_loader_str: str,
 ) -> dict[str, pd.DataFrame]:
@@ -430,7 +426,13 @@ def pre_load_project_dfs(
         dict[str, pd.DataFrame]: Dictionary of pre-loaded dataframes.
     """
 
-    specs_to_load = specs
+    specs_to_load = (
+        specs
+        + [StaticSpec(values_df=outcome_loader_str)]
+        + [StaticSpec(values_df=prediction_time_loader_str)]
+        + [StaticSpec(values_df="sex_female")]
+        + [StaticSpec(values_df="birthdays")]
+    )
 
     # Many features will use the same dataframes, so we can load them once and reuse them.
     pre_loaded_dfs = pre_load_unique_dfs(
@@ -444,9 +446,8 @@ def main(
     proj_name: str,
     feature_sets_path: Path,
     prediction_time_loader_str: str,
-    predictor_specs: list[PredictorSpec],
-    outcome_specs: list[OutcomeSpec],
-    lookahead_years: list[Union[int, float]],
+    predictor_specs: list[UnresolvedPredictorSpec],
+    outcome_specs: list[UnresolvedOutcomeSpec],
 ):
     """Main function for loading, generating and evaluating a flattened
     dataset.
@@ -457,7 +458,7 @@ def main(
         prediction_time_loader_str (str): Key to lookup in data_loaders registry for prediction time dataframe.
         outcome_loader_str (str): Key to lookup in data_loaders registry for outcome dataframe.
         predictor_specs (list[dict[str, dict[str, Any]]]): List of predictor specs.
-        lookahead_years (list[Union[int,float]]): List of lookahead years.
+        outcome_specs (list[dict[str, dict[str, Any]]]): List of outcome specs.
     """
     proj_path, feature_set_id = setup_for_main(
         predictor_specs=predictor_specs,
@@ -484,8 +485,8 @@ def main(
         prediction_time_loader_str=prediction_time_loader_str,
         pre_loaded_dfs=pre_loaded_dfs,
         predictor_specs=predictor_specs,
+        outcome_specs=outcome_specs,
         proj_path=proj_path,
-        lookahead_years=lookahead_years,
     )
 
     split_and_save_to_disk(
@@ -496,7 +497,7 @@ def main(
     )
 
     save_feature_set_description_to_disk(
-        predictor_combinations=predictor_combinations,
+        predictor_specs=predictor_specs,
         flattened_dataset_file_dir=out_dir,
         out_dir=out_dir,
         file_suffix="parquet",
@@ -512,18 +513,18 @@ def gen_predictor_spec_list():
     resolve_multiple = ["max", "min", "mean", "latest", "count"]
     interval_days = [30, 90, 180, 365, 730]
 
-    predictor_group_specs: list[PredictorSpec] = []
+    predictor_group_specs: list[UnresolvedPredictorSpec] = []
 
-    predictor_group_specs += PredictorSpec(
-        values_df=("hba1c",),
+    predictor_group_specs += UnresolvedPredictorSpec(
+        values_lookup_name=("hba1c",),
         fallback=np.nan,
         lab_values_to_load="numerical_and_coerce",
         interval_days=[9999],
-        resolve_multiple="count",
+        resolve_multiple_fn="count",
     )
 
-    predictor_group_specs += PredictorSpec(
-        values_df=(
+    predictor_group_specs += UnresolvedPredictorSpec(
+        values_lookup_name=(
             "hba1c",
             "alat",
             "hdl",
@@ -536,35 +537,35 @@ def gen_predictor_spec_list():
             "egfr",
             "albumine_creatinine_ratio",
         ),
-        resolve_multiple=resolve_multiple,
+        resolve_multiple_fn=resolve_multiple,
         interval_days=interval_days,
         fallback=np.nan,
         lab_values_to_load="numerical_and_coerce",
     )
 
-    predictor_group_specs += PredictorSpec(
-        values_df=(
+    predictor_group_specs += UnresolvedPredictorSpec(
+        values_lookup_name=(
             "essential_hypertension",
             "hyperlipidemia",
             "polycystic_ovarian_syndrome",
             "sleep_apnea",
         ),
-        resolve_multiple=resolve_multiple,
+        resolve_multiple_fn=resolve_multiple,
         interval_days=interval_days,
         fallback=0,
     )
 
-    predictor_group_specs += PredictorSpec(
-        values_df=("antipsychotics",),
+    predictor_group_specs += UnresolvedPredictorSpec(
+        values_lookup_name=("antipsychotics",),
         interval_days=interval_days,
-        resolve_multiple=resolve_multiple,
+        resolve_multiple_fn=resolve_multiple,
         fallback=0,
     )
 
-    predictor_group_specs += PredictorSpec(
-        values_df=("weight_in_kg", "height_in_cm", "bmi"),
+    predictor_group_specs += UnresolvedPredictorSpec(
+        values_lookup_name=("weight_in_kg", "height_in_cm", "bmi"),
         interval_days=interval_days,
-        resolve_multiple=["latest"],
+        resolve_multiple_fn=["latest"],
         fallback=np.nan,
     )
 
@@ -573,13 +574,13 @@ def gen_predictor_spec_list():
     for group_spec in predictor_group_specs:
         predictor_specs += group_spec.create_combinations()
 
-    return
+    return predictor_specs
 
 
 if __name__ == "__main__":
     PREDICTOR_SPECS = gen_predictor_spec_list()
     OUTCOME_SPECS = OutcomeGroupSpec(
-        values_df=["t2d"],
+        values_lookup_name=["t2d"],
         interval_days=[year * 365 for year in [1, 2, 3, 4, 5]],
         resolve_multiple=["max"],
         fallback=0,
@@ -591,5 +592,5 @@ if __name__ == "__main__":
         predictor_specs=PREDICTOR_SPECS,
         proj_name="t2d",
         prediction_time_loader_str="physical_visits_to_psychiatry",
-        lookahead_years=[1, 2, 3, 4, 5],
+        outcome_specs=OUTCOME_SPECS,
     )

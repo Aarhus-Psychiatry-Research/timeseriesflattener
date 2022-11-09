@@ -7,6 +7,10 @@ import pandas as pd
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
+from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
+    resolve_fns,
+)
+
 
 class BaseModel(PydanticBaseModel):
     """."""
@@ -19,7 +23,17 @@ class BaseModel(PydanticBaseModel):
         extra = Extra.forbid
 
 
-class MinSpec(BaseModel):
+class AnySpec(BaseModel):
+    """A base class for all feature specifications. Allows for easier type hinting."""
+
+
+class StaticSpec(AnySpec):
+    """Specification for a static feature."""
+
+    values_df: Union[pd.DataFrame, str]
+
+
+class TemporalSpec(AnySpec):
     """The minimum specification required for all collapsed time series,
     whether looking ahead or behind.
 
@@ -27,11 +41,12 @@ class MinSpec(BaseModel):
     """
 
     # Input data
-    values_df: Union[pd.DataFrame, str]
+    values_df: pd.DataFrame
 
     # Resolving
     interval_days: Union[int, float]
-    resolve_multiple: str
+    resolve_multiple_fn_name: str
+    resolve_multiple_fn: Callable = resolve_fns.get_all()["mean"]
     fallback: Union[Callable, int, float, str]
 
     # Testing
@@ -51,7 +66,7 @@ class MinSpec(BaseModel):
     out_col_name_override: Optional[str] = None
 
     # Output col names
-    feature_content_for_naming: Optional[str] = None
+    feature_name: Optional[str] = None
 
     # Specifications for col_name
     loader_kwargs: Optional[dict] = None
@@ -59,41 +74,47 @@ class MinSpec(BaseModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # Set main col name if not specified
-        if not self.feature_content_for_naming:
-            if not isinstance(self.values_df, pd.DataFrame):
-                self.feature_content_for_naming = self.values_df
-            else:
-                self.feature_content_for_naming = [
-                    c
-                    for c in self.values_df.columns
-                    if c not in [self.timestamp_col_name, self.id_col_name]
-                ][0]
+        self.resolve_multiple_fn: Callable = resolve_fns.get_all()[
+            self.resolve_multiple_fn_name
+        ]
 
         # Convert 'nan' to np.nan object
         if self.fallback == "nan":
             self.fallback = float("nan")
+
+        # Get feature name from the dataframe if it's not specified
+        # in the class initiation
+        if not self.feature_name:
+            self.feature_name = [
+                c
+                for c in self.values_df.columns
+                if c not in [self.timestamp_col_name, self.id_col_name]
+            ][0]
 
     def get_col_str(self, col_main_override: Optional[str] = None) -> str:
         """."""
         if self.out_col_name_override:
             return self.out_col_name_override
 
-        col_main = (
-            col_main_override if col_main_override else self.feature_content_for_naming
-        )
+        col_main = col_main_override if col_main_override else self.feature_name
 
-        return f"{self.prefix}_{col_main}_within_{self.interval_days}_days_{self.resolve_multiple}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{col_main}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
+
+        if isinstance(self, OutcomeSpec):
+            if self.is_dichotomous():
+                col_str += "_dichotomous"
+
+        return col_str
 
 
-class PredictorSpec(MinSpec):
-    """Specification for a single predictor."""
+class PredictorSpec(TemporalSpec):
+    """Specification for a single predictor, where the df has been resolved"""
 
     prefix: str = "pred"
 
 
-class OutcomeSpec(MinSpec):
-    """Specification for a single outcome."""
+class OutcomeSpec(TemporalSpec):
+    """Specification for a single predictor, where the df has been resolved"""
 
     prefix: str = "outc"
     col_main: str = "value"
@@ -101,43 +122,16 @@ class OutcomeSpec(MinSpec):
 
     def is_dichotomous(self) -> bool:
         """Check if the outcome is dichotomous."""
-        if isinstance(self.values_df, pd.DataFrame):
-            return len(self.values_df["value"].unique()) <= 2
-
-        raise TypeError(
-            "values_df must be a pandas DataFrame to check if dichotomous. Resolve before checking.",
-        )
-
-
-class FlattenInDirectionSpec(MinSpec):
-    """Specification for a single feature."""
-
-    def __init__(
-        self,
-        direction: Literal["ahead", "behind"],
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-        self.direction = direction
-        self.construct()
-
-    def construct(self):
-        """Construct the specification."""
-        if self.direction == "ahead":
-            return OutcomeSpec(**self.dict())
-        elif self.direction == "behind":
-            return PredictorSpec(**self.dict())
-        else:
-            raise ValueError("direction must be either 'forward' or 'backward'.")
+        return len(self.values_df["value"].unique()) <= 2
 
 
 class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
     ahead or behind."""
 
-    values_df: Sequence[Union[pd.DataFrame, str]]
+    values_df: Sequence[pd.DataFrame]
     interval_days: Sequence[Union[int, float]]
-    resolve_multiple: Sequence[str]
+    resolve_multiple_fn_name: Sequence[str]
 
     fallback: Sequence[Union[Callable, str]]
 
@@ -189,7 +183,7 @@ def create_feature_combinations_from_dict(
 
 def create_feature_combinations(
     feature_group_spec: MinGroupSpec,
-) -> list[MinSpec]:
+) -> list[TemporalSpec]:
     """Create feature combinations from a FeatureGroupSpec."""
 
     # Create all combinations of top level elements

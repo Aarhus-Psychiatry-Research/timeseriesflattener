@@ -18,9 +18,9 @@ from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
     load_synth_prediction_times,
 )
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    MinSpec,
-    OutcomeSpec,
     PredictorGroupSpec,
+    TemporalSpec,
+    UnresolvedOutcomeSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
@@ -40,7 +40,7 @@ def synth_outcome():
 
 
 base_float_predictor_combinations = PredictorGroupSpec(
-    values_df=["synth_predictor_float"],
+    values_lookup_name=["synth_predictor_float"],
     interval_days=[365, 730],
     resolve_multiple=["mean"],
     fallback=[np.NaN],
@@ -48,7 +48,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
-    values_df=["synth_predictor_float"],
+    values_lookup_name=["synth_predictor_float"],
     interval_days=[365, 730],
     resolve_multiple=["max"],
     fallback=[np.NaN],
@@ -103,7 +103,7 @@ def check_dfs_have_same_contents_by_column(df1, df2):
 
 def create_flattened_df(
     cache_dir: Path,
-    predictor_specs: Iterable[MinSpec],
+    predictor_specs: Iterable[TemporalSpec],
     prediction_times_df: pd.DataFrame,
 ):
     """Create a dataset df for testing."""
@@ -175,10 +175,10 @@ def test_all_non_online_elements_in_pipeline(
     )
 
     flattened_ds.add_temporal_outcome(
-        output_spec=OutcomeSpec(
-            values_df=synth_outcome,
+        output_spec=UnresolvedOutcomeSpec(
+            values_lookup_name=synth_outcome,
             interval_days=365,
-            resolve_multiple="max",
+            resolve_multiple_fn="max",
             fallback=0,
             incident=True,
         ),
@@ -214,7 +214,7 @@ def test_all_non_online_elements_in_pipeline(
     )
 
     save_feature_set_description_to_disk(
-        predictor_combinations=predictor_combinations,
+        predictor_specs=predictor_combinations,
         flattened_dataset_file_dir=tmp_path,
         out_dir=tmp_path,
         file_suffix="parquet",

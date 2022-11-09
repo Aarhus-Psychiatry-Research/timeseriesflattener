@@ -4,7 +4,6 @@ value."""
 # pylint: disable=missing-function-docstring
 
 import catalogue
-import numpy as np
 from pandas import DataFrame, Series
 from scipy import stats
 
