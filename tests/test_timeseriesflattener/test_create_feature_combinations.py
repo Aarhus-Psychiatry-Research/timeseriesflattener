@@ -16,7 +16,7 @@ def test_skip_all_if_no_need_to_process():
         len(
             PredictorGroupSpec(
                 values_df=[synth_predictor_float()],
-                source_values_col_name=["val"],
+                input_col_name_override="val",
                 interval_days=[1],
                 resolve_multiple_fn_name=["max"],
                 fallback=[0],
@@ -30,7 +30,7 @@ def test_skip_all_if_no_need_to_process():
 def test_skip_one_if_no_need_to_process():
     created_combinations = PredictorGroupSpec(
         values_df=[synth_predictor_float()],
-        source_values_col_name=["val"],
+        input_col_name_override="val",
         interval_days=[1, 2],
         resolve_multiple_fn_name=["max", "min"],
         fallback=[0],

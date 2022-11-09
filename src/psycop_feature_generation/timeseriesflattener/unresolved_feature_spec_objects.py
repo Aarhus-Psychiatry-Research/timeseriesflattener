@@ -1,6 +1,6 @@
 """Ffeature specifications where the values are not resolved yet."""
 
-from typing import Callable, Optional, Sequence
+from typing import Optional, Sequence
 
 import pandas as pd
 
@@ -11,7 +11,6 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
-    StaticSpec,
     TemporalSpec,
     create_specs_from_group,
 )

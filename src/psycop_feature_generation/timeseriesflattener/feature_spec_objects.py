@@ -10,9 +10,6 @@ from pydantic import Extra
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_fns,
 )
-from psycop_feature_generation.timeseriesflattener.unresolved_feature_spec_objects import (
-    UnresolvedOutcomeGroupSpec,
-)
 
 
 class BaseModel(PydanticBaseModel):
@@ -33,7 +30,7 @@ class AnySpec(BaseModel):
     """
 
     values_df: pd.DataFrame
-    input_col_name_override: Optional[str]
+    input_col_name_override: Optional[str] = None
     output_col_name_override: Optional[str] = None
 
 
@@ -151,9 +148,11 @@ class MinGroupSpec(BaseModel):
     ahead or behind."""
 
     values_df: Sequence[pd.DataFrame]
+    input_col_name_override: Optional[str] = None
+    output_col_name_override: Optional[str] = None
+
     interval_days: Sequence[Union[int, float]]
     resolve_multiple_fn_name: Sequence[str]
-
     fallback: Sequence[Union[Callable, str]]
 
     allowed_nan_value_prop: Sequence[float]
@@ -162,8 +161,6 @@ class MinGroupSpec(BaseModel):
         Sequence[Literal["all", "numerical", "numerical_and_coerce"]]
     ]
     # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
-
-    source_values_col_name: Optional[Sequence[Optional[str]]] = None
 
     loader_kwargs: Optional[Sequence[dict]] = None
 
