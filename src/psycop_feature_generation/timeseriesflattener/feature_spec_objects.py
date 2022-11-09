@@ -91,6 +91,24 @@ class TemporalSpec(AnySpec):
                 if c not in [self.timestamp_col_name, self.id_col_name]
             ][0]
 
+    def __eq__(self, other):
+        # "combination in list_of_combinations" works for all attributes
+        # except for values_df, since the truth value of a dataframe is
+        # ambiguous.
+        # Instead, use pandas' .equals() method for comparing the dfs,
+        # and get the combined truth value.
+
+        # We need to override the __eq__ method.
+        other_attributes_equal = all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__dict__
+            if attr != "values_df"
+        )
+
+        dfs_equal = self.values_df.equals(other.values_df)
+
+        return other_attributes_equal and dfs_equal
+
     def get_col_str(self, col_main_override: Optional[str] = None) -> str:
         """."""
         if self.out_col_name_override:

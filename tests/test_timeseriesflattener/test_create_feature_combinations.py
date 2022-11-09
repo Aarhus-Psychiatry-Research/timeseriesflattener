@@ -2,9 +2,12 @@
 
 # pylint: disable=missing-function-docstring
 
+from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
+    synth_predictor_float,
+)
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
-    UnresolvedPredictorSpec,
+    PredictorSpec,
 )
 
 
@@ -12,10 +15,10 @@ def test_skip_all_if_no_need_to_process():
     assert (
         len(
             PredictorGroupSpec(
-                values_lookup_name=["prediction_times_df"],
+                values_df=[synth_predictor_float()],
                 source_values_col_name=["val"],
                 interval_days=[1],
-                resolve_multiple=["max"],
+                resolve_multiple_fn_name=["max"],
                 fallback=[0],
                 allowed_nan_value_prop=[0.5],
             ).create_combinations(),
@@ -26,43 +29,43 @@ def test_skip_all_if_no_need_to_process():
 
 def test_skip_one_if_no_need_to_process():
     created_combinations = PredictorGroupSpec(
-        values_lookup_name=["prediction_times_df"],
+        values_df=[synth_predictor_float()],
         source_values_col_name=["val"],
         interval_days=[1, 2],
-        resolve_multiple=["max", "min"],
+        resolve_multiple_fn_name=["max", "min"],
         fallback=[0],
         allowed_nan_value_prop=[0],
     ).create_combinations()
 
     expected_combinations = [
-        UnresolvedPredictorSpec(
-            values_lookup_name="prediction_times_df",
+        PredictorSpec(
+            values_df=synth_predictor_float(),
             interval_days=1,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn_name="max",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",
         ),
-        UnresolvedPredictorSpec(
-            values_lookup_name="prediction_times_df",
+        PredictorSpec(
+            values_df=synth_predictor_float(),
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn_name="max",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",
         ),
-        UnresolvedPredictorSpec(
-            values_lookup_name="prediction_times_df",
+        PredictorSpec(
+            values_df=synth_predictor_float(),
             interval_days=1,
-            resolve_multiple_fn="min",
+            resolve_multiple_fn_name="min",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",
         ),
-        UnresolvedPredictorSpec(
-            values_lookup_name="prediction_times_df",
+        PredictorSpec(
+            values_df=synth_predictor_float(),
             interval_days=2,
-            resolve_multiple_fn="min",
+            resolve_multiple_fn_name="min",
             fallback=0,
             allowed_nan_value_prop=0,
             source_values_col_name="val",

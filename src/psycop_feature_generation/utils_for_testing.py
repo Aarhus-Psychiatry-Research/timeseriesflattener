@@ -5,13 +5,16 @@ from typing import Any, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
+import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
 
+from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
+    load_synth_outcome,
+    load_synth_prediction_times,
+)
 from psycop_feature_generation.timeseriesflattener import FlattenedDataset
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    OutcomeSpec,
-    PredictorSpec,
     TemporalSpec,
 )
 from psycop_feature_generation.utils import data_loaders
@@ -131,3 +134,15 @@ def check_any_item_in_list_has_str(list_of_str: list, str_: str):
         bool: True if any item in the list contains the string.
     """
     return any(str_ in item for item in list_of_str)
+
+
+@pytest.fixture(scope="function")
+def synth_prediction_times():
+    """Load the prediction times."""
+    return load_synth_prediction_times()
+
+
+@pytest.fixture(scope="function")
+def synth_outcome():
+    """Load the synth outcome times."""
+    return load_synth_outcome()

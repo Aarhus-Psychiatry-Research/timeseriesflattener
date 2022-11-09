@@ -27,10 +27,10 @@ from psycop_feature_generation.data_checks.flattened.feature_describer import (
 from psycop_feature_generation.loaders.raw.pre_load_dfs import pre_load_unique_dfs
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     OutcomeGroupSpec,
+    OutcomeSpec,
+    PredictorSpec,
     StaticSpec,
     TemporalSpec,
-    UnresolvedOutcomeSpec,
-    UnresolvedPredictorSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
@@ -52,7 +52,7 @@ def finish_wandb(run: wandb.wandb_sdk.wandb_run.Run):
 
 def init_wandb(
     wandb_project_name: str,
-    predictor_specs: Sequence[UnresolvedPredictorSpec],
+    predictor_specs: Sequence[PredictorSpec],
     save_dir: Union[Path, str],
 ) -> wandb.wandb_sdk.wandb_run.Run:
     """Initialise wandb logging. Allows to use wandb to track progress, send
@@ -251,7 +251,7 @@ def add_metadata(
 def add_outcomes(
     pre_loaded_dfs: dict[str, pd.DataFrame],
     flattened_dataset: FlattenedDataset,
-    outcome_specs: list[UnresolvedOutcomeSpec],
+    outcome_specs: list[OutcomeSpec],
 ) -> FlattenedDataset:
     """Add outcomes.
 
@@ -284,7 +284,7 @@ def add_outcomes(
 
 def add_predictors(
     pre_loaded_dfs: dict[str, pd.DataFrame],
-    predictor_specs: list[UnresolvedPredictorSpec],
+    predictor_specs: list[PredictorSpec],
     flattened_dataset: FlattenedDataset,
 ):
     """Add predictors.
@@ -325,7 +325,7 @@ def add_predictors(
 
 
 def create_full_flattened_dataset(
-    outcome_specs: list[UnresolvedOutcomeSpec],
+    outcome_specs: list[OutcomeSpec],
     prediction_time_loader_str: str,
     pre_loaded_dfs: dict[str, pd.DataFrame],
     predictor_specs: list[dict[str, dict[str, Any]]],
@@ -381,7 +381,7 @@ def create_full_flattened_dataset(
 
 
 def setup_for_main(
-    predictor_specs: list[UnresolvedPredictorSpec],
+    predictor_specs: list[PredictorSpec],
     feature_sets_path: Path,
     proj_name: str,
 ) -> tuple[Path, str]:
@@ -446,8 +446,8 @@ def main(
     proj_name: str,
     feature_sets_path: Path,
     prediction_time_loader_str: str,
-    predictor_specs: list[UnresolvedPredictorSpec],
-    outcome_specs: list[UnresolvedOutcomeSpec],
+    predictor_specs: list[PredictorSpec],
+    outcome_specs: list[OutcomeSpec],
 ):
     """Main function for loading, generating and evaluating a flattened
     dataset.
@@ -513,9 +513,9 @@ def gen_predictor_spec_list():
     resolve_multiple = ["max", "min", "mean", "latest", "count"]
     interval_days = [30, 90, 180, 365, 730]
 
-    predictor_group_specs: list[UnresolvedPredictorSpec] = []
+    predictor_group_specs: list[PredictorSpec] = []
 
-    predictor_group_specs += UnresolvedPredictorSpec(
+    predictor_group_specs += PredictorSpec(
         values_lookup_name=("hba1c",),
         fallback=np.nan,
         lab_values_to_load="numerical_and_coerce",
@@ -523,7 +523,7 @@ def gen_predictor_spec_list():
         resolve_multiple_fn="count",
     )
 
-    predictor_group_specs += UnresolvedPredictorSpec(
+    predictor_group_specs += PredictorSpec(
         values_lookup_name=(
             "hba1c",
             "alat",
@@ -543,7 +543,7 @@ def gen_predictor_spec_list():
         lab_values_to_load="numerical_and_coerce",
     )
 
-    predictor_group_specs += UnresolvedPredictorSpec(
+    predictor_group_specs += PredictorSpec(
         values_lookup_name=(
             "essential_hypertension",
             "hyperlipidemia",
@@ -555,14 +555,14 @@ def gen_predictor_spec_list():
         fallback=0,
     )
 
-    predictor_group_specs += UnresolvedPredictorSpec(
+    predictor_group_specs += PredictorSpec(
         values_lookup_name=("antipsychotics",),
         interval_days=interval_days,
         resolve_multiple_fn=resolve_multiple,
         fallback=0,
     )
 
-    predictor_group_specs += UnresolvedPredictorSpec(
+    predictor_group_specs += PredictorSpec(
         values_lookup_name=("weight_in_kg", "height_in_cm", "bmi"),
         interval_days=interval_days,
         resolve_multiple_fn=["latest"],

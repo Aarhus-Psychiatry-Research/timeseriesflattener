@@ -14,43 +14,30 @@ from application.t2d.generate_features_and_write_to_disk import (
     split_and_save_to_disk,
 )
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
-    load_synth_outcome,
-    load_synth_prediction_times,
+    synth_predictor_binary,
+    synth_predictor_float,
 )
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    OutcomeSpec,
     PredictorGroupSpec,
     TemporalSpec,
-    UnresolvedOutcomeSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
 
-
-@pytest.fixture(scope="function")
-def synth_prediction_times():
-    """Load the prediction times."""
-    return load_synth_prediction_times()
-
-
-@pytest.fixture(scope="function")
-def synth_outcome():
-    """Load the synth outcome times."""
-    return load_synth_outcome()
-
-
 base_float_predictor_combinations = PredictorGroupSpec(
-    values_lookup_name=["synth_predictor_float"],
+    values_df=[synth_predictor_float()],
     interval_days=[365, 730],
-    resolve_multiple=["mean"],
+    resolve_multiple_fn_name=["mean"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
-    values_lookup_name=["synth_predictor_float"],
+    values_df=[synth_predictor_binary()],
     interval_days=[365, 730],
-    resolve_multiple=["max"],
+    resolve_multiple_fn_name=["max"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
 ).create_combinations()
@@ -175,8 +162,8 @@ def test_all_non_online_elements_in_pipeline(
     )
 
     flattened_ds.add_temporal_outcome(
-        output_spec=UnresolvedOutcomeSpec(
-            values_lookup_name=synth_outcome,
+        output_spec=OutcomeSpec(
+            values_df=synth_outcome,
             interval_days=365,
             resolve_multiple_fn="max",
             fallback=0,
