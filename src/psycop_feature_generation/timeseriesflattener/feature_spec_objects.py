@@ -111,9 +111,6 @@ class TemporalSpec(AnySpec):
 
     def get_col_str(self, col_main_override: Optional[str] = None) -> str:
         """."""
-        if self.out_col_name_override:
-            return self.out_col_name_override
-
         col_main = col_main_override if col_main_override else self.feature_name
 
         col_str = f"{self.prefix}_{col_main}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"

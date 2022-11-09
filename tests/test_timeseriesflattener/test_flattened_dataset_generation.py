@@ -25,6 +25,10 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
+from psycop_feature_generation.utils_for_testing import (
+    synth_outcome,
+    synth_prediction_times,
+)
 
 base_float_predictor_combinations = PredictorGroupSpec(
     values_df=[synth_predictor_float()],
@@ -165,7 +169,7 @@ def test_all_non_online_elements_in_pipeline(
         output_spec=OutcomeSpec(
             values_df=synth_outcome,
             interval_days=365,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn_name="max",
             fallback=0,
             incident=True,
         ),

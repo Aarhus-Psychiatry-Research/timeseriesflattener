@@ -14,6 +14,7 @@ from psycop_feature_generation.loaders.flattened.local_feature_loaders import (
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
 )
+from psycop_feature_generation.utils import generate_feature_colname
 
 UNICODE_HIST = {
     0: " ",

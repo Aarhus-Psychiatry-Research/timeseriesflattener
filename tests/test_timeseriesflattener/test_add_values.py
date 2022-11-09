@@ -143,37 +143,6 @@ def test_event_before_prediction():
     )
 
 
-def test_raise_error_if_timestamp_col_not_timestamp_type():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
-                            1,2021-12-31 00:00:00
-                            """
-    outcome_df_str = """dw_ek_borger,timestamp,value,
-                        1,2021-12-30 23:59:59, 1.0
-                        """
-
-    df_prediction_times = str_to_df(
-        prediction_times_df_str,
-        convert_timestamp_to_datetime=True,
-    )
-    df_event_times = str_to_df(outcome_df_str, convert_timestamp_to_datetime=False)
-
-    dataset = FlattenedDataset(
-        prediction_times_df=df_prediction_times,
-        timestamp_col_name="timestamp",
-        id_col_name="dw_ek_borger",
-    )
-
-    with pytest.raises(ValueError):
-        dataset.add_temporal_outcome(
-            OutcomeSpec(
-                values_df=df_event_times,
-                interval_days=5,
-                resolve_multiple_fn_name="max",
-                fallback=0,
-            ),
-        )
-
-
 def test_multiple_citizens_outcome():
     prediction_times_df_str = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
@@ -509,7 +478,7 @@ def test_add_temporal_incident_binary_outcome():
                         1,2021-11-06 00:00:01, 1
                         """
 
-    expected_df_str = """outc_dichotomous_t2d_within_2_days_max_fallback_nan,
+    expected_df_str = """outc_value_within_2_days_max_fallback_nan_dichotomous,
     1
     0"""
 

@@ -8,7 +8,7 @@ from psycop_feature_generation.data_checks.flattened.feature_describer import (
     generate_feature_description_row,
 )
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    UnresolvedPredictorSpec,
+    PredictorSpec,
 )
 from psycop_feature_generation.utils import generate_feature_colname
 
@@ -16,18 +16,12 @@ from psycop_feature_generation.utils import generate_feature_colname
 
 
 @pytest.fixture()
-def predictor_specs():
+def predictor_specs(df):
     return [
-        UnresolvedPredictorSpec(
-            values_lookup_name="hba1c",
+        PredictorSpec(
+            values_df=pd.DataFrame({"hba1c": [0]}),
             interval_days=100,
-            resolve_multiple_fn="max",
-            fallback=np.nan,
-        ),
-        UnresolvedPredictorSpec(
-            values_lookup_name="hdl",
-            interval_days=100,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn_name="max",
             fallback=np.nan,
         ),
     ]
@@ -47,7 +41,7 @@ def test_load_dataset(df):
 
 
 def test_generate_feature_description_row(
-    df, predictor_specs: list[UnresolvedPredictorSpec]
+    df: pd.DataFrame, predictor_specs: list[PredictorSpec]
 ):
     spec = predictor_specs[0]
 
