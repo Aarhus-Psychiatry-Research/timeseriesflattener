@@ -605,7 +605,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         self._concatenated_flattened_timeseries(flattened_predictor_dds)
 
-    def add_age(
+    def add_age_and_date_of_birth(
         self,
         id2date_of_birth: DataFrame,
         date_of_birth_col_name: Optional[str] = "date_of_birth",
@@ -632,29 +632,26 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 ) from e
 
         self.add_static_info(
-            info_df=id2date_of_birth,
-            input_col_name_override=date_of_birth_col_name,
+            static_spec=StaticSpec(
+                values_df=id2date_of_birth,
+                input_col_name_override=date_of_birth_col_name,
+                output_col_name_override=date_of_birth_col_name,
+                prefix_override="",
+            ),
         )
 
         age = (
             (
-                self.df[self.timestamp_col_name]
-                - self.df[f"{self.predictor_col_name_prefix}_{date_of_birth_col_name}"]
+                self.df[self.timestamp_col_name] - self.df[f"{date_of_birth_col_name}"]
             ).dt.days
             / (365.25)
         ).round(2)
-
-        self.df.drop(
-            f"{self.predictor_col_name_prefix}_{date_of_birth_col_name}",
-            axis=1,
-            inplace=True,
-        )
 
         self.df[f"{self.predictor_col_name_prefix}_age_in_years"] = age
 
     def add_static_info(
         self,
-        spec: StaticSpec,
+        static_spec: StaticSpec,
         prefix_override: Optional[str] = None,
     ):
         """Add static info to each prediction time, e.g. age, sex etc.
@@ -668,9 +665,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """
 
         # Try to infer value col name if not provided
-        if spec.input_col_name_override is None:
+        if static_spec.input_col_name_override is None:
             possible_value_cols = [
-                col for col in spec.values_df.columns if col not in self.id_col_name
+                col
+                for col in static_spec.values_df.columns
+                if col not in self.id_col_name
             ]
 
             if len(possible_value_cols) == 1:
@@ -684,7 +683,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     "No value column found in spec.values_df, please check."
                 )
         else:
-            value_col_name = spec.input_col_name_override
+            value_col_name = static_spec.input_col_name_override
 
         # Check for prefix override
         prefix = (
@@ -693,15 +692,15 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             else self.predictor_col_name_prefix
         )
 
-        if spec.output_col_name_override is None:
+        if static_spec.output_col_name_override is None:
             output_col_name = f"{prefix}_{value_col_name}"
         else:
-            output_col_name = f"{prefix}_{spec.output_col_name_override}"
+            output_col_name = f"{prefix}_{static_spec.output_col_name_override}"
 
         df = pd.DataFrame(
             {
-                self.id_col_name: spec.values_df[self.id_col_name],
-                output_col_name: spec.values_df[value_col_name],
+                self.id_col_name: static_spec.values_df[self.id_col_name],
+                output_col_name: static_spec.values_df[value_col_name],
             },
         )
 
