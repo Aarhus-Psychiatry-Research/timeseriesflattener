@@ -21,6 +21,7 @@ def test_skip_all_if_no_need_to_process():
                 resolve_multiple_fn_name=["max"],
                 fallback=[0],
                 allowed_nan_value_prop=[0.5],
+                feature_name="value",
             ).create_combinations(),
         )
         == 1
@@ -35,6 +36,7 @@ def test_skip_one_if_no_need_to_process():
         resolve_multiple_fn_name=["max", "min"],
         fallback=[0],
         allowed_nan_value_prop=[0],
+        feature_name="value",
     ).create_combinations()
 
     expected_combinations = [
@@ -45,6 +47,7 @@ def test_skip_one_if_no_need_to_process():
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",
+            feature_name="value",
         ),
         PredictorSpec(
             values_df=synth_predictor_float(),
@@ -53,6 +56,7 @@ def test_skip_one_if_no_need_to_process():
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",
+            feature_name="value",
         ),
         PredictorSpec(
             values_df=synth_predictor_float(),
@@ -61,6 +65,7 @@ def test_skip_one_if_no_need_to_process():
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",
+            feature_name="value",
         ),
         PredictorSpec(
             values_df=synth_predictor_float(),
@@ -69,6 +74,7 @@ def test_skip_one_if_no_need_to_process():
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",
+            feature_name="value",
         ),
     ]
 

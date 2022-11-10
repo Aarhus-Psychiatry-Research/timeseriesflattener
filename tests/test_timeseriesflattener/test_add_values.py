@@ -22,7 +22,6 @@ from psycop_feature_generation.utils_for_testing import (
     str_to_df,
 )
 
-
 # pylint: disable=import-error
 # from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
 # from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
@@ -48,6 +47,7 @@ def test_predictor_after_prediction_time():
             interval_days=2,
             resolve_multiple_fn_name="max",
             fallback=np.NaN,
+            feature_name="value",
         ),
         expected_values=[np.NaN],
     )
@@ -68,6 +68,7 @@ def test_predictor_before_prediction():
             interval_days=2,
             resolve_multiple_fn_name="max",
             fallback=np.NaN,
+            feature_name="value",
         ),
         expected_values=[1],
     )
@@ -95,6 +96,7 @@ def test_multiple_citizens_predictor():
             values_df=str_to_df(predictor_df_str),
             interval_days=2,
             fallback=np.NaN,
+            feature_name="value",
             resolve_multiple_fn_name="max",
         ),
         expected_values=[0, 1, 0, 2, np.NaN],
@@ -118,6 +120,7 @@ def test_event_after_prediction_time():
             resolve_multiple_fn_name="max",
             incident=True,
             fallback=np.NaN,
+            feature_name="value",
         ),
         expected_values=[1],
     )
@@ -139,6 +142,7 @@ def test_event_before_prediction():
             resolve_multiple_fn_name="max",
             incident=True,
             fallback=np.NaN,
+            feature_name="value",
         ),
         expected_values=[np.NaN],
     )
@@ -166,6 +170,7 @@ def test_multiple_citizens_outcome():
             resolve_multiple_fn_name="max",
             incident=True,
             fallback=np.NaN,
+            feature_name="value",
         ),
         expected_values=[1, np.NaN, 1, np.NaN],
     )
@@ -187,6 +192,7 @@ def test_citizen_without_outcome():
             resolve_multiple_fn_name="max",
             incident=True,
             fallback=np.NaN,
+            feature_name="value",
         ),
         expected_values=[np.NaN],
     )
@@ -222,8 +228,8 @@ def test_static_predictor():
     )
 
     pd.testing.assert_series_equal(
-        left=dataset.df["pred_date_of_birth"].reset_index(drop=True),
-        right=expected_values["pred_date_of_birth"].reset_index(drop=True),
+        left=dataset.df["date_of_birth"].reset_index(drop=True),
+        right=expected_values["date_of_birth"].reset_index(drop=True),
         check_dtype=False,
     )
 
@@ -239,7 +245,7 @@ def test_add_age():
                         """
 
     dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
-    dataset.add_age(
+    dataset.add_age_and_date_of_birth(
         id2date_of_birth=str_to_df(static_predictor),
         date_of_birth_col_name="date_of_birth",
     )
@@ -274,7 +280,7 @@ def test_add_age_error():
     dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
 
     with pytest.raises(ValueError):
-        dataset.add_age(
+        dataset.add_age_and_date_of_birth(
             id2date_of_birth=str_to_df(static_predictor),
             date_of_birth_col_name="date_of_birth",
         )
@@ -317,6 +323,7 @@ def test_incident_outcome_removing_prediction_times():
             interval_days=2,
             incident=True,
             fallback=np.NaN,
+            feature_name="value",
             resolve_multiple_fn_name="max",
             col_main="value",
         ),
@@ -382,14 +389,17 @@ def test_add_multiple_static_predictors():
         resolve_multiple_fn_name="max",
         fallback=0,
         incident=True,
+        feature_name="value",
     )
 
     flattened_dataset.add_temporal_outcome(
         output_spec=output_spec,
     )
 
-    flattened_dataset.add_age(birthdates_df)
-    flattened_dataset.add_static_info(info_df=male_df)
+    flattened_dataset.add_age_and_date_of_birth(
+        date_of_birth_col_name="date_of_birth", id2date_of_birth=birthdates_df
+    )
+    flattened_dataset.add_static_info(static_spec=StaticSpec(values_df=male_df))
 
     outcome_df = flattened_dataset.df
 
@@ -447,6 +457,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         resolve_multiple_fn_name=["min"],
         fallback=[np.nan],
         allowed_nan_value_prop=[0],
+        feature_name="value",
     ).create_combinations()
 
     flattened_dataset.add_temporal_predictors_from_pred_specs(
@@ -461,6 +472,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
             resolve_multiple_fn_name="max",
             fallback=0,
             incident=True,
+            feature_name="value",
         ),
     )
 
@@ -507,6 +519,7 @@ def test_add_temporal_incident_binary_outcome():
             interval_days=2,
             incident=True,
             fallback=np.NaN,
+            feature_name="value",
             resolve_multiple_fn_name="max",
             col_main="t2d",
         ),
@@ -547,6 +560,7 @@ def test_add_tfidf_text_data():
         fallback=[np.nan],
         allowed_nan_value_prop=[0],
         loader_kwargs=[{"featurizer": "tfidf"}],
+        feature_name="tfidf",
     ).create_combinations()
 
     flattened_dataset.add_temporal_predictors_from_pred_specs(

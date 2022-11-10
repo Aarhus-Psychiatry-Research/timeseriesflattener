@@ -10,8 +10,7 @@ from psycop_feature_generation.data_checks.flattened.feature_describer import (
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
 )
-from psycop_feature_generation.utils import generate_feature_colname, PROJECT_ROOT
-
+from psycop_feature_generation.utils import PROJECT_ROOT, generate_feature_colname
 
 # pylint: disable=redefined-outer-name, missing-function-docstring
 
@@ -24,6 +23,7 @@ def predictor_specs(df):
             interval_days=100,
             resolve_multiple_fn_name="max",
             fallback=np.nan,
+            feature_name="hba1c",
         ),
     ]
 
@@ -32,7 +32,8 @@ def predictor_specs(df):
 def df():
     """Load the synthetic flattened data set."""
     return pd.read_csv(
-        PROJECT_ROOT / "tests/test_data/flattened/generated_with_outcome/synth_flattened_with_outcome.csv",
+        PROJECT_ROOT
+        / "tests/test_data/flattened/generated_with_outcome/synth_flattened_with_outcome.csv",
     )
 
 

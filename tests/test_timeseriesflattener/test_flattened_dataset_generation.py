@@ -36,6 +36,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
     resolve_multiple_fn_name=["mean"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
+    feature_name="value",
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
@@ -43,6 +44,7 @@ base_binary_predictor_combinations = PredictorGroupSpec(
     interval_days=[365, 730],
     resolve_multiple_fn_name=["max"],
     fallback=[np.NaN],
+    feature_name="value",
     allowed_nan_value_prop=[0.0],
 ).create_combinations()
 
@@ -172,6 +174,7 @@ def test_all_non_online_elements_in_pipeline(
             resolve_multiple_fn_name="max",
             fallback=0,
             incident=True,
+            feature_name="value",
         ),
     )
 

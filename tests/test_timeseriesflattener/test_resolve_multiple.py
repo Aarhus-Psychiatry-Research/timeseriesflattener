@@ -33,6 +33,7 @@ def test_resolve_multiple_catalogue():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="min",
             interval_days=2,
@@ -55,6 +56,7 @@ def test_resolve_multiple_max():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="max",
             interval_days=2,
@@ -77,6 +79,7 @@ def test_resolve_multiple_min():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="min",
             interval_days=2,
@@ -99,6 +102,7 @@ def test_resolve_multiple_avg():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=PredictorSpec(
+            feature_name="value",
             values_df=str_to_df(predictor_df_str),
             resolve_multiple_fn_name="mean",
             interval_days=2,
@@ -125,6 +129,7 @@ def test_resolve_multiple_latest():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="latest",
             interval_days=2,
@@ -148,6 +153,7 @@ def test_resolve_multiple_latest_no_values():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="latest",
             interval_days=2,
@@ -169,6 +175,7 @@ def test_resolve_multiple_latest_one_vlaue():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="latest",
             interval_days=2,
@@ -196,6 +203,7 @@ def test_resolve_multiple_earliest():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="earliest",
             interval_days=2,
@@ -218,6 +226,7 @@ def test_resolve_multiple_sum():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=PredictorSpec(
+            feature_name="value",
             values_df=str_to_df(predictor_df_str),
             resolve_multiple_fn_name="sum",
             interval_days=2,
@@ -239,6 +248,7 @@ def test_resolve_multiple_count():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="count",
             interval_days=2,
@@ -262,6 +272,7 @@ def test_resolve_multiple_bool():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="bool",
             interval_days=2,
@@ -287,6 +298,7 @@ def test_resolve_multiple_change_per_day():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="change_per_day",
             interval_days=4,
@@ -312,6 +324,7 @@ def test_resolve_multiple_change_per_day_unordered():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="change_per_day",
             interval_days=4,
@@ -337,6 +350,7 @@ def test_resolve_multiple_change_per_day_negative():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="change_per_day",
             interval_days=4,
@@ -362,6 +376,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="change_per_day",
             interval_days=4,
@@ -387,6 +402,7 @@ def test_resolve_multiple_variance():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
+            feature_name="value",
             values_df=str_to_df(event_times_str),
             resolve_multiple_fn_name="variance",
             interval_days=4,

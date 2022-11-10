@@ -70,7 +70,7 @@ class TemporalSpec(AnySpec):
     timestamp_col_name: str = "timestamp"
 
     # Output col names
-    feature_name: Optional[str] = None
+    feature_name: str
 
     # Specifications for col_name
     loader_kwargs: Optional[dict] = None
