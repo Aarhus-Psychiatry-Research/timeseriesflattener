@@ -8,7 +8,7 @@ from wasabi import Printer
 
 from psycop_feature_generation.loaders.raw.load_ids import load_ids
 from psycop_feature_generation.loaders.raw.load_text import load_all_notes
-from psycop_feature_generation.utils import FEATURIZERS_PATH
+from psycop_feature_generation.utils import FEATURIZERS_PATH, PROJECT_ROOT
 
 
 def create_tfidf_vectorizer(
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     # train TF-IDF on synthetic data
     if SYNTHETIC:
-        test_path = Path("tests") / "test_data"
+        test_path = PROJECT_ROOT/"tests" / "test_data"
         save_dir = test_path / "test_tfidf"
         if not save_dir.exists():
             save_dir.mkdir()

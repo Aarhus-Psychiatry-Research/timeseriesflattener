@@ -15,7 +15,7 @@ from transformers import AutoModel, AutoTokenizer
 from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
 
 from psycop_feature_generation.loaders.raw.sql_load import sql_load
-from psycop_feature_generation.utils import data_loaders
+from psycop_feature_generation.utils import data_loaders, PROJECT_ROOT
 
 
 def get_all_valid_note_types() -> set[str]:
@@ -182,7 +182,7 @@ def _huggingface_featurize(
         pd.DataFrame: Original dataframe with huggingface embeddings appended
 
     Example:
-        >>> p = Path("tests") / "test_data" / "raw"
+        >>> p = PROJECT_ROOT / "tests" / "test_data" / "raw"
         >>> huggingface_model_id = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
         >>> df_p = p / "synth_txt_data.csv"
 
@@ -438,7 +438,7 @@ def load_synth_notes(featurizer: str, **featurizer_kwargs) -> pd.DataFrame:
     Returns:
         pd.DataFrame: (Featurized) synthetic notes
     """
-    p = Path("tests") / "test_data"
+    p = PROJECT_ROOT / "tests" / "test_data"
     df = pd.read_csv(
         p / "raw" / "synth_txt_data.csv",
     ).drop("Unnamed: 0", axis=1)
