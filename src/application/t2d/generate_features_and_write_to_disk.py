@@ -242,7 +242,7 @@ def add_metadata(
 
     for static_spec in static_specs:
         flattened_dataset.add_static_info(
-            spec=static_spec,
+            static_spec=static_spec,
         )
 
     return flattened_dataset
@@ -294,12 +294,10 @@ def add_predictors(
 
     for static_spec in static_predictor_specs:
         flattened_dataset.add_static_info(
-            spec=static_spec.values_df,
-            input_col_name_override=static_spec.input_col_name_override,
-            output_col_name_override=static_spec.output_col_name_override,
+            static_spec=static_spec,
         )
 
-    flattened_dataset.add_age(birthdays)
+    flattened_dataset.add_age_and_date_of_birth(birthdays)
 
     start_time = time.time()
 
@@ -509,13 +507,15 @@ def main(
 
 
 def resolve_specifications(
-    pre_loaded_dfs, unresolved_specs: dict[str, list[UnresolvedAnySpec]]
+    pre_loaded_dfs: dict[str, pd.DataFrame],
+    unresolved_specs: dict[str, list[UnresolvedAnySpec]],
 ):
     resolved_specs: dict[str, list[UnresolvedAnySpec]] = defaultdict(list)
 
     for spec_type, specs in unresolved_specs.items():
         for spec in specs:
-            resolved_specs[spec_type] += spec.resolve_spec(str2df=pre_loaded_dfs)
+            resolved_specs[spec_type] += [spec.resolve_spec(str2df=pre_loaded_dfs)]
+
     return resolved_specs
 
 
