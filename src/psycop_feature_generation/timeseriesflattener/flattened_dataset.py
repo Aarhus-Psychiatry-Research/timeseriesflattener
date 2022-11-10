@@ -265,13 +265,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         if not loader_kwargs:
             loader_kwargs = {}
 
-        # Resolve values_df if not already a dataframe.
-        if callable(output_spec.values_df):
-            output_spec.values_df = output_spec.values_df(**loader_kwargs)
-
-        if not isinstance(output_spec.values_df, DataFrame):
-            raise ValueError(f"{output_spec.values_df} is not a DataFrame")
-
         for col_name in (timestamp_col_name, id_col_name):
             if col_name not in output_spec.values_df.columns:
                 raise ValueError(
@@ -324,36 +317,20 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # e.g. when there is only one prediction_time within look_ahead window for slope calculation,
         # replace with NaN
 
-        metadata_cols = (
-            pred_time_uuid_col_name,
-            timestamp_col_name,
-            id_col_name,
-            "timestamp_val",
-        )
-
-        # Rename value_cols to fit string name format if there are more than one value column
-        if len(df.columns) > len(metadata_cols) + 1:
-            df.rename(
-                columns={
-                    c: f"{output_spec.get_col_str(col_main_override=c)}"
-                    for c in df.columns
-                    if c not in metadata_cols
-                },
-                inplace=True,
-            )
-        else:
-            df.rename(columns={"value": output_spec.get_col_str()}, inplace=True)
+        # Rename column
+        df.rename(columns={"value": output_spec.get_col_str()}, inplace=True)
 
         # Find value_cols and add fallback to them
-        value_cols: list[str] = [c for c in df.columns if c not in metadata_cols]
-        df[value_cols] = df[value_cols].fillna(output_spec.fallback, inplace=False)
+        df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
+            output_spec.fallback, inplace=False
+        )
 
         if verbose:
             msg.good(
                 f"Returning {df.shape[0]} rows of flattened dataframe with {value_cols}",
             )
 
-        return df[[pred_time_uuid_col_name] + value_cols]
+        return df[[pred_time_uuid_col_name] + output_spec.get_col_str()]
 
     def _generate_values_for_cache_checking(
         self,
