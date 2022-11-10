@@ -67,6 +67,12 @@ class UnresolvedAnySpec(BaseModel):
 class UnresolvedGroupSpec(MinGroupSpec):
     values_lookup_name: Sequence[str]
     values_df: Optional[Sequence[pd.DataFrame]]
+    feature_name: str
+    
+    def __init__(self):
+        super().__init__()
+        
+        self.feature_name = self.values_lookup_name
 
 
 class UnresolvedTemporalSpec(UnresolvedAnySpec, TemporalSpec):

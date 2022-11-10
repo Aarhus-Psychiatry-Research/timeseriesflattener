@@ -80,21 +80,10 @@ class TemporalSpec(AnySpec):
 
         # convert resolve_multiple_str to fn
         self.resolve_multiple_fn = resolve_fns.get_all()[self.resolve_multiple_fn_name]
+
         # override fallback strings with objects
         if self.fallback == "nan":
             self.fallback = float("nan")
-
-        # infer feature name from df
-        if (
-            self.values_df is not None
-            and isinstance(self.values_df, pd.DataFrame)
-            and not self.feature_name
-        ):
-            self.feature_name = [
-                c
-                for c in self.values_df.columns
-                if c not in [self.timestamp_col_name, self.id_col_name]
-            ][0]
 
     def get_col_str(self, col_main_override: Optional[str] = None) -> str:
         """."""
@@ -153,6 +142,7 @@ class MinGroupSpec(BaseModel):
     ahead or behind."""
 
     values_df: Sequence[pd.DataFrame]
+    feature_name: str
     input_col_name_override: Optional[str] = None
     output_col_name_override: Optional[str] = None
 
