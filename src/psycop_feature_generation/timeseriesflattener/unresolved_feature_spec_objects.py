@@ -1,4 +1,4 @@
-"""Ffeature specifications where the values are not resolved yet."""
+"""Feature specifications where the values are not resolved yet."""
 
 from typing import Optional, Sequence
 
