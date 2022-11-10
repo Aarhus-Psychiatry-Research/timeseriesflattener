@@ -2,6 +2,7 @@
 describing values."""
 import datetime as dt
 import os
+import time
 from collections.abc import Callable
 from datetime import timedelta
 from multiprocessing import Pool
@@ -497,8 +498,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """
         file_name = f"{feature_spec.get_col_str()}_{self.n_uuids}_uuids"
 
-        n_partitions = 1
-
         if hasattr(self, "feature_cache_dir"):
             if self._cache_is_hit(
                 file_pattern=file_name,
@@ -512,9 +511,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     file_suffix=file_suffix,
                 )
 
-                return dd.from_pandas(data=df, npartitions=n_partitions).set_index(
-                    other=self.pred_time_uuid_col_name, compute=True
-                )
+                return df.set_index(keys=self.pred_time_uuid_col_name)
         else:
             msg.info("No cache dir specified, not attempting load")
 
@@ -541,38 +538,30 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 values_df=df,
             )
 
-        return dd.from_pandas(
-            data=df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]],
-            npartitions=n_partitions,
-        ).set_index(other=self.pred_time_uuid_col_name, compute=True)
+        return df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]].set_index(
+            keys=self.pred_time_uuid_col_name
+        )
 
     def _concatenate_flattened_timeseries(
         self,
         flattened_predictor_dds: list[dd.DataFrame],
     ):
         """Concatenate with dask, and show progress bar."""
-        with TqdmCallback(desc="compute"):
-            merged_dds: dd.DataFrame = None  # type: ignore
 
-            for dask_dataframe in flattened_predictor_dds:
-                if merged_dds is None:
-                    merged_dds = dask_dataframe
-                else:
-                    merged_dds = merged_dds.merge(
-                        right=dask_dataframe, left_index=True, right_index=True
-                    )
-            previous_dd = (
-                dd.from_pandas(data=self.df, npartitions=6)
-                .set_index(self.pred_time_uuid_col_name)
-                .compute()
-            )
+        msg = Printer(timestamp=True)
+        msg.info("Starting concatenation")
 
-            self.df = pd.merge(
-                left=merged_dds.compute(),
-                right=previous_dd,
-                left_index=True,
-                right_index=True,
-            ).reset_index()
+        start_time = time.time()
+
+        # Ignore_index ignores potential indeces at the level of columns
+        self.df = pd.concat(
+            objs=flattened_predictor_dds,
+            axis=1,
+        ).reset_index()
+
+        end_time = time.time()
+
+        msg.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
 
     def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
         self,
@@ -581,14 +570,14 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """Add predictors to the flattened dataframe from a list."""
 
         with Pool(self.n_workers) as p:
-            flattened_predictor_dds = p.map(
+            flattened_predictor_dfs = p.map(
                 func=self._get_feature,
                 iterable=predictor_specs,
             )
 
         msg.info("Feature generation complete, concatenating")
 
-        self._concatenate_flattened_timeseries(flattened_predictor_dds)
+        self._concatenate_flattened_timeseries(flattened_predictor_dfs)
 
     def add_age_and_date_of_birth(
         self,
