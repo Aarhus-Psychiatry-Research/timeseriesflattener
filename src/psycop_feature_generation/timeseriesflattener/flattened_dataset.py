@@ -23,6 +23,7 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     TemporalSpec,
+    StaticSpec,
 )
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_fns,
@@ -172,7 +173,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """Load most recent df matching pattern.
 
         Args:
-            dir (Path): Directory to search
             file_pattern (str): Pattern to match
             file_suffix (str, optional): File suffix to match.
 
@@ -655,27 +655,23 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
     def add_static_info(
         self,
-        info_df: DataFrame,
-        input_col_name_override: Optional[str] = None,
+        spec: StaticSpec,
         prefix_override: Optional[str] = None,
-        output_col_name_override: Optional[str] = None,
     ):
         """Add static info to each prediction time, e.g. age, sex etc.
 
         Args:
-            info_df (DataFrame): Contains an id_column and a value column.
+            spec (StaticSpec): Specification for the static info to add.
             prefix_override (str, optional): Prefix for column. Defaults to self.predictor_col_name_prefix.
-            input_col_name_override (str, optional): Column names for the values you want to add. Defaults to "value".
-            output_col_name_override (str, optional): Name of the output column. Defaults to None.
 
         Raises:
             ValueError: If input_col_name does not match a column in info_df.
         """
 
         # Try to infer value col name if not provided
-        if input_col_name_override is None:
+        if spec.input_col_name_override is None:
             possible_value_cols = [
-                col for col in info_df.columns if col not in self.id_col_name
+                col for col in spec.values_df.columns if col not in self.id_col_name
             ]
 
             if len(possible_value_cols) == 1:
@@ -685,9 +681,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     f"Only one value column can be added to static info, found multiple: {possible_value_cols}",
                 )
             elif len(possible_value_cols) == 0:
-                raise ValueError("No value column found in info_df, please check.")
+                raise ValueError(
+                    "No value column found in spec.values_df, please check."
+                )
         else:
-            value_col_name = input_col_name_override
+            value_col_name = spec.input_col_name_override
 
         # Check for prefix override
         prefix = (
@@ -696,15 +694,15 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             else self.predictor_col_name_prefix
         )
 
-        if output_col_name_override is None:
+        if spec.output_col_name_override is None:
             output_col_name = f"{prefix}_{value_col_name}"
         else:
-            output_col_name = f"{prefix}_{output_col_name_override}"
+            output_col_name = f"{prefix}_{spec.output_col_name_override}"
 
         df = pd.DataFrame(
             {
-                self.id_col_name: info_df[self.id_col_name],
-                output_col_name: info_df[value_col_name],
+                self.id_col_name: spec.values_df[self.id_col_name],
+                output_col_name: spec.values_df[value_col_name],
             },
         )
 

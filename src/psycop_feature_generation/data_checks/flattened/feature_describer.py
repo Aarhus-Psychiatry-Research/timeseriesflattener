@@ -1,6 +1,6 @@
 """Generates a df with feature descriptions for the predictors in the source
 df."""
-
+from collections.abc import Sequence
 from pathlib import Path
 
 import numpy as np
@@ -117,7 +117,7 @@ def generate_feature_description_row(
 
     for percentile in (0.01, 0.25, 0.5, 0.75, 0.99):
         # Get the value representing the percentile
-        d[f"{percentile*100}-percentile"] = round(series.quantile(percentile), 1)
+        d[f"{percentile * 100}-percentile"] = round(series.quantile(percentile), 1)
 
     return d
 
@@ -161,7 +161,7 @@ def save_feature_description_from_dir(
     feature_set_dir: Path,
     feature_specs: list[PredictorSpec],
     file_suffix: str,
-    splits: tuple[str] = ("train",),
+    splits: Sequence[str] = ("train",),
     out_dir: Path = None,
 ):
     """Write a csv with feature descriptions in the directory.
