@@ -436,7 +436,6 @@ def pre_load_project_dfs(
 def main(
     proj_name: str,
     feature_sets_path: Path,
-    prediction_time_loader_str: str,
 ):
     """Main function for loading, generating and evaluating a flattened
     dataset.
@@ -459,11 +458,11 @@ def main(
         proj_path=proj_path,
     )
 
-    # TODO: reenable run = init_wandb(
-    #    wandb_project_name=proj_name,
-    #     predictor_specs=unresolved_specs["temporal_predictors"],
-    #     save_dir=out_dir,  # Save-dir as argument because we want to log the path
-    # )
+    run = init_wandb(
+        wandb_project_name=proj_name,
+        predictor_specs=unresolved_specs["temporal_predictors"],
+        save_dir=out_dir,  # Save-dir as argument because we want to log the path
+    )
 
     pre_loaded_dfs = pre_load_unique_dfs(
         specs=unresolved_specs["static_predictors"]
@@ -573,21 +572,19 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
-    # TODO: Reenable
-
     unresolved_temporal_predictor_specs += UnresolvedLabPredictorGroupSpec(
         values_lookup_name=(
             "hba1c",
-            "alat",
-            "hdl",
-            "ldl",
-            "scheduled_glc",
-            "unscheduled_p_glc",
-            "triglycerides",
-            "fasting_ldl",
-            "crp",
-            "egfr",
-            "albumine_creatinine_ratio",
+            # "alat",
+            # "hdl",
+            # "ldl",
+            # "scheduled_glc",
+            # "unscheduled_p_glc",
+            # "triglycerides",
+            # "fasting_ldl",
+            # "crp",
+            # "egfr",
+            # "albumine_creatinine_ratio",
         ),
         resolve_multiple_fn_name=resolve_multiple,
         interval_days=interval_days,
@@ -599,9 +596,9 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
     unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
         values_lookup_name=(
             "essential_hypertension",
-            "hyperlipidemia",
-            "polycystic_ovarian_syndrome",
-            "sleep_apnea",
+            # "hyperlipidemia",
+            # "polycystic_ovarian_syndrome",
+            # "sleep_apnea",
         ),
         resolve_multiple_fn_name=resolve_multiple,
         interval_days=interval_days,
@@ -632,5 +629,4 @@ if __name__ == "__main__":
     main(
         feature_sets_path=FEATURE_SETS_PATH,
         proj_name="t2d",
-        prediction_time_loader_str="physical_visits_to_psychiatry",
     )

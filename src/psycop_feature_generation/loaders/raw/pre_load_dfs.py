@@ -1,9 +1,9 @@
 """Pre-load dataframes to avoid duplicate loading."""
-
 from multiprocessing import Pool
 from typing import Union
 
 import pandas as pd
+import tqdm
 from wasabi import Printer
 
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
@@ -142,7 +142,12 @@ def pre_load_unique_dfs(
     )  # 16 subprocesses should be enough to not be IO bound
 
     with Pool(n_workers) as p:
-        pre_loaded_dfs = p.map(func=load_df_wrapper, iterable=selected_specs)
+        pre_loaded_dfs = list(
+            tqdm.tqdm(
+                p.imap(func=load_df_wrapper, iterable=selected_specs),
+                total=len(selected_specs),
+            )
+        )
 
         error_check_dfs(
             pre_loaded_dfs=pre_loaded_dfs,

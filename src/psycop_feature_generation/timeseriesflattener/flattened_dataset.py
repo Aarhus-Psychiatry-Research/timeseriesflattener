@@ -13,6 +13,7 @@ import dask
 import dask.dataframe as dd
 import numpy as np
 import pandas as pd
+import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
@@ -583,9 +584,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """Add predictors to the flattened dataframe from a list."""
 
         with Pool(self.n_workers) as p:
-            flattened_predictor_dfs = p.map(
-                func=self._get_feature,
-                iterable=predictor_specs,
+            flattened_predictor_dfs = list(
+                tqdm.tqdm(
+                    p.imap(func=self._get_feature, iterable=predictor_specs),
+                    total=len(predictor_specs),
+                )
             )
 
         msg.info("Feature generation complete, concatenating")
