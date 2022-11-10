@@ -476,7 +476,8 @@ def test_add_temporal_predictors_then_temporal_outcome():
         ),
     )
 
-    outcome_df = flattened_dataset.df
+    outcome_df = flattened_dataset.df.set_index("dw_ek_borger").sort_index()
+    expected_df = expected_df.set_index("dw_ek_borger").sort_index()
 
     for col in expected_df.columns:
         pd.testing.assert_series_equal(

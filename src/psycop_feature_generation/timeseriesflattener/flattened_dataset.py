@@ -16,7 +16,6 @@ import pandas as pd
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
-from tqdm.dask import TqdmCallback
 from wasabi import Printer, msg
 
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
@@ -511,7 +510,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     file_suffix=file_suffix,
                 )
 
-                return df.set_index(keys=self.pred_time_uuid_col_name)
+                return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
         else:
             msg.info("No cache dir specified, not attempting load")
 
@@ -538,13 +537,15 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 values_df=df,
             )
 
-        return df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]].set_index(
-            keys=self.pred_time_uuid_col_name
+        return (
+            df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]]
+            .set_index(keys=self.pred_time_uuid_col_name)
+            .sort_index()
         )
 
     def _concatenate_flattened_timeseries(
         self,
-        flattened_predictor_dds: list[dd.DataFrame],
+        flattened_predictor_dfs: list[pd.DataFrame],
     ):
         """Concatenate with dask, and show progress bar."""
 
@@ -553,15 +554,27 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         start_time = time.time()
 
+        df_lengths = 0
+
+        for feature_df in flattened_predictor_dfs:
+            if df_lengths == 0:
+                df_lengths = len(feature_df)
+            else:
+                if df_lengths != len(feature_df):
+                    raise ValueError("Dataframes are not of equal length")
+
         # Ignore_index ignores potential indeces at the level of columns
-        self.df = pd.concat(
-            objs=flattened_predictor_dds,
+        new_features = pd.concat(
+            objs=flattened_predictor_dfs,
             axis=1,
         ).reset_index()
 
         end_time = time.time()
 
         msg.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
+
+        msg.info("Merging with original df")
+        self.df = self.df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
     def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
         self,
@@ -577,7 +590,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         msg.info("Feature generation complete, concatenating")
 
-        self._concatenate_flattened_timeseries(flattened_predictor_dfs)
+        self._concatenate_flattened_timeseries(
+            flattened_predictor_dfs=flattened_predictor_dfs
+        )
 
     def add_age_and_date_of_birth(
         self,
