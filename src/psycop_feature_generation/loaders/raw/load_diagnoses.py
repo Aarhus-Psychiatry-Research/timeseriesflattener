@@ -87,6 +87,8 @@ def _load(
 
     if output_col_name_override is None:
         output_col_name = icd_code
+    else:
+        output_col_name = output_col_name_override
 
     df[output_col_name] = 1
 
@@ -159,7 +161,7 @@ def concat_from_physical_visits(
 
 def from_physical_visits(
     icd_code: str,
-    output_col_name: Optional[str] = "value",
+    output_col_name_override: Optional[str] = "value",
     n_rows: Optional[int] = None,
     wildcard_icd_code: Optional[bool] = False,
 ) -> pd.DataFrame:
@@ -169,7 +171,7 @@ def from_physical_visits(
 
     Args:
         icd_code (str): Substring to match diagnoses for. Matches any diagnoses, whether a-diagnosis, b-diagnosis etc. # noqa: DAR102
-        output_col_name (str, optional): Name of new column string. Defaults to "value".
+        output_col_name_override (str, optional): Name of new column string. Defaults to "value".
         n_rows: Number of rows to return. Defaults to None.
         wildcard_icd_code (bool, optional): Whether to match on icd_code*. Defaults to False.
 
@@ -200,7 +202,7 @@ def from_physical_visits(
     dfs = [
         _load(
             icd_code=icd_code,
-            output_col_name=output_col_name,
+            output_col_name_override=output_col_name_override,
             wildcard_icd_code=wildcard_icd_code,
             n_rows=n_rows_per_df,
             **kwargs,

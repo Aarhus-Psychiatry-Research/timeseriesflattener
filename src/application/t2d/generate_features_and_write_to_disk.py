@@ -24,6 +24,10 @@ from psycop_feature_generation.data_checks.flattened.data_integrity import (
 from psycop_feature_generation.data_checks.flattened.feature_describer import (
     save_feature_description_from_dir,
 )
+from psycop_feature_generation.loaders.raw.load_demographic import birthdays
+from psycop_feature_generation.loaders.raw.load_visits import (
+    physical_visits_to_psychiatry,
+)
 from psycop_feature_generation.loaders.raw.pre_load_dfs import pre_load_unique_dfs
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
@@ -34,6 +38,8 @@ from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
 from psycop_feature_generation.timeseriesflattener.unresolved_feature_spec_objects import (
+    UnresolvedAnySpec,
+    UnresolvedLabPredictorGroupSpec,
     UnresolvedOutcomeGroupSpec,
     UnresolvedPredictorGroupSpec,
     UnresolvedPredictorSpec,
@@ -314,6 +320,7 @@ def add_predictors(
 
 def create_full_flattened_dataset(
     prediction_times: pd.DataFrame,
+    birthdays: pd.DataFrame,
     metadata_specs: list[StaticSpec],
     temporal_predictor_specs: list[PredictorSpec],
     static_predictor_specs: list[StaticSpec],
@@ -363,6 +370,7 @@ def create_full_flattened_dataset(
         temporal_predictor_specs=temporal_predictor_specs,
         static_predictor_specs=static_predictor_specs,
         flattened_dataset=flattened_dataset,
+        birthdays=birthdays,
     )
 
     return flattened_dataset.df
@@ -453,28 +461,31 @@ def main(
         proj_path=proj_path,
     )
 
-    run = init_wandb(
-        wandb_project_name=proj_name,
-        predictor_specs=unresolved_specs["temporal_predictors"],
-        save_dir=out_dir,  # Save-dir as argument because we want to log the path
-    )
+    # TODO: reenable run = init_wandb(
+    #    wandb_project_name=proj_name,
+    #     predictor_specs=unresolved_specs["temporal_predictors"],
+    #     save_dir=out_dir,  # Save-dir as argument because we want to log the path
+    # )
 
     pre_loaded_dfs = pre_load_unique_dfs(
-        specs=unresolved_specs["temporal_predictors"]
+        specs=unresolved_specs["static_predictors"]
+        + unresolved_specs["temporal_predictors"]
+        + unresolved_specs["metadata"]
         + unresolved_specs["outcomes"]
-        + unresolved_specs["metadata"],
     )
 
-    resolved_specs = load_dfs_in_unresolved_specifications(
+    resolved_specs = resolve_specifications(
         pre_loaded_dfs=pre_loaded_dfs, unresolved_specs=unresolved_specs
     )
 
     flattened_df = create_full_flattened_dataset(
-        prediction_times=pre_loaded_dfs[prediction_time_loader_str],
+        prediction_times=physical_visits_to_psychiatry(),
         temporal_predictor_specs=resolved_specs["temporal_predictors"],
+        static_predictor_specs=resolved_specs["static_predictors"],
         metadata_specs=resolved_specs["metadata"],
         outcome_specs=resolved_specs["outcomes"],
         proj_path=proj_path,
+        birthdays=birthdays(),
     )
 
     split_and_save_to_disk(
@@ -497,17 +508,18 @@ def main(
     )
 
 
-def load_dfs_in_unresolved_specifications(pre_loaded_dfs, unresolved_specs):
-    resolved_specs = defaultdict(list)
+def resolve_specifications(
+    pre_loaded_dfs, unresolved_specs: dict[str, list[UnresolvedAnySpec]]
+):
+    resolved_specs: dict[str, list[UnresolvedAnySpec]] = defaultdict(list)
+
     for spec_type, specs in unresolved_specs.items():
         for spec in specs:
-            resolved_specs[spec_type] += spec.resolve(pre_loaded_dfs=pre_loaded_dfs)
+            resolved_specs[spec_type] += spec.resolve_spec(str2df=pre_loaded_dfs)
     return resolved_specs
 
 
-def create_unresolved_specs() -> dict[
-    str, list[Union[UnresolvedTemporalSpec, UnresolvedStaticSpec]]
-]:
+def create_unresolved_specs() -> dict[str, list[UnresolvedAnySpec]]:
     """Create column specifications. Resolve when preloading is finished, so don't do it here."""
     unresolved_specs = {}
 
@@ -517,8 +529,9 @@ def create_unresolved_specs() -> dict[
         values_lookup_name=["t2d"],
         interval_days=[year * 365 for year in (1, 2, 3, 4, 5)],
         resolve_multiple_fn_name=["max"],
-        fallback=0,
+        fallback=[0],
         incident=[True],
+        allowed_nan_value_prop=[0],
     ).create_combinations()
 
     unresolved_specs["metadata"] = [
@@ -547,69 +560,72 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
     """Generate predictor spec list."""
     resolve_multiple = ["max", "min", "mean", "latest", "count"]
     interval_days = [30, 90, 180, 365, 730]
+    allowed_nan_value_prop = [0]
 
-    predictor_group_specs: list[UnresolvedPredictorGroupSpec] = []
+    unresolved_temporal_predictor_specs: list[UnresolvedPredictorSpec] = []
 
-    predictor_group_specs += UnresolvedPredictorGroupSpec(
+    unresolved_temporal_predictor_specs += UnresolvedLabPredictorGroupSpec(
         values_lookup_name=("hba1c",),
-        fallback=np.nan,
-        lab_values_to_load="numerical_and_coerce",
+        fallback=[np.nan],
+        lab_values_to_load=["numerical_and_coerce"],
         interval_days=[9999],
-        resolve_multiple_fn_name="count",
-    )
+        resolve_multiple_fn_name=["count"],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
-    predictor_group_specs += UnresolvedPredictorGroupSpec(
+    # TODO: Reenable
+
+    unresolved_temporal_predictor_specs += UnresolvedLabPredictorGroupSpec(
         values_lookup_name=(
             "hba1c",
-            "alat",
-            "hdl",
-            "ldl",
-            "scheduled_glc",
-            "unscheduled_p_glc",
-            "triglycerides",
-            "fasting_ldl",
-            "crp",
-            "egfr",
-            "albumine_creatinine_ratio",
+            # "alat",
+            # "hdl",
+            # "ldl",
+            # "scheduled_glc",
+            # "unscheduled_p_glc",
+            # "triglycerides",
+            # "fasting_ldl",
+            # "crp",
+            # "egfr",
+            # "albumine_creatinine_ratio",
         ),
         resolve_multiple_fn_name=resolve_multiple,
         interval_days=interval_days,
-        fallback=np.nan,
-        lab_values_to_load="numerical_and_coerce",
-    )
+        fallback=[np.nan],
+        lab_values_to_load=["numerical_and_coerce"],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
-    predictor_group_specs += UnresolvedPredictorGroupSpec(
+    unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
         values_lookup_name=(
-            "essential_hypertension",
-            "hyperlipidemia",
-            "polycystic_ovarian_syndrome",
-            "sleep_apnea",
+            # "essential_hypertension",
+            # "hyperlipidemia",
+            # "polycystic_ovarian_syndrome",
+            # "sleep_apnea",
         ),
         resolve_multiple_fn_name=resolve_multiple,
         interval_days=interval_days,
-        fallback=0,
-    )
+        fallback=[0],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
-    predictor_group_specs += UnresolvedPredictorGroupSpec(
+    unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
         values_lookup_name=("antipsychotics",),
         interval_days=interval_days,
         resolve_multiple_fn_name=resolve_multiple,
-        fallback=0,
-    )
+        fallback=[0],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
-    predictor_group_specs += UnresolvedPredictorGroupSpec(
+    unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
         values_lookup_name=("weight_in_kg", "height_in_cm", "bmi"),
         interval_days=interval_days,
         resolve_multiple_fn_name=["latest"],
-        fallback=np.nan,
-    )
+        fallback=[np.nan],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
-    predictor_specs: list[UnresolvedPredictorSpec] = []
-
-    for group_spec in predictor_group_specs:
-        predictor_specs += group_spec.create_combinations()
-
-    return predictor_specs
+    return unresolved_temporal_predictor_specs
 
 
 if __name__ == "__main__":

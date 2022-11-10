@@ -1,7 +1,7 @@
 """Templates for feature specifications."""
 
 import itertools
-from typing import Callable, Literal, Optional, Sequence, Union
+from typing import Callable, Iterable, Literal, Optional, Sequence, Union
 
 import pandas as pd
 from pydantic import BaseModel as PydanticBaseModel
@@ -48,17 +48,16 @@ class TemporalSpec(AnySpec):
     # Resolving
     interval_days: Union[int, float]
     resolve_multiple_fn_name: str
+
     resolve_multiple_fn: Callable = resolve_fns.get_all()["mean"]
+    # Uses "mean" as a placeholder, is resolved in __init__.
+    # If "mean" isn't set, gives a validation error because no Callable is
+    # set.
+
     fallback: Union[Callable, int, float, str]
 
     # Testing
     allowed_nan_value_prop: float = 0.0
-
-    # Lab results
-    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
-    lab_values_to_load: Optional[
-        Literal["all", "numerical", "numerical_and_coerce"]
-    ] = None
 
     # Input col names
     prefix: Optional[str] = None
@@ -74,17 +73,18 @@ class TemporalSpec(AnySpec):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.resolve_multiple_fn: Callable = resolve_fns.get_all()[
-            self.resolve_multiple_fn_name
-        ]
-
-        # Convert 'nan' to np.nan object
+        # convert resolve_multiple_str to fn
+        self.resolve_multiple_fn = resolve_fns.get_all()[self.resolve_multiple_fn_name]
+        # override fallback strings with objects
         if self.fallback == "nan":
             self.fallback = float("nan")
 
-        # Get feature name from the dataframe if it's not specified
-        # in the class initiation
-        if not self.feature_name:
+        # infer feature name from df
+        if (
+            self.values_df is not None
+            and isinstance(self.values_df, pd.DataFrame)
+            and not self.feature_name
+        ):
             self.feature_name = [
                 c
                 for c in self.values_df.columns
@@ -155,12 +155,7 @@ class MinGroupSpec(BaseModel):
     resolve_multiple_fn_name: Sequence[str]
     fallback: Sequence[Union[Callable, str]]
 
-    allowed_nan_value_prop: Sequence[float]
-
-    lab_values_to_load: Optional[
-        Sequence[Literal["all", "numerical", "numerical_and_coerce"]]
-    ]
-    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
+    allowed_nan_value_prop: Sequence[float] = [0.0]
 
     loader_kwargs: Optional[Sequence[dict]] = None
 
@@ -179,7 +174,7 @@ def create_feature_combinations_from_dict(
     """
 
     # Make all elements iterable
-    d = {k: v if isinstance(v, list) else [v] for k, v in d.items()}
+    d = {k: v if isinstance(v, Iterable) else [v] for k, v in d.items()}
     keys, values = zip(*d.items())
     # Create all combinations of top level elements
     permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]

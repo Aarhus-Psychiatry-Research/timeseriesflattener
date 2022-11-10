@@ -7,18 +7,24 @@ import pandas as pd
 from wasabi import Printer
 
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
+from psycop_feature_generation.loaders.raw.load_demographic import birthdays
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     AnySpec,
     TemporalSpec,
 )
+from psycop_feature_generation.timeseriesflattener.unresolved_feature_spec_objects import (
+    UnresolvedAnySpec,
+)
 from psycop_feature_generation.utils import data_loaders
 
 
-def load_df(predictor_df: str, values_to_load: Union[str, None] = None) -> pd.DataFrame:
+def load_df(
+    loader_fn_name: str, values_to_load: Union[str, None] = None
+) -> pd.DataFrame:
     """Load a dataframe from a SQL database.
 
     Args:
-        predictor_df (str): The name of the loader function which calls the SQL database.
+        loader_fn_name (str): The name of the loader function which calls the SQL database.
         values_to_load (dict): Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". Defaults to None.
 
     Returns:
@@ -28,24 +34,24 @@ def load_df(predictor_df: str, values_to_load: Union[str, None] = None) -> pd.Da
 
     df = pd.DataFrame()
 
-    msg.info(f"{predictor_df}: Loading")
+    msg.info(f"{loader_fn_name}: Loading")
 
     loader_fns = data_loaders.get_all()
 
-    if predictor_df not in loader_fns:
-        msg.fail(f"Could not find loader for {predictor_df}.")
+    if loader_fn_name not in loader_fns:
+        msg.fail(f"Could not find loader for {loader_fn_name}.")
     else:
         # We need this control_flow since some loader_fns don't take values_to_load
         if values_to_load is not None:
-            df = loader_fns[predictor_df](values_to_load=values_to_load)
+            df = loader_fns[loader_fn_name](values_to_load=values_to_load)
         else:
-            df = loader_fns[predictor_df]()
+            df = loader_fns[loader_fn_name]()
 
     # Check that df is a dataframe
     if df.shape[0] == 0:
-        raise ValueError(f"Loaded dataframe {predictor_df} is empty.")
+        raise ValueError(f"Loaded dataframe {loader_fn_name} is empty.")
 
-    msg.info(f"{predictor_df}: Loaded with {len(df)} rows")
+    msg.info(f"{loader_fn_name}: Loaded with {len(df)} rows")
     return df
 
 
@@ -60,8 +66,10 @@ def load_df_wrapper(spec: TemporalSpec) -> dict[str, pd.DataFrame]:
     """
     return {
         spec.values_lookup_name: load_df(
-            predictor_df=spec.values_lookup_name,
-            values_to_load=spec.lab_values_to_load if spec.medications else None,
+            loader_fn_name=spec.values_lookup_name,
+            values_to_load=spec.lab_values_to_load
+            if hasattr(spec, "lab_values_to_load")
+            else None,
         ),
     }
 
@@ -101,8 +109,9 @@ def error_check_dfs(
 
 
 def pre_load_unique_dfs(
-    specs: list[AnySpec],
+    specs: list[UnresolvedAnySpec],
     subset_duplicates_columns: Union[list, str] = "all",
+    max_workers: int = 16,
 ) -> dict[str, pd.DataFrame]:
     """Pre-load unique dataframes to avoid duplicate loading.
 
@@ -119,9 +128,9 @@ def pre_load_unique_dfs(
     selected_specs = []
 
     for spec in specs:
-        if not spec.values_df in selected_df_names:
-            selected_df_names += spec.values_df
-            selected_specs += spec
+        if not spec.values_lookup_name in selected_df_names:
+            selected_df_names += [spec.values_lookup_name]
+            selected_specs += [spec]
 
     msg = Printer(timestamp=True)
 
@@ -129,7 +138,7 @@ def pre_load_unique_dfs(
 
     n_workers = min(
         len(selected_specs),
-        16,
+        max_workers,
     )  # 16 subprocesses should be enough to not be IO bound
 
     with Pool(n_workers) as p:

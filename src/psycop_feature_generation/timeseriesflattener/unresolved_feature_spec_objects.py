@@ -1,6 +1,6 @@
 """Feature specifications where the values are not resolved yet."""
 
-from typing import Optional, Sequence
+from typing import Literal, Optional, Sequence
 
 import pandas as pd
 
@@ -11,6 +11,7 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
+    StaticSpec,
     TemporalSpec,
     create_specs_from_group,
 )
@@ -29,21 +30,37 @@ class UnresolvedAnySpec(BaseModel):
         str2df: dict[str, pd.DataFrame],
     ) -> TemporalSpec:
         """Resolve the values_df."""
-        new_cls: TemporalSpec
-
-        if isinstance(self, UnresolvedOutcomeSpec):
-            new_cls = OutcomeSpec
-        elif isinstance(self, UnresolvedPredictorSpec):
-            new_cls = PredictorSpec
-        else:
-            raise ValueError("Unknown class type.")
-
         str2resolve_multiple = resolve_fns.get_all()
 
-        return new_cls(
+        kwargs_dict = self.dict()
+
+        # Remove the attributes that are not allowed in the outcome specs,
+        # or which will be duplicates because they are manually specified in
+        # the return statement.
+        for redundant_key in (
+            "values_df",
+            "resolve_multiple_fn",
+            "lab_values_to_load",
+            "values_lookup_name",
+        ):
+            if redundant_key in kwargs_dict:
+                kwargs_dict.pop(redundant_key)
+
+        if isinstance(self, UnresolvedPredictorSpec):
+            resolve_to_class = PredictorSpec
+        elif isinstance(self, UnresolvedOutcomeSpec):
+            resolve_to_class = OutcomeSpec
+        elif isinstance(self, UnresolvedStaticSpec):
+            resolve_to_class = StaticSpec
+
+            return resolve_to_class(
+                values_df=str2df[self.values_lookup_name], **kwargs_dict
+            )
+
+        return resolve_to_class(
             values_df=str2df[self.values_lookup_name],
             resolve_multiple_fn=str2resolve_multiple[self.resolve_multiple_fn_name],
-            **self.dict()
+            **kwargs_dict,
         )
 
 
@@ -52,14 +69,35 @@ class UnresolvedGroupSpec(MinGroupSpec):
     values_df: Optional[Sequence[pd.DataFrame]]
 
 
-class UnresolvedTemporalSpec(UnresolvedAnySpec):
+class UnresolvedTemporalSpec(UnresolvedAnySpec, TemporalSpec):
     resolve_multiple_fn_name: str
+    values_df: Optional[pd.DataFrame] = None
+
+    # Override methods used in init of TemporalSpec
+    def resolve_multiple_str_to_fn(self):
+        pass
+
+    def override_fallback_strings_with_objects(self):
+        pass
+
+    def infer_feature_name_from_df(self):
+        pass
 
 
 class UnresolvedPredictorSpec(UnresolvedTemporalSpec):
     """Specification for a single predictor."""
 
     prefix: str = "pred"
+
+
+class UnresolvedLabPredictorSpec(UnresolvedPredictorSpec):
+    """Specification for a single medication predictor, where the df has been resolved."""
+
+    # Lab results
+    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
+    lab_values_to_load: Literal[
+        "all", "numerical", "numerical_and_coerce"
+    ] = "numerical_and_coerce"
 
 
 class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, PredictorGroupSpec):
@@ -70,6 +108,23 @@ class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, PredictorGroupSpec):
         return create_specs_from_group(
             feature_group_spec=self,
             output_class=UnresolvedPredictorSpec,
+        )
+
+
+class UnresolvedLabPredictorGroupSpec(UnresolvedPredictorGroupSpec):
+    """Specification for a group of predictors, where the df has not been
+    resolved."""
+
+    # Lab results
+    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
+    lab_values_to_load: Sequence[
+        Literal["all", "numerical", "numerical_and_coerce"]
+    ] = ["numerical_and_coerce"]
+
+    def create_combinations(self):
+        return create_specs_from_group(
+            feature_group_spec=self,
+            output_class=UnresolvedLabPredictorSpec,
         )
 
 
