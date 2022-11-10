@@ -327,10 +327,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         if verbose:
             msg.good(
-                f"Returning {df.shape[0]} rows of flattened dataframe with {value_cols}",
+                f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",
             )
 
-        return df[[pred_time_uuid_col_name] + output_spec.get_col_str()]
+        return df[[pred_time_uuid_col_name, output_spec.get_col_str()]]
 
     def _generate_values_for_cache_checking(
         self,
