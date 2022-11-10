@@ -30,8 +30,13 @@ class AnySpec(BaseModel):
     """
 
     values_df: pd.DataFrame
+
     input_col_name_override: Optional[str] = None
+    # An override for the input column name. If None, will attempt
+    # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
+
     output_col_name_override: Optional[str] = None
+    # If none, will output pred_<input_col_name>
 
 
 class StaticSpec(AnySpec):
@@ -174,7 +179,7 @@ def create_feature_combinations_from_dict(
     """
 
     # Make all elements iterable
-    d = {k: v if isinstance(v, Iterable) else [v] for k, v in d.items()}
+    d = {k: v if isinstance(v, (list, tuple)) else [v] for k, v in d.items()}
     keys, values = zip(*d.items())
     # Create all combinations of top level elements
     permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]

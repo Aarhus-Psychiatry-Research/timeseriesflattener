@@ -636,7 +636,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 values_df=id2date_of_birth,
                 input_col_name_override=date_of_birth_col_name,
                 output_col_name_override=date_of_birth_col_name,
-                prefix_override="",
             ),
         )
 
@@ -652,7 +651,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     def add_static_info(
         self,
         static_spec: StaticSpec,
-        prefix_override: Optional[str] = None,
     ):
         """Add static info to each prediction time, e.g. age, sex etc.
 
@@ -685,17 +683,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         else:
             value_col_name = static_spec.input_col_name_override
 
-        # Check for prefix override
-        prefix = (
-            prefix_override
-            if prefix_override is not None
-            else self.predictor_col_name_prefix
-        )
-
         if static_spec.output_col_name_override is None:
-            output_col_name = f"{prefix}_{value_col_name}"
+            output_col_name = f"pred_{value_col_name}"
         else:
-            output_col_name = f"{prefix}_{static_spec.output_col_name_override}"
+            output_col_name = f"{static_spec.output_col_name_override}"
 
         df = pd.DataFrame(
             {

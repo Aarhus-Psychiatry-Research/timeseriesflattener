@@ -9,18 +9,19 @@ import pytest
 from psycop_feature_generation.loaders.raw.load_text import (  # noqa pylint: disable=unused-import; load_synth_notes,
     _chunk_text,
 )
-from psycop_feature_generation.loaders.raw.pre_load_dfs import pre_load_unique_dfs
 from psycop_feature_generation.timeseriesflattener import FlattenedDataset
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
+    StaticSpec,
 )
 from psycop_feature_generation.utils import data_loaders
 from psycop_feature_generation.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
 )
+
 
 # pylint: disable=import-error
 # from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
@@ -203,12 +204,16 @@ def test_static_predictor():
 
     dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
     dataset.add_static_info(
-        info_df=str_to_df(static_predictor),
+        static_spec=StaticSpec(
+            values_df=str_to_df(static_predictor),
+            input_col_name_override="date_of_birth",
+            output_col_name_override="date_of_birth",
+        )
     )
 
     expected_values = pd.DataFrame(
         {
-            "pred_date_of_birth": [
+            "date_of_birth": [
                 "1994-12-31 00:00:01",
                 "1994-12-31 00:00:01",
                 "1994-12-31 00:00:01",
