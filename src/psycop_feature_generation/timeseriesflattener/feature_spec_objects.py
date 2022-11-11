@@ -95,7 +95,7 @@ class TemporalSpec(AnySpec):
         if self.fallback == "nan":
             self.fallback = float("nan")
 
-    def get_col_str(self, col_main_override: Optional[str] = None) -> str:
+    def get_col_str(self) -> str:
         """."""
         col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
 

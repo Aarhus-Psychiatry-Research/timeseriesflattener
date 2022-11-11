@@ -16,7 +16,6 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
     PredictorSpec,
 )
-from psycop_feature_generation.utils import data_loaders
 from psycop_feature_generation.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,

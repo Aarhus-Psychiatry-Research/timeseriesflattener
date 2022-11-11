@@ -10,7 +10,6 @@ from multiprocessing import Pool
 from pathlib import Path
 from typing import Any, Optional, Union
 
-import dask
 import numpy as np
 import pandas as pd
 import tqdm
@@ -586,8 +585,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         Args:
             id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
-            date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
+            input_date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
                 Defaults to "date_of_birth".
+            output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
 
         Raises:
             ValueError: _description_
@@ -633,8 +633,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """Add static info to each prediction time, e.g. age, sex etc.
 
         Args:
-            spec (StaticSpec): Specification for the static info to add.
-            prefix_override (str, optional): Prefix for column. Defaults to self.predictor_col_name_prefix.
+            static_spec (StaticSpec): Specification for the static info to add.
 
         Raises:
             ValueError: If input_col_name does not match a column in info_df.
