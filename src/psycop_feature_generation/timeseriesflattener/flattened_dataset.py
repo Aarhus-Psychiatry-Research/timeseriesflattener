@@ -621,7 +621,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self,
         id2date_of_birth: DataFrame,
         input_date_of_birth_col_name: Optional[str] = "date_of_birth",
-        output_prefix: str = "eval",
+        output_prefix: str = "pred",
     ):
         """Add age at prediction time to each prediction time.
 
@@ -652,7 +652,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             static_spec=StaticSpec(
                 values_df=id2date_of_birth,
                 input_col_name_override=input_date_of_birth_col_name,
-                prefix="eval",
+                prefix=output_prefix,
                 # We typically don't want to use date of birth as a predictor,
                 # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
                 feature_name=output_date_of_birth_name,
