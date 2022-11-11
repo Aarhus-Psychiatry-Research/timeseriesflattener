@@ -65,9 +65,9 @@ def finish_wandb(run: wandb.wandb_sdk.wandb_run.Run):
 
 
 def init_wandb(
-        wandb_project_name: str,
-        predictor_specs: Sequence[PredictorSpec],
-        save_dir: Union[Path, str],
+    wandb_project_name: str,
+    predictor_specs: Sequence[PredictorSpec],
+    save_dir: Union[Path, str],
 ) -> wandb.wandb_sdk.wandb_run.Run:
     """Initialise wandb logging. Allows to use wandb to track progress, send
     Slack notifications if failing, and track logs.
@@ -102,12 +102,12 @@ def init_wandb(
 
 
 def save_feature_set_description_to_disk(
-        predictor_specs: list,
-        flattened_dataset_file_dir: Path,
-        out_dir: Path,
-        file_suffix: str,
-        describe_splits: bool = True,
-        compare_splits: bool = True,
+    predictor_specs: list,
+    flattened_dataset_file_dir: Path,
+    out_dir: Path,
+    file_suffix: str,
+    describe_splits: bool = True,
+    compare_splits: bool = True,
 ):
     """Describe output.
 
@@ -143,8 +143,8 @@ def save_feature_set_description_to_disk(
 
 
 def create_save_dir_path(
-        proj_path: Path,
-        feature_set_id: str,
+    proj_path: Path,
+    feature_set_id: str,
 ) -> Path:
     """Create save directory.
 
@@ -167,12 +167,12 @@ def create_save_dir_path(
 
 
 def split_and_save_to_disk(
-        flattened_df: pd.DataFrame,
-        out_dir: Path,
-        file_prefix: str,
-        file_suffix: str,
-        split_ids_dict: Optional[dict[str, pd.Series]] = None,
-        splits: Optional[list[str]] = None,
+    flattened_df: pd.DataFrame,
+    out_dir: Path,
+    file_prefix: str,
+    file_suffix: str,
+    split_ids_dict: Optional[dict[str, pd.Series]] = None,
+    splits: Optional[list[str]] = None,
 ):
     """Split and save to disk.
 
@@ -230,8 +230,8 @@ def split_and_save_to_disk(
 
 
 def add_metadata_to_ds(
-        specs: list[AnySpec],
-        flattened_dataset: FlattenedDataset,
+    specs: list[AnySpec],
+    flattened_dataset: FlattenedDataset,
 ) -> FlattenedDataset:
     """Add metadata.
 
@@ -255,8 +255,8 @@ def add_metadata_to_ds(
 
 
 def add_outcomes_to_ds(
-        flattened_dataset: FlattenedDataset,
-        outcome_specs: list[OutcomeSpec],
+    flattened_dataset: FlattenedDataset,
+    outcome_specs: list[OutcomeSpec],
 ) -> FlattenedDataset:
     """Add outcomes.
 
@@ -280,10 +280,10 @@ def add_outcomes_to_ds(
 
 
 def add_predictors_to_ds(
-        temporal_predictor_specs: list[PredictorSpec],
-        static_predictor_specs: list[AnySpec],
-        birthdays: pd.DataFrame,
-        flattened_dataset: FlattenedDataset,
+    temporal_predictor_specs: list[PredictorSpec],
+    static_predictor_specs: list[AnySpec],
+    birthdays: pd.DataFrame,
+    flattened_dataset: FlattenedDataset,
 ):
     """Add predictors.
 
@@ -323,13 +323,13 @@ def add_predictors_to_ds(
 
 
 def create_full_flattened_dataset(
-        prediction_times: pd.DataFrame,
-        birthdays: pd.DataFrame,
-        metadata_specs: list[AnySpec],
-        temporal_predictor_specs: list[PredictorSpec],
-        static_predictor_specs: list[AnySpec],
-        outcome_specs: list[OutcomeSpec],
-        proj_path: Path,
+    prediction_times: pd.DataFrame,
+    birthdays: pd.DataFrame,
+    metadata_specs: list[AnySpec],
+    temporal_predictor_specs: list[PredictorSpec],
+    static_predictor_specs: list[AnySpec],
+    outcome_specs: list[OutcomeSpec],
+    proj_path: Path,
 ) -> pd.DataFrame:
     """Create flattened dataset.
 
@@ -381,9 +381,9 @@ def create_full_flattened_dataset(
 
 
 def setup_for_main(
-        n_predictors: int,
-        feature_sets_path: Path,
-        proj_name: str,
+    n_predictors: int,
+    feature_sets_path: Path,
+    proj_name: str,
 ) -> tuple[Path, str]:
     """Setup for main.
 
@@ -407,78 +407,6 @@ def setup_for_main(
     return proj_path, feature_set_id
 
 
-def main(
-        proj_name: str,
-        feature_sets_path: Path,
-):
-    """Main function for loading, generating and evaluating a flattened
-    dataset.
-
-    Args:
-        proj_name (str): Name of project.
-        feature_sets_path (Path): Path to where feature sets should be stored.
-        prediction_time_loader_str (str): Key to lookup in data_loaders registry for prediction time dataframe.
-    """
-    unresolved_specs = create_unresolved_specs()
-
-    proj_path, feature_set_id = setup_for_main(
-        n_predictors=len(unresolved_specs.temporal_predictors),
-        feature_sets_path=feature_sets_path,
-        proj_name=proj_name,
-    )
-
-    out_dir = create_save_dir_path(
-        feature_set_id=feature_set_id,
-        proj_path=proj_path,
-    )
-
-    run = init_wandb(
-        wandb_project_name=proj_name,
-        predictor_specs=unresolved_specs.temporal_predictors,
-        save_dir=out_dir,  # Save-dir as argument because we want to log the path
-    )
-
-    pre_loaded_dfs = pre_load_unique_dfs(
-        specs=unresolved_specs.static_predictors
-              + unresolved_specs.temporal_predictors
-              + unresolved_specs.metadata
-              + unresolved_specs.outcomes
-    )
-
-    resolved_specs = resolve_specifications(
-        pre_loaded_dfs=pre_loaded_dfs, unresolved_specs=unresolved_specs
-    )
-
-    flattened_df = create_full_flattened_dataset(
-        prediction_times=physical_visits_to_psychiatry(),
-        temporal_predictor_specs=resolved_specs.temporal_predictors,
-        static_predictor_specs=resolved_specs.static_predictors,
-        metadata_specs=resolved_specs.metadata,
-        outcome_specs=resolved_specs.outcomes,
-        proj_path=proj_path,
-        birthdays=birthdays(),
-    )
-
-    split_and_save_to_disk(
-        flattened_df=flattened_df,
-        out_dir=out_dir,
-        file_prefix=feature_set_id,
-        file_suffix="parquet",
-    )
-
-    save_feature_set_description_to_disk(
-        predictor_specs=resolved_specs.temporal_predictors
-                        + resolved_specs.static_predictors,
-        flattened_dataset_file_dir=out_dir,
-        out_dir=out_dir,
-        file_suffix="parquet",
-    )
-
-    finish_wandb(
-        run=run,
-    )
-
-
 class ResolvedSpecSet(BaseModel):
     """A set of resolved specs, ready for flattening."""
 
@@ -498,8 +426,8 @@ class UnresolvedSpecSet(BaseModel):
 
 
 def resolve_specifications(
-        pre_loaded_dfs: dict[str, pd.DataFrame],
-        unresolved_specs: UnresolvedSpecSet,
+    pre_loaded_dfs: dict[str, pd.DataFrame],
+    unresolved_specs: UnresolvedSpecSet,
 ) -> ResolvedSpecSet:
     resolved_spec_set: dict[str, list[AnySpec]] = defaultdict(list)
 
@@ -510,16 +438,6 @@ def resolve_specifications(
     return ResolvedSpecSet(**resolved_spec_set)
 
 
-def create_unresolved_specs() -> UnresolvedSpecSet:
-    """Create column specifications. Resolve when preloading is finished, so don't do it here."""
-    return UnresolvedSpecSet(
-        temporal_predictors=get_unresolved_temporal_predictor_specs(),
-        static_predictors=get_static_predictor_specs(),
-        outcomes=get_unresolved_outcome_specs(),
-        metadata=get_unresolved_metadata_specs(),
-    )
-
-
 def get_static_predictor_specs():
     """Get static predictor specs."""
     return [
@@ -527,7 +445,7 @@ def get_static_predictor_specs():
             values_lookup_name="sex_female",
             input_col_name_override="sex_female",
             prefix="pred",
-        )
+        ),
     ]
 
 
@@ -627,6 +545,92 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
     # ).create_combinations()
 
     return unresolved_temporal_predictor_specs
+
+
+def create_unresolved_specs() -> UnresolvedSpecSet:
+    """Create column specifications.
+
+    Resolve when preloading is finished, so don't do it here.
+    """
+    return UnresolvedSpecSet(
+        temporal_predictors=get_unresolved_temporal_predictor_specs(),
+        static_predictors=get_static_predictor_specs(),
+        outcomes=get_unresolved_outcome_specs(),
+        metadata=get_unresolved_metadata_specs(),
+    )
+
+
+def main(
+    proj_name: str,
+    feature_sets_path: Path,
+):
+    """Main function for loading, generating and evaluating a flattened
+    dataset.
+
+    Args:
+        proj_name (str): Name of project.
+        feature_sets_path (Path): Path to where feature sets should be stored.
+        prediction_time_loader_str (str): Key to lookup in data_loaders registry for prediction time dataframe.
+    """
+    unresolved_specs = create_unresolved_specs()
+
+    proj_path, feature_set_id = setup_for_main(
+        n_predictors=len(unresolved_specs.temporal_predictors),
+        feature_sets_path=feature_sets_path,
+        proj_name=proj_name,
+    )
+
+    out_dir = create_save_dir_path(
+        feature_set_id=feature_set_id,
+        proj_path=proj_path,
+    )
+
+    run = init_wandb(
+        wandb_project_name=proj_name,
+        predictor_specs=unresolved_specs.temporal_predictors,
+        save_dir=out_dir,  # Save-dir as argument because we want to log the path
+    )
+
+    pre_loaded_dfs = pre_load_unique_dfs(
+        specs=unresolved_specs.static_predictors
+        + unresolved_specs.temporal_predictors
+        + unresolved_specs.metadata
+        + unresolved_specs.outcomes,
+    )
+
+    resolved_specs = resolve_specifications(
+        pre_loaded_dfs=pre_loaded_dfs,
+        unresolved_specs=unresolved_specs,
+    )
+
+    flattened_df = create_full_flattened_dataset(
+        prediction_times=physical_visits_to_psychiatry(),
+        temporal_predictor_specs=resolved_specs.temporal_predictors,
+        static_predictor_specs=resolved_specs.static_predictors,
+        metadata_specs=resolved_specs.metadata,
+        outcome_specs=resolved_specs.outcomes,
+        proj_path=proj_path,
+        birthdays=birthdays(),
+    )
+
+    split_and_save_to_disk(
+        flattened_df=flattened_df,
+        out_dir=out_dir,
+        file_prefix=feature_set_id,
+        file_suffix="parquet",
+    )
+
+    save_feature_set_description_to_disk(
+        predictor_specs=resolved_specs.temporal_predictors
+        + resolved_specs.static_predictors,
+        flattened_dataset_file_dir=out_dir,
+        out_dir=out_dir,
+        file_suffix="parquet",
+    )
+
+    finish_wandb(
+        run=run,
+    )
 
 
 if __name__ == "__main__":

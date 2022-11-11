@@ -90,30 +90,9 @@ def create_unicode_hist(series: pd.Series) -> pd.Series:
     return ucode_to_print
 
 
-def generate_feature_description_row(
-    series: pd.Series,
-    predictor_spec: AnySpec,
-) -> dict:
-    """Generate a row with feature description.
-
-    Args:
-        series (pd.Series): Series with data to describe.
-        predictor_spec (PredictorSpec): Predictor specification.
-
-    Returns:
-        dict: dictionary with feature description.
-    """
-
-    if isinstance(predictor_spec, StaticSpec):
-        d = generate_static_feature_description(series, predictor_spec)
-    elif isinstance(predictor_spec, TemporalSpec):
-        d = generate_temporal_feature_description(series, predictor_spec)
-
-    return d
-
-
 def generate_temporal_feature_description(
-    series: pd.Series, predictor_spec: TemporalSpec
+    series: pd.Series,
+    predictor_spec: TemporalSpec,
 ):
     d = {
         "Predictor df": predictor_spec.feature_name,
@@ -149,6 +128,28 @@ def generate_static_feature_description(series: pd.Series, predictor_spec: Stati
         "Histogram": create_unicode_hist(series),
         "Proportion using fallback": "N/A",
     }
+
+
+def generate_feature_description_row(
+    series: pd.Series,
+    predictor_spec: AnySpec,
+) -> dict:
+    """Generate a row with feature description.
+
+    Args:
+        series (pd.Series): Series with data to describe.
+        predictor_spec (PredictorSpec): Predictor specification.
+
+    Returns:
+        dict: dictionary with feature description.
+    """
+
+    if isinstance(predictor_spec, StaticSpec):
+        d = generate_static_feature_description(series, predictor_spec)
+    elif isinstance(predictor_spec, TemporalSpec):
+        d = generate_temporal_feature_description(series, predictor_spec)
+
+    return d
 
 
 def generate_feature_description_df(

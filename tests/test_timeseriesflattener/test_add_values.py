@@ -219,7 +219,7 @@ def test_static_predictor():
             feature_name=feature_name,
             prefix=prefix,
             input_col_name_override=feature_name,
-        )
+        ),
     )
 
     expected_values = pd.DataFrame(
@@ -406,10 +406,11 @@ def test_add_multiple_static_predictors():
     )
 
     flattened_dataset.add_age_and_date_of_birth(
-        input_date_of_birth_col_name="date_of_birth", id2date_of_birth=birthdates_df
+        input_date_of_birth_col_name="date_of_birth",
+        id2date_of_birth=birthdates_df,
     )
     flattened_dataset.add_static_info(
-        static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred")
+        static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred"),
     )
 
     outcome_df = flattened_dataset.df

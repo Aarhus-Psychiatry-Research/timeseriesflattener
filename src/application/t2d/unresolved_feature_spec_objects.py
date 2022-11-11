@@ -114,12 +114,15 @@ class UnresolvedPredictorSpec(UnresolvedTemporalSpec):
 
 
 class UnresolvedLabPredictorSpec(UnresolvedPredictorSpec):
-    """Specification for a single medication predictor, where the df has been resolved."""
+    """Specification for a single medication predictor, where the df has been
+    resolved."""
 
     # Lab results
     # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
     lab_values_to_load: Literal[
-        "all", "numerical", "numerical_and_coerce"
+        "all",
+        "numerical",
+        "numerical_and_coerce",
     ] = "numerical_and_coerce"
 
 

@@ -276,7 +276,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         # Find value_cols and add fallback to them
         df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
-            output_spec.fallback, inplace=False
+            output_spec.fallback,
+            inplace=False,
         )
 
         if verbose:
@@ -497,6 +498,32 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             .sort_index()
         )
 
+    def _check_dfs_have_same_lengths(self, dfs: list[pd.DataFrame]):
+        """Check that all dfs have the same length."""
+        df_lengths = 0
+
+        for feature_df in dfs:
+            if df_lengths == 0:
+                df_lengths = len(feature_df)
+            else:
+                if df_lengths != len(feature_df):
+                    raise ValueError("Dataframes are not of equal length")
+
+    def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
+        """Randomly sample 50 positions in each df and check that their indeces
+        are identical.
+
+        This checks that all the dataframes are aligned before
+        concatenation.
+        """
+        for _ in range(50):
+            random_index = random.randint(0, len(dfs[0]) - 1)
+            for feature_df in dfs[1:]:
+                if dfs[0].index[random_index] != feature_df.index[random_index]:
+                    raise ValueError(
+                        "Dataframes are not of identical index. Were they correctly aligned before concatenation?",
+                    )
+
     def _concatenate_flattened_timeseries(
         self,
         flattened_predictor_dfs: list[pd.DataFrame],
@@ -505,7 +532,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         msg = Printer(timestamp=True)
         msg.info(
-            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal."
+            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
         )
 
         start_time = time.time()
@@ -529,28 +556,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         msg.info("Merging with original df")
         self.df = self.df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
-    def _check_dfs_have_same_lengths(self, dfs: list[pd.DataFrame]):
-        """Check that all dfs have the same length."""
-        df_lengths = 0
-
-        for feature_df in dfs:
-            if df_lengths == 0:
-                df_lengths = len(feature_df)
-            else:
-                if df_lengths != len(feature_df):
-                    raise ValueError("Dataframes are not of equal length")
-
-    def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
-        """Randomly sample 50 positions in each df and check that their indeces are identical.
-        This checks that all the dataframes are aligned before concatenation."""
-        for _ in range(50):
-            random_index = random.randint(0, len(dfs[0]) - 1)
-            for feature_df in dfs[1:]:
-                if dfs[0].index[random_index] != feature_df.index[random_index]:
-                    raise ValueError(
-                        "Dataframes are not of identical index. Were they correctly aligned before concatenation?"
-                    )
-
     def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
         self,
         predictor_specs: list[PredictorSpec],
@@ -562,13 +567,13 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 tqdm.tqdm(
                     p.imap(func=self._get_feature, iterable=predictor_specs),
                     total=len(predictor_specs),
-                )
+                ),
             )
 
         msg.info("Feature generation complete, concatenating")
 
         self._concatenate_flattened_timeseries(
-            flattened_predictor_dfs=flattened_predictor_dfs
+            flattened_predictor_dfs=flattened_predictor_dfs,
         )
 
     def add_age_and_date_of_birth(
@@ -651,7 +656,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 )
             elif len(possible_value_cols) == 0:
                 raise ValueError(
-                    "No value column found in spec.values_df, please check."
+                    "No value column found in spec.values_df, please check.",
                 )
         else:
             value_col_name = static_spec.input_col_name_override

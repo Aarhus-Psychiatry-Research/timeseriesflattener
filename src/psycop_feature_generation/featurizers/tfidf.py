@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     # train TF-IDF on synthetic data
     if SYNTHETIC:
-        test_path = PROJECT_ROOT/"tests" / "test_data"
+        test_path = PROJECT_ROOT / "tests" / "test_data"
         save_dir = test_path / "test_tfidf"
         if not save_dir.exists():
             save_dir.mkdir()

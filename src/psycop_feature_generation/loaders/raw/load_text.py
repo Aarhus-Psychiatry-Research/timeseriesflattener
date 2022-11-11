@@ -15,7 +15,7 @@ from transformers import AutoModel, AutoTokenizer
 from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
 
 from psycop_feature_generation.loaders.raw.sql_load import sql_load
-from psycop_feature_generation.utils import data_loaders, PROJECT_ROOT
+from psycop_feature_generation.utils import PROJECT_ROOT, data_loaders
 
 
 def get_all_valid_note_types() -> set[str]:

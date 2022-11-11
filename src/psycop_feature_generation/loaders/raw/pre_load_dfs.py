@@ -6,9 +6,7 @@ import pandas as pd
 import tqdm
 from wasabi import Printer
 
-from application.t2d.unresolved_feature_spec_objects import (
-    UnresolvedAnySpec,
-)
+from application.t2d.unresolved_feature_spec_objects import UnresolvedAnySpec
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     TemporalSpec,
@@ -17,7 +15,8 @@ from psycop_feature_generation.utils import data_loaders
 
 
 def load_df(
-        loader_fn_name: str, values_to_load: Union[str, None] = None
+    loader_fn_name: str,
+    values_to_load: Union[str, None] = None,
 ) -> pd.DataFrame:
     """Load a dataframe from a SQL database.
 
@@ -73,8 +72,8 @@ def load_df_wrapper(spec: TemporalSpec) -> dict[str, pd.DataFrame]:
 
 
 def error_check_dfs(
-        pre_loaded_dfs: list[dict[str, pd.DataFrame]],
-        subset_duplicates_columns: Union[list, str] = "all",
+    pre_loaded_dfs: list[dict[str, pd.DataFrame]],
+    subset_duplicates_columns: Union[list, str] = "all",
 ) -> None:
     """Error check the pre-loaded dataframes.
 
@@ -107,9 +106,9 @@ def error_check_dfs(
 
 
 def pre_load_unique_dfs(
-        specs: list[UnresolvedAnySpec],
-        subset_duplicates_columns: Union[list, str] = "all",
-        max_workers: int = 16,
+    specs: list[UnresolvedAnySpec],
+    subset_duplicates_columns: Union[list, str] = "all",
+    max_workers: int = 16,
 ) -> dict[str, pd.DataFrame]:
     """Pre-load unique dataframes to avoid duplicate loading.
 
@@ -144,7 +143,7 @@ def pre_load_unique_dfs(
             tqdm.tqdm(
                 p.imap(func=load_df_wrapper, iterable=selected_specs),
                 total=len(selected_specs),
-            )
+            ),
         )
 
         error_check_dfs(

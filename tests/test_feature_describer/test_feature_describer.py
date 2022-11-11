@@ -28,6 +28,7 @@ def predictor_specs(df):
         ),
     ]
 
+
 @pytest.fixture()
 def static_spec(df):
     return [
@@ -36,8 +37,7 @@ def static_spec(df):
             prefix="pred",
             feature_name="hba1c",
         ),
-    ]   
-    
+    ]
 
 
 @pytest.fixture()
@@ -74,7 +74,10 @@ def test_generate_feature_description_row_for_static_spec(
     spec = static_spec[0]
 
     column_name = spec.get_col_str()
-    
-    df.rename(columns={"pred_hba1c_within_100_days_max_fallback_nan": column_name}, inplace=True)
+
+    df.rename(
+        columns={"pred_hba1c_within_100_days_max_fallback_nan": column_name},
+        inplace=True,
+    )
 
     generate_feature_description_row(series=df[column_name], predictor_spec=spec)
