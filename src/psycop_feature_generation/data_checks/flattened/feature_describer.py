@@ -105,41 +105,50 @@ def generate_feature_description_row(
     """
 
     if isinstance(predictor_spec, StaticSpec):
-        d = {
-            "Predictor df": predictor_spec.feature_name,
-            "Lookbehind days": "N/A",
-            "Resolve multiple": "N/A",
-            "N unique": series.nunique(),
-            "Fallback strategy": "N/A",
-            "Proportion missing": series.isna().mean(),
-            "Mean": round(series.mean(), 2),
-            "Histogram": create_unicode_hist(series),
-            "Proportion using fallback": get_value_proportion(
-                series,
-                predictor_spec.fallback,
-            ),
-        }
+        d = generate_static_feature_description(series, predictor_spec)
     elif isinstance(predictor_spec, TemporalSpec):
-        d = {
-            "Predictor df": predictor_spec.feature_name,
-            "Lookbehind days": predictor_spec.interval_days,
-            "Resolve multiple": predictor_spec.resolve_multiple_fn,
-            "N unique": series.nunique(),
-            "Fallback strategy": predictor_spec.fallback,
-            "Proportion missing": series.isna().mean(),
-            "Mean": round(series.mean(), 2),
-            "Histogram": create_unicode_hist(series),
-            "Proportion using fallback": get_value_proportion(
-                series,
-                predictor_spec.fallback,
-            ),
-        }
-
-        for percentile in (0.01, 0.25, 0.5, 0.75, 0.99):
-            # Get the value representing the percentile
-            d[f"{percentile * 100}-percentile"] = round(series.quantile(percentile), 1)
+        d = generate_temporal_feature_description(series, predictor_spec)
 
     return d
+
+
+def generate_temporal_feature_description(
+    series: pd.Series, predictor_spec: TemporalSpec
+):
+    d = {
+        "Predictor df": predictor_spec.feature_name,
+        "Lookbehind days": predictor_spec.interval_days,
+        "Resolve multiple": predictor_spec.resolve_multiple_fn,
+        "N unique": series.nunique(),
+        "Fallback strategy": predictor_spec.fallback,
+        "Proportion missing": series.isna().mean(),
+        "Mean": round(series.mean(), 2),
+        "Histogram": create_unicode_hist(series),
+        "Proportion using fallback": get_value_proportion(
+            series,
+            predictor_spec.fallback,
+        ),
+    }
+
+    for percentile in (0.01, 0.25, 0.5, 0.75, 0.99):
+        # Get the value representing the percentile
+        d[f"{percentile * 100}-percentile"] = round(series.quantile(percentile), 1)
+
+    return d
+
+
+def generate_static_feature_description(series: pd.Series, predictor_spec: StaticSpec):
+    return {
+        "Predictor df": predictor_spec.feature_name,
+        "Lookbehind days": "N/A",
+        "Resolve multiple": "N/A",
+        "N unique": series.nunique(),
+        "Fallback strategy": "N/A",
+        "Proportion missing": series.isna().mean(),
+        "Mean": round(series.mean(), 2),
+        "Histogram": create_unicode_hist(series),
+        "Proportion using fallback": "N/A",
+    }
 
 
 def generate_feature_description_df(
