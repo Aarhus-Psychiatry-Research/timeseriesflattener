@@ -537,45 +537,45 @@ def test_add_temporal_incident_binary_outcome():
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
 
 
-def test_add_tfidf_text_data():
-    prediction_times_str = """dw_ek_borger,timestamp,
-                            746430.0,1970-05-01 00:00:00
-                            765709.0,1971-05-14 22:04:00
-                            """
+# def test_add_tfidf_text_data():
+#     prediction_times_str = """dw_ek_borger,timestamp,
+#                             746430.0,1970-05-01 00:00:00
+#                             765709.0,1971-05-14 22:04:00
+#                             """
 
-    prediction_times_df = str_to_df(prediction_times_str)
+#     prediction_times_df = str_to_df(prediction_times_str)
 
-    flattened_dataset = FlattenedDataset(
-        prediction_times_df=prediction_times_df,
-        timestamp_col_name="timestamp",
-        id_col_name="dw_ek_borger",
-        n_workers=4,
-    )
+#     flattened_dataset = FlattenedDataset(
+#         prediction_times_df=prediction_times_df,
+#         timestamp_col_name="timestamp",
+#         id_col_name="dw_ek_borger",
+#         n_workers=4,
+#     )
 
-    synth_notes_df = data_loaders.get_all()["synth_notes"](featurizer="tfidf")
+#     synth_notes_df = data_loaders.get_all()["synth_notes"](featurizer="tfidf")
 
-    predictor_specs = PredictorGroupSpec(
-        values_df=[synth_notes_df],
-        interval_days=[1, 365, 720],
-        resolve_multiple_fn_name=["min"],
-        fallback=[np.nan],
-        allowed_nan_value_prop=[0],
-        loader_kwargs=[{"featurizer": "tfidf"}],
-        feature_name="tfidf",
-    ).create_combinations()
+#     predictor_specs = PredictorGroupSpec(
+#         values_df=[synth_notes_df],
+#         interval_days=[1, 365, 720],
+#         resolve_multiple_fn_name=["min"],
+#         fallback=[np.nan],
+#         allowed_nan_value_prop=[0],
+#         loader_kwargs=[{"featurizer": "tfidf"}],
+#         feature_name="tfidf",
+#     ).create_combinations()
 
-    flattened_dataset.add_temporal_predictors_from_pred_specs(
-        predictor_specs=predictor_specs,
-    )
+#     flattened_dataset.add_temporal_predictors_from_pred_specs(
+#         predictor_specs=predictor_specs,
+#     )
 
-    outcome_df = flattened_dataset.df
+#     outcome_df = flattened_dataset.df
 
-    assert outcome_df.shape == (2, 33)
+#     assert outcome_df.shape == (2, 33)
 
-    # 20 nas = 2 ids * 10 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
-    assert outcome_df.isna().sum().sum() == 20
+#     # 20 nas = 2 ids * 10 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
+#     assert outcome_df.isna().sum().sum() == 20
 
-    # assert len()
+#     # assert len()
 
 
 # @pytest.mark.slow  # Only run if --runslow is passed to pytest

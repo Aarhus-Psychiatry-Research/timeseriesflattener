@@ -2,6 +2,7 @@
 describing values."""
 import datetime as dt
 import os
+import random
 import time
 from collections.abc import Callable
 from datetime import timedelta
@@ -548,23 +549,20 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self,
         flattened_predictor_dfs: list[pd.DataFrame],
     ):
-        """Concatenate with dask, and show progress bar."""
+        """Concatenate flattened predictor dfs."""
 
         msg = Printer(timestamp=True)
         msg.info("Starting concatenation")
 
         start_time = time.time()
 
-        df_lengths = 0
+        # Check that dfs are ready for concatenation. Concatenation doesn't merge on IDs, but is **much** faster.
+        # We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row
+        # for each id.
+        self._check_dfs_have_identical_indexes(dfs=flattened_predictor_dfs)
+        self._check_dfs_have_same_lengths(dfs=flattened_predictor_dfs)
 
-        for feature_df in flattened_predictor_dfs:
-            if df_lengths == 0:
-                df_lengths = len(feature_df)
-            else:
-                if df_lengths != len(feature_df):
-                    raise ValueError("Dataframes are not of equal length")
-
-        # Ignore_index ignores potential indeces at the level of columns
+        # If so, ready for concatenation. Reset index to be ready for the merge at the end.
         new_features = pd.concat(
             objs=flattened_predictor_dfs,
             axis=1,
@@ -576,6 +574,28 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         msg.info("Merging with original df")
         self.df = self.df.merge(right=new_features, on=self.pred_time_uuid_col_name)
+
+    def _check_dfs_have_same_lengths(self, dfs: list[pd.DataFrame]):
+        """Check that all dfs have the same length."""
+        df_lengths = 0
+
+        for feature_df in dfs:
+            if df_lengths == 0:
+                df_lengths = len(feature_df)
+            else:
+                if df_lengths != len(feature_df):
+                    raise ValueError("Dataframes are not of equal length")
+
+    def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
+        """Randomly sample 50 positions in each df and check that their indeces are identical.
+        This checks that all the dataframes are aligned before concatenation."""
+        for _ in range(50):
+            random_index = random.randint(0, len(dfs[0]) - 1)
+            for feature_df in dfs[1:]:
+                if dfs[0].index[random_index] != feature_df.index[random_index]:
+                    raise ValueError(
+                        "Dataframes are not of identical index. Were they correctly aligned before concatenation?"
+                    )
 
     def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
         self,
