@@ -199,12 +199,16 @@ def test_citizen_without_outcome():
 
 
 def test_static_predictor():
+    prefix = "meta"
+    feature_name = "date_of_birth"
+    output_col_name = f"{prefix}_{feature_name}"
+
     prediction_times_df = """dw_ek_borger,timestamp,
                             1,2021-12-31 00:00:00
                             1,2021-12-31 00:00:01
                             1,2021-12-31 00:00:02
                             """
-    static_predictor = """dw_ek_borger,date_of_birth
+    static_predictor = f"""dw_ek_borger,{feature_name}
                         1,1994-12-31 00:00:01
                         """
 
@@ -212,14 +216,15 @@ def test_static_predictor():
     dataset.add_static_info(
         static_spec=StaticSpec(
             values_df=str_to_df(static_predictor),
-            input_col_name_override="date_of_birth",
-            output_col_name_override="date_of_birth",
+            feature_name=feature_name,
+            prefix=prefix,
+            input_col_name_override=feature_name,
         )
     )
 
     expected_values = pd.DataFrame(
         {
-            "date_of_birth": [
+            output_col_name: [
                 "1994-12-31 00:00:01",
                 "1994-12-31 00:00:01",
                 "1994-12-31 00:00:01",
@@ -228,8 +233,8 @@ def test_static_predictor():
     )
 
     pd.testing.assert_series_equal(
-        left=dataset.df["date_of_birth"].reset_index(drop=True),
-        right=expected_values["date_of_birth"].reset_index(drop=True),
+        left=dataset.df[output_col_name].reset_index(drop=True),
+        right=expected_values[output_col_name].reset_index(drop=True),
         check_dtype=False,
     )
 
