@@ -34,9 +34,11 @@ class UnresolvedAnySpec(BaseModel):
 
         kwargs_dict = self.dict()
 
+        # Infer feature_name from values_lookup_name
+        kwargs_dict["feature_name"] = kwargs_dict["values_lookup_name"]
+
         # Remove the attributes that are not allowed in the outcome specs,
-        # or which will be duplicates because they are manually specified in
-        # the return statement.
+        # or which are inferred in the return statement.
         for redundant_key in (
             "values_df",
             "resolve_multiple_fn",
@@ -46,6 +48,7 @@ class UnresolvedAnySpec(BaseModel):
             if redundant_key in kwargs_dict:
                 kwargs_dict.pop(redundant_key)
 
+        # For classes where the resolve_multiple_fn has already been inferred
         if isinstance(self, UnresolvedPredictorSpec):
             resolve_to_class = PredictorSpec
         elif isinstance(self, UnresolvedOutcomeSpec):
@@ -57,6 +60,7 @@ class UnresolvedAnySpec(BaseModel):
                 values_df=str2df[self.values_lookup_name], **kwargs_dict
             )
 
+        # And for those where inference is still needed
         return resolve_to_class(
             values_df=str2df[self.values_lookup_name],
             resolve_multiple_fn=str2resolve_multiple[self.resolve_multiple_fn_name],
@@ -66,20 +70,22 @@ class UnresolvedAnySpec(BaseModel):
 
 class UnresolvedGroupSpec(MinGroupSpec):
     values_lookup_name: Sequence[str]
-    values_df: Optional[Sequence[pd.DataFrame]]
-    feature_name: Optional[str] = None
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        if not self.feature_name:
-            self.feature_name = self.values_lookup_name
+    # Override defaults from MinGroupSpec that don't make sense for an
+    # unresolved group spec.
+    values_df: Optional[Sequence[pd.DataFrame]]
+    feature_name: Optional[list[str]]
 
 
 class UnresolvedTemporalSpec(UnresolvedAnySpec, TemporalSpec):
     resolve_multiple_fn_name: str
     values_df: Optional[pd.DataFrame] = None
 
-    # Override methods used in init of TemporalSpec
+    # Override the requirement of a feature_name from MinGroupSpec,
+    # not needed for unresolved groups since it can be inferred from
+    # values_lookup_name
+    feature_name: Optional[str] = None
+
     def resolve_multiple_str_to_fn(self):
         pass
 
@@ -106,7 +112,7 @@ class UnresolvedLabPredictorSpec(UnresolvedPredictorSpec):
     ] = "numerical_and_coerce"
 
 
-class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, PredictorGroupSpec):
+class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, MinGroupSpec):
     """Specification for a group of predictors, where the df has not been
     resolved."""
 

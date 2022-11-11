@@ -615,7 +615,7 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
     ).create_combinations()
 
     unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-        values_lookup_name=("weight_in_kg", "height_in_cm", "bmi"),
+        values_lookup_name=["weight_in_kg", "height_in_cm", "bmi"],
         interval_days=interval_days,
         resolve_multiple_fn_name=["latest"],
         fallback=[np.nan],

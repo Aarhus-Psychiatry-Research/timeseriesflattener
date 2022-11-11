@@ -141,18 +141,18 @@ class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
     ahead or behind."""
 
-    values_df: Sequence[pd.DataFrame]
+    values_df: list[pd.DataFrame]
     feature_name: str
     input_col_name_override: Optional[str] = None
     output_col_name_override: Optional[str] = None
 
-    interval_days: Sequence[Union[int, float]]
-    resolve_multiple_fn_name: Sequence[str]
-    fallback: Sequence[Union[Callable, str]]
+    interval_days: list[Union[int, float]]
+    resolve_multiple_fn_name: list[str]
+    fallback: list[Union[Callable, str]]
 
-    allowed_nan_value_prop: Sequence[float] = [0.0]
+    allowed_nan_value_prop: list[float] = [0.0]
 
-    loader_kwargs: Optional[Sequence[dict]] = None
+    loader_kwargs: Optional[list[dict]] = None
 
 
 def create_feature_combinations_from_dict(
@@ -171,8 +171,10 @@ def create_feature_combinations_from_dict(
     # Make all elements iterable
     d = {k: v if isinstance(v, (list, tuple)) else [v] for k, v in d.items()}
     keys, values = zip(*d.items())
+
     # Create all combinations of top level elements
     permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
+
     return permutations_dicts
 
 
@@ -184,6 +186,7 @@ def create_specs_from_group(
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
     feature_group_spec_dict = feature_group_spec.__dict__
+
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
 
     return [output_class(**d) for d in permuted_dicts]
