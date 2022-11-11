@@ -5,13 +5,13 @@ from typing import Literal, Optional, Sequence
 import pandas as pd
 
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    AnySpec,
     BaseModel,
     MinGroupSpec,
     OutcomeGroupSpec,
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
-    StaticSpec,
     TemporalSpec,
     create_specs_from_group,
 )
@@ -61,7 +61,7 @@ class UnresolvedAnySpec(BaseModel):
         elif isinstance(self, UnresolvedOutcomeSpec):
             resolve_to_class = OutcomeSpec
         elif isinstance(self, UnresolvedStaticSpec):
-            resolve_to_class = StaticSpec
+            resolve_to_class = AnySpec
 
             if self.output_col_name_override:
                 kwargs_dict["feature_name"] = self.output_col_name_override

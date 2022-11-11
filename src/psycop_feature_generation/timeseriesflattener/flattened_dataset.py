@@ -24,7 +24,6 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     AnySpec,
     OutcomeSpec,
     PredictorSpec,
-    StaticSpec,
     TemporalSpec,
 )
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
@@ -552,7 +551,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         """Concatenate flattened predictor dfs."""
 
         msg = Printer(timestamp=True)
-        msg.info("Starting concatenation")
+        msg.info(
+            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal."
+        )
 
         start_time = time.time()
 
@@ -649,7 +650,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         output_age_col_name = f"{output_prefix}_age_in_years"
 
         self.add_static_info(
-            static_spec=StaticSpec(
+            static_spec=AnySpec(
                 values_df=id2date_of_birth,
                 input_col_name_override=input_date_of_birth_col_name,
                 prefix=output_prefix,
@@ -669,7 +670,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
     def add_static_info(
         self,
-        static_spec: StaticSpec,
+        static_spec: AnySpec,
     ):
         """Add static info to each prediction time, e.g. age, sex etc.
 
@@ -702,7 +703,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         else:
             value_col_name = static_spec.input_col_name_override
 
-        output_col_name = f"{static_spec.prefix}_{value_col_name}"
+        if static_spec.feature_name is None:
+            output_col_name = f"{static_spec.prefix}_{value_col_name}"
+        elif static_spec.feature_name:
+            output_col_name = f"{static_spec.prefix}_{static_spec.feature_name}"
 
         df = pd.DataFrame(
             {
@@ -830,9 +834,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
         )
 
-        self.df = pd.concat(
-            objs=[self.df, df],
-            axis=1,
+        self.df = self.df.merge(
+            right=df,
+            on=self.pred_time_uuid_col_name,
+            validate="1:1",
         )
 
     @staticmethod

@@ -11,10 +11,10 @@ from psycop_feature_generation.loaders.raw.load_text import (  # noqa pylint: di
 )
 from psycop_feature_generation.timeseriesflattener import FlattenedDataset
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    AnySpec,
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
-    StaticSpec,
 )
 from psycop_feature_generation.utils import data_loaders
 from psycop_feature_generation.utils_for_testing import (
@@ -214,7 +214,7 @@ def test_static_predictor():
 
     dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
     dataset.add_static_info(
-        static_spec=StaticSpec(
+        static_spec=AnySpec(
             values_df=str_to_df(static_predictor),
             feature_name=feature_name,
             prefix=prefix,
@@ -409,7 +409,7 @@ def test_add_multiple_static_predictors():
         input_date_of_birth_col_name="date_of_birth", id2date_of_birth=birthdates_df
     )
     flattened_dataset.add_static_info(
-        static_spec=StaticSpec(values_df=male_df, feature_name="male", prefix="pred")
+        static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred")
     )
 
     outcome_df = flattened_dataset.df
