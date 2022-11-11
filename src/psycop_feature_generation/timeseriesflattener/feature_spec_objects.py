@@ -1,8 +1,7 @@
 """Templates for feature specifications."""
 
 import itertools
-from abc import abstractmethod
-from typing import Callable, Iterable, Literal, Optional, Sequence, Union
+from typing import Callable, Optional, Sequence, Union
 
 import pandas as pd
 from pydantic import BaseModel as PydanticBaseModel
