@@ -207,7 +207,7 @@ def from_physical_visits(
             n_rows=n_rows_per_df,
             **kwargs,
         )
-        for source_name, kwargs in diagnoses_source_table_info.items()
+        for _, kwargs in diagnoses_source_table_info.items()
     ]
 
     df = pd.concat(dfs).drop_duplicates(
