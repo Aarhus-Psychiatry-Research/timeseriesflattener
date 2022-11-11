@@ -548,7 +548,9 @@ def create_unresolved_specs() -> dict[str, list[UnresolvedAnySpec]]:
 
     unresolved_specs["static_predictors"] = [
         UnresolvedStaticSpec(
-            values_lookup_name="sex_female", input_col_name_override="sex_female", prefix="pred_"
+            values_lookup_name="sex_female",
+            input_col_name_override="sex_female",
+            prefix="pred_",
         )
     ]
 
@@ -570,7 +572,7 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
         interval_days=[9999],
         resolve_multiple_fn_name=["count"],
         allowed_nan_value_prop=allowed_nan_value_prop,
-        output_col_name_override="eval_hba1c_count_within_9999_days",
+        prefix="eval",
     ).create_combinations()
 
     unresolved_temporal_predictor_specs += UnresolvedLabPredictorGroupSpec(

@@ -127,6 +127,8 @@ class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, MinGroupSpec):
     """Specification for a group of predictors, where the df has not been
     resolved."""
 
+    prefix: str = "pred"
+
     def create_combinations(self):
         return create_specs_from_group(
             feature_group_spec=self,
@@ -173,4 +175,5 @@ class UnresolvedOutcomeGroupSpec(UnresolvedGroupSpec, OutcomeGroupSpec):
 class UnresolvedStaticSpec(UnresolvedAnySpec):
     """Specification for a static feature, where the df has not been
     resolved."""
+
     prefix: str = "pred"
