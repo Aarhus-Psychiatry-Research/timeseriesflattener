@@ -620,48 +620,52 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     def add_age_and_date_of_birth(
         self,
         id2date_of_birth: DataFrame,
-        date_of_birth_col_name: Optional[str] = "date_of_birth",
+        input_date_of_birth_col_name: Optional[str] = "date_of_birth",
+        output_prefix: str = "eval",
     ):
         """Add age at prediction time to each prediction time.
 
         Args:
             id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
             date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
-            Defaults to "date_of_birth".
+                Defaults to "date_of_birth".
 
         Raises:
             ValueError: _description_
         """
-        if id2date_of_birth[date_of_birth_col_name].dtype != "<M8[ns]":
+        if id2date_of_birth[input_date_of_birth_col_name].dtype != "<M8[ns]":
             try:
-                id2date_of_birth[date_of_birth_col_name] = pd.to_datetime(
-                    id2date_of_birth[date_of_birth_col_name],
+                id2date_of_birth[input_date_of_birth_col_name] = pd.to_datetime(
+                    id2date_of_birth[input_date_of_birth_col_name],
                     format="%Y-%m-%d",
                 )
             except Exception as e:
                 raise ValueError(
-                    f"Conversion of {date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
+                    f"Conversion of {input_date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
                 ) from e
+
+        output_date_of_birth_name = input_date_of_birth_col_name
+        output_date_of_birth_col_name = f"{output_prefix}_{output_date_of_birth_name}"
+        output_age_col_name = f"{output_prefix}_age_in_years"
 
         self.add_static_info(
             static_spec=StaticSpec(
                 values_df=id2date_of_birth,
-                input_col_name_override=date_of_birth_col_name,
+                input_col_name_override=input_date_of_birth_col_name,
                 prefix="eval",
                 # We typically don't want to use date of birth as a predictor,
                 # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
-                feature_name=date_of_birth_col_name,
+                feature_name=output_date_of_birth_name,
             ),
         )
 
-        age = (
+        self.df[output_age_col_name] = (
             (
-                self.df[self.timestamp_col_name] - self.df[f"{date_of_birth_col_name}"]
+                self.df[self.timestamp_col_name]
+                - self.df[f"{output_date_of_birth_col_name}"]
             ).dt.days
             / (365.25)
         ).round(2)
-
-        self.df[f"{self.predictor_col_name_prefix}_age_in_years"] = age
 
     def add_static_info(
         self,
