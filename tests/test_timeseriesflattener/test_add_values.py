@@ -250,14 +250,18 @@ def test_add_age():
                         """
 
     dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
+
+    output_prefix = "eval"
+
     dataset.add_age_and_date_of_birth(
         id2date_of_birth=str_to_df(static_predictor),
-        date_of_birth_col_name="date_of_birth",
+        input_date_of_birth_col_name="date_of_birth",
+        output_prefix=output_prefix,
     )
 
     expected_values = pd.DataFrame(
         {
-            "pred_age_in_years": [
+            f"{output_prefix}_age_in_years": [
                 0.0,
                 27.0,
                 27.0,
@@ -266,8 +270,8 @@ def test_add_age():
     )
 
     pd.testing.assert_series_equal(
-        left=dataset.df["pred_age_in_years"].reset_index(drop=True),
-        right=expected_values["pred_age_in_years"].reset_index(drop=True),
+        left=dataset.df["eval_age_in_years"].reset_index(drop=True),
+        right=expected_values[f"{output_prefix}_age_in_years"].reset_index(drop=True),
         check_dtype=False,
     )
 
@@ -287,7 +291,7 @@ def test_add_age_error():
     with pytest.raises(ValueError):
         dataset.add_age_and_date_of_birth(
             id2date_of_birth=str_to_df(static_predictor),
-            date_of_birth_col_name="date_of_birth",
+            input_date_of_birth_col_name="date_of_birth",
         )
 
 
@@ -402,7 +406,7 @@ def test_add_multiple_static_predictors():
     )
 
     flattened_dataset.add_age_and_date_of_birth(
-        date_of_birth_col_name="date_of_birth", id2date_of_birth=birthdates_df
+        input_date_of_birth_col_name="date_of_birth", id2date_of_birth=birthdates_df
     )
     flattened_dataset.add_static_info(static_spec=StaticSpec(values_df=male_df))
 
