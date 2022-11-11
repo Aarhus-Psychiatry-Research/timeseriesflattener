@@ -46,10 +46,8 @@ from psycop_feature_generation.timeseriesflattener.unresolved_feature_spec_objec
     UnresolvedLabPredictorSpec,
     UnresolvedOutcomeGroupSpec,
     UnresolvedOutcomeSpec,
-    UnresolvedPredictorGroupSpec,
     UnresolvedPredictorSpec,
     UnresolvedStaticSpec,
-    UnresolvedTemporalSpec,
 )
 from psycop_feature_generation.utils import (
     FEATURE_SETS_PATH,
@@ -231,7 +229,7 @@ def split_and_save_to_disk(
         msg.good(f"{dataset_name}: Succesfully saved to {file_path}")
 
 
-def add_metadata(
+def add_metadata_to_ds(
     specs: list[AnySpec],
     flattened_dataset: FlattenedDataset,
 ) -> FlattenedDataset:
@@ -256,7 +254,7 @@ def add_metadata(
     return flattened_dataset
 
 
-def add_outcomes(
+def add_outcomes_to_ds(
     flattened_dataset: FlattenedDataset,
     outcome_specs: list[OutcomeSpec],
 ) -> FlattenedDataset:
@@ -281,7 +279,7 @@ def add_outcomes(
     return flattened_dataset
 
 
-def add_predictors(
+def add_predictors_to_ds(
     temporal_predictor_specs: list[PredictorSpec],
     static_predictor_specs: list[AnySpec],
     birthdays: pd.DataFrame,
@@ -362,17 +360,17 @@ def create_full_flattened_dataset(
     )
 
     # Outcome
-    flattened_dataset = add_metadata(
+    flattened_dataset = add_metadata_to_ds(
         flattened_dataset=flattened_dataset,
         specs=metadata_specs,
     )
 
-    flattened_dataset = add_outcomes(
+    flattened_dataset = add_outcomes_to_ds(
         outcome_specs=outcome_specs,
         flattened_dataset=flattened_dataset,
     )
 
-    flattened_dataset = add_predictors(
+    flattened_dataset = add_predictors_to_ds(
         temporal_predictor_specs=temporal_predictor_specs,
         static_predictor_specs=static_predictor_specs,
         flattened_dataset=flattened_dataset,
@@ -485,9 +483,9 @@ class ResolvedSpecSet(BaseModel):
     """A set of resolved specs, ready for flattening."""
 
     temporal_predictors: list[PredictorSpec]
-    static_predictors: list[AnySpec]
+    static_predictors: list[StaticSpec]
     outcomes: list[OutcomeSpec]
-    metadata: list[AnySpec]
+    metadata: list[Union[StaticSpec, TemporalSpec]]
 
 
 class UnresolvedSpecSet(BaseModel):

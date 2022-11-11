@@ -2,6 +2,7 @@
 df."""
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -12,7 +13,10 @@ from psycop_feature_generation.loaders.flattened.local_feature_loaders import (
     load_split_predictors,
 )
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    AnySpec,
     PredictorSpec,
+    StaticSpec,
+    TemporalSpec,
 )
 
 UNICODE_HIST = {
@@ -88,7 +92,7 @@ def create_unicode_hist(series: pd.Series) -> pd.Series:
 
 def generate_feature_description_row(
     series: pd.Series,
-    predictor_spec: PredictorSpec,
+    predictor_spec: AnySpec,
 ) -> dict:
     """Generate a row with feature description.
 
@@ -100,24 +104,40 @@ def generate_feature_description_row(
         dict: dictionary with feature description.
     """
 
-    d = {
-        "Predictor df": predictor_spec.feature_name,
-        "Lookbehind days": predictor_spec.interval_days,
-        "Resolve multiple": predictor_spec.resolve_multiple_fn,
-        "N unique": series.nunique(),
-        "Fallback strategy": predictor_spec.fallback,
-        "Proportion missing": series.isna().mean(),
-        "Mean": round(series.mean(), 2),
-        "Histogram": create_unicode_hist(series),
-        "Proportion using fallback": get_value_proportion(
-            series,
-            predictor_spec.fallback,
-        ),
-    }
+    if isinstance(predictor_spec, StaticSpec):
+        d = {
+            "Predictor df": predictor_spec.feature_name,
+            "Lookbehind days": "N/A",
+            "Resolve multiple": "N/A",
+            "N unique": series.nunique(),
+            "Fallback strategy": "N/A",
+            "Proportion missing": series.isna().mean(),
+            "Mean": round(series.mean(), 2),
+            "Histogram": create_unicode_hist(series),
+            "Proportion using fallback": get_value_proportion(
+                series,
+                predictor_spec.fallback,
+            ),
+        }
+    elif isinstance(predictor_spec, TemporalSpec):
+        d = {
+            "Predictor df": predictor_spec.feature_name,
+            "Lookbehind days": predictor_spec.interval_days,
+            "Resolve multiple": predictor_spec.resolve_multiple_fn,
+            "N unique": series.nunique(),
+            "Fallback strategy": predictor_spec.fallback,
+            "Proportion missing": series.isna().mean(),
+            "Mean": round(series.mean(), 2),
+            "Histogram": create_unicode_hist(series),
+            "Proportion using fallback": get_value_proportion(
+                series,
+                predictor_spec.fallback,
+            ),
+        }
 
-    for percentile in (0.01, 0.25, 0.5, 0.75, 0.99):
-        # Get the value representing the percentile
-        d[f"{percentile * 100}-percentile"] = round(series.quantile(percentile), 1)
+        for percentile in (0.01, 0.25, 0.5, 0.75, 0.99):
+            # Get the value representing the percentile
+            d[f"{percentile * 100}-percentile"] = round(series.quantile(percentile), 1)
 
     return d
 
@@ -159,7 +179,7 @@ def generate_feature_description_df(
 
 def save_feature_description_from_dir(
     feature_set_dir: Path,
-    feature_specs: list[PredictorSpec],
+    feature_specs: list[Union[TemporalSpec, StaticSpec]],
     file_suffix: str,
     splits: Sequence[str] = ("train",),
     out_dir: Path = None,
