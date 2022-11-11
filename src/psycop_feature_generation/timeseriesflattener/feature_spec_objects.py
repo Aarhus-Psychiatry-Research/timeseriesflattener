@@ -134,7 +134,6 @@ class OutcomeSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "outc"
-    col_main: str = "value"
     incident: bool
 
     def is_dichotomous(self) -> bool:

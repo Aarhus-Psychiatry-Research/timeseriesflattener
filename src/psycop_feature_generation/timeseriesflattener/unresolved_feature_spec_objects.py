@@ -156,7 +156,6 @@ class UnresolvedOutcomeSpec(UnresolvedTemporalSpec):
     """Specification for a single outcome."""
 
     prefix: str = "outc"
-    col_main: str = "value"
     incident: bool
 
 
