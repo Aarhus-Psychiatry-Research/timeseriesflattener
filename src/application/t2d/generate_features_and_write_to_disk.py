@@ -548,7 +548,7 @@ def create_unresolved_specs() -> dict[str, list[UnresolvedAnySpec]]:
 
     unresolved_specs["static_predictors"] = [
         UnresolvedStaticSpec(
-            values_lookup_name="sex_female", input_col_name_override="sex_female"
+            values_lookup_name="sex_female", input_col_name_override="sex_female", prefix="pred_"
         )
     ]
 
@@ -564,12 +564,13 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
     unresolved_temporal_predictor_specs: list[UnresolvedPredictorSpec] = []
 
     unresolved_temporal_predictor_specs += UnresolvedLabPredictorGroupSpec(
-        values_lookup_name=("hba1c",),
+        values_lookup_name=["hba1c"],
         fallback=[np.nan],
         lab_values_to_load=["numerical_and_coerce"],
         interval_days=[9999],
         resolve_multiple_fn_name=["count"],
         allowed_nan_value_prop=allowed_nan_value_prop,
+        output_col_name_override="eval_hba1c_count_within_9999_days",
     ).create_combinations()
 
     unresolved_temporal_predictor_specs += UnresolvedLabPredictorGroupSpec(
@@ -606,21 +607,21 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
-    unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-        values_lookup_name=("antipsychotics",),
-        interval_days=interval_days,
-        resolve_multiple_fn_name=resolve_multiple,
-        fallback=[0],
-        allowed_nan_value_prop=allowed_nan_value_prop,
-    ).create_combinations()
+    # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
+    #     values_lookup_name=("antipsychotics",),
+    #     interval_days=interval_days,
+    #     resolve_multiple_fn_name=resolve_multiple,
+    #     fallback=[0],
+    #     allowed_nan_value_prop=allowed_nan_value_prop,
+    # ).create_combinations()
 
-    unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-        values_lookup_name=["weight_in_kg", "height_in_cm", "bmi"],
-        interval_days=interval_days,
-        resolve_multiple_fn_name=["latest"],
-        fallback=[np.nan],
-        allowed_nan_value_prop=allowed_nan_value_prop,
-    ).create_combinations()
+    # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
+    #     values_lookup_name=["weight_in_kg", "height_in_cm", "bmi"],
+    #     interval_days=interval_days,
+    #     resolve_multiple_fn_name=["latest"],
+    #     fallback=[np.nan],
+    #     allowed_nan_value_prop=allowed_nan_value_prop,
+    # ).create_combinations()
 
     return unresolved_temporal_predictor_specs
 

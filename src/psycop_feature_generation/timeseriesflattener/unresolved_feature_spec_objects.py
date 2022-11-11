@@ -37,13 +37,20 @@ class UnresolvedAnySpec(BaseModel):
         # Infer feature_name from values_lookup_name
         kwargs_dict["feature_name"] = kwargs_dict["values_lookup_name"]
 
-        # Remove the attributes that are not allowed in the outcome specs,
+        # Remove the attributes that are not allowed in the resolve_to_class,
         # or which are inferred in the return statement.
+
+        # This implementation is super brittle - whenever a new key is added to
+        # any class that is resolved, but which isn't added to feature_spec_objects,
+        # it breaks. Alternative ideas are very welcome.
+        # We can get around it by allowing extras (e.g. attributes which aren't specified) in the feature_spec_objects,
+        # but that leaves us open to typos.
         for redundant_key in (
             "values_df",
             "resolve_multiple_fn",
             "lab_values_to_load",
             "values_lookup_name",
+            "output_col_name_override",
         ):
             if redundant_key in kwargs_dict:
                 kwargs_dict.pop(redundant_key)
@@ -55,6 +62,10 @@ class UnresolvedAnySpec(BaseModel):
             resolve_to_class = OutcomeSpec
         elif isinstance(self, UnresolvedStaticSpec):
             resolve_to_class = StaticSpec
+
+            if self.output_col_name_override:
+                kwargs_dict["feature_name"] = self.output_col_name_override
+                kwargs_dict["prefix"] = ""
 
             return resolve_to_class(
                 values_df=str2df[self.values_lookup_name], **kwargs_dict
@@ -162,3 +173,4 @@ class UnresolvedOutcomeGroupSpec(UnresolvedGroupSpec, OutcomeGroupSpec):
 class UnresolvedStaticSpec(UnresolvedAnySpec):
     """Specification for a static feature, where the df has not been
     resolved."""
+    prefix: str = "pred"

@@ -1,6 +1,7 @@
 """Templates for feature specifications."""
 
 import itertools
+from abc import abstractmethod
 from typing import Callable, Iterable, Literal, Optional, Sequence, Union
 
 import pandas as pd
@@ -30,13 +31,23 @@ class AnySpec(BaseModel):
     """
 
     values_df: pd.DataFrame
+    feature_name: str
+    prefix: str
+    # Used for column name generation, e.g. pred_<feature_name>.
 
     input_col_name_override: Optional[str] = None
     # An override for the input column name. If None, will attempt
     # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
 
-    output_col_name_override: Optional[str] = None
-    # If none, will output pred_<input_col_name>
+    def get_col_str(self) -> str:
+        """."""
+        col_str = f"{self.prefix}_{self.feature_name}"
+
+        if isinstance(self, OutcomeSpec):
+            if self.is_dichotomous():
+                col_str += "_dichotomous"
+
+        return col_str
 
 
 class StaticSpec(AnySpec):
@@ -65,7 +76,7 @@ class TemporalSpec(AnySpec):
     allowed_nan_value_prop: float = 0.0
 
     # Input col names
-    prefix: Optional[str] = None
+    prefix: str
     id_col_name: str = "dw_ek_borger"
     timestamp_col_name: str = "timestamp"
 
@@ -87,12 +98,7 @@ class TemporalSpec(AnySpec):
 
     def get_col_str(self, col_main_override: Optional[str] = None) -> str:
         """."""
-        if self.output_col_name_override:
-            return self.output_col_name_override
-
-        col_main = col_main_override if col_main_override else self.feature_name
-
-        col_str = f"{self.prefix}_{col_main}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
 
         if isinstance(self, OutcomeSpec):
             if self.is_dichotomous():
@@ -189,7 +195,7 @@ def create_specs_from_group(
 
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
 
-    return [output_class(**d) for d in permuted_dicts]
+    return [output_class(**d) for d in permuted_dicts]  # type: ignore
 
 
 class PredictorGroupSpec(MinGroupSpec):

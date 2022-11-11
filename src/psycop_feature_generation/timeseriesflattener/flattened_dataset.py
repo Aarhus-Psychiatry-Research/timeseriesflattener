@@ -647,7 +647,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             static_spec=StaticSpec(
                 values_df=id2date_of_birth,
                 input_col_name_override=date_of_birth_col_name,
-                output_col_name_override=date_of_birth_col_name,
+                prefix="eval",
+                # We typically don't want to use date of birth as a predictor,
+                # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
+                feature_name=date_of_birth_col_name,
             ),
         )
 
@@ -695,10 +698,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         else:
             value_col_name = static_spec.input_col_name_override
 
-        if static_spec.output_col_name_override is None:
-            output_col_name = f"pred_{value_col_name}"
-        else:
-            output_col_name = f"{static_spec.output_col_name_override}"
+        output_col_name = f"{static_spec}_{value_col_name}"
 
         df = pd.DataFrame(
             {
