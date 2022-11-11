@@ -150,7 +150,6 @@ class MinGroupSpec(BaseModel):
     values_df: list[pd.DataFrame]
     feature_name: str
     input_col_name_override: Optional[str] = None
-    output_col_name_override: Optional[str] = None
 
     interval_days: list[Union[int, float]]
     resolve_multiple_fn_name: list[str]

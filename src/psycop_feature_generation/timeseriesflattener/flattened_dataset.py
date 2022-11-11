@@ -698,7 +698,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         else:
             value_col_name = static_spec.input_col_name_override
 
-        output_col_name = f"{static_spec}_{value_col_name}"
+        output_col_name = f"{static_spec.prefix}_{value_col_name}"
 
         df = pd.DataFrame(
             {
