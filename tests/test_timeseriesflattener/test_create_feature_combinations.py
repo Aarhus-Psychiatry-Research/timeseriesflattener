@@ -3,6 +3,9 @@
 # pylint: disable=missing-function-docstring
 import numpy as np
 
+from application.t2d.unresolved_feature_spec_objects import (
+    UnresolvedPredictorGroupSpec,
+)
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
     synth_predictor_float,
 )
@@ -10,25 +13,22 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
     PredictorSpec,
 )
-from psycop_feature_generation.timeseriesflattener.unresolved_feature_spec_objects import (
-    UnresolvedPredictorGroupSpec,
-)
 
 
 def test_skip_all_if_no_need_to_process():
     assert (
-        len(
-            PredictorGroupSpec(
-                values_df=[synth_predictor_float()],
-                input_col_name_override="val",
-                interval_days=[1],
-                resolve_multiple_fn_name=["max"],
-                fallback=[0],
-                allowed_nan_value_prop=[0.5],
-                feature_name="value",
-            ).create_combinations(),
-        )
-        == 1
+            len(
+                PredictorGroupSpec(
+                    values_df=[synth_predictor_float()],
+                    input_col_name_override="val",
+                    interval_days=[1],
+                    resolve_multiple_fn_name=["max"],
+                    fallback=[0],
+                    allowed_nan_value_prop=[0.5],
+                    feature_name="value",
+                ).create_combinations(),
+            )
+            == 1
     )
 
 

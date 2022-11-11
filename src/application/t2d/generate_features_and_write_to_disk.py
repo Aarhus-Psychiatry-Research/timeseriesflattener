@@ -18,6 +18,15 @@ import wandb
 from wasabi import Printer
 
 import psycop_feature_generation.loaders.raw  # noqa
+from application.t2d.unresolved_feature_spec_objects import (
+    UnresolvedAnySpec,
+    UnresolvedLabPredictorGroupSpec,
+    UnresolvedLabPredictorSpec,
+    UnresolvedOutcomeGroupSpec,
+    UnresolvedOutcomeSpec,
+    UnresolvedPredictorSpec,
+    UnresolvedStaticSpec,
+)
 from psycop_feature_generation.data_checks.flattened.data_integrity import (
     save_feature_set_integrity_from_dir,
 )
@@ -40,15 +49,6 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
-from psycop_feature_generation.timeseriesflattener.unresolved_feature_spec_objects import (
-    UnresolvedAnySpec,
-    UnresolvedLabPredictorGroupSpec,
-    UnresolvedLabPredictorSpec,
-    UnresolvedOutcomeGroupSpec,
-    UnresolvedOutcomeSpec,
-    UnresolvedPredictorSpec,
-    UnresolvedStaticSpec,
-)
 from psycop_feature_generation.utils import (
     FEATURE_SETS_PATH,
     PROJECT_ROOT,
@@ -65,9 +65,9 @@ def finish_wandb(run: wandb.wandb_sdk.wandb_run.Run):
 
 
 def init_wandb(
-    wandb_project_name: str,
-    predictor_specs: Sequence[PredictorSpec],
-    save_dir: Union[Path, str],
+        wandb_project_name: str,
+        predictor_specs: Sequence[PredictorSpec],
+        save_dir: Union[Path, str],
 ) -> wandb.wandb_sdk.wandb_run.Run:
     """Initialise wandb logging. Allows to use wandb to track progress, send
     Slack notifications if failing, and track logs.
@@ -102,12 +102,12 @@ def init_wandb(
 
 
 def save_feature_set_description_to_disk(
-    predictor_specs: list,
-    flattened_dataset_file_dir: Path,
-    out_dir: Path,
-    file_suffix: str,
-    describe_splits: bool = True,
-    compare_splits: bool = True,
+        predictor_specs: list,
+        flattened_dataset_file_dir: Path,
+        out_dir: Path,
+        file_suffix: str,
+        describe_splits: bool = True,
+        compare_splits: bool = True,
 ):
     """Describe output.
 
@@ -143,8 +143,8 @@ def save_feature_set_description_to_disk(
 
 
 def create_save_dir_path(
-    proj_path: Path,
-    feature_set_id: str,
+        proj_path: Path,
+        feature_set_id: str,
 ) -> Path:
     """Create save directory.
 
@@ -167,12 +167,12 @@ def create_save_dir_path(
 
 
 def split_and_save_to_disk(
-    flattened_df: pd.DataFrame,
-    out_dir: Path,
-    file_prefix: str,
-    file_suffix: str,
-    split_ids_dict: Optional[dict[str, pd.Series]] = None,
-    splits: Optional[list[str]] = None,
+        flattened_df: pd.DataFrame,
+        out_dir: Path,
+        file_prefix: str,
+        file_suffix: str,
+        split_ids_dict: Optional[dict[str, pd.Series]] = None,
+        splits: Optional[list[str]] = None,
 ):
     """Split and save to disk.
 
@@ -230,8 +230,8 @@ def split_and_save_to_disk(
 
 
 def add_metadata_to_ds(
-    specs: list[AnySpec],
-    flattened_dataset: FlattenedDataset,
+        specs: list[AnySpec],
+        flattened_dataset: FlattenedDataset,
 ) -> FlattenedDataset:
     """Add metadata.
 
@@ -255,8 +255,8 @@ def add_metadata_to_ds(
 
 
 def add_outcomes_to_ds(
-    flattened_dataset: FlattenedDataset,
-    outcome_specs: list[OutcomeSpec],
+        flattened_dataset: FlattenedDataset,
+        outcome_specs: list[OutcomeSpec],
 ) -> FlattenedDataset:
     """Add outcomes.
 
@@ -280,10 +280,10 @@ def add_outcomes_to_ds(
 
 
 def add_predictors_to_ds(
-    temporal_predictor_specs: list[PredictorSpec],
-    static_predictor_specs: list[AnySpec],
-    birthdays: pd.DataFrame,
-    flattened_dataset: FlattenedDataset,
+        temporal_predictor_specs: list[PredictorSpec],
+        static_predictor_specs: list[AnySpec],
+        birthdays: pd.DataFrame,
+        flattened_dataset: FlattenedDataset,
 ):
     """Add predictors.
 
@@ -323,13 +323,13 @@ def add_predictors_to_ds(
 
 
 def create_full_flattened_dataset(
-    prediction_times: pd.DataFrame,
-    birthdays: pd.DataFrame,
-    metadata_specs: list[AnySpec],
-    temporal_predictor_specs: list[PredictorSpec],
-    static_predictor_specs: list[AnySpec],
-    outcome_specs: list[OutcomeSpec],
-    proj_path: Path,
+        prediction_times: pd.DataFrame,
+        birthdays: pd.DataFrame,
+        metadata_specs: list[AnySpec],
+        temporal_predictor_specs: list[PredictorSpec],
+        static_predictor_specs: list[AnySpec],
+        outcome_specs: list[OutcomeSpec],
+        proj_path: Path,
 ) -> pd.DataFrame:
     """Create flattened dataset.
 
@@ -381,9 +381,9 @@ def create_full_flattened_dataset(
 
 
 def setup_for_main(
-    n_predictors: int,
-    feature_sets_path: Path,
-    proj_name: str,
+        n_predictors: int,
+        feature_sets_path: Path,
+        proj_name: str,
 ) -> tuple[Path, str]:
     """Setup for main.
 
@@ -408,8 +408,8 @@ def setup_for_main(
 
 
 def main(
-    proj_name: str,
-    feature_sets_path: Path,
+        proj_name: str,
+        feature_sets_path: Path,
 ):
     """Main function for loading, generating and evaluating a flattened
     dataset.
@@ -440,9 +440,9 @@ def main(
 
     pre_loaded_dfs = pre_load_unique_dfs(
         specs=unresolved_specs.static_predictors
-        + unresolved_specs.temporal_predictors
-        + unresolved_specs.metadata
-        + unresolved_specs.outcomes
+              + unresolved_specs.temporal_predictors
+              + unresolved_specs.metadata
+              + unresolved_specs.outcomes
     )
 
     resolved_specs = resolve_specifications(
@@ -468,7 +468,7 @@ def main(
 
     save_feature_set_description_to_disk(
         predictor_specs=resolved_specs.temporal_predictors
-        + resolved_specs.static_predictors,
+                        + resolved_specs.static_predictors,
         flattened_dataset_file_dir=out_dir,
         out_dir=out_dir,
         file_suffix="parquet",
@@ -498,8 +498,8 @@ class UnresolvedSpecSet(BaseModel):
 
 
 def resolve_specifications(
-    pre_loaded_dfs: dict[str, pd.DataFrame],
-    unresolved_specs: UnresolvedSpecSet,
+        pre_loaded_dfs: dict[str, pd.DataFrame],
+        unresolved_specs: UnresolvedSpecSet,
 ) -> ResolvedSpecSet:
     resolved_spec_set: dict[str, list[AnySpec]] = defaultdict(list)
 

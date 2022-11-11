@@ -25,14 +25,13 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
     TemporalSpec,
 )
+from psycop_feature_generation.timeseriesflattener.flattened_ds_validator import (
+    ValidateInitFlattenedDataset,
+)
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_fns,
 )
-from psycop_feature_generation.utils import (
-    df_contains_duplicates,
-    load_dataset_from_file,
-    write_df_to_file,
-)
+from psycop_feature_generation.utils import load_dataset_from_file, write_df_to_file
 
 ProgressBar().register()
 
@@ -40,57 +39,14 @@ ProgressBar().register()
 class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     """Turn a set of time-series into tabular prediction-time data."""
 
-    def _check_timestamp_col_type(self):
-        """Check that the timestamp column is of type datetime."""
-        timestamp_col_type = type(self.df[self.timestamp_col_name][0]).__name__
-
-        if timestamp_col_type not in ["Timestamp"]:
-            try:
-                self.df[self.timestamp_col_name] = pd.to_datetime(
-                    self.df[self.timestamp_col_name],
-                )
-            except Exception as exc:
-                raise ValueError(
-                    f"prediction_times_df: {self.timestamp_col_name} is of type {timestamp_col_type}, and could not be converted to 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset. More info: {exc}",
-                ) from exc
-
-    def _check_for_duplicate_rows(self):
-        """Check that there are no duplicate rows in the initial dataframe."""
-        if df_contains_duplicates(
-            df=self.df,
-            col_subset=[self.id_col_name, self.timestamp_col_name],
-        ):
-            raise ValueError(
-                "Duplicate patient/timestamp combinations in prediction_times_df, aborting",
-            )
-
-    def _check_that_timestamp_and_id_columns_exist(self):
-        """Check that the required columns are present in the initial
-        dataframe."""
-
-        for col_name in (self.timestamp_col_name, self.id_col_name):
-            if col_name not in self.df.columns:
-                raise ValueError(
-                    f"{col_name} does not exist in prediction_times_df, change the df or set another argument",
-                )
-
-    def _check_init_df_for_errors(self):
-        """Run checks on the initial dataframe."""
-
-        # Check that colnames are present
-        self._check_that_timestamp_and_id_columns_exist()
-        self._check_for_duplicate_rows()
-        self._check_timestamp_col_type()
-
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
         id_col_name: str = "dw_ek_borger",
         timestamp_col_name: str = "timestamp",
-        min_date: Optional[pd.Timestamp] = None,
-        n_workers: int = 60,
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
+        n_workers: int = 60,
         feature_cache_dir: Optional[Path] = None,
     ):
         """Class containing a time-series, flattened.
@@ -119,11 +75,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         Args:
             prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
             timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
-            min_date (Optional[pd.Timestamp], optional): Drop all prediction times before this date. Defaults to None.
             id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "dw_ek_borger".
             predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to "pred_".
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
-            n_workers (int): Number of subprocesses to spawn for parallellisation. Defaults to 60.
+            n_workers (int): Number of subprocesses to spawn for parallelization. Defaults to 60.
             feature_cache_dir (Path): Path to cache directory for feature dataframes. Defaults to None.
 
         Raises:
@@ -134,10 +89,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         self.timestamp_col_name = timestamp_col_name
         self.id_col_name = id_col_name
-        self.pred_time_uuid_col_name = "prediction_time_uuid"
         self.predictor_col_name_prefix = predictor_col_name_prefix
         self.outcome_col_name_prefix = outcome_col_name_prefix
-        self.min_date = min_date
+        self.pred_time_uuid_col_name = "prediction_time_uuid"
 
         if feature_cache_dir:
             self.feature_cache_dir = feature_cache_dir
@@ -153,11 +107,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         self.df = prediction_times_df
 
-        self._check_init_df_for_errors()
-
-        # Drop prediction times before min_date
-        if min_date is not None:
-            self.df = self.df[self.df[self.timestamp_col_name] > self.min_date]
+        ValidateInitFlattenedDataset(
+            df=self.df,
+            timestamp_col_name=self.timestamp_col_name,
+            id_col_name=self.id_col_name,
+        )
 
         # Create pred_time_uuid_columne
         self.df[self.pred_time_uuid_col_name] = self.df[self.id_col_name].astype(
@@ -486,14 +440,14 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self,
         feature_spec: AnySpec,
         file_suffix: str = "parquet",
-    ) -> dask.dataframe.DataFrame:
+    ) -> pd.DataFrame:
         """Get feature. Either load from cache, or generate if necessary.
 
         Args:
             file_suffix (str, optional): File suffix for the cache lookup. Defaults to "parquet".
 
         Returns:
-            dask.dataframe: DataFrame generates with create_flattened_df
+            pd.DataFrame: Feature
         """
         file_name = f"{feature_spec.get_col_str()}_{self.n_uuids}_uuids"
 
