@@ -1,7 +1,8 @@
 """Templates for feature specifications."""
 
 import itertools
-from typing import Callable, Optional, Sequence, Union
+from collections.abc import Sequence
+from typing import Callable, Optional, Union
 
 import pandas as pd
 from pydantic import BaseModel as PydanticBaseModel
@@ -30,16 +31,18 @@ class AnySpec(BaseModel):
     """
 
     values_df: pd.DataFrame
+    # Dataframe with the values.
+
+    # Used for column name generation, e.g. <prefix>_<feature_name>.
     feature_name: str
     prefix: str
-    # Used for column name generation, e.g. pred_<feature_name>.
 
     input_col_name_override: Optional[str] = None
     # An override for the input column name. If None, will attempt
     # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
 
     def get_col_str(self) -> str:
-        """."""
+        """Create column name for the output column."""
         col_str = f"{self.prefix}_{self.feature_name}"
 
         if isinstance(self, OutcomeSpec):
@@ -54,7 +57,7 @@ class StaticSpec(AnySpec):
 
 
 class TemporalSpec(AnySpec):
-    """The minimum specification required for all collapsed time series,
+    """The minimum specification required for all collapsed time series (temporal features),
     whether looking ahead or behind.
 
     Mostly used for inheritance below.
@@ -62,25 +65,30 @@ class TemporalSpec(AnySpec):
 
     # Resolving
     interval_days: Union[int, float]
+    # How far to look in the given direction (ahead for outcomes, behind for predictors)
+
     resolve_multiple_fn_name: str
+    # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
 
     resolve_multiple_fn: Callable = resolve_fns.get_all()["mean"]
     # Uses "mean" as a placeholder, is resolved in __init__.
-    # If "mean" isn't set, gives a validation error because no Callable is
-    # set.
+    # If "mean" isn't set, gives a validation error because no Callable is set.
 
     fallback: Union[Callable, int, float, str]
+    # Which value to use if no values are found within interval_days.
 
-    # Testing
     allowed_nan_value_prop: float = 0.0
+    # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
-    # Input col names
-    prefix: str
     id_col_name: str = "dw_ek_borger"
-    timestamp_col_name: str = "timestamp"
+    # Col name for ids in the input dataframe.
 
-    # Output col names
+    timestamp_col_name: str = "timestamp"
+    # Col name for timestamps in the input dataframe.
+
+    # Used for generating the output column names, which will start with <prefix>_<feature_name>.
     feature_name: str
+    prefix: str
 
     # Specifications for col_name
     loader_kwargs: Optional[dict] = None
@@ -96,7 +104,7 @@ class TemporalSpec(AnySpec):
             self.fallback = float("nan")
 
     def get_col_str(self) -> str:
-        """."""
+        """Generate the column name for the output column."""
         col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
 
         if isinstance(self, OutcomeSpec):
@@ -106,11 +114,9 @@ class TemporalSpec(AnySpec):
         return col_str
 
     def __eq__(self, other):
-        # "combination in list_of_combinations" works for all attributes
-        # except for values_df, since the truth value of a dataframe is
-        # ambiguous.
-        # Instead, use pandas' .equals() method for comparing the dfs,
-        # and get the combined truth value.
+        # Trying to run `spec in list_of_specs` works for all attributes except for values_df,
+        # since the truth value of a dataframe is ambiguous. To remedy this, we use pandas'
+        # .equals() method for comparing the dfs, and get the combined truth value.
 
         # We need to override the __eq__ method.
         other_attributes_equal = all(
@@ -134,7 +140,11 @@ class OutcomeSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "outc"
+
     incident: bool
+    # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
+    # For example, type 2 diabetes is incident. Incident outcomes cna be handled in a vectorised
+    # way during resolution, which is faster than non-incident outcomes.
 
     def is_dichotomous(self) -> bool:
         """Check if the outcome is dichotomous."""
@@ -146,16 +156,24 @@ class MinGroupSpec(BaseModel):
     ahead or behind."""
 
     values_df: list[pd.DataFrame]
-    feature_name: str
+
     input_col_name_override: Optional[str] = None
+    # Override for the column name to use as values in values_df.
 
     interval_days: list[Union[int, float]]
+    # How far to look in the given direction (ahead for outcomes, behind for predictors)
+
     resolve_multiple_fn_name: list[str]
+    # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
+
     fallback: list[Union[Callable, str]]
+    # Which value to use if no values are found within interval_days.
 
     allowed_nan_value_prop: list[float] = [0.0]
+    # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
-    loader_kwargs: Optional[list[dict]] = None
+    feature_name: str
+    # Name of the output column.
 
 
 def create_feature_combinations_from_dict(
@@ -185,6 +203,7 @@ def create_specs_from_group(
     feature_group_spec: MinGroupSpec,
     output_class: AnySpec,
 ) -> list[AnySpec]:
+    """Create a list of specs from a GroupSpec."""
 
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
@@ -209,6 +228,9 @@ class OutcomeGroupSpec(MinGroupSpec):
     """Specificaiton for a group of outcomes."""
 
     incident: Sequence[bool]
+    # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
+    # For example, type 2 diabetes is incident. Incident outcomes can be handled in a vectorised
+    # way during resolution, which is faster than non-incident outcomes.
 
     def create_combinations(self):
         return create_specs_from_group(

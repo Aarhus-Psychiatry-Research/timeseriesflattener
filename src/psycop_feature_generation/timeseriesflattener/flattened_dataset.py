@@ -190,7 +190,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         id_col_name: str,
         timestamp_col_name: str,
         pred_time_uuid_col_name: str,
-        loader_kwargs: Optional[dict] = None,
         verbose: bool = False,
     ) -> DataFrame:
 
@@ -208,16 +207,12 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 static method.
             pred_time_uuid_col_name (str): Name of uuid column in
                 prediction_times_with_uuid_df. Required because this is a static method.
-            loader_kwargs (dict, optional): Keyword arguments to pass to the loader
             verbose (bool, optional): Whether to print progress.
 
 
         Returns:
             DataFrame
         """
-        if not loader_kwargs:
-            loader_kwargs = {}
-
         for col_name in (timestamp_col_name, id_col_name):
             if col_name not in output_spec.values_df.columns:
                 raise ValueError(
@@ -317,7 +312,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 timestamp_col_name=self.timestamp_col_name,
                 pred_time_uuid_col_name=self.pred_time_uuid_col_name,
                 output_spec=output_spec,
-                loader_kwargs=output_spec.loader_kwargs,
             ).dropna()
 
             # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
@@ -480,7 +474,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             timestamp_col_name=self.timestamp_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             output_spec=feature_spec,
-            loader_kwargs=feature_spec.loader_kwargs,
         )
 
         # Write df to cache if exists

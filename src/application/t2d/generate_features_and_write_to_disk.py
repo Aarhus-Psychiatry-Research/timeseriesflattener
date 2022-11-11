@@ -8,8 +8,9 @@ import sys
 import tempfile
 import time
 from collections import defaultdict
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Optional, Sequence, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd

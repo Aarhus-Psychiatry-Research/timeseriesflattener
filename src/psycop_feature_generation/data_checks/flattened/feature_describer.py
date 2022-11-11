@@ -94,6 +94,7 @@ def generate_temporal_feature_description(
     series: pd.Series,
     predictor_spec: TemporalSpec,
 ):
+    """Generate a row with feature description for a temporal predictor."""
     d = {
         "Predictor df": predictor_spec.feature_name,
         "Lookbehind days": predictor_spec.interval_days,
@@ -117,6 +118,7 @@ def generate_temporal_feature_description(
 
 
 def generate_static_feature_description(series: pd.Series, predictor_spec: StaticSpec):
+    """Generate a row with feature description for a static predictor."""
     return {
         "Predictor df": predictor_spec.feature_name,
         "Lookbehind days": "N/A",

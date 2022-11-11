@@ -1,6 +1,7 @@
 """Feature specifications where the values are not resolved yet."""
 
-from typing import Literal, Optional, Sequence
+from collections.abc import Sequence
+from typing import Literal, Optional
 
 import pandas as pd
 

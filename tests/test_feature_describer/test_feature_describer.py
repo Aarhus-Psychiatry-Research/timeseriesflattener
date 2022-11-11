@@ -11,7 +11,7 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
     StaticSpec,
 )
-from psycop_feature_generation.utils import PROJECT_ROOT, generate_feature_colname
+from psycop_feature_generation.utils import PROJECT_ROOT
 
 # pylint: disable=redefined-outer-name, missing-function-docstring
 

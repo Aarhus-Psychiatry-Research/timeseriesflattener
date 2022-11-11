@@ -1,8 +1,10 @@
 """Feature specifications where the values are not resolved yet."""
 
-from typing import Literal, Optional, Sequence
+from collections.abc import Sequence
+from typing import Literal, Optional
 
 import pandas as pd
+from pydantic import Field
 
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     AnySpec,
@@ -10,7 +12,6 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     MinGroupSpec,
     OutcomeGroupSpec,
     OutcomeSpec,
-    PredictorGroupSpec,
     PredictorSpec,
     TemporalSpec,
     create_specs_from_group,
@@ -21,9 +22,16 @@ from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions im
 
 
 class UnresolvedAnySpec(BaseModel):
+    """Class containing attributes and logic that any and all feature specifications share. Unresolved, meaning that there's no dataframe with values yet."""
+
     values_lookup_name: str
+    # A string which can be resolved to a function which returns a dataframe with the values.
+
     input_col_name_override: Optional[str]
+    # Name of the column with the values from values_lookup_name.
+
     output_col_name_override: Optional[str]
+    # Override the name of the output column when resolving a dataframe.
 
     def resolve_spec(
         self,
@@ -80,6 +88,8 @@ class UnresolvedAnySpec(BaseModel):
 
 
 class UnresolvedGroupSpec(MinGroupSpec):
+    """Class for things that all feature specification groups share. Unresolved, meaning that there's no dataframe with values yet."""
+
     values_lookup_name: Sequence[str]
 
     # Override defaults from MinGroupSpec that don't make sense for an
@@ -89,12 +99,15 @@ class UnresolvedGroupSpec(MinGroupSpec):
 
 
 class UnresolvedTemporalSpec(UnresolvedAnySpec, TemporalSpec):
+    """Class for things that all temporal feature specification groups share. Unresolved, meaning that there's no dataframe with values yet."""
+
     resolve_multiple_fn_name: str
-    values_df: Optional[pd.DataFrame] = None
+    # Name of the resolve_multiple function, will be resolved to a function in resolve_multiple_functions.py.
 
     # Override the requirement of a feature_name from MinGroupSpec,
     # not needed for unresolved groups since it can be inferred from
     # values_lookup_name
+    values_df: Optional[pd.DataFrame] = None
     feature_name: Optional[str] = None
 
     def resolve_multiple_str_to_fn(self):
@@ -111,6 +124,7 @@ class UnresolvedPredictorSpec(UnresolvedTemporalSpec):
     """Specification for a single predictor."""
 
     prefix: str = "pred"
+    # Prefix for the output column name.
 
 
 class UnresolvedLabPredictorSpec(UnresolvedPredictorSpec):
@@ -118,12 +132,12 @@ class UnresolvedLabPredictorSpec(UnresolvedPredictorSpec):
     resolved."""
 
     # Lab results
-    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
     lab_values_to_load: Literal[
         "all",
         "numerical",
         "numerical_and_coerce",
     ] = "numerical_and_coerce"
+    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
 
 
 class UnresolvedPredictorGroupSpec(UnresolvedGroupSpec, MinGroupSpec):
@@ -144,10 +158,10 @@ class UnresolvedLabPredictorGroupSpec(UnresolvedPredictorGroupSpec):
     resolved."""
 
     # Lab results
-    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
     lab_values_to_load: Sequence[
         Literal["all", "numerical", "numerical_and_coerce"]
     ] = ["numerical_and_coerce"]
+    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
 
     def create_combinations(self):
         return create_specs_from_group(
@@ -161,6 +175,8 @@ class UnresolvedOutcomeSpec(UnresolvedTemporalSpec):
 
     prefix: str = "outc"
     incident: bool
+    # Whether the outcome is incident or not (i.e. whether you can get the same outcome more than once).
+    # Incident outcomes can be handled in a vectorized manner when resolving, making it much faster.
 
 
 class UnresolvedOutcomeGroupSpec(UnresolvedGroupSpec, OutcomeGroupSpec):
