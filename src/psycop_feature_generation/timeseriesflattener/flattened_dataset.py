@@ -28,7 +28,7 @@ from psycop_feature_generation.timeseriesflattener.flattened_ds_validator import
     ValidateInitFlattenedDataset,
 )
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
-    resolve_fns,
+    resolve_multiple_fns,
 )
 from psycop_feature_generation.utils import load_dataset_from_file, write_df_to_file
 
@@ -110,7 +110,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             df=self.df,
             timestamp_col_name=self.timestamp_col_name,
             id_col_name=self.id_col_name,
-        )
+        ).validate_dataset()
 
         # Create pred_time_uuid_columne
         self.df[self.pred_time_uuid_col_name] = self.df[self.id_col_name].astype(
@@ -845,7 +845,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         df = df.sort_values(by="timestamp_val").groupby(pred_time_uuid_colname)
 
         if isinstance(resolve_multiple, str):
-            resolve_multiple = resolve_fns.get(resolve_multiple)
+            resolve_multiple = resolve_multiple_fns.get(resolve_multiple)
 
         if callable(resolve_multiple):
             df = resolve_multiple(df).reset_index()

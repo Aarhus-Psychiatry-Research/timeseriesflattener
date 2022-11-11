@@ -43,6 +43,7 @@ class ValidateInitFlattenedDataset:
         self.timestamp_col_name = timestamp_col_name
         self.id_col_name = id_col_name
 
+    def validate_dataset(self):
         self._check_that_timestamp_and_id_columns_exist()
         self._check_for_duplicate_rows()
         self._check_timestamp_col_type()

@@ -237,7 +237,7 @@ def add_metadata_to_ds(
     """Add metadata.
 
     Args:
-        static_specs (list[StaticSpec]): List of static specs.
+        static_specs (list[AnySpec]): List of specs.
         flattened_dataset (FlattenedDataset): Flattened dataset.
 
     Returns:
@@ -393,7 +393,7 @@ def setup_for_main(
         feature_sets_path (Path): Path to feature sets.
         proj_name (str): Name of project.
     Returns:
-        tuple[list[dict[str, dict[str, Any]]], dict[str, pd.DataFrame], Path]: Tuple of predictor combinations, pre-loaded dataframes, and project path.
+        tuple[Path, str]: Tuple of project path, and feature_set_id
     """
     # Some predictors take way longer to complete. Shuffling ensures that e.g. the ones that take the longest aren't all
     # at the end of the list.

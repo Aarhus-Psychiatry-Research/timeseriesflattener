@@ -1,4 +1,4 @@
-"""Feature specifications where the values are not resolved yet."""
+"""Feature specifications where the values are not resolved (i.e. converted from string representation to dataframe/callable) yet."""
 
 from collections.abc import Sequence
 from typing import Literal, Optional
@@ -17,7 +17,7 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     create_specs_from_group,
 )
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
-    resolve_fns,
+    resolve_multiple_fns,
 )
 
 
@@ -28,7 +28,7 @@ class UnresolvedAnySpec(BaseModel):
     # A string which can be resolved to a function which returns a dataframe with the values.
 
     input_col_name_override: Optional[str]
-    # Name of the column with the values from values_lookup_name.
+    # Which column in the dataframe to use as raw values.
 
     output_col_name_override: Optional[str]
     # Override the name of the output column when resolving a dataframe.
@@ -38,7 +38,7 @@ class UnresolvedAnySpec(BaseModel):
         str2df: dict[str, pd.DataFrame],
     ) -> TemporalSpec:
         """Resolve the values_df."""
-        str2resolve_multiple = resolve_fns.get_all()
+        str2resolve_multiple = resolve_multiple_fns.get_all()
 
         kwargs_dict = self.dict()
 
@@ -110,15 +110,6 @@ class UnresolvedTemporalSpec(UnresolvedAnySpec, TemporalSpec):
     values_df: Optional[pd.DataFrame] = None
     feature_name: Optional[str] = None
 
-    def resolve_multiple_str_to_fn(self):
-        pass
-
-    def override_fallback_strings_with_objects(self):
-        pass
-
-    def infer_feature_name_from_df(self):
-        pass
-
 
 class UnresolvedPredictorSpec(UnresolvedTemporalSpec):
     """Specification for a single predictor."""
@@ -161,7 +152,7 @@ class UnresolvedLabPredictorGroupSpec(UnresolvedPredictorGroupSpec):
     lab_values_to_load: Sequence[
         Literal["all", "numerical", "numerical_and_coerce"]
     ] = ["numerical_and_coerce"]
-    # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_corce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
+    #  # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_coerce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
 
     def create_combinations(self):
         return create_specs_from_group(

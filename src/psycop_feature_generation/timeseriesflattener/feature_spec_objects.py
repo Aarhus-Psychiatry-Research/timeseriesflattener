@@ -9,7 +9,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
-    resolve_fns,
+    resolve_multiple_fns,
 )
 
 
@@ -17,7 +17,7 @@ class BaseModel(PydanticBaseModel):
     """."""
 
     class Config:
-        """An pydantic basemodel, which doesn't allow attributes that are not
+        """A pydantic basemodel, which doesn't allow attributes that are not
         defined in the class."""
 
         arbitrary_types_allowed = True
@@ -45,10 +45,6 @@ class AnySpec(BaseModel):
         """Create column name for the output column."""
         col_str = f"{self.prefix}_{self.feature_name}"
 
-        if isinstance(self, OutcomeSpec):
-            if self.is_dichotomous():
-                col_str += "_dichotomous"
-
         return col_str
 
 
@@ -63,14 +59,13 @@ class TemporalSpec(AnySpec):
     Mostly used for inheritance below.
     """
 
-    # Resolving
     interval_days: Union[int, float]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
 
     resolve_multiple_fn_name: str
     # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
 
-    resolve_multiple_fn: Callable = resolve_fns.get_all()["mean"]
+    resolve_multiple_fn: Callable = resolve_multiple_fns.get_all()["mean"]
     # Uses "mean" as a placeholder, is resolved in __init__.
     # If "mean" isn't set, gives a validation error because no Callable is set.
 
@@ -86,18 +81,16 @@ class TemporalSpec(AnySpec):
     timestamp_col_name: str = "timestamp"
     # Col name for timestamps in the input dataframe.
 
-    # Used for generating the output column names, which will start with <prefix>_<feature_name>.
-    feature_name: str
-    prefix: str
-
-    # Specifications for col_name
     loader_kwargs: Optional[dict] = None
+    # Optional keyword arguments for the data loader
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         # convert resolve_multiple_str to fn
-        self.resolve_multiple_fn = resolve_fns.get_all()[self.resolve_multiple_fn_name]
+        self.resolve_multiple_fn = resolve_multiple_fns.get_all()[
+            self.resolve_multiple_fn_name
+        ]
 
         # override fallback strings with objects
         if self.fallback == "nan":
@@ -106,10 +99,6 @@ class TemporalSpec(AnySpec):
     def get_col_str(self) -> str:
         """Generate the column name for the output column."""
         col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
-
-        if isinstance(self, OutcomeSpec):
-            if self.is_dichotomous():
-                col_str += "_dichotomous"
 
         return col_str
 
@@ -146,9 +135,23 @@ class OutcomeSpec(TemporalSpec):
     # For example, type 2 diabetes is incident. Incident outcomes cna be handled in a vectorised
     # way during resolution, which is faster than non-incident outcomes.
 
+    def get_col_str(self) -> str:
+        col_str = super().get_col_str()
+
+        if self.is_dichotomous():
+            col_str += "_dichotomous"
+
+        return col_str
+
     def is_dichotomous(self) -> bool:
         """Check if the outcome is dichotomous."""
-        return len(self.values_df["value"].unique()) <= 2
+        col_name = (
+            "value"
+            if not self.input_col_name_override
+            else self.input_col_name_override
+        )
+
+        return len(self.values_df[col_name].unique()) <= 2
 
 
 class MinGroupSpec(BaseModel):
@@ -225,7 +228,7 @@ class PredictorGroupSpec(MinGroupSpec):
 
 
 class OutcomeGroupSpec(MinGroupSpec):
-    """Specificaiton for a group of outcomes."""
+    """Specification for a group of outcomes."""
 
     incident: Sequence[bool]
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.

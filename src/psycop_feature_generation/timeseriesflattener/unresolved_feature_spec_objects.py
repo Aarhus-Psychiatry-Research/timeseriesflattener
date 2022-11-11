@@ -16,7 +16,7 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     create_specs_from_group,
 )
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
-    resolve_fns,
+    resolve_multiple_fns,
 )
 
 
@@ -30,7 +30,7 @@ class UnresolvedAnySpec(BaseModel):
         str2df: dict[str, pd.DataFrame],
     ) -> TemporalSpec:
         """Resolve the values_df."""
-        str2resolve_multiple = resolve_fns.get_all()
+        str2resolve_multiple = resolve_multiple_fns.get_all()
 
         kwargs_dict = self.dict()
 
