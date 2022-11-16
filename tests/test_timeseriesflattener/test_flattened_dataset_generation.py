@@ -11,9 +11,10 @@ import pytest
 
 from application.t2d.generate_features_and_write_to_disk import (
     save_feature_set_description_to_disk,
-    split_and_save_to_disk,
+    split_and_save_dataset_to_disk,
 )
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
+    load_synth_prediction_times,
     synth_predictor_binary,
     synth_predictor_float,
 )
@@ -198,7 +199,7 @@ def test_all_non_online_elements_in_pipeline(
 
         start_idx = end_idx
 
-    split_and_save_to_disk(
+    split_and_save_dataset_to_disk(
         flattened_df=flattened_df,
         out_dir=tmp_path,
         file_prefix="integration",
