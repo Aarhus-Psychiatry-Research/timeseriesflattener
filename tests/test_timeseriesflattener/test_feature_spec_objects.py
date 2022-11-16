@@ -31,16 +31,6 @@ def test_loader_kwargs():
     assert len(spec.values_df) == 10
 
 
-def test_anyspec_output_col_name_override():
-    spec = AnySpec(
-        values_loader="synth_predictor_float",
-        prefix="test",
-        output_col_name_override="test",
-    )
-
-    assert "test" in spec.values_df.columns
-
-
 def test_anyspec_incorrect_values_loader_str():
     with pytest.raises(ValueError, match=r".*in registry.*"):
         AnySpec(values_loader="I don't exist", prefix="test")

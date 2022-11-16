@@ -238,7 +238,7 @@ class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
     ahead or behind. Used to generate combinations of features."""
 
-    values_loader: Sequence[str]
+    values_loader: list[str]
     # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
     # then calls the function which should return a dataframe.
 

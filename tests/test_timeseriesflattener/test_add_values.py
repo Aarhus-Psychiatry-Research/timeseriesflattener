@@ -460,17 +460,17 @@ def test_add_temporal_predictors_then_temporal_outcome():
         n_workers=4,
     )
 
-    predictor_spec_list = PredictorGroupSpec(
+    predictor_spec_list = PredictorSpec(
         values_df=predictors_df,
-        interval_days=[1, 365, 720],
-        resolve_multiple_fn=["min"],
-        fallback=[np.nan],
-        allowed_nan_value_prop=[0],
+        interval_days=365,
+        resolve_multiple_fn="min",
+        fallback=np.nan,
+        allowed_nan_value_prop=0,
         feature_name="value",
-    ).create_combinations()
+    )
 
     flattened_dataset.add_temporal_predictors_from_pred_specs(
-        predictor_specs=predictor_spec_list,
+        predictor_specs=[predictor_spec_list],
     )
 
     flattened_dataset.add_temporal_outcome(
