@@ -19,7 +19,7 @@ from psycop_feature_generation.data_checks.utils import save_df_to_pretty_html_t
 from psycop_feature_generation.utils import RAW_DATA_VALIDATION_PATH
 
 
-def median_absolute_deviation(series: pd.Series) -> np.array:
+def median_absolute_deviation(series: pd.Series) -> float:
     """Calculates a series' median absolute deviation from its own median.
 
     Args:
@@ -182,10 +182,10 @@ def validate_raw_data(
     msg.good("Finished data description.")
 
     data_description = pd.DataFrame(data_description)
-    data_description["prop NaT"] = get_na_prob(df[timestamp_col_name])
-    data_description.to_csv(savepath / "data_description.csv", index=False)
+    data_description["prop NaT"] = get_na_prob(df[timestamp_col_name])  # type: ignore
+    data_description.to_csv(savepath / "data_description.csv", index=False)  # type: ignore
     # Highlight rows with large deviations from the baseline
-    data_description = data_description.style.apply(
+    data_description = data_description.style.apply(  # type: ignore
         func=highlight_large_deviation,
         threshold=deviation_threshold_ratio,
         baseline_column=deviation_baseline_column,

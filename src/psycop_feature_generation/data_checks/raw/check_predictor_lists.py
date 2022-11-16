@@ -11,16 +11,17 @@ from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
 from psycop_feature_generation.utils import data_loaders
 
 
-def check_df_conforms_to_arg_dict(
+def check_df_conforms_to_feature_spec(
     df: pd.DataFrame,
     required_columns: list[str],
     subset_duplicates_columns: list[str],
     expected_val_dtypes: list[str],
     msg_prefix: str,
+    arg_dict: dict,
     allowed_nan_value_prop: float = 0.01,
-    arg_dict: dict = None,
 ):
-    """Check that df conforms to d.
+    """Check that a loaded df conforms to to a given feature specification.
+    Useful when creating loaders.
 
     Args:
         df (pd.DataFrame): Dataframe to check.
@@ -29,8 +30,8 @@ def check_df_conforms_to_arg_dict(
             checking for duplicates.
         expected_val_dtypes (list[str]): Expected value dtype.
         msg_prefix (str): Prefix to add to all messages.
+        arg_dict (dict): Dictionary with specifications for what df should conform to.
         allowed_nan_value_prop (float): Allowed proportion of missing values. Defaults to 0.01.
-        arg_dict (dict): Dictionary with specifications for what df should conform to. Defaults to None.
 
     Raises:
         ValueError: If df does not conform to d.
@@ -114,7 +115,7 @@ def get_unique_predictor_dfs(predictor_dict_list: list[dict], required_keys: lis
 
 
 def check_feature_combinations_return_correct_dfs(  # noqa pylint: disable=too-many-branches
-    predictor_dict_list: Optional[list[dict[str, Union[str, float, int]]]],
+    predictor_dict_list: list[dict[str, Union[str, float, int]]],
     n_rows: int = 1_000,
     required_columns: Optional[list[str]] = None,
     subset_duplicates_columns: Optional[list[str]] = None,
@@ -173,7 +174,7 @@ def check_feature_combinations_return_correct_dfs(  # noqa pylint: disable=too-m
 
         msg_prefix = f"{i+1}/{len(unique_subset_dicts)} {d['predictor_df']}:"
 
-        df_failures = check_df_conforms_to_arg_dict(
+        df_failures = check_df_conforms_to_feature_spec(
             df=df,
             required_columns=required_columns,
             subset_duplicates_columns=subset_duplicates_columns,

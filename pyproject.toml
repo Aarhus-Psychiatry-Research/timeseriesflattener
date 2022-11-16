@@ -24,8 +24,9 @@ numpy = ">=1.23.3,<1.23.5"
 torch = "^1.12.1"
 transformers = "^4.22.2"
 pyarrow = ">=9.0.0,<9.1.0"
-protobuf = "4.21.8" # Other versions cause errors with pyarrow. If causing conflicts, try expanding.
 psycopmlutils = ">=0.2.4, <0.3.0"
+protobuf = "<=3.20.3" # Other versions give errors with pytest, super weird!
+frozendict = "^2.3.4"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7.1.3, <7.1.5"
@@ -36,7 +37,8 @@ flake8 = ">=5.0.0, <5.0.6"
 docformatter = ">=1.5.0, <1.5.2"
 mypy = ">=0.971,<0.983"
 pytest-xdist = ">=2.4.0, <2.5.2"
-protobuf = "4.21.8" # Other versions give errors with pytest, super weird!
+
+pylint = "^2.15.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -61,5 +63,8 @@ build_command = "pip install poetry && poetry build"
 
 [tool.pytest]
 n = 0
+
+[tool.mypy]
+ignore_missing_imports = true
 
 [tool.pyright] # Added because of weird pylance error, issue here: https://github.com/microsoft/pylance-release/issues/3366
