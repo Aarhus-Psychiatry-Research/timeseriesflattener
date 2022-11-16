@@ -11,7 +11,7 @@ resolve_multiple_fns = catalogue.create("timeseriesflattener", "resolve_strategi
 
 
 @resolve_multiple_fns.register("latest")
-def get_latest_value_in_group(grouped_df: DataFrame) -> DataFrame:
+def latest(grouped_df: DataFrame) -> DataFrame:
     """Get the latest value.
 
     Args:
@@ -24,7 +24,7 @@ def get_latest_value_in_group(grouped_df: DataFrame) -> DataFrame:
 
 
 @resolve_multiple_fns.register("earliest")
-def get_earliest_value_in_group(grouped_df: DataFrame) -> DataFrame:
+def earliest(grouped_df: DataFrame) -> DataFrame:
     """Get the earliest value.
 
     Args:
@@ -36,38 +36,38 @@ def get_earliest_value_in_group(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.first()
 
 
-@resolve_multiple_fns.register("max")
-def get_max_in_group(grouped_df: DataFrame) -> DataFrame:
+@resolve_multiple_fns.register("maximum")
+def maximum(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.max()
 
 
-@resolve_multiple_fns.register("min")
-def get_min_in_group(grouped_df: DataFrame) -> DataFrame:
+@resolve_multiple_fns.register("minimum")
+def minimum(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.min()
 
 
 @resolve_multiple_fns.register("mean")
-def get_mean_in_group(grouped_df: DataFrame) -> DataFrame:
+def mean(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.mean(numeric_only=True)
 
 
-@resolve_multiple_fns.register("sum")
-def get_sum_in_group(grouped_df: DataFrame) -> DataFrame:
+@resolve_multiple_fns.register("summed")
+def summed(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.sum()
 
 
 @resolve_multiple_fns.register("count")
-def get_count_in_group(grouped_df: DataFrame) -> DataFrame:
+def count(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.count()
 
 
 @resolve_multiple_fns.register("variance")
-def get_variance_in_group(grouped_df: DataFrame) -> DataFrame:
+def variance(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.var()
 
 
-@resolve_multiple_fns.register("bool")
-def get_bool_in_group(grouped_df: DataFrame) -> DataFrame:
+@resolve_multiple_fns.register("boolean")
+def boolean(grouped_df: DataFrame) -> DataFrame:
     """Returns a boolean value indicating whether or not event has occured in
     look ahead/behind window.
 
@@ -89,7 +89,7 @@ def get_bool_in_group(grouped_df: DataFrame) -> DataFrame:
 
 
 @resolve_multiple_fns.register("change_per_day")
-def get_change_in_value_per_day(grouped_df: DataFrame) -> DataFrame:
+def change_per_day(grouped_df: DataFrame) -> DataFrame:
     """Returns the change in value per day.
 
     Args:

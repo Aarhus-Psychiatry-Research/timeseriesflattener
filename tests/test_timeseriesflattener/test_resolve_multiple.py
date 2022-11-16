@@ -8,11 +8,11 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
 )
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: disable=unused-import
-    get_earliest_value_in_group,
-    get_latest_value_in_group,
-    get_max_in_group,
-    get_mean_in_group,
-    get_min_in_group,
+    earliest,
+    latest,
+    maximum,
+    mean,
+    minimum,
 )
 from psycop_feature_generation.utils_for_testing import (
     assert_flattened_data_as_expected,
@@ -35,7 +35,7 @@ def test_resolve_multiple_catalogue():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="min",
+            resolve_multiple_fn="minimum",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -58,7 +58,7 @@ def test_resolve_multiple_max():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -81,7 +81,7 @@ def test_resolve_multiple_min():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="min",
+            resolve_multiple_fn="minimum",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -228,7 +228,7 @@ def test_resolve_multiple_sum():
         output_spec=PredictorSpec(
             feature_name="value",
             values_df=str_to_df(predictor_df_str),
-            resolve_multiple_fn="sum",
+            resolve_multiple_fn="summed",
             interval_days=2,
             fallback=0,
         ),
@@ -274,7 +274,7 @@ def test_resolve_multiple_bool():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="bool",
+            resolve_multiple_fn="boolean",
             interval_days=2,
             fallback=0,
             incident=True,

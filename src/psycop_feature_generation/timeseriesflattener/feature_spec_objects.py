@@ -137,12 +137,7 @@ class TemporalSpec(AnySpec):
     interval_days: Union[int, float]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
 
-    resolve_multiple_fn: str
-    # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
-
-    resolve_multiple_fn: Union[Callable, str] = resolve_multiple_fns.get_all()["mean"]
-    # Uses "mean" as a placeholder, is resolved in __init__.
-    # If "mean" isn't set, gives a validation error because no Callable is set.
+    resolve_multiple_fn: Callable
 
     fallback: Union[Callable, int, float, str]
     # Which value to use if no values are found within interval_days.
@@ -161,15 +156,13 @@ class TemporalSpec(AnySpec):
     # Optional keyword arguments for the data loader
 
     def __init__(self, **data):
+        if isinstance(data["resolve_multiple_fn"], str):
+            # convert resolve_multiple_str to fn
+            data["resolve_multiple_fn"] = resolve_multiple_fns.get_all()[
+                data["resolve_multiple_fn"]
+            ]
+
         super().__init__(**data)
-
-        # TODO: Resolve multiple_fn if it is a string, don't
-        # use two different attributes.
-
-        # convert resolve_multiple_str to fn
-        self.resolve_multiple_fn = resolve_multiple_fns.get_all()[
-            self.resolve_multiple_fn
-        ]
 
         # override fallback strings with objects
         if self.fallback == "nan":
@@ -177,7 +170,7 @@ class TemporalSpec(AnySpec):
 
     def get_col_str(self) -> str:
         """Generate the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn.__name__}_fallback_{self.fallback}"
 
         return col_str
 

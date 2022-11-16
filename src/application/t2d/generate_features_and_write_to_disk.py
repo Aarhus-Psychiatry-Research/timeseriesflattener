@@ -470,7 +470,7 @@ def get_unresolved_outcome_specs():
     return UnresolvedOutcomeGroupSpec(
         values_loader=["t2d"],
         interval_days=[year * 365 for year in (1, 2, 3, 4, 5)],
-        resolve_multiple_fn=["max"],
+        resolve_multiple_fn=["maximum"],
         fallback=[0],
         incident=[True],
         allowed_nan_value_prop=[0],
@@ -479,7 +479,7 @@ def get_unresolved_outcome_specs():
 
 def get_unresolved_temporal_predictor_specs() -> list[PredictorSpec]:
     """Generate predictor spec list."""
-    resolve_multiple = ["max"]  # , "min", "mean", "latest", "count"]
+    resolve_multiple = ["maximum"]  # , "min", "mean", "latest", "count"]
     interval_days = [30]  # , 90, 180, 365, 730]
     allowed_nan_value_prop = [0]
 

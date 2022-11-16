@@ -11,14 +11,12 @@ def test_anyspec_init():
     """Test that AnySpec initialises correctly."""
     values_loader_name = "synth_predictor_float"
 
-    df = synth_predictor_float()
-
     spec = AnySpec(
         values_loader=values_loader_name,
         prefix="test",
     )
 
-    assert type(spec.values_df) == pd.DataFrame
+    assert isinstance(spec.values_df, pd.DataFrame)
     assert spec.feature_name == values_loader_name
 
 

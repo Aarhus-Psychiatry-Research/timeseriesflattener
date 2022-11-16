@@ -42,7 +42,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 base_binary_predictor_combinations = PredictorGroupSpec(
     values_df=[synth_predictor_binary()],
     interval_days=[365, 730],
-    resolve_multiple_fn=["max"],
+    resolve_multiple_fn=["maximum"],
     fallback=[np.NaN],
     feature_name="value",
     allowed_nan_value_prop=[0.0],
@@ -171,7 +171,7 @@ def test_all_non_online_elements_in_pipeline(
         output_spec=OutcomeSpec(
             values_df=synth_outcome,
             interval_days=365,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             fallback=0,
             incident=True,
             feature_name="value",

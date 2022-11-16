@@ -44,7 +44,7 @@ def test_predictor_after_prediction_time():
         output_spec=PredictorSpec(
             values_df=predictor_df,
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             fallback=np.NaN,
             feature_name="value",
         ),
@@ -65,7 +65,7 @@ def test_predictor_before_prediction():
         output_spec=PredictorSpec(
             values_df=str_to_df(predictor_df_str),
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             fallback=np.NaN,
             feature_name="value",
         ),
@@ -96,7 +96,7 @@ def test_multiple_citizens_predictor():
             interval_days=2,
             fallback=np.NaN,
             feature_name="value",
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
         ),
         expected_values=[0, 1, 0, 2, np.NaN],
     )
@@ -116,7 +116,7 @@ def test_event_after_prediction_time():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -138,7 +138,7 @@ def test_event_before_prediction():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -166,7 +166,7 @@ def test_multiple_citizens_outcome():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -188,7 +188,7 @@ def test_citizen_without_outcome():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -308,7 +308,7 @@ def test_incident_outcome_removing_prediction_times():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_maximum_fallback_nan_dichotomous,
                         1,2021-12-31 00:00:00, 1.0
                         2,2021-12-31 00:00:00, 1.0
                         3,2023-12-31 00:00:00, 0.0
@@ -332,7 +332,7 @@ def test_incident_outcome_removing_prediction_times():
             incident=True,
             fallback=np.NaN,
             feature_name="value",
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
         ),
     )
 
@@ -360,7 +360,7 @@ def test_add_multiple_static_predictors():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_max_fallback_0_dichotomous,pred_age_in_years,pred_male
+    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_maximum_fallback_0_dichotomous,pred_age_in_years,pred_male
                         1,2021-12-31 00:00:00, 1.0,22.00,1
                         2,2021-12-31 00:00:00, 1.0,22.00,0
                         3,2023-12-31 00:00:00, 0.0,23.99,1
@@ -392,7 +392,7 @@ def test_add_multiple_static_predictors():
     output_spec = OutcomeSpec(
         values_df=event_times_df,
         interval_days=2,
-        resolve_multiple_fn="max",
+        resolve_multiple_fn="maximum",
         fallback=0,
         incident=True,
         feature_name="value",
@@ -415,7 +415,7 @@ def test_add_multiple_static_predictors():
     for col in (
         "dw_ek_borger",
         "timestamp",
-        "outc_value_within_2_days_max_fallback_0_dichotomous",
+        "outc_value_within_2_days_maximum_fallback_0_dichotomous",
         "pred_age_in_years",
         "pred_male",
     ):
@@ -463,7 +463,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
     predictor_spec_list = PredictorGroupSpec(
         values_df=[predictors_df],
         interval_days=[1, 365, 720],
-        resolve_multiple_fn=["min"],
+        resolve_multiple_fn=["minimum"],
         fallback=[np.nan],
         allowed_nan_value_prop=[0],
         feature_name="value",
@@ -477,7 +477,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         output_spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
             fallback=0,
             incident=True,
             feature_name="value",
@@ -507,7 +507,7 @@ def test_add_temporal_incident_binary_outcome():
                         1,2021-11-06 00:00:01, 1
                         """
 
-    expected_df_str = """outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """outc_value_within_2_days_maximum_fallback_nan_dichotomous,
     1
     0"""
 
@@ -529,7 +529,7 @@ def test_add_temporal_incident_binary_outcome():
             incident=True,
             fallback=np.NaN,
             feature_name="value",
-            resolve_multiple_fn="max",
+            resolve_multiple_fn="maximum",
         ),
     )
 
@@ -564,7 +564,7 @@ def test_add_temporal_incident_binary_outcome():
 #     predictor_specs = PredictorGroupSpec(
 #         df=[synth_notes_df],
 #         interval_days=[1, 365, 720],
-#         resolve_multiple_fn=["min"],
+#         resolve_multiple_fn=["minimum"],
 #         fallback=[np.nan],
 #         allowed_nan_value_prop=[0],
 #         loader_kwargs=[{"featurizer": "tfidf"}],
