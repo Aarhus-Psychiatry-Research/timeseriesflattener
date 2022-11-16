@@ -12,7 +12,7 @@ from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions im
     latest,
     max,
     mean,
-    min,
+    minimum,
 )
 from psycop_feature_generation.utils_for_testing import (
     assert_flattened_data_as_expected,

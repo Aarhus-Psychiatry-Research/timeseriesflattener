@@ -136,7 +136,7 @@ class TemporalSpec(AnySpec):
     interval_days: Union[int, float]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
 
-    resolve_multiple_fn: str
+    resolve_multiple_fn: Callable
 
     fallback: Union[Callable, int, float, str]
     # Which value to use if no values are found within interval_days.
