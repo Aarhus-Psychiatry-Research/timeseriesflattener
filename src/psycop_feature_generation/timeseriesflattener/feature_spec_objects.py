@@ -38,8 +38,8 @@ class AnySpec(BaseModel):
     Allows for easier type hinting.
     """
 
-    values_loader: Optional[str]] = None
-    # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry, 
+    values_loader: Optional[str] = None
+    # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
     # then calls the function which should return a dataframe.
 
     loader_kwargs: Optional[dict[str, Any]] = None
