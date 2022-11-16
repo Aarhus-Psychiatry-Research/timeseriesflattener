@@ -352,7 +352,7 @@ def create_flattened_dataset(
 
     flattened_dataset = add_metadata_to_ds(
         flattened_dataset=flattened_dataset,
-        specs=spec_set.metadata_specs,
+        specs=spec_set.metadata,
     )
 
     flattened_dataset = add_outcomes_to_ds(
@@ -442,7 +442,7 @@ def get_outcome_specs():
     ).create_combinations()
 
 
-def get_predictor_specs() -> list[PredictorSpec]:
+def get_temporal_predictor_specs() -> list[PredictorSpec]:
     """Generate predictor spec list."""
     resolve_multiple = ["max"]  # , "min", "mean", "latest", "count"]
     interval_days = [30]  # , 90, 180, 365, 730]
@@ -514,7 +514,7 @@ def main(
         feature_sets_path (Path): Path to where feature sets should be stored.
     """
     spec_set = SpecSet(
-        temporal_predictors=get_predictor_specs(),
+        temporal_predictors=get_temporal_predictor_specs(),
         static_predictors=get_static_predictor_specs(),
         outcomes=get_outcome_specs(),
         metadata=get_metadata_specs(),
