@@ -60,7 +60,7 @@ def init_wandb(
     wandb_project_name: str,
     predictor_specs: Sequence[PredictorSpec],
     save_dir: Union[Path, str],
-) -> wandb.wandb_sdk.wandb_run.Run:
+) -> None:
     """Initialise wandb logging. Allows to use wandb to track progress, send
     Slack notifications if failing, and track logs.
 
@@ -68,9 +68,6 @@ def init_wandb(
         wandb_project_name (str): Name of wandb project.
         predictor_specs (Iterable[dict[str, Any]]): List of predictor specs.
         save_dir (Union[Path, str]): Path to save dir.
-
-    Return:
-        wandb.wandb_sdk.wandb_run.Run: WandB run.
     """
 
     feature_settings = {
@@ -88,9 +85,7 @@ def init_wandb(
         )
         (PROJECT_ROOT / "wandb" / "debug-cli.onerm").mkdir(exist_ok=True, parents=True)
 
-    run = wandb.init(project=wandb_project_name, config=feature_settings)
-
-    return run  # type: ignore
+    wandb.init(project=wandb_project_name, config=feature_settings)
 
 
 def save_feature_set_description_to_disk(
@@ -158,7 +153,7 @@ def create_save_dir_path(
     return save_dir
 
 
-def split_and_save_to_disk(
+def split_and_save_dataset_to_disk(
     flattened_df: pd.DataFrame,
     out_dir: Path,
     file_prefix: str,
@@ -314,7 +309,7 @@ def add_predictors_to_ds(
     return flattened_dataset
 
 
-def create_full_flattened_dataset(
+def create_flattened_dataset(
     prediction_times: pd.DataFrame,
     birthdays: pd.DataFrame,
     metadata_specs: list[AnySpec],
@@ -351,7 +346,6 @@ def create_full_flattened_dataset(
         feature_cache_dir=proj_path / "feature_cache",
     )
 
-    # Outcome
     flattened_dataset = add_metadata_to_ds(
         flattened_dataset=flattened_dataset,
         specs=metadata_specs,
@@ -386,8 +380,6 @@ def setup_for_main(
     Returns:
         tuple[Path, str]: Tuple of project path, and feature_set_id
     """
-    # Some predictors take way longer to complete. Shuffling ensures that e.g. the ones that take the longest aren't all
-    # at the end of the list.
     proj_path = feature_sets_path / proj_name
 
     if not proj_path.exists():
@@ -575,25 +567,13 @@ def main(
         proj_path=proj_path,
     )
 
-    run = init_wandb(
+    init_wandb(
         wandb_project_name=proj_name,
         predictor_specs=unresolved_specs.temporal_predictors,
         save_dir=out_dir,  # Save-dir as argument because we want to log the path
     )
 
-    pre_loaded_dfs = pre_load_unique_dfs(
-        specs=unresolved_specs.static_predictors
-        + unresolved_specs.temporal_predictors
-        + unresolved_specs.metadata
-        + unresolved_specs.outcomes,
-    )
-
-    resolved_specs = resolve_specifications(
-        pre_loaded_dfs=pre_loaded_dfs,
-        unresolved_specs=unresolved_specs,
-    )
-
-    flattened_df = create_full_flattened_dataset(
+    flattened_df = create_flattened_dataset(
         prediction_times=physical_visits_to_psychiatry(),
         temporal_predictor_specs=resolved_specs.temporal_predictors,
         static_predictor_specs=resolved_specs.static_predictors,
@@ -603,7 +583,7 @@ def main(
         birthdays=birthdays(),
     )
 
-    split_and_save_to_disk(
+    split_and_save_dataset_to_disk(
         flattened_df=flattened_df,
         out_dir=out_dir,
         file_prefix=feature_set_id,
