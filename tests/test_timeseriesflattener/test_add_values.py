@@ -44,7 +44,7 @@ def test_predictor_after_prediction_time():
         output_spec=PredictorSpec(
             values_df=predictor_df,
             interval_days=2,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             fallback=np.NaN,
             feature_name="value",
         ),
@@ -65,7 +65,7 @@ def test_predictor_before_prediction():
         output_spec=PredictorSpec(
             values_df=str_to_df(predictor_df_str),
             interval_days=2,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             fallback=np.NaN,
             feature_name="value",
         ),
@@ -96,7 +96,7 @@ def test_multiple_citizens_predictor():
             interval_days=2,
             fallback=np.NaN,
             feature_name="value",
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
         ),
         expected_values=[0, 1, 0, 2, np.NaN],
     )
@@ -116,7 +116,7 @@ def test_event_after_prediction_time():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -138,7 +138,7 @@ def test_event_before_prediction():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -166,7 +166,7 @@ def test_multiple_citizens_outcome():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -188,7 +188,7 @@ def test_citizen_without_outcome():
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
             interval_days=2,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,
             feature_name="value",
@@ -332,7 +332,7 @@ def test_incident_outcome_removing_prediction_times():
             incident=True,
             fallback=np.NaN,
             feature_name="value",
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
         ),
     )
 
@@ -392,7 +392,7 @@ def test_add_multiple_static_predictors():
     output_spec = OutcomeSpec(
         values_df=event_times_df,
         interval_days=2,
-        resolve_multiple_fn_name="max",
+        resolve_multiple_fn="max",
         fallback=0,
         incident=True,
         feature_name="value",
@@ -477,7 +477,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         output_spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             fallback=0,
             incident=True,
             feature_name="value",
@@ -529,7 +529,7 @@ def test_add_temporal_incident_binary_outcome():
             incident=True,
             fallback=np.NaN,
             feature_name="value",
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
         ),
     )
 

@@ -6,9 +6,9 @@ import pandas as pd
 import tqdm
 from wasabi import Printer
 
-from application.t2d.unresolved_feature_spec_objects import UnresolvedAnySpec
 from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    AnySpec,
     TemporalSpec,
 )
 from psycop_feature_generation.utils import data_loaders
@@ -106,7 +106,7 @@ def error_check_dfs(
 
 
 def pre_load_unique_dfs(
-    specs: list[UnresolvedAnySpec],
+    specs: list[AnySpec],
     subset_duplicates_columns: Union[list, str] = "all",
     max_workers: int = 16,
 ) -> dict[str, pd.DataFrame]:

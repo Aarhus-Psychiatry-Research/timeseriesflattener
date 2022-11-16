@@ -6,7 +6,7 @@ from functools import lru_cache
 from typing import Any, Callable, Optional, Union
 
 import pandas as pd
-from frozendict import frozendict
+from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
@@ -54,14 +54,28 @@ class AnySpec(BaseModel):
     # Used for column name generation, e.g. <prefix>_<feature_name>.
 
     input_col_name_override: Optional[str] = None
-
     # An override for the input column name. If None, will attempt
     # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
+
+    output_col_name_override: Optional[str] = None
+    # Override for the values col name in the output.
 
     def __init__(self, **data):
         self.resolve_values_df(data)
 
         super().__init__(**data)
+
+        if self.output_col_name_override:
+            input_col_name = (
+                "value"
+                if not self.input_col_name_override
+                else self.input_col_name_override
+            )
+
+            self.values_df.rename(
+                columns={input_col_name: self.output_col_name_override},
+                inplace=True,
+            )
 
     def resolve_values_df(self, data: dict[str, Any]):
         if "values_loader" not in data and "values_df" not in data:
@@ -76,6 +90,9 @@ class AnySpec(BaseModel):
                 data["values_loader"] = data_loaders.get(data["values_loader"])
 
             if callable(data["values_loader"]):
+                if not "loader_kwargs" in data:
+                    data["loader_kwargs"] = {}
+
                 data["values_df"] = load_df_with_cache(
                     loader_fn=data["values_loader"],
                     kwargs=frozendict(data["loader_kwargs"]),
@@ -120,10 +137,10 @@ class TemporalSpec(AnySpec):
     interval_days: Union[int, float]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
 
-    resolve_multiple_fn_name: str
+    resolve_multiple_fn: str
     # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
 
-    resolve_multiple_fn: Callable = resolve_multiple_fns.get_all()["mean"]
+    resolve_multiple_fn: Union[Callable, str] = resolve_multiple_fns.get_all()["mean"]
     # Uses "mean" as a placeholder, is resolved in __init__.
     # If "mean" isn't set, gives a validation error because no Callable is set.
 
@@ -151,7 +168,7 @@ class TemporalSpec(AnySpec):
 
         # convert resolve_multiple_str to fn
         self.resolve_multiple_fn = resolve_multiple_fns.get_all()[
-            self.resolve_multiple_fn_name
+            self.resolve_multiple_fn
         ]
 
         # override fallback strings with objects
@@ -160,7 +177,7 @@ class TemporalSpec(AnySpec):
 
     def get_col_str(self) -> str:
         """Generate the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn_name}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn}_fallback_{self.fallback}"
 
         return col_str
 

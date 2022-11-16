@@ -171,7 +171,7 @@ def test_all_non_online_elements_in_pipeline(
         output_spec=OutcomeSpec(
             values_df=synth_outcome,
             interval_days=365,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             fallback=0,
             incident=True,
             feature_name="value",

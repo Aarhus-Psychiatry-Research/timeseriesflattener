@@ -25,6 +25,7 @@ torch = "^1.12.1"
 transformers = "^4.22.2"
 pyarrow = ">=9.0.0,<9.1.0"
 psycopmlutils = ">=0.2.4, <0.3.0"
+protobuf = "<=3.20.3" # Other versions give errors with pytest, super weird!
 frozendict = "^2.3.4"
 
 [tool.poetry.dev-dependencies]
@@ -36,7 +37,7 @@ flake8 = ">=5.0.0, <5.0.6"
 docformatter = ">=1.5.0, <1.5.2"
 mypy = ">=0.971,<0.983"
 pytest-xdist = ">=2.4.0, <2.5.2"
-protobuf = "4.21.8" # Other versions give errors with pytest, super weird!
+
 pylint = "^2.15.5"
 
 [build-system]

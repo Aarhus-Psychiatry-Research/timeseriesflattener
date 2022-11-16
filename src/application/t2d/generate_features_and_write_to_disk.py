@@ -19,15 +19,6 @@ import wandb
 from wasabi import Printer
 
 import psycop_feature_generation.loaders.raw  # noqa
-from application.t2d.unresolved_feature_spec_objects import (
-    UnresolvedAnySpec,
-    UnresolvedLabPredictorGroupSpec,
-    UnresolvedLabPredictorSpec,
-    UnresolvedOutcomeGroupSpec,
-    UnresolvedOutcomeSpec,
-    UnresolvedPredictorSpec,
-    UnresolvedStaticSpec,
-)
 from psycop_feature_generation.data_checks.flattened.data_integrity import (
     save_feature_set_integrity_from_dir,
 )
@@ -420,10 +411,10 @@ class ResolvedSpecSet(BaseModel):
 class UnresolvedSpecSet(BaseModel):
     """A set of unresolved specs, ready for resolving."""
 
-    temporal_predictors: list[UnresolvedPredictorSpec]
-    static_predictors: list[UnresolvedStaticSpec]
-    outcomes: list[UnresolvedOutcomeSpec]
-    metadata: list[UnresolvedAnySpec]
+    temporal_predictors: list[PredictorSpec]
+    static_predictors: list[StaticSpec]
+    outcomes: list[OutcomeSpec]
+    metadata: list[AnySpec]
 
 
 def resolve_specifications(
@@ -442,8 +433,8 @@ def resolve_specifications(
 def get_static_predictor_specs():
     """Get static predictor specs."""
     return [
-        UnresolvedStaticSpec(
-            values_lookup_name="sex_female",
+        StaticSpec(
+            values_loader="sex_female",
             input_col_name_override="sex_female",
             prefix="pred",
         ),
@@ -453,22 +444,21 @@ def get_static_predictor_specs():
 def get_unresolved_metadata_specs():
     """Get metadata specs."""
     return [
-        UnresolvedStaticSpec(
-            values_lookup_name="t2d",
+        StaticSpec(
+            values_loader="t2d",
             input_col_name_override="timestamp",
             output_col_name_override="timestamp_first_t2d_hba1c",
         ),
-        UnresolvedStaticSpec(
-            values_lookup_name="timestamp_exclusion",
+        StaticSpec(
+            values_loader="timestamp_exclusion",
             input_col_name_override="timestamp",
             output_col_name_override="timestamp_exclusion",
         ),
-        UnresolvedLabPredictorSpec(
-            values_lookup_name="hba1c",
+        PredictorSpec(
+            values_loader="hba1c",
             fallback=np.nan,
-            lab_values_to_load="numerical_and_coerce",
             interval_days=9999,
-            resolve_multiple_fn_name="count",
+            resolve_multiple_fn="count",
             allowed_nan_value_prop=0.0,
             prefix="eval",
         ),
@@ -478,25 +468,25 @@ def get_unresolved_metadata_specs():
 def get_unresolved_outcome_specs():
     """Get outcome specs."""
     return UnresolvedOutcomeGroupSpec(
-        values_lookup_name=["t2d"],
+        values_loader=["t2d"],
         interval_days=[year * 365 for year in (1, 2, 3, 4, 5)],
-        resolve_multiple_fn_name=["max"],
+        resolve_multiple_fn=["max"],
         fallback=[0],
         incident=[True],
         allowed_nan_value_prop=[0],
     ).create_combinations()
 
 
-def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
+def get_unresolved_temporal_predictor_specs() -> list[PredictorSpec]:
     """Generate predictor spec list."""
     resolve_multiple = ["max"]  # , "min", "mean", "latest", "count"]
     interval_days = [30]  # , 90, 180, 365, 730]
     allowed_nan_value_prop = [0]
 
-    unresolved_temporal_predictor_specs: list[UnresolvedPredictorSpec] = []
+    unresolved_temporal_predictor_specs: list[PredictorSpec] = []
 
     unresolved_temporal_predictor_specs += UnresolvedLabPredictorGroupSpec(
-        values_lookup_name=(
+        values_loader=(
             "hba1c",
             # "alat",
             # "hdl",
@@ -509,38 +499,37 @@ def get_unresolved_temporal_predictor_specs() -> list[UnresolvedPredictorSpec]:
             # "egfr",
             # "albumine_creatinine_ratio",
         ),
-        resolve_multiple_fn_name=resolve_multiple,
+        resolve_multiple_fn=resolve_multiple,
         interval_days=interval_days,
         fallback=[np.nan],
-        lab_values_to_load=["numerical_and_coerce"],
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
     # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-    #     values_lookup_name=(
+    #     values_loader=(
     #         "essential_hypertension",
     #         "hyperlipidemia",
     #         "polycystic_ovarian_syndrome",
     #         "sleep_apnea",
     #     ),
-    #     resolve_multiple_fn_name=resolve_multiple,
+    #     resolve_multiple_fn=resolve_multiple,
     #     interval_days=interval_days,
     #     fallback=[0],
     #     allowed_nan_value_prop=allowed_nan_value_prop,
     # ).create_combinations()
 
     # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-    #     values_lookup_name=("antipsychotics",),
+    #     values_loader=("antipsychotics",),
     #     interval_days=interval_days,
-    #     resolve_multiple_fn_name=resolve_multiple,
+    #     resolve_multiple_fn=resolve_multiple,
     #     fallback=[0],
     #     allowed_nan_value_prop=allowed_nan_value_prop,
     # ).create_combinations()
 
     # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-    #     values_lookup_name=["weight_in_kg", "height_in_cm", "bmi"],
+    #     values_loader=["weight_in_kg", "height_in_cm", "bmi"],
     #     interval_days=interval_days,
-    #     resolve_multiple_fn_name=["latest"],
+    #     resolve_multiple_fn=["latest"],
     #     fallback=[np.nan],
     #     allowed_nan_value_prop=allowed_nan_value_prop,
     # ).create_combinations()

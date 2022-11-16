@@ -22,7 +22,7 @@ def predictor_specs(df):
         PredictorSpec(
             values_df=pd.DataFrame({"hba1c": [0]}),
             interval_days=100,
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             fallback=np.nan,
             feature_name="hba1c",
         ),

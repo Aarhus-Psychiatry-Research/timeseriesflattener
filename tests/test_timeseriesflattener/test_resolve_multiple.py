@@ -35,7 +35,7 @@ def test_resolve_multiple_catalogue():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="min",
+            resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -58,7 +58,7 @@ def test_resolve_multiple_max():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="max",
+            resolve_multiple_fn="max",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -81,7 +81,7 @@ def test_resolve_multiple_min():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="min",
+            resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -104,7 +104,7 @@ def test_resolve_multiple_avg():
         output_spec=PredictorSpec(
             feature_name="value",
             values_df=str_to_df(predictor_df_str),
-            resolve_multiple_fn_name="mean",
+            resolve_multiple_fn="mean",
             interval_days=2,
             fallback=0,
         ),
@@ -131,7 +131,7 @@ def test_resolve_multiple_latest():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="latest",
+            resolve_multiple_fn="latest",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -155,7 +155,7 @@ def test_resolve_multiple_latest_no_values():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="latest",
+            resolve_multiple_fn="latest",
             interval_days=2,
             fallback=np.nan,
             incident=True,
@@ -177,7 +177,7 @@ def test_resolve_multiple_latest_one_vlaue():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="latest",
+            resolve_multiple_fn="latest",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -205,7 +205,7 @@ def test_resolve_multiple_earliest():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="earliest",
+            resolve_multiple_fn="earliest",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -228,7 +228,7 @@ def test_resolve_multiple_sum():
         output_spec=PredictorSpec(
             feature_name="value",
             values_df=str_to_df(predictor_df_str),
-            resolve_multiple_fn_name="sum",
+            resolve_multiple_fn="sum",
             interval_days=2,
             fallback=0,
         ),
@@ -250,7 +250,7 @@ def test_resolve_multiple_count():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="count",
+            resolve_multiple_fn="count",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -274,7 +274,7 @@ def test_resolve_multiple_bool():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="bool",
+            resolve_multiple_fn="bool",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -300,7 +300,7 @@ def test_resolve_multiple_change_per_day():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="change_per_day",
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
             incident=True,
@@ -326,7 +326,7 @@ def test_resolve_multiple_change_per_day_unordered():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="change_per_day",
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
             incident=True,
@@ -352,7 +352,7 @@ def test_resolve_multiple_change_per_day_negative():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="change_per_day",
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
             incident=True,
@@ -378,7 +378,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="change_per_day",
+            resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=99999,
             incident=True,
@@ -404,7 +404,7 @@ def test_resolve_multiple_variance():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn_name="variance",
+            resolve_multiple_fn="variance",
             interval_days=4,
             fallback=np.NaN,
             incident=True,
