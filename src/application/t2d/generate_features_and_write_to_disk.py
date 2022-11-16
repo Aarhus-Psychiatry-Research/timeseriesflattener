@@ -337,14 +337,14 @@ def create_flattened_dataset(
     """
     msg = Printer(timestamp=True)
 
-    msg.info(f"Generating {len(spec_set.temporal_predictor_specs)} features")
+    msg.info(f"Generating {len(spec_set.temporal_predictors)} features")
 
     msg.info("Initialising flattened dataset")
 
     flattened_dataset = FlattenedDataset(
         prediction_times_df=prediction_times,
         n_workers=min(
-            len(spec_set.temporal_predictor_specs),
+            len(spec_set.temporal_predictors),
             psutil.cpu_count(logical=False),
         ),
         feature_cache_dir=proj_path / "feature_cache",
@@ -361,8 +361,8 @@ def create_flattened_dataset(
     )
 
     flattened_dataset = add_predictors_to_ds(
-        temporal_predictor_specs=spec_set.temporal_predictor_specs,
-        static_predictor_specs=spec_set.static_predictor_specs,
+        temporal_predictor_specs=spec_set.temporal_predictors,
+        static_predictor_specs=spec_set.static_predictors,
         flattened_dataset=flattened_dataset,
         birthdays=birthdays,
     )

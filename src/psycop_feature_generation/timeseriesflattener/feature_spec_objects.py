@@ -96,6 +96,9 @@ class AnySpec(BaseModel):
     def __init__(self, **data):
         data = resolve_values_df(data)
 
+        if in_dict_and_not_none(d=data, key="output_col_name_override"):
+            data["prefix"] = ""
+
         super().__init__(**data)
 
         # Type-hint the values_df to no longer be optional. Changes the outwards-facing
