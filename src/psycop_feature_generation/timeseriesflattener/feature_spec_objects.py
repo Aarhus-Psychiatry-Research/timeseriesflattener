@@ -35,7 +35,7 @@ def resolve_values_df(data: dict[str, Any]):
     ):
         raise ValueError("Only one of values_loader or df can be specified.")
 
-    if "values_df" not in data:
+    if "values_df" not in data or data["values_df"] is None:
         if isinstance(data["values_loader"], str):
             data["feature_name"] = data["values_loader"]
             data["values_loader"] = data_loaders.get(data["values_loader"])
@@ -237,7 +237,7 @@ class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
     ahead or behind. Used to generate combinations of features."""
 
-    values_loader: Sequence[str] = None
+    values_loader: Sequence[str]
     # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
     # then calls the function which should return a dataframe.
 
@@ -261,9 +261,6 @@ class MinGroupSpec(BaseModel):
 
     allowed_nan_value_prop: list[float] = [0.0]
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
-
-    feature_name: str
-    # Name of the output column.
 
     def __init__(self, **data):
         super().__init__(**data)
