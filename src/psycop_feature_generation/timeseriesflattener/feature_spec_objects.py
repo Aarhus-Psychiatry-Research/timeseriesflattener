@@ -2,23 +2,30 @@
 
 import itertools
 from collections.abc import Sequence
-from functools import lru_cache
+from functools import cache
 from typing import Any, Callable, Optional, Union
 
 import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
+from wasabi import Printer
 
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_multiple_fns,
 )
 from psycop_feature_generation.utils import data_loaders
 
+msg = Printer(timestamp=True)
 
-@lru_cache()
-def load_df_with_cache(loader_fn: Callable, kwargs: dict[str, Any]) -> pd.DataFrame:
-    return loader_fn(**kwargs)
+
+@cache
+def load_df_with_cache(loader_fn: Callable, kwargs: dict[str, Any], feature_name: str) -> pd.DataFrame:
+    msg.info(f"{feature_name}: Loading values")
+    df = loader_fn(**kwargs)
+    msg.good(f"{feature_name}: Loaded values")
+    
+    return df
 
 
 def in_dict_and_not_none(d: dict, key: str) -> bool:
@@ -47,7 +54,9 @@ def resolve_values_df(data: dict[str, Any]):
             data["values_df"] = load_df_with_cache(
                 loader_fn=data["values_loader"],
                 kwargs=frozendict(data["loader_kwargs"]),
+                feature_name=data["feature_name"],
             )
+            
 
     if not isinstance(data["values_df"], pd.DataFrame):
         raise ValueError("values_df must be or resolve to a pandas DataFrame.")

@@ -48,14 +48,6 @@ from psycop_feature_generation.utils import (
 )
 
 
-def finish_wandb():
-    """Log artifacts and finish the run."""
-
-    wandb.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
-
-    wandb.finish()
-
-
 def init_wandb(
     wandb_project_name: str,
     predictor_specs: Sequence[PredictorSpec],
@@ -356,7 +348,7 @@ def create_flattened_dataset(
     )
 
     flattened_dataset = add_outcomes_to_ds(
-        outcome_specs=spec_set.outcome_specs,
+        outcome_specs=spec_set.outcomes,
         flattened_dataset=flattened_dataset,
     )
 
@@ -444,8 +436,8 @@ def get_outcome_specs():
 
 def get_temporal_predictor_specs() -> list[PredictorSpec]:
     """Generate predictor spec list."""
-    resolve_multiple = ["max"]  # , "min", "mean", "latest", "count"]
-    interval_days = [30]  # , 90, 180, 365, 730]
+    resolve_multiple = ["max", "min", "mean", "latest", "count"]
+    interval_days = [30, 90, 180, 365, 730]
     allowed_nan_value_prop = [0]
 
     unresolved_temporal_predictor_specs: list[PredictorSpec] = []
@@ -453,16 +445,16 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
     unresolved_temporal_predictor_specs += PredictorGroupSpec(
         values_loader=(
             "hba1c",
-            # "alat",
-            # "hdl",
-            # "ldl",
-            # "scheduled_glc",
-            # "unscheduled_p_glc",
-            # "triglycerides",
-            # "fasting_ldl",
-            # "crp",
-            # "egfr",
-            # "albumine_creatinine_ratio",
+            "alat",
+            "hdl",
+            "ldl",
+            "scheduled_glc",
+            "unscheduled_p_glc",
+            "triglycerides",
+            "fasting_ldl",
+            "crp",
+            "egfr",
+            "albumine_creatinine_ratio",
         ),
         resolve_multiple_fn=resolve_multiple,
         interval_days=interval_days,
@@ -470,34 +462,34 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
-    # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-    #     values_loader=(
-    #         "essential_hypertension",
-    #         "hyperlipidemia",
-    #         "polycystic_ovarian_syndrome",
-    #         "sleep_apnea",
-    #     ),
-    #     resolve_multiple_fn=resolve_multiple,
-    #     interval_days=interval_days,
-    #     fallback=[0],
-    #     allowed_nan_value_prop=allowed_nan_value_prop,
-    # ).create_combinations()
+    unresolved_temporal_predictor_specs += PredictorGroupSpec(
+        values_loader=(
+            "essential_hypertension",
+            "hyperlipidemia",
+            "polycystic_ovarian_syndrome",
+            "sleep_apnea",
+        ),
+        resolve_multiple_fn=resolve_multiple,
+        interval_days=interval_days,
+        fallback=[0],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
-    # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-    #     values_loader=("antipsychotics",),
-    #     interval_days=interval_days,
-    #     resolve_multiple_fn=resolve_multiple,
-    #     fallback=[0],
-    #     allowed_nan_value_prop=allowed_nan_value_prop,
-    # ).create_combinations()
+    unresolved_temporal_predictor_specs += PredictorGroupSpec(
+        values_loader=("antipsychotics",),
+        interval_days=interval_days,
+        resolve_multiple_fn=resolve_multiple,
+        fallback=[0],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
-    # unresolved_temporal_predictor_specs += UnresolvedPredictorGroupSpec(
-    #     values_loader=["weight_in_kg", "height_in_cm", "bmi"],
-    #     interval_days=interval_days,
-    #     resolve_multiple_fn=["latest"],
-    #     fallback=[np.nan],
-    #     allowed_nan_value_prop=allowed_nan_value_prop,
-    # ).create_combinations()
+    unresolved_temporal_predictor_specs += PredictorGroupSpec(
+        values_loader=["weight_in_kg", "height_in_cm", "bmi"],
+        interval_days=interval_days,
+        resolve_multiple_fn=["latest"],
+        fallback=[np.nan],
+        allowed_nan_value_prop=allowed_nan_value_prop,
+    ).create_combinations()
 
     return unresolved_temporal_predictor_specs
 
@@ -558,7 +550,7 @@ def main(
         file_suffix="parquet",
     )
 
-    finish_wandb()
+    wandb.log_artifact("poetry.lock", name="poetry_lock_file", type="poetry_lock")
 
 
 if __name__ == "__main__":
