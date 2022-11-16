@@ -82,17 +82,3 @@ def test_skip_one_if_no_need_to_process():
 
     for combination in created_combinations:
         assert combination in expected_combinations
-
-
-def test_unresolved_predictor_group_spec_create_combinations_correct_nr():
-    """Tests that create_combination creates the correct number of
-    combinations."""
-    combinations = UnresolvedPredictorGroupSpec(
-        values_lookup_name=["weight_in_kg", "height_in_cm"],
-        interval_days=[1, 2],
-        resolve_multiple_fn_name=["latest"],
-        fallback=[np.nan],
-        allowed_nan_value_prop=[0.0],
-    ).create_combinations()
-
-    assert len(combinations) == 4

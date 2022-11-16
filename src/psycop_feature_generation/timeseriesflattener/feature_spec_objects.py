@@ -2,11 +2,11 @@
 
 import itertools
 from collections.abc import Sequence
-from typing import Callable, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import pandas as pd
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Extra, validator
+from pydantic import Extra
 
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_multiple_fns,
@@ -36,7 +36,7 @@ class AnySpec(BaseModel):
     # tries to resolve from XYZ registry, then calls the function which should return
     # a dataframe.
 
-    df: pd.DataFrame = None
+    values_df: pd.DataFrame
     # Dataframe with the values.
 
     feature_name: str
@@ -48,25 +48,43 @@ class AnySpec(BaseModel):
     # An override for the input column name. If None, will attempt
     # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
 
-    @validator("df")
-    def resolve_df(self, value):
-        if not (self.values_loader or self.df):
-            raise ValueError("Either values_loader or df must be specified.")
-        if self.values_loader and self.df:
-            raise ValueError("Only one of values_loader or df can be specified.")
-        if self.values_loader:
-            if isinstance(self.values_loader, str):
-                self.feature_name = self.values_loader
-                self.values_loader = data_loaders.get(self.values_loader)
+    def __init__(self, **data):
+        self.resolve_values_df(data)
 
-            if callable(self.values_loader):
-                self.df = self.values_loader()
+        super().__init__(**data)
+
+    def resolve_values_df(self, data: dict[str, Any]):
+        if "values_loader" not in data and "values_df" not in data:
+            raise ValueError("Either values_loader or df must be specified.")
+
+        if "values_loader" in data and "values_df" in data:
+            raise ValueError("Only one of values_loader or df can be specified.")
+
+        if "values_df" not in data:
+            if isinstance(data["values_loader"], str):
+                data["feature_name"] = data["values_loader"]
+                data["values_loader"] = data_loaders.get(data["values_loader"])
+
+            if callable(data["values_loader"]):
+                data["values_df"] = data["values_loader"]()
             else:
-                raise ValueError(
-                    f"{self.values_loader.__name__} could not be resolved to a callable"
-                )
-        if not isinstance(self.df, pd.DataFrame):
-            raise ValueError(f"{self.df.__name__} could not be resolved to a dataframe")
+                raise ValueError("values_loader could not be resolved to a callable")
+
+    def __eq__(self, other):
+        # Trying to run `spec in list_of_specs` works for all attributes except for df,
+        # since the truth value of a dataframe is ambiguous. To remedy this, we use pandas'
+        # .equals() method for comparing the dfs, and get the combined truth value.
+
+        # We need to override the __eq__ method.
+        other_attributes_equal = all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in self.__dict__
+            if attr != "values_df"
+        )
+
+        dfs_equal = self.values_df.equals(other.values_df)
+
+        return other_attributes_equal and dfs_equal
 
     def get_col_str(self) -> str:
         """Create column name for the output column."""
@@ -133,22 +151,6 @@ class TemporalSpec(AnySpec):
 
         return col_str
 
-    def __eq__(self, other):
-        # Trying to run `spec in list_of_specs` works for all attributes except for df,
-        # since the truth value of a dataframe is ambiguous. To remedy this, we use pandas'
-        # .equals() method for comparing the dfs, and get the combined truth value.
-
-        # We need to override the __eq__ method.
-        other_attributes_equal = all(
-            getattr(self, attr) == getattr(other, attr)
-            for attr in self.__dict__
-            if attr != "df"
-        )
-
-        dfs_equal = self.df.equals(other.df)
-
-        return other_attributes_equal and dfs_equal
-
 
 class PredictorSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
@@ -183,7 +185,7 @@ class OutcomeSpec(TemporalSpec):
             else self.input_col_name_override
         )
 
-        return len(self.df[col_name].unique()) <= 2
+        return len(self.values_df[col_name].unique()) <= 2
 
 
 class MinGroupSpec(BaseModel):
@@ -212,7 +214,7 @@ class MinGroupSpec(BaseModel):
 
 
 def create_feature_combinations_from_dict(
-        d: dict[str, Union[str, list]],
+    d: dict[str, Union[str, list]],
 ) -> list[dict[str, Union[str, float, int]]]:
     """Create feature combinations from a dictionary of feature specifications.
     Only unpacks the top level of lists.
@@ -235,8 +237,8 @@ def create_feature_combinations_from_dict(
 
 
 def create_specs_from_group(
-        feature_group_spec: MinGroupSpec,
-        output_class: AnySpec,
+    feature_group_spec: MinGroupSpec,
+    output_class: AnySpec,
 ) -> list[AnySpec]:
     """Create a list of specs from a GroupSpec."""
 

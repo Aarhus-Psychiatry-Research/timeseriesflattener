@@ -21,7 +21,6 @@ from psycop_feature_generation.utils_for_testing import (
     str_to_df,
 )
 
-
 # pylint: disable=import-error
 # from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
 # from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
@@ -414,11 +413,11 @@ def test_add_multiple_static_predictors():
     outcome_df = flattened_dataset.df
 
     for col in (
-            "dw_ek_borger",
-            "timestamp",
-            "outc_value_within_2_days_max_fallback_0_dichotomous",
-            "pred_age_in_years",
-            "pred_male",
+        "dw_ek_borger",
+        "timestamp",
+        "outc_value_within_2_days_max_fallback_0_dichotomous",
+        "pred_age_in_years",
+        "pred_male",
     ):
         pd.testing.assert_series_equal(
             outcome_df[col],

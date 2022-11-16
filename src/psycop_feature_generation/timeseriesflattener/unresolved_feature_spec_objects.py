@@ -26,8 +26,8 @@ class UnresolvedAnySpec(BaseModel):
     output_col_name_override: Optional[str]
 
     def resolve_spec(
-            self,
-            str2df: dict[str, pd.DataFrame],
+        self,
+        str2df: dict[str, pd.DataFrame],
     ) -> TemporalSpec:
         """Resolve the df."""
         str2resolve_multiple = resolve_multiple_fns.get_all()
@@ -46,11 +46,11 @@ class UnresolvedAnySpec(BaseModel):
         # We can get around it by allowing extras (e.g. attributes which aren't specified) in the feature_spec_objects,
         # but that leaves us open to typos.
         for redundant_key in (
-                "df",
-                "resolve_multiple_fn",
-                "lab_values_to_load",
-                "values_lookup_name",
-                "output_col_name_override",
+            "df",
+            "resolve_multiple_fn",
+            "lab_values_to_load",
+            "values_lookup_name",
+            "output_col_name_override",
         ):
             if redundant_key in kwargs_dict:
                 kwargs_dict.pop(redundant_key)

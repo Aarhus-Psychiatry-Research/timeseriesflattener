@@ -18,10 +18,14 @@ def test_anyspec_init():
         prefix="test",
     )
 
-    assert type(spec.df) == pd.DataFrame
+    assert type(spec.values_df) == pd.DataFrame
     assert spec.feature_name == values_loader_name
 
 
 def test_anyspec_incorrect_values_loader_str():
-    with pytest.raises(ValueError, match="to a callable"):
+    with pytest.raises(ValueError, match=r".*in registry.*"):
         AnySpec(values_loader="I don't exist", prefix="test")
+
+
+if __name__ == "__main__":
+    test_anyspec_init()
