@@ -36,6 +36,9 @@ class AnySpec(BaseModel):
     # tries to resolve from XYZ registry, then calls the function which should return
     # a dataframe.
 
+    loader_kwargs: Optional[dict[str, Any]] = None
+    # Optional kwargs for the values_loader
+
     values_df: pd.DataFrame
     # Dataframe with the values.
 
@@ -66,7 +69,7 @@ class AnySpec(BaseModel):
                 data["values_loader"] = data_loaders.get(data["values_loader"])
 
             if callable(data["values_loader"]):
-                data["values_df"] = data["values_loader"]()
+                data["values_df"] = data["values_loader"](**data["loader_kwargs"])
             else:
                 raise ValueError("values_loader could not be resolved to a callable")
 
