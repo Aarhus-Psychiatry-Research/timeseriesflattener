@@ -230,7 +230,7 @@ class MinGroupSpec(BaseModel):
     interval_days: list[Union[int, float]]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
 
-    resolve_multiple_fn_name: list[str]
+    resolve_multiple_fn: list[str]
     # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
 
     fallback: list[Union[Callable, str]]

@@ -463,7 +463,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
     predictor_spec_list = PredictorGroupSpec(
         values_df=[predictors_df],
         interval_days=[1, 365, 720],
-        resolve_multiple_fn_name=["min"],
+        resolve_multiple_fn=["min"],
         fallback=[np.nan],
         allowed_nan_value_prop=[0],
         feature_name="value",
@@ -564,7 +564,7 @@ def test_add_temporal_incident_binary_outcome():
 #     predictor_specs = PredictorGroupSpec(
 #         df=[synth_notes_df],
 #         interval_days=[1, 365, 720],
-#         resolve_multiple_fn_name=["min"],
+#         resolve_multiple_fn=["min"],
 #         fallback=[np.nan],
 #         allowed_nan_value_prop=[0],
 #         loader_kwargs=[{"featurizer": "tfidf"}],
@@ -606,7 +606,7 @@ def test_add_temporal_incident_binary_outcome():
 #             {
 #                 "predictor_df": "synth_notes",
 #                 "lookbehind_days": [1, 365, 720],
-#                 "resolve_multiple_fn_name": "min",
+#                 "resolve_multiple_fn": "min",
 #                 "fallback": np.nan,
 #                 "loader_kwargs": {
 #                     "featurizer": "huggingface",

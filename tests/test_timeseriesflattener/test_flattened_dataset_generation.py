@@ -33,7 +33,7 @@ from psycop_feature_generation.utils_for_testing import (
 base_float_predictor_combinations = PredictorGroupSpec(
     values_df=[synth_predictor_float()],
     interval_days=[365, 730],
-    resolve_multiple_fn_name=["mean"],
+    resolve_multiple_fn=["mean"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
     feature_name="value",
@@ -42,7 +42,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 base_binary_predictor_combinations = PredictorGroupSpec(
     values_df=[synth_predictor_binary()],
     interval_days=[365, 730],
-    resolve_multiple_fn_name=["max"],
+    resolve_multiple_fn=["max"],
     fallback=[np.NaN],
     feature_name="value",
     allowed_nan_value_prop=[0.0],
