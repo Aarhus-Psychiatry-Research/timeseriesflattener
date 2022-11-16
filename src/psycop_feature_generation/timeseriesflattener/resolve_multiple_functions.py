@@ -36,12 +36,12 @@ def earliest(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.first()
 
 
-@resolve_multiple_fns.register("maximum")
-def maximum(grouped_df: DataFrame) -> DataFrame:
+@resolve_multiple_fns.register("max")
+def max(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.max()
 
 
-@resolve_multiple_fns.register("minimum")
+@resolve_multiple_fns.register("min")
 def minimum(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.min()
 
@@ -51,7 +51,7 @@ def mean(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.mean(numeric_only=True)
 
 
-@resolve_multiple_fns.register("summed")
+@resolve_multiple_fns.register("sum")
 def summed(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.sum()
 
@@ -66,7 +66,7 @@ def variance(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.var()
 
 
-@resolve_multiple_fns.register("boolean")
+@resolve_multiple_fns.register("bool")
 def boolean(grouped_df: DataFrame) -> DataFrame:
     """Returns a boolean value indicating whether or not event has occured in
     look ahead/behind window.

@@ -1,4 +1,4 @@
-,citizen_ids,timestamp,timestamp_outcome,pred_hba1c_within_100_days_maximum_fallback_nan,pred_hdl_within_100_days_max_fallback_nan,outc_dichotomous_t2d_within_30_days_max_fallback_0
+,citizen_ids,timestamp,timestamp_outcome,pred_hba1c_within_100_days_max_fallback_nan,pred_hdl_within_100_days_max_fallback_nan,outc_dichotomous_t2d_within_30_days_max_fallback_0
 0,911728.0,1973-10-05 23:07:00,1971-02-02 07:16:00,56.811807593916384,0.7226603212144671,0.0
 1,642345.0,1974-10-31 18:44:00,1975-04-12 16:30:00,43.34912487071097,0.5135122979150542,0.0
 2,23036.0,1972-01-26 08:05:00,1973-01-05 05:44:00,62.2044393269387,1.2021553318530473,0.0

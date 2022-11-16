@@ -19,7 +19,7 @@ def test_skip_all_if_no_need_to_process():
                 values_df=[synth_predictor_float()],
                 input_col_name_override="val",
                 interval_days=[1],
-                resolve_multiple_fn=["maximum"],
+                resolve_multiple_fn=["max"],
                 fallback=[0],
                 allowed_nan_value_prop=[0.5],
                 feature_name="value",
@@ -34,7 +34,7 @@ def test_skip_one_if_no_need_to_process():
         values_df=[synth_predictor_float()],
         input_col_name_override="val",
         interval_days=[1, 2],
-        resolve_multiple_fn=["maximum", "minimum"],
+        resolve_multiple_fn=["max", "min"],
         fallback=[0],
         allowed_nan_value_prop=[0],
         feature_name="value",
@@ -44,7 +44,7 @@ def test_skip_one_if_no_need_to_process():
         PredictorSpec(
             values_df=synth_predictor_float(),
             interval_days=1,
-            resolve_multiple_fn="maximum",
+            resolve_multiple_fn="max",
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",
@@ -53,7 +53,7 @@ def test_skip_one_if_no_need_to_process():
         PredictorSpec(
             values_df=synth_predictor_float(),
             interval_days=2,
-            resolve_multiple_fn="maximum",
+            resolve_multiple_fn="max",
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",
@@ -62,7 +62,7 @@ def test_skip_one_if_no_need_to_process():
         PredictorSpec(
             values_df=synth_predictor_float(),
             interval_days=1,
-            resolve_multiple_fn="minimum",
+            resolve_multiple_fn="min",
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",
@@ -71,7 +71,7 @@ def test_skip_one_if_no_need_to_process():
         PredictorSpec(
             values_df=synth_predictor_float(),
             interval_days=2,
-            resolve_multiple_fn="minimum",
+            resolve_multiple_fn="min",
             fallback=0,
             allowed_nan_value_prop=0,
             input_col_name_override="val",

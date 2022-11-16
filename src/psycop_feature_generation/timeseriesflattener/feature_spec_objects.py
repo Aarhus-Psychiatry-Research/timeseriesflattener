@@ -38,10 +38,9 @@ class AnySpec(BaseModel):
     Allows for easier type hinting.
     """
 
-    values_loader: Optional[Union[Callable, str]] = None
-    # Loader for the df. If Callable, it should return a dataframe. If str,
-    # tries to resolve from XYZ registry, then calls the function which should return
-    # a dataframe.
+    values_loader: Optional[str]] = None
+    # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry, 
+    # then calls the function which should return a dataframe.
 
     loader_kwargs: Optional[dict[str, Any]] = None
     # Optional kwargs for the values_loader
@@ -137,7 +136,7 @@ class TemporalSpec(AnySpec):
     interval_days: Union[int, float]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
 
-    resolve_multiple_fn: Callable
+    resolve_multiple_fn: str
 
     fallback: Union[Callable, int, float, str]
     # Which value to use if no values are found within interval_days.

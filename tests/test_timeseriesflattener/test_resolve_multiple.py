@@ -10,9 +10,9 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: disable=unused-import
     earliest,
     latest,
-    maximum,
+    max,
     mean,
-    minimum,
+    min,
 )
 from psycop_feature_generation.utils_for_testing import (
     assert_flattened_data_as_expected,
@@ -35,7 +35,7 @@ def test_resolve_multiple_catalogue():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="minimum",
+            resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -58,7 +58,7 @@ def test_resolve_multiple_max():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="maximum",
+            resolve_multiple_fn="max",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -81,7 +81,7 @@ def test_resolve_multiple_min():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="minimum",
+            resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
             incident=True,
@@ -228,7 +228,7 @@ def test_resolve_multiple_sum():
         output_spec=PredictorSpec(
             feature_name="value",
             values_df=str_to_df(predictor_df_str),
-            resolve_multiple_fn="summed",
+            resolve_multiple_fn="sum",
             interval_days=2,
             fallback=0,
         ),
@@ -274,7 +274,7 @@ def test_resolve_multiple_bool():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="boolean",
+            resolve_multiple_fn="bool",
             interval_days=2,
             fallback=0,
             incident=True,
