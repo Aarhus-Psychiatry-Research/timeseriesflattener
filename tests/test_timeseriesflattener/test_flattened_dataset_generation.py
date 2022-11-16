@@ -32,7 +32,7 @@ from psycop_feature_generation.utils_for_testing import (
 )
 
 base_float_predictor_combinations = PredictorGroupSpec(
-    values_df=[synth_predictor_float()],
+    values_df=synth_predictor_float(),
     interval_days=[365, 730],
     resolve_multiple_fn=["mean"],
     fallback=[np.NaN],
@@ -41,7 +41,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
-    values_df=[synth_predictor_binary()],
+    values_df=synth_predictor_binary(),
     interval_days=[365, 730],
     resolve_multiple_fn=["max"],
     fallback=[np.NaN],
@@ -220,7 +220,7 @@ def test_all_non_online_elements_in_pipeline(
 
 if __name__ == "__main__":
     base_float_predictor_combinations = PredictorGroupSpec(
-        values_df=[synth_predictor_float()],
+        values_df=synth_predictor_float(),
         interval_days=[365, 730],
         resolve_multiple_fn=["mean"],
         fallback=[np.NaN],

@@ -37,7 +37,7 @@ def earliest(grouped_df: DataFrame) -> DataFrame:
 
 
 @resolve_multiple_fns.register("max")
-def max(grouped_df: DataFrame) -> DataFrame:
+def maximum(grouped_df: DataFrame) -> DataFrame:
     return grouped_df.max()
 
 

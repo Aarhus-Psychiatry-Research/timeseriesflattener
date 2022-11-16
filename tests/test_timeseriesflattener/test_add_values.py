@@ -461,7 +461,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
     )
 
     predictor_spec_list = PredictorGroupSpec(
-        values_df=[predictors_df],
+        values_df=predictors_df,
         interval_days=[1, 365, 720],
         resolve_multiple_fn=["min"],
         fallback=[np.nan],

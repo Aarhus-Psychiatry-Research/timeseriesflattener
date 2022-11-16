@@ -243,7 +243,7 @@ def blood_sample(
 
     for k in sources_to_load:  # pylint: disable=invalid-name
         dfs.append(
-            fn_dict[k](
+            fn_dict[k](  # type: ignore
                 blood_sample_id=blood_sample_id,
                 n_rows=n_rows_per_fn,
                 view=view,

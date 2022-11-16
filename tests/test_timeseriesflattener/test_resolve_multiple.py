@@ -10,7 +10,7 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: disable=unused-import
     earliest,
     latest,
-    max,
+    maximum,
     mean,
     minimum,
 )

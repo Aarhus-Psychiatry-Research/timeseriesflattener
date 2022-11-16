@@ -21,6 +21,40 @@ def load_df_with_cache(loader_fn: Callable, kwargs: dict[str, Any]) -> pd.DataFr
     return loader_fn(**kwargs)
 
 
+def in_dict_and_not_none(d: dict, key: str) -> bool:
+    """Check if a key is in a dictionary and its value is not None."""
+    return key in d and d[key] is not None
+
+
+def resolve_values_df(data: dict[str, Any]):
+    if "values_loader" not in data and "values_df" not in data:
+        raise ValueError("Either values_loader or df must be specified.")
+
+    if in_dict_and_not_none(d=data, key="values_loader") and in_dict_and_not_none(
+        key="values_df", d=data
+    ):
+        raise ValueError("Only one of values_loader or df can be specified.")
+
+    if "values_df" not in data:
+        if isinstance(data["values_loader"], str):
+            data["feature_name"] = data["values_loader"]
+            data["values_loader"] = data_loaders.get(data["values_loader"])
+
+        if callable(data["values_loader"]):
+            if not "loader_kwargs" in data:
+                data["loader_kwargs"] = {}
+
+            data["values_df"] = load_df_with_cache(
+                loader_fn=data["values_loader"],
+                kwargs=frozendict(data["loader_kwargs"]),
+            )
+
+    if not isinstance(data["values_df"], pd.DataFrame):
+        raise ValueError("values_df must be or resolve to a pandas DataFrame.")
+
+    return data
+
+
 class BaseModel(PydanticBaseModel):
     """."""
 
@@ -60,9 +94,13 @@ class AnySpec(BaseModel):
     # Override for the values col name in the output.
 
     def __init__(self, **data):
-        self.resolve_values_df(data)
+        data = resolve_values_df(data)
 
         super().__init__(**data)
+
+        # Type-hint the values_df to no longer be optional. Changes the outwards-facing
+        # type hint so that mypy doesn't complain.
+        self.values_df: pd.DataFrame = self.values_df
 
         if self.output_col_name_override:
             input_col_name = (
@@ -75,29 +113,6 @@ class AnySpec(BaseModel):
                 columns={input_col_name: self.output_col_name_override},
                 inplace=True,
             )
-
-    def resolve_values_df(self, data: dict[str, Any]):
-        if "values_loader" not in data and "values_df" not in data:
-            raise ValueError("Either values_loader or df must be specified.")
-
-        if "values_loader" in data and "values_df" in data:
-            raise ValueError("Only one of values_loader or df can be specified.")
-
-        if "values_df" not in data:
-            if isinstance(data["values_loader"], str):
-                data["feature_name"] = data["values_loader"]
-                data["values_loader"] = data_loaders.get(data["values_loader"])
-
-            if callable(data["values_loader"]):
-                if not "loader_kwargs" in data:
-                    data["loader_kwargs"] = {}
-
-                data["values_df"] = load_df_with_cache(
-                    loader_fn=data["values_loader"],
-                    kwargs=frozendict(data["loader_kwargs"]),
-                )
-            else:
-                raise ValueError("values_loader could not be resolved to a callable")
 
     def __eq__(self, other):
         # Trying to run `spec in list_of_specs` works for all attributes except for df,
@@ -138,6 +153,10 @@ class TemporalSpec(AnySpec):
 
     resolve_multiple_fn: Callable
 
+    key_for_resolve_multiple: str
+    # Key used to lookup the resolve_multiple_fn in the resolve_multiple_fns registry.
+    # Used for column name generation.
+
     fallback: Union[Callable, int, float, str]
     # Which value to use if no values are found within interval_days.
 
@@ -157,11 +176,15 @@ class TemporalSpec(AnySpec):
     def __init__(self, **data):
         if isinstance(data["resolve_multiple_fn"], str):
             # convert resolve_multiple_str to fn
+            data["key_for_resolve_multiple"] = data["resolve_multiple_fn"]
+
             data["resolve_multiple_fn"] = resolve_multiple_fns.get_all()[
                 data["resolve_multiple_fn"]
             ]
 
         super().__init__(**data)
+
+        self.resolve_multiple_fn = data["resolve_multiple_fn"]
 
         # override fallback strings with objects
         if self.fallback == "nan":
@@ -169,7 +192,7 @@ class TemporalSpec(AnySpec):
 
     def get_col_str(self) -> str:
         """Generate the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.resolve_multiple_fn.__name__}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
 
         return col_str
 
@@ -207,17 +230,25 @@ class OutcomeSpec(TemporalSpec):
             else self.input_col_name_override
         )
 
-        return len(self.values_df[col_name].unique()) <= 2
+        return len(self.values_df[col_name].unique()) <= 2  # type: ignore
 
 
 class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
-    ahead or behind."""
+    ahead or behind. Used to generate combinations of features."""
 
-    values_df: list[pd.DataFrame]
+    values_loader: Optional[Callable] = None
+    # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
+    # then calls the function which should return a dataframe.
+
+    values_df: Optional[pd.DataFrame] = None
+    # Dataframe with the values.
 
     input_col_name_override: Optional[str] = None
     # Override for the column name to use as values in df.
+
+    output_col_name_override: Optional[str] = None
+    # Override for the column name to use as values in the output df.
 
     interval_days: list[Union[int, float]]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
@@ -233,6 +264,25 @@ class MinGroupSpec(BaseModel):
 
     feature_name: str
     # Name of the output column.
+
+    def __init__(self, **data):
+        data = resolve_values_df(data)
+
+        super().__init__(**data)
+
+        self.values_df: pd.DataFrame = self.values_df
+
+        if self.output_col_name_override:
+            input_col_name = (
+                "value"
+                if not self.input_col_name_override
+                else self.input_col_name_override
+            )
+
+            self.values_df.rename(
+                columns={input_col_name: self.output_col_name_override},
+                inplace=True,
+            )
 
 
 def create_feature_combinations_from_dict(
