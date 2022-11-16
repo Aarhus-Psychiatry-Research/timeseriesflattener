@@ -20,11 +20,13 @@ msg = Printer(timestamp=True)
 
 
 @cache
-def load_df_with_cache(loader_fn: Callable, kwargs: dict[str, Any], feature_name: str) -> pd.DataFrame:
+def load_df_with_cache(
+    loader_fn: Callable, kwargs: dict[str, Any], feature_name: str
+) -> pd.DataFrame:
     msg.info(f"{feature_name}: Loading values")
     df = loader_fn(**kwargs)
     msg.good(f"{feature_name}: Loaded values")
-    
+
     return df
 
 
@@ -56,7 +58,6 @@ def resolve_values_df(data: dict[str, Any]):
                 kwargs=frozendict(data["loader_kwargs"]),
                 feature_name=data["feature_name"],
             )
-            
 
     if not isinstance(data["values_df"], pd.DataFrame):
         raise ValueError("values_df must be or resolve to a pandas DataFrame.")
@@ -115,11 +116,11 @@ class AnySpec(BaseModel):
         self.values_df: pd.DataFrame = self.values_df
 
     def __eq__(self, other):
-        # Trying to run `spec in list_of_specs` works for all attributes except for df,
-        # since the truth value of a dataframe is ambiguous. To remedy this, we use pandas'
-        # .equals() method for comparing the dfs, and get the combined truth value.
+        """Trying to run `spec in list_of_specs` works for all attributes except for df,
+        since the truth value of a dataframe is ambiguous. To remedy this, we use pandas'
+        .equals() method for comparing the dfs, and get the combined truth value.
 
-        # We need to override the __eq__ method.
+        We need to override the __eq__ method."""
         other_attributes_equal = all(
             getattr(self, attr) == getattr(other, attr)
             for attr in self.__dict__
