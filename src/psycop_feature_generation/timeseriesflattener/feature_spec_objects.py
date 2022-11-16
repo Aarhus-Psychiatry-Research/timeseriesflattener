@@ -237,7 +237,7 @@ class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
     ahead or behind. Used to generate combinations of features."""
 
-    values_loader: Optional[Callable] = None
+    values_loader: Sequence[str] = None
     # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
     # then calls the function which should return a dataframe.
 
@@ -266,11 +266,7 @@ class MinGroupSpec(BaseModel):
     # Name of the output column.
 
     def __init__(self, **data):
-        data = resolve_values_df(data)
-
         super().__init__(**data)
-
-        self.values_df: pd.DataFrame = self.values_df
 
         if self.output_col_name_override:
             input_col_name = (
