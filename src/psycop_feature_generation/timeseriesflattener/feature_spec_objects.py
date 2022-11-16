@@ -91,7 +91,7 @@ class AnySpec(BaseModel):
     # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
 
     output_col_name_override: Optional[str] = None
-    # Override for the values col name in the output.
+    # Override the generated col name after flattening the time series.
 
     def __init__(self, **data):
         data = resolve_values_df(data)
@@ -104,18 +104,6 @@ class AnySpec(BaseModel):
         # Type-hint the values_df to no longer be optional. Changes the outwards-facing
         # type hint so that mypy doesn't complain.
         self.values_df: pd.DataFrame = self.values_df
-
-        if self.output_col_name_override:
-            input_col_name = (
-                "value"
-                if not self.input_col_name_override
-                else self.input_col_name_override
-            )
-
-            self.values_df.rename(
-                columns={input_col_name: self.output_col_name_override},
-                inplace=True,
-            )
 
     def __eq__(self, other):
         # Trying to run `spec in list_of_specs` works for all attributes except for df,
