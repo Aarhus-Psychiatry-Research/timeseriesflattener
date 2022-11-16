@@ -1,7 +1,6 @@
 """Tests for feature_combination creation."""
 
 # pylint: disable=missing-function-docstring
-import numpy as np
 
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
     synth_predictor_float,
