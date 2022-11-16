@@ -2,9 +2,11 @@
 
 import itertools
 from collections.abc import Sequence
+from functools import lru_cache
 from typing import Any, Callable, Optional, Union
 
 import pandas as pd
+from frozendict import frozendict
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
@@ -12,6 +14,11 @@ from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions im
     resolve_multiple_fns,
 )
 from psycop_feature_generation.utils import data_loaders
+
+
+@lru_cache()
+def load_df_with_cache(loader_fn: Callable, kwargs: dict[str, Any]) -> pd.DataFrame:
+    return loader_fn(**kwargs)
 
 
 class BaseModel(PydanticBaseModel):
@@ -69,7 +76,10 @@ class AnySpec(BaseModel):
                 data["values_loader"] = data_loaders.get(data["values_loader"])
 
             if callable(data["values_loader"]):
-                data["values_df"] = data["values_loader"](**data["loader_kwargs"])
+                data["values_df"] = load_df_with_cache(
+                    loader_fn=data["values_loader"],
+                    kwargs=frozendict(data["loader_kwargs"]),
+                )
             else:
                 raise ValueError("values_loader could not be resolved to a callable")
 
