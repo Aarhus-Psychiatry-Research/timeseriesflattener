@@ -26,10 +26,10 @@ class UnresolvedAnySpec(BaseModel):
     output_col_name_override: Optional[str]
 
     def resolve_spec(
-        self,
-        str2df: dict[str, pd.DataFrame],
+            self,
+            str2df: dict[str, pd.DataFrame],
     ) -> TemporalSpec:
-        """Resolve the values_df."""
+        """Resolve the df."""
         str2resolve_multiple = resolve_multiple_fns.get_all()
 
         kwargs_dict = self.dict()
@@ -46,11 +46,11 @@ class UnresolvedAnySpec(BaseModel):
         # We can get around it by allowing extras (e.g. attributes which aren't specified) in the feature_spec_objects,
         # but that leaves us open to typos.
         for redundant_key in (
-            "values_df",
-            "resolve_multiple_fn",
-            "lab_values_to_load",
-            "values_lookup_name",
-            "output_col_name_override",
+                "df",
+                "resolve_multiple_fn",
+                "lab_values_to_load",
+                "values_lookup_name",
+                "output_col_name_override",
         ):
             if redundant_key in kwargs_dict:
                 kwargs_dict.pop(redundant_key)
@@ -90,7 +90,7 @@ class UnresolvedGroupSpec(MinGroupSpec):
 
 class UnresolvedTemporalSpec(UnresolvedAnySpec, TemporalSpec):
     resolve_multiple_fn_name: str
-    values_df: Optional[pd.DataFrame] = None
+    df: Optional[pd.DataFrame] = None
 
     # Override the requirement of a feature_name from MinGroupSpec,
     # not needed for unresolved groups since it can be inferred from

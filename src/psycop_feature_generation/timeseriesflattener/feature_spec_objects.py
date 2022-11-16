@@ -6,11 +6,12 @@ from typing import Callable, Optional, Union
 
 import pandas as pd
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Extra
+from pydantic import Extra, validator
 
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_multiple_fns,
 )
+from psycop_feature_generation.utils import data_loaders
 
 
 class BaseModel(PydanticBaseModel):
@@ -30,16 +31,42 @@ class AnySpec(BaseModel):
     Allows for easier type hinting.
     """
 
-    values_df: pd.DataFrame
+    values_loader: Optional[Union[Callable, str]] = None
+    # Loader for the df. If Callable, it should return a dataframe. If str,
+    # tries to resolve from XYZ registry, then calls the function which should return
+    # a dataframe.
+
+    df: pd.DataFrame = None
     # Dataframe with the values.
 
-    # Used for column name generation, e.g. <prefix>_<feature_name>.
     feature_name: str
     prefix: str
+    # Used for column name generation, e.g. <prefix>_<feature_name>.
 
     input_col_name_override: Optional[str] = None
+
     # An override for the input column name. If None, will attempt
     # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
+
+    @validator("df")
+    def resolve_df(self, value):
+        if not (self.values_loader or self.df):
+            raise ValueError("Either values_loader or df must be specified.")
+        if self.values_loader and self.df:
+            raise ValueError("Only one of values_loader or df can be specified.")
+        if self.values_loader:
+            if isinstance(self.values_loader, str):
+                self.feature_name = self.values_loader
+                self.values_loader = data_loaders.get(self.values_loader)
+
+            if callable(self.values_loader):
+                self.df = self.values_loader()
+            else:
+                raise ValueError(
+                    f"{self.values_loader.__name__} could not be resolved to a callable"
+                )
+        if not isinstance(self.df, pd.DataFrame):
+            raise ValueError(f"{self.df.__name__} could not be resolved to a dataframe")
 
     def get_col_str(self) -> str:
         """Create column name for the output column."""
@@ -82,10 +109,14 @@ class TemporalSpec(AnySpec):
     # Col name for timestamps in the input dataframe.
 
     loader_kwargs: Optional[dict] = None
+
     # Optional keyword arguments for the data loader
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, **data):
+        super().__init__(**data)
+
+        # TODO: Resolve multiple_fn if it is a string, don't
+        # use two different attributes.
 
         # convert resolve_multiple_str to fn
         self.resolve_multiple_fn = resolve_multiple_fns.get_all()[
@@ -103,7 +134,7 @@ class TemporalSpec(AnySpec):
         return col_str
 
     def __eq__(self, other):
-        # Trying to run `spec in list_of_specs` works for all attributes except for values_df,
+        # Trying to run `spec in list_of_specs` works for all attributes except for df,
         # since the truth value of a dataframe is ambiguous. To remedy this, we use pandas'
         # .equals() method for comparing the dfs, and get the combined truth value.
 
@@ -111,10 +142,10 @@ class TemporalSpec(AnySpec):
         other_attributes_equal = all(
             getattr(self, attr) == getattr(other, attr)
             for attr in self.__dict__
-            if attr != "values_df"
+            if attr != "df"
         )
 
-        dfs_equal = self.values_df.equals(other.values_df)
+        dfs_equal = self.df.equals(other.df)
 
         return other_attributes_equal and dfs_equal
 
@@ -131,6 +162,7 @@ class OutcomeSpec(TemporalSpec):
     prefix: str = "outc"
 
     incident: bool
+
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
     # For example, type 2 diabetes is incident. Incident outcomes cna be handled in a vectorised
     # way during resolution, which is faster than non-incident outcomes.
@@ -151,7 +183,7 @@ class OutcomeSpec(TemporalSpec):
             else self.input_col_name_override
         )
 
-        return len(self.values_df[col_name].unique()) <= 2
+        return len(self.df[col_name].unique()) <= 2
 
 
 class MinGroupSpec(BaseModel):
@@ -161,7 +193,7 @@ class MinGroupSpec(BaseModel):
     values_df: list[pd.DataFrame]
 
     input_col_name_override: Optional[str] = None
-    # Override for the column name to use as values in values_df.
+    # Override for the column name to use as values in df.
 
     interval_days: list[Union[int, float]]
     # How far to look in the given direction (ahead for outcomes, behind for predictors)
@@ -180,7 +212,7 @@ class MinGroupSpec(BaseModel):
 
 
 def create_feature_combinations_from_dict(
-    d: dict[str, Union[str, list]],
+        d: dict[str, Union[str, list]],
 ) -> list[dict[str, Union[str, float, int]]]:
     """Create feature combinations from a dictionary of feature specifications.
     Only unpacks the top level of lists.
@@ -203,8 +235,8 @@ def create_feature_combinations_from_dict(
 
 
 def create_specs_from_group(
-    feature_group_spec: MinGroupSpec,
-    output_class: AnySpec,
+        feature_group_spec: MinGroupSpec,
+        output_class: AnySpec,
 ) -> list[AnySpec]:
     """Create a list of specs from a GroupSpec."""
 
@@ -231,6 +263,7 @@ class OutcomeGroupSpec(MinGroupSpec):
     """Specification for a group of outcomes."""
 
     incident: Sequence[bool]
+
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
     # For example, type 2 diabetes is incident. Incident outcomes can be handled in a vectorised
     # way during resolution, which is faster than non-incident outcomes.

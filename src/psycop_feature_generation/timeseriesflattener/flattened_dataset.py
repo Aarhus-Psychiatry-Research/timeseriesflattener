@@ -39,14 +39,14 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     """Turn a set of time-series into tabular prediction-time data."""
 
     def __init__(  # pylint: disable=too-many-arguments
-        self,
-        prediction_times_df: DataFrame,
-        id_col_name: str = "dw_ek_borger",
-        timestamp_col_name: str = "timestamp",
-        predictor_col_name_prefix: str = "pred",
-        outcome_col_name_prefix: str = "outc",
-        n_workers: int = 60,
-        feature_cache_dir: Optional[Path] = None,
+            self,
+            prediction_times_df: DataFrame,
+            id_col_name: str = "dw_ek_borger",
+            timestamp_col_name: str = "timestamp",
+            predictor_col_name_prefix: str = "pred",
+            outcome_col_name_prefix: str = "outc",
+            n_workers: int = 60,
+            feature_cache_dir: Optional[Path] = None,
     ):
         """Class containing a time-series, flattened.
 
@@ -118,10 +118,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         ) + self.df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
     def _load_most_recent_df_matching_pattern(
-        self,
-        dir_path: Path,
-        file_pattern: str,
-        file_suffix: str,
+            self,
+            dir_path: Path,
+            file_pattern: str,
+            file_suffix: str,
     ) -> DataFrame:
         """Load most recent df matching pattern.
 
@@ -147,11 +147,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         )
 
     def _load_cached_df_and_expand_fallback(
-        self,
-        file_pattern: str,
-        file_suffix: str,
-        fallback: Any,
-        full_col_str: str,
+            self,
+            file_pattern: str,
+            file_suffix: str,
+            fallback: Any,
+            full_col_str: str,
     ) -> pd.DataFrame:
         """Load most recent df matching pattern, and expand fallback column.
 
@@ -185,12 +185,12 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
-        prediction_times_with_uuid_df: DataFrame,
-        output_spec: TemporalSpec,
-        id_col_name: str,
-        timestamp_col_name: str,
-        pred_time_uuid_col_name: str,
-        verbose: bool = False,
+            prediction_times_with_uuid_df: DataFrame,
+            output_spec: TemporalSpec,
+            id_col_name: str,
+            timestamp_col_name: str,
+            pred_time_uuid_col_name: str,
+            verbose: bool = False,
     ) -> DataFrame:
 
         """Create a dataframe with flattened values (either predictor or
@@ -201,9 +201,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 timestamps for each prediction time.
             output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
             id_col_name (str): Name of id_column in prediction_times_with_uuid_df and
-                values_df. Required because this is a static method.
+                df. Required because this is a static method.
             timestamp_col_name (str): Name of timestamp column in
-                prediction_times_with_uuid_df and values_df. Required because this is a
+                prediction_times_with_uuid_df and df. Required because this is a
                 static method.
             pred_time_uuid_col_name (str): Name of uuid column in
                 prediction_times_with_uuid_df. Required because this is a static method.
@@ -214,7 +214,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             DataFrame
         """
         for col_name in (timestamp_col_name, id_col_name):
-            if col_name not in output_spec.values_df.columns:
+            if col_name not in output_spec.df.columns:
                 raise ValueError(
                     f"{col_name} does not exist in df_prediction_times, change the df or set another argument",
                 )
@@ -223,7 +223,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Drop dw_ek_borger for faster merge
         df = pd.merge(
             left=prediction_times_with_uuid_df,
-            right=output_spec.values_df,
+            right=output_spec.df,
             how="left",
             on=id_col_name,
             suffixes=("_pred", "_val"),
@@ -282,10 +282,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         return df[[pred_time_uuid_col_name, output_spec.get_col_str()]]
 
     def _generate_values_for_cache_checking(
-        self,
-        output_spec: TemporalSpec,
-        value_col_str: str,
-        n_to_generate: int = 100_000,
+            self,
+            output_spec: TemporalSpec,
+            value_col_str: str,
+            n_to_generate: int = 100_000,
     ):
         generated_df = pd.DataFrame({value_col_str: []})
 
@@ -294,7 +294,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         n_trials = 0
 
         while not any(
-            generated_df[value_col_str] != output_spec.fallback,
+                generated_df[value_col_str] != output_spec.fallback,
         ):
             if n_trials != 0:
                 self.msg.info(
@@ -319,10 +319,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             if not np.isnan(output_spec.fallback):
                 generated_df = generated_df[
                     generated_df[value_col_str] != output_spec.fallback
-                ]
+                    ]
 
             n_to_generate = (
-                n_to_generate**1.5
+                    n_to_generate ** 1.5
             )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
 
             n_trials += 1
@@ -330,10 +330,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         return generated_df
 
     def _cache_is_hit(
-        self,
-        output_spec: Union[PredictorSpec, PredictorSpec],
-        file_pattern: str,
-        file_suffix: str,
+            self,
+            output_spec: Union[PredictorSpec, PredictorSpec],
+            file_pattern: str,
+            file_suffix: str,
     ) -> bool:
         """Check if cache is hit.
 
@@ -391,7 +391,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         # Check that all rows in generated_df are in cache_df
         if not merged_df[value_col_str + generated_suffix].equals(
-            merged_df[value_col_str + cached_suffix],
+                merged_df[value_col_str + cached_suffix],
         ):
             self.msg.info(f"Cache miss, computed values didn't match {file_pattern}")
 
@@ -399,7 +399,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             unequal_rows = merged_df[  # pylint: disable=unused-variable
                 merged_df[value_col_str + generated_suffix]
                 != merged_df[value_col_str + cached_suffix]
-            ]
+                ]
 
             return False
 
@@ -408,10 +408,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         return True
 
     def _write_feature_to_cache(
-        self,
-        values_df: pd.DataFrame,
-        predictor_spec: PredictorSpec,
-        file_name: str,
+            self,
+            values_df: pd.DataFrame,
+            predictor_spec: PredictorSpec,
+            file_name: str,
     ):
         """Write feature to cache."""
         out_df = values_df
@@ -419,7 +419,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Drop rows containing fallback, since it's non-informative
         out_df = out_df[
             out_df[predictor_spec.get_col_str()] != predictor_spec.fallback
-        ].dropna()
+            ].dropna()
 
         # Write df to cache
         timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -431,9 +431,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         )
 
     def _get_feature(
-        self,
-        feature_spec: AnySpec,
-        file_suffix: str = "parquet",
+            self,
+            feature_spec: AnySpec,
+            file_suffix: str = "parquet",
     ) -> pd.DataFrame:
         """Get feature. Either load from cache, or generate if necessary.
 
@@ -447,9 +447,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         if hasattr(self, "feature_cache_dir"):
             if self._cache_is_hit(
-                file_pattern=file_name,
-                output_spec=feature_spec,
-                file_suffix="parquet",
+                    file_pattern=file_name,
+                    output_spec=feature_spec,
+                    file_suffix="parquet",
             ):
                 df = self._load_cached_df_and_expand_fallback(
                     file_pattern=file_name,
@@ -517,8 +517,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     )
 
     def _concatenate_flattened_timeseries(
-        self,
-        flattened_predictor_dfs: list[pd.DataFrame],
+            self,
+            flattened_predictor_dfs: list[pd.DataFrame],
     ):
         """Concatenate flattened predictor dfs."""
 
@@ -549,8 +549,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self.df = self.df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
     def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
-        self,
-        predictor_specs: list[PredictorSpec],
+            self,
+            predictor_specs: list[PredictorSpec],
     ):
         """Add predictors to the flattened dataframe from a list."""
 
@@ -569,10 +569,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         )
 
     def add_age_and_date_of_birth(
-        self,
-        id2date_of_birth: DataFrame,
-        input_date_of_birth_col_name: Optional[str] = "date_of_birth",
-        output_prefix: str = "pred",
+            self,
+            id2date_of_birth: DataFrame,
+            input_date_of_birth_col_name: Optional[str] = "date_of_birth",
+            output_prefix: str = "pred",
     ):
         """Add age at prediction time to each prediction time.
 
@@ -612,16 +612,16 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         )
 
         self.df[output_age_col_name] = (
-            (
-                self.df[self.timestamp_col_name]
-                - self.df[f"{output_date_of_birth_col_name}"]
-            ).dt.days
-            / (365.25)
+                (
+                        self.df[self.timestamp_col_name]
+                        - self.df[f"{output_date_of_birth_col_name}"]
+                ).dt.days
+                / (365.25)
         ).round(2)
 
     def add_static_info(
-        self,
-        static_spec: AnySpec,
+            self,
+            static_spec: AnySpec,
     ):
         """Add static info to each prediction time, e.g. age, sex etc.
 
@@ -635,9 +635,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Try to infer value col name if not provided
         if static_spec.input_col_name_override is None:
             possible_value_cols = [
-                col
-                for col in static_spec.values_df.columns
-                if col not in self.id_col_name
+                col for col in static_spec.df.columns if col not in self.id_col_name
             ]
 
             if len(possible_value_cols) == 1:
@@ -648,7 +646,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 )
             elif len(possible_value_cols) == 0:
                 raise ValueError(
-                    "No value column found in spec.values_df, please check.",
+                    "No value column found in spec.df, please check.",
                 )
         else:
             value_col_name = static_spec.input_col_name_override
@@ -660,8 +658,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         df = pd.DataFrame(
             {
-                self.id_col_name: static_spec.values_df[self.id_col_name],
-                output_col_name: static_spec.values_df[value_col_name],
+                self.id_col_name: static_spec.df[self.id_col_name],
+                output_col_name: static_spec.df[value_col_name],
             },
         )
 
@@ -675,8 +673,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         )
 
     def _add_incident_outcome(
-        self,
-        outcome_spec: OutcomeSpec,
+            self,
+            outcome_spec: OutcomeSpec,
     ):
         """Add incident outcomes.
 
@@ -687,7 +685,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         df = pd.merge(
             self.df,
-            outcome_spec.values_df,
+            outcome_spec.df,
             how="left",
             on=self.id_col_name,
             suffixes=("_prediction", "_outcome"),
@@ -697,14 +695,14 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         df = df.drop(
             df[
                 df[outcome_timestamp_col_name] < df[prediction_timestamp_col_name]
-            ].index,
+                ].index,
         )
 
         if outcome_spec.is_dichotomous():
             df[outcome_spec.get_col_str()] = (
-                df[prediction_timestamp_col_name]
-                + timedelta(days=outcome_spec.interval_days)
-                > df[outcome_timestamp_col_name]
+                    df[prediction_timestamp_col_name]
+                    + timedelta(days=outcome_spec.interval_days)
+                    > df[outcome_timestamp_col_name]
             ).astype(int)
 
         df.rename(
@@ -719,8 +717,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self.df = df
 
     def add_temporal_outcome(
-        self,
-        output_spec: OutcomeSpec,
+            self,
+            output_spec: OutcomeSpec,
     ):
         """Add an outcome-column to the dataset.
 
@@ -739,8 +737,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             )
 
     def add_temporal_predictor(
-        self,
-        output_spec: PredictorSpec,
+            self,
+            output_spec: PredictorSpec,
     ):
         """Add a column with predictor values to the flattened dataset (e.g.
         "average value of bloodsample within n days").
@@ -753,8 +751,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         )
 
     def add_temporal_col_to_flattened_dataset(
-        self,
-        output_spec: TemporalSpec,
+            self,
+            output_spec: TemporalSpec,
     ):
         """Add a column to the dataset (either predictor or outcome depending
         on the value of "direction").
@@ -762,7 +760,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         Args:
             output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
         """
-        timestamp_col_type = output_spec.values_df[self.timestamp_col_name].dtype
+        timestamp_col_type = output_spec.df[self.timestamp_col_name].dtype
 
         if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
             # Convert dtype to timestamp
@@ -792,9 +790,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _add_back_prediction_times_without_value(
-        df: DataFrame,
-        pred_times_with_uuid: DataFrame,
-        pred_time_uuid_colname: str,
+            df: DataFrame,
+            pred_times_with_uuid: DataFrame,
+            pred_time_uuid_colname: str,
     ) -> DataFrame:
         """Ensure all prediction times are represented in the returned
         dataframe.
@@ -817,9 +815,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _resolve_multiple_values_within_interval_days(
-        resolve_multiple: Callable,
-        df: DataFrame,
-        pred_time_uuid_colname: str,
+            resolve_multiple: Callable,
+            df: DataFrame,
+            pred_time_uuid_colname: str,
     ) -> DataFrame:
         """Apply the resolve_multiple function to prediction_times where there
         are multiple values within the interval_days lookahead.
@@ -836,8 +834,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Numeric value amounts to days passed since 1/1/1970
         try:
             df["timestamp_val"] = (
-                df["timestamp_val"] - dt.datetime(1970, 1, 1)
-            ).dt.total_seconds() / 86400
+                                          df["timestamp_val"] - dt.datetime(1970, 1, 1)
+                                  ).dt.total_seconds() / 86400
         except TypeError:
             msg.info("All values are NaT, returning empty dataframe")
 
@@ -856,11 +854,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _drop_records_outside_interval_days(
-        df: DataFrame,
-        direction: str,
-        interval_days: float,
-        timestamp_pred_colname: str,
-        timestamp_value_colname: str,
+            df: DataFrame,
+            direction: str,
+            interval_days: float,
+            timestamp_pred_colname: str,
+            timestamp_value_colname: str,
     ) -> DataFrame:
         """Keep only rows where timestamp_value is within interval_days in
         direction of timestamp_pred.
@@ -879,20 +877,20 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             DataFrame
         """
         df["time_from_pred_to_val_in_days"] = (
-            (df[timestamp_value_colname] - df[timestamp_pred_colname])
-            / (np.timedelta64(1, "s"))
-            / 86_400
+                (df[timestamp_value_colname] - df[timestamp_pred_colname])
+                / (np.timedelta64(1, "s"))
+                / 86_400
         )
         # Divide by 86.400 seconds/day
 
         if direction == "ahead":
             df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] <= interval_days
-            ) & (df["time_from_pred_to_val_in_days"] > 0)
+                                           df["time_from_pred_to_val_in_days"] <= interval_days
+                                   ) & (df["time_from_pred_to_val_in_days"] > 0)
         elif direction == "behind":
             df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] >= -interval_days
-            ) & (df["time_from_pred_to_val_in_days"] < 0)
+                                           df["time_from_pred_to_val_in_days"] >= -interval_days
+                                   ) & (df["time_from_pred_to_val_in_days"] < 0)
         else:
             raise ValueError("direction can only be 'ahead' or 'behind'")
 

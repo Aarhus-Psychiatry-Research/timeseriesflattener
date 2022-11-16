@@ -4,7 +4,6 @@ from collections.abc import Sequence
 from typing import Literal, Optional
 
 import pandas as pd
-from pydantic import Field
 
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     AnySpec,
@@ -31,13 +30,14 @@ class UnresolvedAnySpec(BaseModel):
     # Which column in the dataframe to use as raw values.
 
     output_col_name_override: Optional[str]
+
     # Override the name of the output column when resolving a dataframe.
 
     def resolve_spec(
         self,
         str2df: dict[str, pd.DataFrame],
     ) -> TemporalSpec:
-        """Resolve the values_df."""
+        """Resolve the df."""
         str2resolve_multiple = resolve_multiple_fns.get_all()
 
         kwargs_dict = self.dict()
@@ -54,7 +54,7 @@ class UnresolvedAnySpec(BaseModel):
         # We can get around it by allowing extras (e.g. attributes which aren't specified) in the feature_spec_objects,
         # but that leaves us open to typos.
         for redundant_key in (
-            "values_df",
+            "df",
             "resolve_multiple_fn",
             "lab_values_to_load",
             "values_lookup_name",
@@ -107,7 +107,7 @@ class UnresolvedTemporalSpec(UnresolvedAnySpec, TemporalSpec):
     # Override the requirement of a feature_name from MinGroupSpec,
     # not needed for unresolved groups since it can be inferred from
     # values_lookup_name
-    values_df: Optional[pd.DataFrame] = None
+    df: Optional[pd.DataFrame] = None
     feature_name: Optional[str] = None
 
 
@@ -152,6 +152,7 @@ class UnresolvedLabPredictorGroupSpec(UnresolvedPredictorGroupSpec):
     lab_values_to_load: Sequence[
         Literal["all", "numerical", "numerical_and_coerce"]
     ] = ["numerical_and_coerce"]
+
     #  # Which values to load for medications. Takes "all", "numerical" or "numerical_and_coerce". If "numerical_and_coerce", takes inequalities like >=9 and coerces them by a multiplication defined in the loader.
 
     def create_combinations(self):
