@@ -24,6 +24,7 @@ from psycop_feature_generation.data_checks.flattened.data_integrity import (
 from psycop_feature_generation.data_checks.flattened.feature_describer import (
     save_feature_description_from_dir,
 )
+from psycop_feature_generation.loaders import flattened
 from psycop_feature_generation.loaders.raw.load_demographic import birthdays
 from psycop_feature_generation.loaders.raw.load_visits import (
     physical_visits_to_psychiatry,
@@ -252,6 +253,9 @@ def add_outcomes_to_ds(
 
     for spec in outcome_specs:
         msg.info(f"Adding outcome with {spec.interval_days} days of lookahead")
+        flattened_dataset.add_temporal_outcome(
+            output_spec=spec,
+        )
 
     msg.good("Finished adding outcomes")
 
