@@ -440,9 +440,9 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
     interval_days = [30, 90, 180, 365, 730]
     allowed_nan_value_prop = [0]
 
-    unresolved_temporal_predictor_specs: list[PredictorSpec] = []
+    temporal_predictor_specs: list[PredictorSpec] = []
 
-    unresolved_temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_specs += PredictorGroupSpec(
         values_loader=(
             "hba1c",
             "alat",
@@ -462,7 +462,7 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
-    unresolved_temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_specs += PredictorGroupSpec(
         values_loader=(
             "essential_hypertension",
             "hyperlipidemia",
@@ -475,7 +475,7 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
-    unresolved_temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_specs += PredictorGroupSpec(
         values_loader=("antipsychotics",),
         interval_days=interval_days,
         resolve_multiple_fn=resolve_multiple,
@@ -483,7 +483,7 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
-    unresolved_temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_specs += PredictorGroupSpec(
         values_loader=["weight_in_kg", "height_in_cm", "bmi"],
         interval_days=interval_days,
         resolve_multiple_fn=["latest"],
@@ -491,7 +491,7 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         allowed_nan_value_prop=allowed_nan_value_prop,
     ).create_combinations()
 
-    return unresolved_temporal_predictor_specs
+    return temporal_predictor_specs
 
 
 def main(
