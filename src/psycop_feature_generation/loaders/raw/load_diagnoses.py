@@ -13,7 +13,6 @@ import pandas as pd
 from psycop_feature_generation.loaders.raw.utils import load_from_codes
 from psycop_feature_generation.utils import data_loaders
 
-
 def concat_from_physical_visits(
     icd_codes: list[str],
     output_col_name: str,
@@ -84,7 +83,7 @@ def from_physical_visits(
 
     Args:
         icd_code (str): Substring to match diagnoses for. Matches any diagnoses, whether a-diagnosis, b-diagnosis etc. # noqa: DAR102
-        output_col_name (str, optional): Name of new column string. Defaults to "value".
+        output_col_name_override (str, optional): Name of new column string. Defaults to "value".
         n_rows: Number of rows to return. Defaults to None.
         wildcard_icd_code (bool, optional): Whether to match on icd_code*. Defaults to False.
 

@@ -161,3 +161,6 @@ pytest-coverage.txt
 wandb
 poetry.lock
 *.html
+
+# PyCharm
+/.idea/*

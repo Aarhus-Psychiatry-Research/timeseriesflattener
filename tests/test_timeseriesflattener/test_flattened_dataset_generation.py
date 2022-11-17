@@ -2,67 +2,50 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
-
 from pathlib import Path
+from typing import Iterable
 
 import numpy as np
 import pandas as pd
 import pytest
 
+from application.t2d.generate_features_and_write_to_disk import (
+    save_feature_set_description_to_disk,
+    split_and_save_dataset_to_disk,
+)
 from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
-    load_synth_outcome,
     load_synth_prediction_times,
+    synth_predictor_binary,
     synth_predictor_float,
+)
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    OutcomeSpec,
+    PredictorGroupSpec,
+    TemporalSpec,
 )
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
 )
-from src.application.t2d.generate_features_and_write_to_disk import (
-    save_feature_set_description_to_disk,
-    split_and_save_to_disk,
+from psycop_feature_generation.utils_for_testing import (
+    synth_outcome,
+    synth_prediction_times,
 )
 
+base_float_predictor_combinations = PredictorGroupSpec(
+    values_loader=["synth_predictor_float"],
+    interval_days=[365, 730],
+    resolve_multiple_fn=["mean"],
+    fallback=[np.NaN],
+    allowed_nan_value_prop=[0.0],
+).create_combinations()
 
-@pytest.fixture(scope="function")
-def synth_prediction_times():
-    """Load the prediction times."""
-    return load_synth_prediction_times()
-
-
-base_float_predictor_combinations = [
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 365,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 730,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-]
-
-
-base_binary_predictor_combinations = [
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 365,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-    {
-        "predictor_df": "synth_predictor_float",
-        "lookbehind_days": 730,
-        "resolve_multiple": "max",
-        "fallback": np.NaN,
-        "allowed_nan_value_prop": 0.0,
-    },
-]
+base_binary_predictor_combinations = PredictorGroupSpec(
+    values_loader=["synth_predictor_binary"],
+    interval_days=[365, 730],
+    resolve_multiple_fn=["max"],
+    fallback=[np.NaN],
+    allowed_nan_value_prop=[0.0],
+).create_combinations()
 
 
 def check_dfs_have_same_contents_by_column(df1, df2):
@@ -110,67 +93,55 @@ def check_dfs_have_same_contents_by_column(df1, df2):
         assert len(diff_rows) == 0
 
 
-def create_flattened_df(cache_dir, predictor_combinations, prediction_times_df):
+def create_flattened_df(
+    cache_dir: Path,
+    predictor_specs: Iterable[TemporalSpec],
+    prediction_times_df: pd.DataFrame,
+):
     """Create a dataset df for testing."""
-    first_df = FlattenedDataset(
+    flat_ds = FlattenedDataset(
         prediction_times_df=prediction_times_df,
-        n_workers=4,
+        n_workers=1,
         feature_cache_dir=cache_dir,
     )
-    first_df.add_temporal_predictors_from_list_of_argument_dictionaries(
-        predictor_combinations,
+
+    flat_ds.add_temporal_predictors_from_pred_specs(
+        predictor_specs=predictor_specs,
     )
 
-    return first_df.df
-
-
-def init_temp_dir(tmp_path):
-    """Create a temp dir for testing."""
-    # Delete temp dir
-    # Add a random number so tmp_paths from different processes don't overlap
-
-    tmp_path = Path(tmp_path / f"temp_{np.random.randint(100_000_000)}")
-
-    # Create temp dir
-    tmp_path.mkdir(parents=True, exist_ok=True)
-
-    return tmp_path
+    return flat_ds.df
 
 
 @pytest.mark.parametrize(
-    "predictor_combinations",
+    "predictor_specs",
     [base_float_predictor_combinations, base_binary_predictor_combinations],
 )
 def test_cache_hitting(
     tmp_path,
     synth_prediction_times,
-    predictor_combinations,
+    predictor_specs,
 ):
-    """Test that the cache is hit when the same data is requested twice."""
-
-    if callable(predictor_combinations):
-        predictor_combinations = predictor_combinations()
 
     # Create the cache
     first_df = create_flattened_df(
         cache_dir=tmp_path,
-        predictor_combinations=predictor_combinations,
+        predictor_specs=predictor_specs.copy(),
         prediction_times_df=synth_prediction_times,
     )
 
     # Load the cache
     cache_df = create_flattened_df(
         cache_dir=tmp_path,
-        predictor_combinations=predictor_combinations,
+        predictor_specs=predictor_specs.copy(),
         prediction_times_df=synth_prediction_times,
     )
 
+    # Assert that each column has the same contents
+    check_dfs_have_same_contents_by_column(df1=first_df, df2=cache_df)
+
     # If cache_df doesn't hit the cache, it creates its own files
     # Thus, number of files is an indicator of whether the cache was hit
-    assert len(list(tmp_path.glob("*"))) == len(predictor_combinations)
-
-    # Assert that each column has the same contents
-    check_dfs_have_same_contents_by_column(first_df, cache_df)
+    assert len(list(tmp_path.glob("*"))) == len(predictor_specs)
 
 
 @pytest.mark.parametrize(
@@ -180,15 +151,33 @@ def test_cache_hitting(
 def test_all_non_online_elements_in_pipeline(
     tmp_path,
     synth_prediction_times,
+    synth_outcome,
     predictor_combinations,
 ):
     """Test that the splitting and saving to disk works as expected."""
 
-    flattened_df = create_flattened_df(
-        cache_dir=None,
-        predictor_combinations=predictor_combinations,
+    flattened_ds = FlattenedDataset(
         prediction_times_df=synth_prediction_times,
+        n_workers=4,
+        feature_cache_dir=None,
     )
+
+    flattened_ds.add_temporal_predictors_from_pred_specs(
+        predictor_combinations,
+    )
+
+    flattened_ds.add_temporal_outcome(
+        output_spec=OutcomeSpec(
+            values_df=synth_outcome,
+            interval_days=365,
+            resolve_multiple_fn="max",
+            fallback=0,
+            incident=True,
+            feature_name="value",
+        ),
+    )
+
+    flattened_df = flattened_ds.df
 
     split_ids = {}
 
@@ -208,7 +197,7 @@ def test_all_non_online_elements_in_pipeline(
 
         start_idx = end_idx
 
-    split_and_save_to_disk(
+    split_and_save_dataset_to_disk(
         flattened_df=flattened_df,
         out_dir=tmp_path,
         file_prefix="integration",
@@ -218,8 +207,20 @@ def test_all_non_online_elements_in_pipeline(
     )
 
     save_feature_set_description_to_disk(
-        predictor_combinations=predictor_combinations,
-        flattened_csv_dir=tmp_path,
+        predictor_specs=predictor_combinations,
+        flattened_dataset_file_dir=tmp_path,
         out_dir=tmp_path,
         file_suffix="parquet",
+        describe_splits=True,
+        compare_splits=True,
     )
+
+
+if __name__ == "__main__":
+    base_float_predictor_combinations = PredictorGroupSpec(
+        values_loader=["synth_predictor_float"],
+        interval_days=[365, 730],
+        resolve_multiple_fn=["mean"],
+        fallback=[np.NaN],
+        allowed_nan_value_prop=[0.0],
+    ).create_combinations()

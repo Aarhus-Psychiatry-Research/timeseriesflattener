@@ -1,10 +1,15 @@
 """Tests for errors raised from flattened dataset class."""
 
 import pytest
-from utils_for_testing import str_to_df  # pylint: disable=import-error
 
+from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+    PredictorSpec,
+)
 from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
     FlattenedDataset,
+)
+from psycop_feature_generation.utils_for_testing import (
+    str_to_df,  # pylint: disable=import-error
 )
 
 # pylint: disable=missing-function-docstring
@@ -46,11 +51,13 @@ def test_col_does_not_exist():
 
     with pytest.raises(KeyError):
         flattened_df.add_temporal_predictor(
-            predictor_df=event_times_df,
-            lookbehind_days=2,
-            resolve_multiple="max",
-            fallback=2,
-            new_col_name="val",
+            output_spec=PredictorSpec(
+                values_df=event_times_df,
+                interval_days=2,
+                resolve_multiple_fn="max",
+                fallback=2,
+                feature_name="value",
+            ),
         )
 
 

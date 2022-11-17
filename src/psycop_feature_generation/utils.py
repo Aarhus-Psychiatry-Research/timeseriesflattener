@@ -48,49 +48,6 @@ def format_dict_for_printing(d: dict) -> str:
     )
 
 
-def generate_feature_colname(
-    prefix: str,
-    out_col_name: Union[str, list[str]],
-    interval_days: int,
-    resolve_multiple: str,
-    fallback: str,
-    loader_kwargs: Optional[dict] = None,
-) -> Union[str, list[str]]:
-    """Generates standardized column name from feature collapse information. If
-    passed a string, generates a single column name. If passed a list of
-    strings, generates a list of column names.
-
-    Args:
-        prefix (str): Prefix (typically either "pred" or "outc")
-        out_col_name (str): Name after the prefix.
-        interval_days (int): Fills out "_within_{interval_days}" in the col name.
-        resolve_multiple (str): Name of the resolve_multiple strategy.
-        fallback (str): Values used for fallback.
-        loader_kwargs (dict, optional): Loader kwargs. Defaults to None.
-
-    Returns:
-        str: A full column name
-    """
-    if isinstance(out_col_name, str):
-        out_col_name = [out_col_name]
-
-    col_name = [
-        f"{prefix}_{col}_within_{interval_days}_days_{resolve_multiple}_fallback_{fallback}"
-        for col in out_col_name
-    ]
-
-    # Append {loader_kwargs} to colname if it exists
-    if loader_kwargs:
-        col_name = [
-            f"{col}_{format_dict_for_printing(loader_kwargs)}" for col in col_name
-        ]
-
-    if len(col_name) == 1:
-        col_name = col_name[0]  # type: ignore
-
-    return col_name
-
-
 def load_dataset_from_file(
     file_path: Path,
     nrows: Optional[int] = None,
