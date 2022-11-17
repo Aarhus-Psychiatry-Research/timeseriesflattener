@@ -90,7 +90,7 @@ def load(
             Defaults to True.
         wildcard_icd_code (bool, optional): Whether to match on atc_code* or
             atc_code.
-        n_rows (int, optional): Number of rows to return. Defaults to None.
+        n_rows (int, optional): Number of rows to return. Defaults to None, in which case all rows are returned.
 
     Returns:
         pd.DataFrame: Cols: dw_ek_borger, timestamp, {atc_code_prefix}_value = 1
