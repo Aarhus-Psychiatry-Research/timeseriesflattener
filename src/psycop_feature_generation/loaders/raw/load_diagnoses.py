@@ -10,8 +10,7 @@ from typing import Optional, Union
 
 import pandas as pd
 
-from psycop_feature_generation.loaders.raw.sql_load import sql_load
-from psycop_feature_generation.loaders.raw.utils import load_from_list
+from psycop_feature_generation.loaders.raw.utils import load_from_codes
 from psycop_feature_generation.utils import data_loaders
 
 
@@ -36,35 +35,34 @@ def concat_from_physical_visits(
 
     diagnoses_source_table_info = {
         "lpr3": {
-            "fct": "FOR_LPR3kontakter_psyk_somatik_inkl_2021_feb2022",
+            "view": "FOR_LPR3kontakter_psyk_somatik_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_lpr3kontaktstart",
         },
         "lpr2_inpatient": {
-            "fct": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021_feb2022",
+            "view": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_indlaeggelse",
         },
         "lpr2_acute_outpatient": {
-            "fct": "FOR_akutambulantekontakter_psyk_somatik_LPR2_inkl_2021_feb2022",
+            "view": "FOR_akutambulantekontakter_psyk_somatik_LPR2_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_start",
         },
         "lpr2_outpatient": {
-            "fct": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021_feb2022",
+            "view": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_start",
         },
     }
 
-    # Using ._load is faster than from_physical_visits since it can process all icd_codes in the SQL request at once,
-    # rather than processing one at a time and aggregating.
     dfs = [
-        load_from_list(
+        load_from_codes(
             codes_to_match=icd_codes,
             column_name="diagnosegruppestreng",
             output_col_name=output_col_name,
             wildcard_code=wildcard_icd_code,
             n_rows=n_rows,
+            load_diagnoses=True,
             **kwargs,
         )
-        for source_name, kwargs in diagnoses_source_table_info.items()
+        for _, kwargs in diagnoses_source_table_info.items()
     ]
 
     df = pd.concat(dfs).drop_duplicates(
@@ -75,7 +73,7 @@ def concat_from_physical_visits(
 
 
 def from_physical_visits(
-    icd_code: str,
+    icd_code: Union[list[str], str],
     output_col_name: Optional[str] = "value",
     n_rows: Optional[int] = None,
     wildcard_icd_code: Optional[bool] = False,
@@ -96,15 +94,15 @@ def from_physical_visits(
 
     diagnoses_source_table_info = {
         "lpr3": {
-            "fct": "FOR_LPR3kontakter_psyk_somatik_inkl_2021",
+            "view": "FOR_LPR3kontakter_psyk_somatik_inkl_2021",
             "source_timestamp_col_name": "datotid_lpr3kontaktstart",
         },
         "lpr2_inpatient": {
-            "fct": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021",
+            "view": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021",
             "source_timestamp_col_name": "datotid_indlaeggelse",
         },
         "lpr2_outpatient": {
-            "fct": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021",
+            "view": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021",
             "source_timestamp_col_name": "datotid_start",
         },
     }
@@ -115,14 +113,16 @@ def from_physical_visits(
         n_rows_per_df = None
 
     dfs = [
-        load_from_list(
+        load_from_codes(
             codes_to_match=icd_code,
-            column_name="diagnosegruppestreng",
+            code_col_name="diagnosegruppestreng",
             output_col_name=output_col_name,
             n_rows=n_rows_per_df,
+            wildcard_code=wildcard_icd_code,
             **kwargs,
+            load_diagnoses=True,
         )
-        for source_name, kwargs in diagnoses_source_table_info.items()
+        for _, kwargs in diagnoses_source_table_info.items()
     ]
 
     df = pd.concat(dfs).drop_duplicates(

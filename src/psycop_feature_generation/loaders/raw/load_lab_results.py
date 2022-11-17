@@ -55,9 +55,7 @@ def load_non_numerical_values_and_coerce_inequalities(
         inplace=True,
     )
 
-    if ineq2mult:
-        return multiply_inequalities_in_df(df, ineq2mult=ineq2mult)
-    return multiply_inequalities_in_df(df)
+    return multiply_inequalities_in_df(df, ineq2mult=ineq2mult)
 
 
 def load_numerical_values(

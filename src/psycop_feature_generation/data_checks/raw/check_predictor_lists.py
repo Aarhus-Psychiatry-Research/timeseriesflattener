@@ -36,6 +36,15 @@ def check_df_conforms_to_arg_dict(
         ValueError: If df does not conform to d.
     """
 
+    if required_columns is None:
+        required_columns = ["dw_ek_borger", "timestamp", "value"]
+
+    if subset_duplicates_columns is None:
+        subset_duplicates_columns = ["dw_ek_borger", "timestamp", "value"]
+
+    if expected_val_dtypes is None:
+        expected_val_dtypes = ["float64", "int64"]
+
     msg = Printer(timestamp=True)
 
     allowed_nan_value_prop = (
