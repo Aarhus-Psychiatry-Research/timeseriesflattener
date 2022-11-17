@@ -266,6 +266,20 @@ class MinGroupSpec(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
 
+        invalid_loaders = list()
+
+        for loader in self.values_loader:
+            try:
+                loader in data_loaders.get_all()
+            except:
+                invalid_loaders.append(loader)
+
+        if len(invalid_loaders) != 0:
+            nl = '\n'
+            raise ValueError(f"""Following loaders were not found in data_loaders registry: {nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}Available loaders: {nl}{nl.join(str(loader) for loader in data_loaders.get_all())}""")
+
+
+
         if self.output_col_name_override:
             input_col_name = (
                 "value"
