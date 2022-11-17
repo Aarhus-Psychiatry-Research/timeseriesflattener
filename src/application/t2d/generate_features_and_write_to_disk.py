@@ -436,9 +436,9 @@ def get_outcome_specs():
 
 def get_temporal_predictor_specs() -> list[PredictorSpec]:
     """Generate predictor spec list."""
-    resolve_multiple = ["max", "min", "mean", "latest", "count"]
-    interval_days = [30, 90, 180, 365, 730]
-    allowed_nan_value_prop = [0]
+    base_resolve_multiple = ["max", "min", "mean", "latest", "count"]
+    base_interval_days = [30, 90, 180, 365, 730]
+    base_allowed_nan_value_prop = [0]
 
     temporal_predictor_specs: list[PredictorSpec] = []
 
@@ -456,10 +456,10 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
             "egfr",
             "albumine_creatinine_ratio",
         ),
-        resolve_multiple_fn=resolve_multiple,
-        interval_days=interval_days,
+        resolve_multiple_fn=base_resolve_multiple,
+        interval_days=base_interval_days,
         fallback=[np.nan],
-        allowed_nan_value_prop=allowed_nan_value_prop,
+        allowed_nan_value_prop=base_allowed_nan_value_prop,
     ).create_combinations()
 
     temporal_predictor_specs += PredictorGroupSpec(
@@ -469,26 +469,50 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
             "polycystic_ovarian_syndrome",
             "sleep_apnea",
         ),
-        resolve_multiple_fn=resolve_multiple,
-        interval_days=interval_days,
+        resolve_multiple_fn=base_resolve_multiple,
+        interval_days=base_interval_days,
         fallback=[0],
-        allowed_nan_value_prop=allowed_nan_value_prop,
+        allowed_nan_value_prop=base_allowed_nan_value_prop,
     ).create_combinations()
 
     temporal_predictor_specs += PredictorGroupSpec(
-        values_loader=("antipsychotics",),
-        interval_days=interval_days,
-        resolve_multiple_fn=resolve_multiple,
+        values_loader=(
+            "essential_hypertension",
+            "hyperlipidemia",
+            "polycystic_ovarian_syndrome",
+            "sleep_apnea",
+            "f0_disorders",
+            "f1_disorders",
+            "f2_disorders",
+            "f3_disorders",
+            "f4_disorders",
+            "f5_disorders",
+            "f6_disorders",
+            "f7_disorders",
+            "f8_disorders",
+            "hyperkinetic_disorders",
+        ),
+        resolve_multiple_fn=base_resolve_multiple,
+        interval_days=base_interval_days,
         fallback=[0],
-        allowed_nan_value_prop=allowed_nan_value_prop,
+        allowed_nan_value_prop=base_allowed_nan_value_prop,
+    ).create_combinations()
+
+    temporal_predictor_specs += PredictorGroupSpec(
+        values_loader=("antipsychotics",
+                       "clozapine"),
+        interval_days=base_interval_days,
+        resolve_multiple_fn=base_resolve_multiple,
+        fallback=[0],
+        allowed_nan_value_prop=base_allowed_nan_value_prop,
     ).create_combinations()
 
     temporal_predictor_specs += PredictorGroupSpec(
         values_loader=["weight_in_kg", "height_in_cm", "bmi"],
-        interval_days=interval_days,
+        interval_days=base_interval_days,
         resolve_multiple_fn=["latest"],
         fallback=[np.nan],
-        allowed_nan_value_prop=allowed_nan_value_prop,
+        allowed_nan_value_prop=base_allowed_nan_value_prop,
     ).create_combinations()
 
     return temporal_predictor_specs
