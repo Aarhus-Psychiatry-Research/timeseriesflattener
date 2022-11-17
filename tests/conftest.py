@@ -5,8 +5,6 @@ import sys
 
 import pytest
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "helpers"))
-
 
 def pytest_addoption(parser):
     parser.addoption(

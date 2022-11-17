@@ -193,7 +193,7 @@ def load_all_values(
 def blood_sample(
     blood_sample_id: Union[str, list],
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     """Load a blood sample.
 
@@ -241,7 +241,7 @@ def blood_sample(
 
     for k in sources_to_load:  # pylint: disable=invalid-name
         dfs.append(
-            fn_dict[k](
+            fn_dict[k](  # type: ignore
                 blood_sample_id=blood_sample_id,
                 n_rows=n_rows_per_fn,
                 view=view,
@@ -261,7 +261,9 @@ def blood_sample(
 
 
 @data_loaders.register("hba1c")
-def hba1c(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFrame:
+def hba1c(
+    n_rows: Optional[int] = None, values_to_load: str = "numerical_and_coerce"
+) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU27300",
         n_rows=n_rows,
@@ -272,7 +274,7 @@ def hba1c(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFr
 @data_loaders.register("scheduled_glc")
 def scheduled_glc(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     npu_suffixes = [
         "08550",
@@ -331,7 +333,7 @@ def scheduled_glc(
 @data_loaders.register("unscheduled_p_glc")
 def unscheduled_p_glc(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     npu_suffixes = [
         "02192",
@@ -354,7 +356,7 @@ def unscheduled_p_glc(
 @data_loaders.register("triglycerides")
 def triglycerides(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU04094",
@@ -366,7 +368,7 @@ def triglycerides(
 @data_loaders.register("fasting_triglycerides")
 def fasting_triglycerides(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU03620",
@@ -376,7 +378,9 @@ def fasting_triglycerides(
 
 
 @data_loaders.register("hdl")
-def hdl(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFrame:
+def hdl(
+    n_rows: Optional[int] = None, values_to_load: str = "numerical_and_coerce"
+) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU01567",
         n_rows=n_rows,
@@ -385,7 +389,9 @@ def hdl(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFram
 
 
 @data_loaders.register("ldl")
-def ldl(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFrame:
+def ldl(
+    n_rows: Optional[int] = None, values_to_load: str = "numerical_and_coerce"
+) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id=["NPU01568", "AAB00101"],
         n_rows=n_rows,
@@ -396,7 +402,7 @@ def ldl(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFram
 @data_loaders.register("fasting_ldl")
 def fasting_ldl(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id=["NPU10171", "AAB00102"],
@@ -406,7 +412,9 @@ def fasting_ldl(
 
 
 @data_loaders.register("alat")
-def alat(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFrame:
+def alat(
+    n_rows: Optional[int] = None, values_to_load: str = "numerical_and_coerce"
+) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU19651",
         n_rows=n_rows,
@@ -415,7 +423,9 @@ def alat(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFra
 
 
 @data_loaders.register("asat")
-def asat(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFrame:
+def asat(
+    n_rows: Optional[int] = None, values_to_load: str = "numerical_and_coerce"
+) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU19654",
         n_rows=n_rows,
@@ -426,7 +436,7 @@ def asat(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFra
 @data_loaders.register("lymphocytes")
 def lymphocytes(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU02636",
@@ -438,7 +448,7 @@ def lymphocytes(
 @data_loaders.register("leukocytes")
 def leukocytes(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU02593",
@@ -448,7 +458,9 @@ def leukocytes(
 
 
 @data_loaders.register("crp")
-def crp(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFrame:
+def crp(
+    n_rows: Optional[int] = None, values_to_load: str = "numerical_and_coerce"
+) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU19748",
         n_rows=n_rows,
@@ -459,7 +471,7 @@ def crp(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFram
 @data_loaders.register("creatinine")
 def creatinine(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id=["NPU18016", "ASS00355", "ASS00354"],
@@ -469,7 +481,9 @@ def creatinine(
 
 
 @data_loaders.register("egfr")
-def egfr(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFrame:
+def egfr(
+    n_rows: Optional[int] = None, values_to_load: str = "numerical_and_coerce"
+) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id=["DNK35302", "DNK35131", "AAB00345", "AAB00343"],
         n_rows=n_rows,
@@ -480,10 +494,226 @@ def egfr(n_rows: Optional[int] = None, values_to_load: str = None) -> pd.DataFra
 @data_loaders.register("albumine_creatinine_ratio")
 def albumine_creatinine_ratio(
     n_rows: Optional[int] = None,
-    values_to_load: str = None,
+    values_to_load: str = "numerical_and_coerce",
 ) -> pd.DataFrame:
     return blood_sample(
         blood_sample_id="NPU19661",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp21a2")
+def cyp21a2(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU19053",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp2c19")
+def cyp2c19(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU19309",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp2c9")
+def cyp2c9(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU32095",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp3a5")
+def cyp3a5(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU27992",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("cyp2d6")
+def cyp2d6(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU19308",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_lithium")
+def p_lithium(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU02613",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_clozapine")
+def p_clozapine(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU04114",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_olanzapine")
+def p_olanzapine(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU09358",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_aripiprazol")
+def p_aripiprazol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU26669",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_risperidone")
+def p_risperidone(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU04868",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_paliperidone")
+def p_paliperidone(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU18359",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_haloperidol")
+def p_haloperidol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU03937",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_amitriptyline")
+def p_amitriptyline(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU01224",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_nortriptyline")
+def p_nortriptyline(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU02923",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_clomipramine")
+def p_clomipramine(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU01616",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_paracetamol")
+def p_paracetamol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU03024",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_ibuprofen")
+def p_ibuprofen(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU08794",
+        n_rows=n_rows,
+        values_to_load=values_to_load,
+    )
+
+
+@data_loaders.register("p_ethanol")
+def p_ethanol(
+    n_rows: Optional[int] = None,
+    values_to_load: str = "numerical_and_coerce",
+) -> pd.DataFrame:
+    return blood_sample(
+        blood_sample_id="NPU01992",
         n_rows=n_rows,
         values_to_load=values_to_load,
     )

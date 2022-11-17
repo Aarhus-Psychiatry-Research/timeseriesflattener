@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
 
     # This allows a subsequently queued workflow run to interrupt previous runs
     concurrency:

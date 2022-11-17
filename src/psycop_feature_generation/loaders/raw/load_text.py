@@ -9,14 +9,13 @@ from pathlib import Path
 from typing import Optional, Union
 
 import dill as pkl
-import numpy as np
 import pandas as pd
 import torch
 from transformers import AutoModel, AutoTokenizer
 from transformers.modeling_outputs import BaseModelOutputWithPoolingAndCrossAttentions
 
 from psycop_feature_generation.loaders.raw.sql_load import sql_load
-from psycop_feature_generation.utils import data_loaders
+from psycop_feature_generation.utils import PROJECT_ROOT, data_loaders
 
 
 def get_all_valid_note_types() -> set[str]:
@@ -85,7 +84,7 @@ def _load_notes_for_year(
 
 def _tfidf_featurize(
     df: pd.DataFrame,
-    tfidf_path: Optional[Path],
+    tfidf_path: Path,
     text_col: str = "text",
 ) -> pd.DataFrame:
     """TF-IDF featurize text. Assumes `df` to have a column named `text`.
@@ -104,7 +103,7 @@ def _tfidf_featurize(
     vocab = ["tfidf-" + word for word in tfidf.get_feature_names()]
 
     text = df[text_col].values
-    df = df.drop(text_col, axis=1)
+    df = df.drop(text_col, axis=1).reset_index(drop=True)
 
     text = tfidf.transform(text)
     text = pd.DataFrame(text.toarray(), columns=vocab)
@@ -114,7 +113,7 @@ def _tfidf_featurize(
 def _mean_pooling(
     model_output: BaseModelOutputWithPoolingAndCrossAttentions,
     attention_mask: torch.Tensor,
-) -> np.ndarray:
+) -> torch.Tensor:
     """Mean Pooling - take attention mask into account for correct averaging.
 
     Args:
@@ -183,7 +182,7 @@ def _huggingface_featurize(
         pd.DataFrame: Original dataframe with huggingface embeddings appended
 
     Example:
-        >>> p = Path("tests") / "test_data" / "raw"
+        >>> p = PROJECT_ROOT / "tests" / "test_data" / "raw"
         >>> huggingface_model_id = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
         >>> df_p = p / "synth_txt_data.csv"
 
@@ -220,7 +219,7 @@ def _huggingface_featurize(
         embedding = _mean_pooling(model_output, encoded_input["attention_mask"])
 
         if len(chunks) > 1:
-            list_of_embeddings.append(torch.mean(embedding, axis=0).numpy())
+            list_of_embeddings.append(torch.mean(embedding, axis=0).numpy())  # type: ignore
         else:
             list_of_embeddings.append(embedding.numpy()[0])
 
@@ -328,13 +327,14 @@ def load_and_featurize_notes(
 
     with Pool(processes=len(years)) as p:
         dfs = p.map(load_and_featurize, [str(y) for y in years])
-    dfs = pd.concat(dfs)
 
-    dfs = dfs.rename(
+    df = pd.concat(dfs)
+
+    df = df.rename(
         {"datotid_senest_aendret_i_sfien": "timestamp", "fritekst": "text"},
         axis=1,
     )
-    return dfs
+    return df
 
 
 @data_loaders.register("all_notes")
@@ -438,8 +438,10 @@ def load_synth_notes(featurizer: str, **featurizer_kwargs) -> pd.DataFrame:
     Returns:
         pd.DataFrame: (Featurized) synthetic notes
     """
-    p = Path("tests") / "test_data"
-    df = pd.read_csv(p / "raw" / "synth_txt_data.csv")
+    p = PROJECT_ROOT / "tests" / "test_data"
+    df = pd.read_csv(
+        p / "raw" / "synth_txt_data.csv",
+    ).drop("Unnamed: 0", axis=1)
     df = df.dropna()
     df["timestamp"] = pd.to_datetime(df["timestamp"])
 
