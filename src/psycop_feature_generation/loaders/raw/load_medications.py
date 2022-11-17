@@ -58,7 +58,7 @@ def load(
             source_timestamp_col_name="datotid_ordinationstart",
             view="FOR_Medicin_ordineret_inkl_2021_feb2022",
             output_col_name=output_col_name,
-            wildcard_code=wildcard_code,
+            match_with_wildcard=wildcard_code,
             n_rows=n_rows,
             load_diagnoses=False,
         )
@@ -72,7 +72,7 @@ def load(
             source_timestamp_col_name="datotid_administration_start",
             view="FOR_Medicin_administreret_inkl_2021_feb2022",
             output_col_name=output_col_name,
-            wildcard_code=wildcard_code,
+            match_with_wildcard=wildcard_code,
             n_rows=n_rows,
             load_diagnoses=False,
         )

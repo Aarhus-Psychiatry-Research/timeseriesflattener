@@ -13,6 +13,7 @@ import pandas as pd
 from psycop_feature_generation.loaders.raw.utils import load_from_codes
 from psycop_feature_generation.utils import data_loaders
 
+
 def concat_from_physical_visits(
     icd_codes: list[str],
     output_col_name: str,
@@ -56,7 +57,7 @@ def concat_from_physical_visits(
             codes_to_match=icd_codes,
             column_name="diagnosegruppestreng",
             output_col_name=output_col_name,
-            wildcard_code=wildcard_icd_code,
+            match_with_wildcard=wildcard_icd_code,
             n_rows=n_rows,
             load_diagnoses=True,
             **kwargs,
@@ -117,7 +118,7 @@ def from_physical_visits(
             code_col_name="diagnosegruppestreng",
             output_col_name=output_col_name,
             n_rows=n_rows_per_df,
-            wildcard_code=wildcard_icd_code,
+            match_with_wildcard=wildcard_icd_code,
             **kwargs,
             load_diagnoses=True,
         )
