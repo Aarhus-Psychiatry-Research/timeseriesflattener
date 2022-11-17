@@ -8,10 +8,10 @@ from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 
 def str_to_sql_match_logic(
-    code_to_match: str,
-    code_sql_col_name: str,
-    load_diagnoses: bool,
-    match_with_wildcard: bool,
+        code_to_match: str,
+        code_sql_col_name: str,
+        load_diagnoses: bool,
+        match_with_wildcard: bool,
 ):
     """Generate SQL match logic from a single string.
 
@@ -19,30 +19,24 @@ def str_to_sql_match_logic(
         code_to_match (list[str]): List of strings to match.
         code_sql_col_name (str): Name of the SQL column containing the codes.
         load_diagnoses (bool): Whether to load diagnoses or medications. Determines the logic. See calling function for more.
-        match_with_wildcard (bool): Whether to match on icd_code* / atc_code*.
+        match_with_wildcard (bool): Whether to match on icd_code* / atc_code* or only icd_code / atc_code.
     """
+    base_query = f"lower({code_sql_col_name}) LIKE '%{code_to_match.lower()}"
+
     if match_with_wildcard:
-        match_col_sql_str = (
-            f"lower({code_sql_col_name}) LIKE '%{code_to_match.lower()}%'"
-        )
-    else:
-        match_col_sql_str = (
-            f"lower({code_sql_col_name}) LIKE '%{code_to_match.lower()}'"
-        )
+        return f"{base_query}%'"
 
-        if load_diagnoses:
-            match_col_sql_str += (
-                f" OR lower({code_sql_col_name}) LIKE '%{code_to_match.lower()}#%'"
-            )
+    if load_diagnoses:
+        return f"{base_query} OR {base_query}#%'"
 
-    return match_col_sql_str
+    return base_query
 
 
 def list_to_sql_logic(
-    codes_to_match: list[str],
-    code_sql_col_name: str,
-    load_diagnoses: bool,
-    match_with_wildcard: bool,
+        codes_to_match: list[str],
+        code_sql_col_name: str,
+        load_diagnoses: bool,
+        match_with_wildcard: bool,
 ):
     """Generate SQL match logic from a list of strings.
 
@@ -50,39 +44,39 @@ def list_to_sql_logic(
         codes_to_match (list[str]): List of strings to match.
         code_sql_col_name (str): Name of the SQL column containing the codes.
         load_diagnoses (bool): Whether to load diagnoses or medications. Determines the logic. See calling function for more.
-        match_with_wildcard (bool): Whether to match on icd_code* / atc_code*.
+        match_with_wildcard (bool): Whether to match on icd_code* / atc_code* or only icd_code / atc_code.
     """
     match_col_sql_strings = []
 
     for code_str in codes_to_match:
+        base_query = f"lower({code_sql_col_name}) LIKE '%{code_str.lower()}"
+
         if match_with_wildcard:
             match_col_sql_strings.append(
-                f"lower({code_sql_col_name}) LIKE '%{code_str.lower()}%'",
+                f"{base_query}%'",
             )
         else:
             # If the string is at the end of diagnosegruppestreng, it doesn't end with a hashtag
-            match_col_sql_strings.append(
-                f"lower({code_sql_col_name}) LIKE '%{code_str.lower()}'",
-            )
+            match_col_sql_strings.append(base_query)
 
             if load_diagnoses:
                 # If the string is at the beginning of diagnosegruppestreng, it doesn't start with a hashtag
                 match_col_sql_strings.append(
-                    f"lower({code_sql_col_name}) LIKE '{code_str.lower()}%'",
+                    f"lower({code_sql_col_name}) LIKE '{code_str.lower()}#%'",
                 )
 
     return " OR ".join(match_col_sql_strings)
 
 
 def load_from_codes(
-    codes_to_match: Union[list[str], str],
-    load_diagnoses: bool,
-    code_col_name: str,
-    source_timestamp_col_name: str,
-    view: str,
-    output_col_name: Optional[str] = None,
-    match_with_wildcard: bool = True,
-    n_rows: Optional[int] = None,
+        codes_to_match: Union[list[str], str],
+        load_diagnoses: bool,
+        code_col_name: str,
+        source_timestamp_col_name: str,
+        view: str,
+        output_col_name: Optional[str] = None,
+        match_with_wildcard: bool = True,
+        n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
     """Load the visits that have diagnoses that match icd_code or atc code from
     the beginning of their adiagnosekode or atc code string. Aggregates all
@@ -131,8 +125,8 @@ def load_from_codes(
         raise ValueError("codes_to_match must be either a list or a string.")
 
     sql = (
-        f"SELECT dw_ek_borger, {source_timestamp_col_name}, {code_col_name}"
-        + f" FROM [fct].{fct} WHERE {source_timestamp_col_name} IS NOT NULL AND ({match_col_sql_str})"
+            f"SELECT dw_ek_borger, {source_timestamp_col_name}, {code_col_name}"
+            + f" FROM [fct].{fct} WHERE {source_timestamp_col_name} IS NOT NULL AND ({match_col_sql_str})"
     )
 
     df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
