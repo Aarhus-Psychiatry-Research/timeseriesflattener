@@ -18,7 +18,7 @@ def _load_one_source(
     wildcard_icd_code: Optional[bool] = False,
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Load the prescribed medications that match atc. If wildcard_icd_code,
+    """Load the prescribed medications that match atc. If wildcard_atc_code,
     match from atc_code*. Aggregates all that match. Beware that data is
     incomplete prior to sep. 2016 for prescribed medications.
 
@@ -75,7 +75,7 @@ def load(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
     """Load medications. Aggregates prescribed/administered if both true. If
-    wildcard_icd_code, match from atc_code*. Aggregates all that match. Beware
+    wildcard_atc_code, match from atc_code*. Aggregates all that match. Beware
     that data is incomplete prior to sep. 2016 for prescribed medications.
 
     Args:
