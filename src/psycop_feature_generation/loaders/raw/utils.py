@@ -8,10 +8,10 @@ from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 
 def str_to_sql_match_logic(
-        code_to_match: str,
-        code_sql_col_name: str,
-        load_diagnoses: bool,
-        match_with_wildcard: bool,
+    code_to_match: str,
+    code_sql_col_name: str,
+    load_diagnoses: bool,
+    match_with_wildcard: bool,
 ):
     """Generate SQL match logic from a single string.
 
@@ -33,10 +33,10 @@ def str_to_sql_match_logic(
 
 
 def list_to_sql_logic(
-        codes_to_match: list[str],
-        code_sql_col_name: str,
-        load_diagnoses: bool,
-        match_with_wildcard: bool,
+    codes_to_match: list[str],
+    code_sql_col_name: str,
+    load_diagnoses: bool,
+    match_with_wildcard: bool,
 ):
     """Generate SQL match logic from a list of strings.
 
@@ -69,14 +69,14 @@ def list_to_sql_logic(
 
 
 def load_from_codes(
-        codes_to_match: Union[list[str], str],
-        load_diagnoses: bool,
-        code_col_name: str,
-        source_timestamp_col_name: str,
-        view: str,
-        output_col_name: Optional[str] = None,
-        match_with_wildcard: bool = True,
-        n_rows: Optional[int] = None,
+    codes_to_match: Union[list[str], str],
+    load_diagnoses: bool,
+    code_col_name: str,
+    source_timestamp_col_name: str,
+    view: str,
+    output_col_name: Optional[str] = None,
+    match_with_wildcard: bool = True,
+    n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
     """Load the visits that have diagnoses that match icd_code or atc code from
     the beginning of their adiagnosekode or atc code string. Aggregates all
@@ -125,8 +125,8 @@ def load_from_codes(
         raise ValueError("codes_to_match must be either a list or a string.")
 
     sql = (
-            f"SELECT dw_ek_borger, {source_timestamp_col_name}, {code_col_name}"
-            + f" FROM [fct].{fct} WHERE {source_timestamp_col_name} IS NOT NULL AND ({match_col_sql_str})"
+        f"SELECT dw_ek_borger, {source_timestamp_col_name}, {code_col_name}"
+        + f" FROM [fct].{fct} WHERE {source_timestamp_col_name} IS NOT NULL AND ({match_col_sql_str})"
     )
 
     df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
