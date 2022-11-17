@@ -499,8 +499,21 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
     ).create_combinations()
 
     temporal_predictor_specs += PredictorGroupSpec(
-        values_loader=("antipsychotics",
-                       "clozapine"),
+        values_loader=(
+            "antipsychotics",
+            "clozapine",
+            "top_10_weight_gaining_antipsychotics",
+            "lithium",
+            "valproate",
+            "lamotrigine",
+            "benzodiazepines",
+            "pregabaline",
+            "ssri",
+            "snri",
+            "tca",
+            "selected_nassa",
+            "benzodiazepine_related_sleeping_agents",
+        ),
         interval_days=base_interval_days,
         resolve_multiple_fn=base_resolve_multiple,
         fallback=[0],
