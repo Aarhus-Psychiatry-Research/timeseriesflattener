@@ -48,6 +48,8 @@ from psycop_feature_generation.utils import (
     write_df_to_file,
 )
 
+LOOKAHEAD_YEARS = (1, 2, 3, 4, 5)
+
 
 def init_wandb(
     wandb_project_name: str,
@@ -404,7 +406,7 @@ def get_static_predictor_specs():
     ]
 
 
-def get_metadata_specs():
+def get_metadata_specs() -> list[AnySpec]:
     """Get metadata specs."""
     return [
         StaticSpec(
@@ -425,6 +427,15 @@ def get_metadata_specs():
             allowed_nan_value_prop=0.0,
             prefix="eval",
         ),
+        OutcomeGroupSpec(
+            values_loader=["hba1c"],
+            interval_days=[year * 365 for year in LOOKAHEAD_YEARS],
+            resolve_multiple_fn=["count"],
+            fallback=[0],
+            incident=[False],
+            allowed_nan_value_prop=[0.0],
+            prefix="eval",
+        ).create_combinations(),
     ]
 
 
@@ -432,7 +443,7 @@ def get_outcome_specs():
     """Get outcome specs."""
     return OutcomeGroupSpec(
         values_loader=["t2d"],
-        interval_days=[year * 365 for year in (1, 2, 3, 4, 5)],
+        interval_days=[year * 365 for year in LOOKAHEAD_YEARS],
         resolve_multiple_fn=["max"],
         fallback=[0],
         incident=[True],

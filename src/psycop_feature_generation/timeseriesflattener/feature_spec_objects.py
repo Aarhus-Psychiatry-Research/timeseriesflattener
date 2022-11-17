@@ -263,6 +263,9 @@ class MinGroupSpec(BaseModel):
     allowed_nan_value_prop: list[float] = [0.0]
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
+    prefix: Optional[str] = None
+    # Prefix for the column name. Overrides the default prefix for the feature type.
+
     def __init__(self, **data):
         super().__init__(**data)
 
