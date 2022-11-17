@@ -308,9 +308,12 @@ def benzodiazepines(n_rows: Optional[int] = None) -> pd.DataFrame:
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
-    
+
+
 @data_loaders.register("benzodiazepine_related_sleeping_agents")
-def benzodiazepine_related_sleeping_agents(n_rows: Optional[int] = None) -> pd.DataFrame:
+def benzodiazepine_related_sleeping_agents(
+    n_rows: Optional[int] = None,
+) -> pd.DataFrame:
     return load(
         atc_code=["N05CF01", "N05CF02"],
         load_prescribed=False,
@@ -388,6 +391,7 @@ def tca(n_rows: Optional[int] = None) -> pd.DataFrame:
         n_rows=n_rows,
     )
 
+
 @data_loaders.register("selected_nassa")
 def selected_nassa(n_rows: Optional[int] = None) -> pd.DataFrame:
     return load(
@@ -397,6 +401,7 @@ def selected_nassa(n_rows: Optional[int] = None) -> pd.DataFrame:
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
+
 
 @data_loaders.register("lithium")
 def lithium(n_rows: Optional[int] = None) -> pd.DataFrame:
@@ -652,6 +657,7 @@ def statins(n_rows: Optional[int] = None) -> pd.DataFrame:
         n_rows=n_rows,
     )
 
+
 @data_loaders.register("antihypertensives")
 def antihypertensives(n_rows: Optional[int] = None) -> pd.DataFrame:
     return load(
@@ -661,7 +667,8 @@ def antihypertensives(n_rows: Optional[int] = None) -> pd.DataFrame:
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
-    
+
+
 @data_loaders.register("diuretics")
 def diuretics(n_rows: Optional[int] = None) -> pd.DataFrame:
     return load(
@@ -671,7 +678,8 @@ def diuretics(n_rows: Optional[int] = None) -> pd.DataFrame:
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
-    
+
+
 @data_loaders.register("gerd_drugs")
 def gerd_drugs(n_rows: Optional[int] = None) -> pd.DataFrame:
     """Gastroesophageal reflux disease (GERD) drugs"""
