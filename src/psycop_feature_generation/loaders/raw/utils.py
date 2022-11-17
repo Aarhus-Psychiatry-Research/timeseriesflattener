@@ -8,20 +8,31 @@ from psycop_feature_generation.loaders.raw.sql_load import sql_load
 
 
 def str_to_sql_match_logic(
-    codes_to_match: str,
-    code_col_name: str,
-    wildcard_code: bool,
+    code_to_match: str,
+    code_sql_col_name: str,
     load_diagnoses: bool,
+    match_with_wildcard: bool,
 ):
-    """Generate SQL match logic from a single string."""
-    if wildcard_code:
-        match_col_sql_str = f"lower({code_col_name}) LIKE '%{codes_to_match.lower()}%'"
+    """Generate SQL match logic from a single string.
+
+    Args:
+        code_to_match (list[str]): List of strings to match.
+        code_sql_col_name (str): Name of the SQL column containing the codes.
+        load_diagnoses (bool): Whether to load diagnoses or medications. Determines the logic. See calling function for more.
+        match_with_wildcard (bool): Whether to match on icd_code* / atc_code*.
+    """
+    if match_with_wildcard:
+        match_col_sql_str = (
+            f"lower({code_sql_col_name}) LIKE '%{code_to_match.lower()}%'"
+        )
     else:
-        match_col_sql_str = f"lower({code_col_name}) LIKE '%{codes_to_match.lower()}'"
+        match_col_sql_str = (
+            f"lower({code_sql_col_name}) LIKE '%{code_to_match.lower()}'"
+        )
 
         if load_diagnoses:
             match_col_sql_str += (
-                f" OR lower({code_col_name}) LIKE '%{codes_to_match.lower()}#%'"
+                f" OR lower({code_sql_col_name}) LIKE '%{code_to_match.lower()}#%'"
             )
 
     return match_col_sql_str
@@ -29,28 +40,35 @@ def str_to_sql_match_logic(
 
 def list_to_sql_logic(
     codes_to_match: list[str],
+    code_sql_col_name: str,
     load_diagnoses: bool,
-    code_col_name: str,
-    wildcard_code: bool,
+    match_with_wildcard: bool,
 ):
-    """Generate SQL match logic from a list of strings."""
+    """Generate SQL match logic from a list of strings.
+
+    Args:
+        codes_to_match (list[str]): List of strings to match.
+        code_sql_col_name (str): Name of the SQL column containing the codes.
+        load_diagnoses (bool): Whether to load diagnoses or medications. Determines the logic. See calling function for more.
+        match_with_wildcard (bool): Whether to match on icd_code* / atc_code*.
+    """
     match_col_sql_strings = []
 
     for code_str in codes_to_match:
-        if wildcard_code:
+        if match_with_wildcard:
             match_col_sql_strings.append(
-                f"lower({code_col_name}) LIKE '%{code_str.lower()}%'",
+                f"lower({code_sql_col_name}) LIKE '%{code_str.lower()}%'",
             )
         else:
             # If the string is at the end of diagnosegruppestreng, it doesn't end with a hashtag
             match_col_sql_strings.append(
-                f"lower({code_col_name}) LIKE '%{code_str.lower()}'",
+                f"lower({code_sql_col_name}) LIKE '%{code_str.lower()}'",
             )
 
             if load_diagnoses:
                 # If the string is at the beginning of diagnosegruppestreng, it doesn't start with a hashtag
                 match_col_sql_strings.append(
-                    f"lower({code_col_name}) LIKE '{code_str.lower()}%'",
+                    f"lower({code_sql_col_name}) LIKE '{code_str.lower()}%'",
                 )
 
     return " OR ".join(match_col_sql_strings)
@@ -63,7 +81,7 @@ def load_from_codes(
     source_timestamp_col_name: str,
     view: str,
     output_col_name: Optional[str] = None,
-    wildcard_code: bool = True,
+    match_with_wildcard: bool = True,
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
     """Load the visits that have diagnoses that match icd_code or atc code from
@@ -77,7 +95,7 @@ def load_from_codes(
         load_diagnoses (bool): Determines which mathing logic is employed. If True, will load diagnoses. If False, will load medications.
             Diagnoses must be able to split a string like this:
                 A:DF431#+:ALFC3#B:DF329
-            Which means that if wildcard_code is False, we must match on *icd_code# or *icd_code followed by nothing. If it's true, we can match on *icd_code*.
+            Which means that if match_with_wildcard is False, we must match on *icd_code# or *icd_code followed by nothing. If it's true, we can match on *icd_code*.
         code_col_name (str): Name of column containing either diagnosis (icd) or medication (atc) codes.
             Takes either 'diagnosegruppestreng' or 'atc' as input.
         source_timestamp_col_name (str): Name of the timestamp column in the SQL
@@ -85,7 +103,7 @@ def load_from_codes(
         view (str): Name of the SQL view to load from.
         output_col_name (str, optional): Name of new column string. Defaults to
             None.
-        wildcard_code (bool, optional): Whether to match on icd_code* / atc_code*.
+        match_with_wildcard (bool, optional): Whether to match on icd_code* / atc_code*.
             Defaults to true.
         n_rows: Number of rows to return. Defaults to None.
 
@@ -98,16 +116,16 @@ def load_from_codes(
     if isinstance(codes_to_match, list) and len(codes_to_match) > 1:
         match_col_sql_str = list_to_sql_logic(
             codes_to_match=codes_to_match,
+            code_sql_col_name=code_col_name,
             load_diagnoses=load_diagnoses,
-            code_col_name=code_col_name,
-            wildcard_code=wildcard_code,
+            match_with_wildcard=match_with_wildcard,
         )
     elif isinstance(codes_to_match, str):
         match_col_sql_str = str_to_sql_match_logic(
-            codes_to_match=codes_to_match,
-            code_col_name=code_col_name,
-            wildcard_code=wildcard_code,
+            code_to_match=codes_to_match,
+            code_sql_col_name=code_col_name,
             load_diagnoses=load_diagnoses,
+            match_with_wildcard=match_with_wildcard,
         )
     else:
         raise ValueError("codes_to_match must be either a list or a string.")
