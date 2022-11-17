@@ -160,7 +160,7 @@ def concat_from_physical_visits(
 
 
 def from_physical_visits(
-    icd_code: str,
+    icd_code: Union[str, list[str]],
     output_col_name_override: Optional[str] = "value",
     n_rows: Optional[int] = None,
     wildcard_icd_code: Optional[bool] = False,
