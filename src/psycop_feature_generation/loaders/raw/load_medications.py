@@ -640,3 +640,45 @@ def various_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
+
+
+@data_loaders.register("statins")
+def statins(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return load(
+        atc_code="C10AA",
+        load_prescribed=False,
+        load_administered=True,
+        wildcard_icd_code=True,
+        n_rows=n_rows,
+    )
+
+@data_loaders.register("antihypertensives")
+def antihypertensives(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return load(
+        atc_code="C02",
+        load_prescribed=False,
+        load_administered=True,
+        wildcard_icd_code=True,
+        n_rows=n_rows,
+    )
+    
+@data_loaders.register("diuretics")
+def diuretics(n_rows: Optional[int] = None) -> pd.DataFrame:
+    return load(
+        atc_code="C07",
+        load_prescribed=False,
+        load_administered=True,
+        wildcard_icd_code=True,
+        n_rows=n_rows,
+    )
+    
+@data_loaders.register("gerd_drugs")
+def gerd_drugs(n_rows: Optional[int] = None) -> pd.DataFrame:
+    """Gastroesophageal reflux disease (GERD) drugs"""
+    return load(
+        atc_code="A02",
+        load_prescribed=False,
+        load_administered=True,
+        wildcard_icd_code=True,
+        n_rows=n_rows,
+    )

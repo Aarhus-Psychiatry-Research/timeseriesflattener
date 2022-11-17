@@ -726,3 +726,13 @@ def tics_and_misc(n_rows: Optional[int] = None) -> pd.DataFrame:
         wildcard_icd_code=True,
         n_rows=n_rows,
     )
+
+
+@data_loaders.register("gerd")
+def gerd(n_rows: Optional[int] = None) -> pd.DataFrame:
+    """Gastroesophageal reflux disease (GERD) diagnoses"""
+    return from_physical_visits(
+        icd_code="k21",
+        wildcard_icd_code=True,
+        n_rows=n_rows,
+    )
