@@ -1,85 +1,29 @@
 """Loaders for medications."""
-from typing import Optional
+from typing import Optional, Union
 
 import pandas as pd
 from wasabi import msg
 
-from psycop_feature_generation.loaders.raw.sql_load import sql_load
+from psycop_feature_generation.loaders.raw.utils import load_from_codes
 from psycop_feature_generation.utils import data_loaders
 
 # pylint: disable=missing-function-docstring
 
 
-def _load_one_source(
-    atc_code: str,
-    source_timestamp_col_name: str,
-    view: str,
-    output_col_name: Optional[str] = None,
-    wildcard_icd_code: Optional[bool] = False,
-    n_rows: Optional[int] = None,
-) -> pd.DataFrame:
-    """Load the prescribed medications that match atc. If wildcard_icd_code,
-    match from atc_code*. Aggregates all that match. Beware that data is
-    incomplete prior to sep. 2016 for prescribed medications.
-
-    Args:
-        atc_code (str): ATC string to match on. # noqa: DAR102
-        source_timestamp_col_name (str): Name of the timestamp column in the SQL
-            table.
-        view (str): Which view to use, e.g.
-            "FOR_Medicin_ordineret_inkl_2021_feb2022"
-        output_col_name (str, optional): Name of new column string. Defaults to
-            None.
-        wildcard_icd_code (bool, optional): Whether to match on atc_code* or
-            atc_code.
-        n_rows (int, optional): Number of rows to return. Defaults to None.
-
-    Returns:
-        pd.DataFrame: A pandas dataframe with dw_ek_borger, timestamp and
-            output_col_name = 1
-    """
-
-    if wildcard_icd_code:
-        end_of_sql = "%"
-    else:
-        end_of_sql = ""  # noqa
-
-    view = f"[{view}]"
-    sql = (
-        f"SELECT dw_ek_borger, {source_timestamp_col_name}, atc FROM [fct].{view}"
-        + f" WHERE {source_timestamp_col_name} IS NOT NULL AND (lower(atc)) LIKE lower('{atc_code}{end_of_sql}')"
-    )
-
-    df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
-
-    if output_col_name is None:
-        output_col_name = atc_code
-
-    df[output_col_name] = 1
-
-    df.drop(["atc"], axis="columns", inplace=True)
-
-    return df.rename(
-        columns={
-            source_timestamp_col_name: "timestamp",
-        },
-    )
-
-
 def load(
-    atc_code: str,
+    atc_code: Union[str, list[str]],
     output_col_name: Optional[str] = None,
     load_prescribed: Optional[bool] = False,
     load_administered: Optional[bool] = True,
-    wildcard_icd_code: Optional[bool] = True,
+    wildcard_code: Optional[bool] = True,
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
     """Load medications. Aggregates prescribed/administered if both true. If
-    wildcard_icd_code, match from atc_code*. Aggregates all that match. Beware
+    wildcard_atc_code, match from atc_code*. Aggregates all that match. Beware
     that data is incomplete prior to sep. 2016 for prescribed medications.
 
     Args:
-        atc_code (str): ATC-code prefix to load. Matches atc_code_prefix*. # noqa: DAR102
+        atc_code (str): ATC-code prefix to load. Matches atc_code_prefix*.
             Aggregates all.
         output_col_name (str, optional): Name of output_col_name. Contains 1 if
             atc_code matches atc_code_prefix, 0 if not.Defaults to
@@ -88,7 +32,7 @@ def load(
             False. Beware incomplete until sep 2016.
         load_administered (bool, optional): Whether to load administrations.
             Defaults to True.
-        wildcard_icd_code (bool, optional): Whether to match on atc_code* or
+        wildcard_code (bool, optional): Whether to match on atc_code* or
             atc_code.
         n_rows (int, optional): Number of rows to return. Defaults to None.
 
@@ -104,35 +48,46 @@ def load(
 
     df = pd.DataFrame()
 
+    if load_prescribed and load_administered:
+        n_rows = int(n_rows / 2) if n_rows else None
+
     if load_prescribed:
-        df_medication_prescribed = _load_one_source(
-            atc_code=atc_code,
+        df_medication_prescribed = load_from_codes(
+            codes_to_match=atc_code,
+            code_col_name="atc",
             source_timestamp_col_name="datotid_ordinationstart",
             view="FOR_Medicin_ordineret_inkl_2021_feb2022",
             output_col_name=output_col_name,
-            wildcard_icd_code=wildcard_icd_code,
+            match_with_wildcard=wildcard_code,
             n_rows=n_rows,
+            load_diagnoses=False,
         )
 
         df = pd.concat([df, df_medication_prescribed])
 
     if load_administered:
-        df_medication_administered = _load_one_source(
-            atc_code=atc_code,
+        df_medication_administered = load_from_codes(
+            codes_to_match=atc_code,
+            code_col_name="atc",
             source_timestamp_col_name="datotid_administration_start",
             view="FOR_Medicin_administreret_inkl_2021_feb2022",
             output_col_name=output_col_name,
-            wildcard_icd_code=wildcard_icd_code,
+            match_with_wildcard=wildcard_code,
             n_rows=n_rows,
+            load_diagnoses=False,
         )
         df = pd.concat([df, df_medication_administered])
 
     if output_col_name is None:
-        output_col_name = atc_code
+        if isinstance(atc_code, list):
+            # Joint list of atc_codes
+            output_col_name = "_".join(atc_code)
+        else:
+            output_col_name = atc_code
 
     df.rename(
         columns={
-            atc_code: "value",
+            output_col_name: "value",
         },
         inplace=True,
     )
@@ -185,7 +140,7 @@ def antipsychotics(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N05A",
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -205,7 +160,7 @@ def first_gen_antipsychotics(n_rows: Optional[int] = None) -> pd.DataFrame:
         ],
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -231,7 +186,7 @@ def second_gen_antipsychotics(n_rows: Optional[int] = None) -> pd.DataFrame:
         ],
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -242,7 +197,7 @@ def olanzapine(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N05AH03",
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -253,7 +208,7 @@ def clozapine(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N05AH02",
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -264,7 +219,7 @@ def anxiolytics(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N05B",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -275,7 +230,7 @@ def hypnotics(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N05C",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -286,7 +241,7 @@ def antidepressives(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N06A",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -298,7 +253,7 @@ def ssri(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code=["N06AB10", "N06AB04", "N06AB08", "N06AB03", "N06AB05", "N06AB06"],
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -310,7 +265,7 @@ def snri(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code=["N06AX21", "N06AX16"],
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -322,7 +277,7 @@ def tca(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code=["N06AA09", "N06AA04", "N06AA02", "N06AA10", "N06AA16"],
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -333,7 +288,7 @@ def lithium(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N05AN01",
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -344,7 +299,7 @@ def hyperactive_disorders_medications(n_rows: Optional[int] = None) -> pd.DataFr
         atc_code="N06B",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -355,7 +310,7 @@ def dementia_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N06D",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -366,7 +321,7 @@ def anti_epileptics(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N03",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -378,7 +333,7 @@ def alcohol_abstinence(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code=["A11DA01", "A11EA", "N05BA02", "N03AA02"],
         load_prescribed=True,
         load_administered=True,
-        wildcard_icd_code=False,
+        wildcard_code=False,
         n_rows=n_rows,
     )
 
@@ -390,7 +345,7 @@ def alimentary_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="A",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -401,7 +356,7 @@ def blood_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="B",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -412,7 +367,7 @@ def cardiovascular_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="C",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -423,7 +378,7 @@ def dermatological_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="D",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -434,7 +389,7 @@ def genito_sex_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="G",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -445,7 +400,7 @@ def hormonal_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="H",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -456,7 +411,7 @@ def antiinfectives(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="J",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -467,7 +422,7 @@ def antineoplastic(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="L",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -478,7 +433,7 @@ def musculoskeletal_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="M",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -489,7 +444,7 @@ def nervous_system_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -500,7 +455,7 @@ def analgesic(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="N02",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -511,7 +466,7 @@ def antiparasitic(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="P",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -522,7 +477,7 @@ def respiratory_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="R",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -533,7 +488,7 @@ def sensory_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="S",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
 
@@ -544,6 +499,6 @@ def various_medications(n_rows: Optional[int] = None) -> pd.DataFrame:
         atc_code="V",
         load_prescribed=False,
         load_administered=True,
-        wildcard_icd_code=True,
+        wildcard_code=True,
         n_rows=n_rows,
     )
