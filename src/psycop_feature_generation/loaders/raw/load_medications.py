@@ -17,6 +17,7 @@ def _load_one_source(
     output_col_name: Optional[str] = None,
     wildcard_icd_code: Optional[bool] = False,
     n_rows: Optional[int] = None,
+    exclude_atc_codes: Optional[list[str]] = None,
 ) -> pd.DataFrame:
     """Load the prescribed medications that match atc. If wildcard_icd_code,
     match from atc_code*. Aggregates all that match. Beware that data is
@@ -33,6 +34,7 @@ def _load_one_source(
         wildcard_icd_code (bool, optional): Whether to match on atc_code* or
             atc_code.
         n_rows (int, optional): Number of rows to return. Defaults to None.
+        exclude_atc_codes (list[str], optional): Drop rows if atc_code is a direct match to any of these. Defaults to None.
 
     Returns:
         pd.DataFrame: A pandas dataframe with dw_ek_borger, timestamp and
@@ -57,6 +59,10 @@ def _load_one_source(
 
     df[output_col_name] = 1
 
+    # Drop rows if "atc" column matches any of the strings in exclude_atc_codes
+    if exclude_atc_codes is not None:
+        df = df[~df["atc"].isin(exclude_atc_codes)]
+
     df.drop(["atc"], axis="columns", inplace=True)
 
     return df.rename(
@@ -73,6 +79,7 @@ def load(
     load_administered: Optional[bool] = True,
     wildcard_icd_code: Optional[bool] = True,
     n_rows: Optional[int] = None,
+    exclude_atc_codes: Optional[list[str]] = None,
 ) -> pd.DataFrame:
     """Load medications. Aggregates prescribed/administered if both true. If
     wildcard_icd_code, match from atc_code*. Aggregates all that match. Beware
@@ -91,6 +98,7 @@ def load(
         wildcard_icd_code (bool, optional): Whether to match on atc_code* or
             atc_code.
         n_rows (int, optional): Number of rows to return. Defaults to None, in which case all rows are returned.
+        excclude_atc_codes (list[str], optional): Drop rows if atc_code is a direct match to any of these. Defaults to None.
 
     Returns:
         pd.DataFrame: Cols: dw_ek_borger, timestamp, {atc_code_prefix}_value = 1
@@ -112,6 +120,7 @@ def load(
             output_col_name=output_col_name,
             wildcard_icd_code=wildcard_icd_code,
             n_rows=n_rows,
+            exclude_atc_codes=exclude_atc_codes,
         )
 
         df = pd.concat([df, df_medication_prescribed])
@@ -124,6 +133,7 @@ def load(
             output_col_name=output_col_name,
             wildcard_icd_code=wildcard_icd_code,
             n_rows=n_rows,
+            exclude_atc_codes=exclude_atc_codes,
         )
         df = pd.concat([df, df_medication_administered])
 
@@ -187,6 +197,7 @@ def antipsychotics(n_rows: Optional[int] = None) -> pd.DataFrame:
         load_administered=True,
         wildcard_icd_code=True,
         n_rows=n_rows,
+        exclude_atc_codes=["N05AN01"],
     )
 
 
