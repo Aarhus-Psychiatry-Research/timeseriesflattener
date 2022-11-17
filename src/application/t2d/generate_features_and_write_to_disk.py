@@ -282,7 +282,9 @@ def add_predictors_to_ds(
             static_spec=static_spec,
         )
 
-    flattened_dataset.add_age_and_date_of_birth(birthdays)
+    flattened_dataset.add_age_and_birth_year(
+        id2date_of_birth=birthdays, birth_year_as_predictor=True
+    )
 
     start_time = time.time()
 

@@ -568,19 +568,21 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             flattened_predictor_dfs=flattened_predictor_dfs,
         )
 
-    def add_age_and_date_of_birth(
+    def add_age_and_birth_year(
         self,
         id2date_of_birth: DataFrame,
         input_date_of_birth_col_name: Optional[str] = "date_of_birth",
         output_prefix: str = "pred",
+        birth_year_as_predictor: bool = False,
     ):
-        """Add age at prediction time to each prediction time.
+        """Add age at prediction time and patient's birth year to each prediction time.
 
         Args:
             id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
             input_date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
                 Defaults to "date_of_birth".
             output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
+            birth_year_as_predictor (bool, optional): Whether to add birth year as a predictor. Defaults to False.
 
         Raises:
             ValueError: _description_
@@ -596,8 +598,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     f"Conversion of {input_date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
                 ) from e
 
-        output_date_of_birth_name = input_date_of_birth_col_name
-        output_date_of_birth_col_name = f"{output_prefix}_{output_date_of_birth_name}"
         output_age_col_name = f"{output_prefix}_age_in_years"
 
         self.add_static_info(
@@ -607,17 +607,23 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 prefix=output_prefix,
                 # We typically don't want to use date of birth as a predictor,
                 # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
-                feature_name=output_date_of_birth_name,
+                feature_name=input_date_of_birth_col_name,
             ),
         )
 
         self.df[output_age_col_name] = (
             (
                 self.df[self.timestamp_col_name]
-                - self.df[f"{output_date_of_birth_col_name}"]
+                - self.df[f"eval_{input_date_of_birth_col_name}"]
             ).dt.days
             / (365.25)
         ).round(2)
+
+        if birth_year_as_predictor:
+            # Convert datetime to year
+            self.df["pred_birth_year"] = self.df[
+                f"eval_{input_date_of_birth_col_name}"
+            ].dt.year
 
     def add_static_info(
         self,
@@ -635,7 +641,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Try to infer value col name if not provided
         if static_spec.input_col_name_override is None:
             possible_value_cols = [
-                col for col in static_spec.values_df.columns if col not in self.id_col_name
+                col
+                for col in static_spec.values_df.columns
+                if col not in self.id_col_name
             ]
 
             if len(possible_value_cols) == 1:
