@@ -262,16 +262,21 @@ class MinGroupSpec(BaseModel):
 
     allowed_nan_value_prop: list[float] = [0.0]
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
-    
+
     def __init__(self, **data):
         super().__init__(**data)
-        
+
         # Check that all passed loaders are valid
-        invalid_loaders = list(set(self.values_loader) - set(data_loaders.get_all()))
+        invalid_loaders = list(
+            set(self.values_loader) - set(data_loaders.get_all().keys())
+        )
         if len(invalid_loaders) != 0:
-            raise ValueError(f"""Invalid loader(s) specified. Following loaders were not found in the data_loaders registry:
-            {' '.join(str(loader) for loader in invalid_loaders)} 
-            Available loaders:{' '.join(str(loader) for loader in data_loaders.get_all())}""")
+            nl = "\n"  # New line variable as f-string can't handle backslashes
+            raise ValueError(
+                f"""Invalid loader(s) specified.{nl}{nl}Following loaders were not found in the data_loaders registry:"""
+                f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
+                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all().keys())}"""
+            )
 
         if self.output_col_name_override:
             input_col_name = (
