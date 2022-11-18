@@ -357,6 +357,13 @@ def create_flattened_dataset(
         feature_cache_dir=proj_path / "feature_cache",
     )
 
+    flattened_dataset = add_predictors_to_ds(
+        temporal_predictor_specs=spec_set.temporal_predictors,
+        static_predictor_specs=spec_set.static_predictors,
+        flattened_dataset=flattened_dataset,
+        birthdays=birthdays,
+    )
+
     flattened_dataset = add_metadata_to_ds(
         flattened_dataset=flattened_dataset,
         specs=spec_set.metadata,
@@ -365,13 +372,6 @@ def create_flattened_dataset(
     flattened_dataset = add_outcomes_to_ds(
         outcome_specs=spec_set.outcomes,
         flattened_dataset=flattened_dataset,
-    )
-
-    flattened_dataset = add_predictors_to_ds(
-        temporal_predictor_specs=spec_set.temporal_predictors,
-        static_predictor_specs=spec_set.static_predictors,
-        flattened_dataset=flattened_dataset,
-        birthdays=birthdays,
     )
 
     return flattened_dataset.df
