@@ -27,9 +27,10 @@ def str_to_sql_match_logic(
         return f"{base_query}%'"
 
     if load_diagnoses:
-        return f"{base_query} OR {base_query}#%'"
+        return f"{base_query}' OR {base_query}#%'"
 
-    return base_query
+    return f"{base_query}'"
+
 
 
 def list_to_sql_logic(
@@ -57,7 +58,7 @@ def list_to_sql_logic(
             )
         else:
             # If the string is at the end of diagnosegruppestreng, it doesn't end with a hashtag
-            match_col_sql_strings.append(base_query)
+            match_col_sql_strings.append(f"{base_query}'")
 
             if load_diagnoses:
                 # If the string is at the beginning of diagnosegruppestreng, it doesn't start with a hashtag

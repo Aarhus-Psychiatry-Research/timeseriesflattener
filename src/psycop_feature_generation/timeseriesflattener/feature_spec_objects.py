@@ -323,6 +323,8 @@ def create_specs_from_group(
 class PredictorGroupSpec(MinGroupSpec):
     """Specification for a group of predictors."""
 
+    prefix = "pred"
+
     def create_combinations(self):
         return create_specs_from_group(
             feature_group_spec=self,
@@ -332,6 +334,8 @@ class PredictorGroupSpec(MinGroupSpec):
 
 class OutcomeGroupSpec(MinGroupSpec):
     """Specification for a group of outcomes."""
+
+    prefix = "outc"
 
     incident: Sequence[bool]
 

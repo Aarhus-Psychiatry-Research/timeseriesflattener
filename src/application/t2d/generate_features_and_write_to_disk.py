@@ -24,7 +24,6 @@ from psycop_feature_generation.data_checks.flattened.data_integrity import (
 from psycop_feature_generation.data_checks.flattened.feature_describer import (
     save_feature_description_from_dir,
 )
-from psycop_feature_generation.loaders import flattened
 from psycop_feature_generation.loaders.raw.load_demographic import birthdays
 from psycop_feature_generation.loaders.raw.load_visits import (
     physical_visits_to_psychiatry,

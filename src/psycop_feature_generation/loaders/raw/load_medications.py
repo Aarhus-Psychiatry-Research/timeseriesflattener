@@ -348,7 +348,6 @@ def selected_nassa(n_rows: Optional[int] = None) -> pd.DataFrame:
         load_prescribed=True,
         load_administered=True,
         wildcard_code=True,
-        wildcard_code=False,
         n_rows=n_rows,
     )
 
