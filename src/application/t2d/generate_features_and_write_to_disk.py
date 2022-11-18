@@ -8,8 +8,9 @@ import sys
 import tempfile
 import time
 from collections.abc import Sequence
+from multiprocessing import Pool
 from pathlib import Path
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -43,6 +44,7 @@ from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
 )
 from psycop_feature_generation.utils import (
     FEATURE_SETS_PATH,
+    N_WORKERS,
     PROJECT_ROOT,
     write_df_to_file,
 )
@@ -308,6 +310,13 @@ def add_predictors_to_ds(
     return flattened_dataset
 
 
+def resolve_spec_set_component(spec_set_component: dict[str, Callable]):
+    for k, v in spec_set_component.items():
+        spec_set_component[k] = v()
+
+    return spec_set_component
+
+
 class SpecSet(BaseModel):
     """A set of unresolved specs, ready for resolving."""
 
@@ -315,7 +324,6 @@ class SpecSet(BaseModel):
     static_predictors: list[StaticSpec]
     outcomes: list[OutcomeSpec]
     metadata: list[AnySpec]
-
 
 def create_flattened_dataset(
     prediction_times: pd.DataFrame,
@@ -407,7 +415,7 @@ def get_static_predictor_specs():
 
 def get_metadata_specs() -> list[AnySpec]:
     """Get metadata specs."""
-    return [
+    metadata_specs = [
         StaticSpec(
             values_loader="t2d",
             input_col_name_override="timestamp",
@@ -426,16 +434,19 @@ def get_metadata_specs() -> list[AnySpec]:
             allowed_nan_value_prop=0.0,
             prefix="eval",
         ),
-        OutcomeGroupSpec(
-            values_loader=["hba1c"],
-            interval_days=[year * 365 for year in LOOKAHEAD_YEARS],
-            resolve_multiple_fn=["count"],
-            fallback=[0],
-            incident=[False],
-            allowed_nan_value_prop=[0.0],
-            prefix="eval",
-        ).create_combinations(),
     ]
+
+    metadata_specs += OutcomeGroupSpec(
+        values_loader=["hba1c"],
+        interval_days=[year * 365 for year in LOOKAHEAD_YEARS],
+        resolve_multiple_fn=["count"],
+        fallback=[0],
+        incident=[False],
+        allowed_nan_value_prop=[0.0],
+        prefix="eval",
+    ).create_combinations()
+
+    return metadata_specs
 
 
 def get_outcome_specs():
@@ -450,15 +461,19 @@ def get_outcome_specs():
     ).create_combinations()
 
 
+def resolve_group_spec(group_spec: Union[PredictorGroupSpec, OutcomeGroupSpec]):
+    return group_spec.create_combinations()
+
+
 def get_temporal_predictor_specs() -> list[PredictorSpec]:
     """Generate predictor spec list."""
     base_resolve_multiple = ["max", "min", "mean", "latest", "count"]
     base_interval_days = [30, 90, 180, 365, 730]
     base_allowed_nan_value_prop = [0]
 
-    temporal_predictor_specs: list[PredictorSpec] = []
+    temporal_predictor_groups: list[PredictorGroupSpec] = []
 
-    temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_groups += PredictorGroupSpec(
         values_loader=(
             "hba1c",
             "alat",
@@ -476,9 +491,9 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         interval_days=base_interval_days,
         fallback=[np.nan],
         allowed_nan_value_prop=base_allowed_nan_value_prop,
-    ).create_combinations()
+    )
 
-    temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_groups += PredictorGroupSpec(
         values_loader=(
             "essential_hypertension",
             "hyperlipidemia",
@@ -490,14 +505,10 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         interval_days=base_interval_days,
         fallback=[0],
         allowed_nan_value_prop=base_allowed_nan_value_prop,
-    ).create_combinations()
+    )
 
-    temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_groups += PredictorGroupSpec(
         values_loader=(
-            "essential_hypertension",
-            "hyperlipidemia",
-            "polycystic_ovarian_syndrome",
-            "sleep_apnea",
             "f0_disorders",
             "f1_disorders",
             "f2_disorders",
@@ -508,16 +519,16 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
             "f7_disorders",
             "f8_disorders",
             "hyperkinetic_disorders",
-            "gerd_drugs",
         ),
         resolve_multiple_fn=base_resolve_multiple,
         interval_days=base_interval_days,
         fallback=[0],
         allowed_nan_value_prop=base_allowed_nan_value_prop,
-    ).create_combinations()
+    )
 
-    temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_groups += PredictorGroupSpec(
         values_loader=(
+            "gerd_drugs",
             "antipsychotics",
             "clozapine",
             "top_10_weight_gaining_antipsychotics",
@@ -539,15 +550,25 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         resolve_multiple_fn=base_resolve_multiple,
         fallback=[0],
         allowed_nan_value_prop=base_allowed_nan_value_prop,
-    ).create_combinations()
+    )
 
-    temporal_predictor_specs += PredictorGroupSpec(
+    temporal_predictor_groups += PredictorGroupSpec(
         values_loader=["weight_in_kg", "height_in_cm", "bmi"],
         interval_days=base_interval_days,
         resolve_multiple_fn=["latest"],
         fallback=[np.nan],
         allowed_nan_value_prop=base_allowed_nan_value_prop,
-    ).create_combinations()
+    )
+
+    with Pool(min(N_WORKERS, len(temporal_predictor_groups))) as p:
+        temporal_predictor_specs: list[PredictorSpec] = p.map(
+            func=resolve_group_spec, iterable=temporal_predictor_groups
+        )
+
+        # Unpack list of lists
+        temporal_predictor_specs = [
+            item for sublist in temporal_predictor_specs for item in sublist
+        ]
 
     return temporal_predictor_specs
 

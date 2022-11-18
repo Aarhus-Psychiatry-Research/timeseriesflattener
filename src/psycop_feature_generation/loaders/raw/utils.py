@@ -134,8 +134,9 @@ def load_from_codes(
 
     df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
 
-    # Drop all rows whose code_col_name is in exclude_codes
-    df = df[~df[code_col_name].isin(exclude_codes)]
+    if exclude_codes:
+        # Drop all rows whose code_col_name is in exclude_codes
+        df = df[~df[code_col_name].isin(exclude_codes)]
 
     if output_col_name is None:
         if isinstance(codes_to_match, list):
