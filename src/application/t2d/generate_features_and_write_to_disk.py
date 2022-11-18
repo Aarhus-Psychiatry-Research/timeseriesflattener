@@ -474,15 +474,23 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
     temporal_predictor_groups = [
         PredictorGroupSpec(
             values_loader=(
-                "hba1c",
                 "alat",
                 "hdl",
                 "ldl",
-                "scheduled_glc",
-                "unscheduled_p_glc",
                 "triglycerides",
                 "fasting_ldl",
                 "crp",
+            ),
+            resolve_multiple_fn=base_resolve_multiple,
+            interval_days=base_interval_days,
+            fallback=[np.nan],
+            allowed_nan_value_prop=base_allowed_nan_value_prop,
+        ),
+        PredictorGroupSpec(
+            values_loader=(
+                "hba1c",
+                "scheduled_glc",
+                "unscheduled_p_glc",
                 "egfr",
                 "albumine_creatinine_ratio",
             ),
@@ -524,7 +532,6 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
         ),
         PredictorGroupSpec(
             values_loader=(
-                "gerd_drugs",
                 "antipsychotics",
                 "clozapine",
                 "top_10_weight_gaining_antipsychotics",
@@ -538,6 +545,15 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
                 "tca",
                 "selected_nassa",
                 "benzodiazepine_related_sleeping_agents",
+            ),
+            interval_days=base_interval_days,
+            resolve_multiple_fn=base_resolve_multiple,
+            fallback=[0],
+            allowed_nan_value_prop=base_allowed_nan_value_prop,
+        ),
+        PredictorGroupSpec(
+            values_loader=(
+                "gerd_drugs",
                 "statins",
                 "antihypertensives",
                 "diuretics",
