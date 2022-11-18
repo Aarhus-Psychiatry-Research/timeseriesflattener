@@ -50,6 +50,7 @@ from psycop_feature_generation.utils import (
 )
 
 LOOKAHEAD_YEARS = (1, 2, 3, 4, 5)
+msg = Printer(timestamp=True)
 
 
 def init_wandb(
@@ -225,8 +226,10 @@ def add_metadata_to_ds(
     Returns:
         FlattenedDataset: Flattened dataset.
     """
+    msg.info("Adding metadata to dataset")
 
     for spec in specs:
+        msg.info(f"Adding metadata from {spec.feature_name}")
         if isinstance(spec, StaticSpec):
             flattened_dataset.add_static_info(
                 static_spec=spec,
@@ -250,9 +253,7 @@ def add_outcomes_to_ds(
     Returns:
         FlattenedDataset: Flattened dataset.
     """
-
-    msg = Printer(timestamp=True)
-    msg.info("Adding outcomes")
+    msg.info("Adding outcomes to dataset")
 
     for spec in outcome_specs:
         msg.info(f"Adding outcome with {spec.interval_days} days of lookahead")
@@ -279,7 +280,6 @@ def add_predictors_to_ds(
         birthdays (pd.DataFrame): Birthdays. Used for inferring age at each prediction time.
         flattened_dataset (FlattenedDataset): Flattened dataset.
     """
-
     msg = Printer(timestamp=True)
 
     msg.info("Adding static predictors")
@@ -325,6 +325,7 @@ class SpecSet(BaseModel):
     outcomes: list[OutcomeSpec]
     metadata: list[AnySpec]
 
+
 def create_flattened_dataset(
     prediction_times: pd.DataFrame,
     birthdays: pd.DataFrame,
@@ -342,7 +343,6 @@ def create_flattened_dataset(
     Returns:
         FlattenedDataset: Flattened dataset.
     """
-    msg = Printer(timestamp=True)
 
     msg.info(f"Generating {len(spec_set.temporal_predictors)} features")
 
@@ -352,7 +352,7 @@ def create_flattened_dataset(
         prediction_times_df=prediction_times,
         n_workers=min(
             len(spec_set.temporal_predictors),
-            psutil.cpu_count(logical=False),
+            30,
         ),
         feature_cache_dir=proj_path / "feature_cache",
     )
@@ -471,94 +471,90 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
     base_interval_days = [30, 90, 180, 365, 730]
     base_allowed_nan_value_prop = [0]
 
-    temporal_predictor_groups: list[PredictorGroupSpec] = []
-
-    temporal_predictor_groups += PredictorGroupSpec(
-        values_loader=(
-            "hba1c",
-            "alat",
-            "hdl",
-            "ldl",
-            "scheduled_glc",
-            "unscheduled_p_glc",
-            "triglycerides",
-            "fasting_ldl",
-            "crp",
-            "egfr",
-            "albumine_creatinine_ratio",
+    temporal_predictor_groups = [
+        PredictorGroupSpec(
+            values_loader=(
+                "hba1c",
+                "alat",
+                "hdl",
+                "ldl",
+                "scheduled_glc",
+                "unscheduled_p_glc",
+                "triglycerides",
+                "fasting_ldl",
+                "crp",
+                "egfr",
+                "albumine_creatinine_ratio",
+            ),
+            resolve_multiple_fn=base_resolve_multiple,
+            interval_days=base_interval_days,
+            fallback=[np.nan],
+            allowed_nan_value_prop=base_allowed_nan_value_prop,
         ),
-        resolve_multiple_fn=base_resolve_multiple,
-        interval_days=base_interval_days,
-        fallback=[np.nan],
-        allowed_nan_value_prop=base_allowed_nan_value_prop,
-    )
-
-    temporal_predictor_groups += PredictorGroupSpec(
-        values_loader=(
-            "essential_hypertension",
-            "hyperlipidemia",
-            "polycystic_ovarian_syndrome",
-            "sleep_apnea",
-            "gerd",
+        PredictorGroupSpec(
+            values_loader=(
+                "essential_hypertension",
+                "hyperlipidemia",
+                "polycystic_ovarian_syndrome",
+                "sleep_apnea",
+                "gerd",
+            ),
+            resolve_multiple_fn=base_resolve_multiple,
+            interval_days=base_interval_days,
+            fallback=[0],
+            allowed_nan_value_prop=base_allowed_nan_value_prop,
         ),
-        resolve_multiple_fn=base_resolve_multiple,
-        interval_days=base_interval_days,
-        fallback=[0],
-        allowed_nan_value_prop=base_allowed_nan_value_prop,
-    )
-
-    temporal_predictor_groups += PredictorGroupSpec(
-        values_loader=(
-            "f0_disorders",
-            "f1_disorders",
-            "f2_disorders",
-            "f3_disorders",
-            "f4_disorders",
-            "f5_disorders",
-            "f6_disorders",
-            "f7_disorders",
-            "f8_disorders",
-            "hyperkinetic_disorders",
+        PredictorGroupSpec(
+            values_loader=(
+                "f0_disorders",
+                "f1_disorders",
+                "f2_disorders",
+                "f3_disorders",
+                "f4_disorders",
+                "f5_disorders",
+                "f6_disorders",
+                "f7_disorders",
+                "f8_disorders",
+                "hyperkinetic_disorders",
+            ),
+            resolve_multiple_fn=base_resolve_multiple,
+            interval_days=base_interval_days,
+            fallback=[0],
+            allowed_nan_value_prop=base_allowed_nan_value_prop,
         ),
-        resolve_multiple_fn=base_resolve_multiple,
-        interval_days=base_interval_days,
-        fallback=[0],
-        allowed_nan_value_prop=base_allowed_nan_value_prop,
-    )
-
-    temporal_predictor_groups += PredictorGroupSpec(
-        values_loader=(
-            "gerd_drugs",
-            "antipsychotics",
-            "clozapine",
-            "top_10_weight_gaining_antipsychotics",
-            "lithium",
-            "valproate",
-            "lamotrigine",
-            "benzodiazepines",
-            "pregabaline",
-            "ssri",
-            "snri",
-            "tca",
-            "selected_nassa",
-            "benzodiazepine_related_sleeping_agents",
-            "statins",
-            "antihypertensives",
-            "diuretics",
+        PredictorGroupSpec(
+            values_loader=(
+                "gerd_drugs",
+                "antipsychotics",
+                "clozapine",
+                "top_10_weight_gaining_antipsychotics",
+                "lithium",
+                "valproate",
+                "lamotrigine",
+                "benzodiazepines",
+                "pregabaline",
+                "ssri",
+                "snri",
+                "tca",
+                "selected_nassa",
+                "benzodiazepine_related_sleeping_agents",
+                "statins",
+                "antihypertensives",
+                "diuretics",
+            ),
+            interval_days=base_interval_days,
+            resolve_multiple_fn=base_resolve_multiple,
+            fallback=[0],
+            allowed_nan_value_prop=base_allowed_nan_value_prop,
         ),
-        interval_days=base_interval_days,
-        resolve_multiple_fn=base_resolve_multiple,
-        fallback=[0],
-        allowed_nan_value_prop=base_allowed_nan_value_prop,
-    )
-
-    temporal_predictor_groups += PredictorGroupSpec(
-        values_loader=["weight_in_kg", "height_in_cm", "bmi"],
-        interval_days=base_interval_days,
-        resolve_multiple_fn=["latest"],
-        fallback=[np.nan],
-        allowed_nan_value_prop=base_allowed_nan_value_prop,
-    )
+        PredictorGroupSpec(
+            values_loader=["weight_in_kg", "height_in_cm", "bmi"],
+            interval_days=base_interval_days,
+            resolve_multiple_fn=["latest"],
+            fallback=[np.nan],
+            allowed_nan_value_prop=base_allowed_nan_value_prop,
+        ),
+    ]
 
     with Pool(min(N_WORKERS, len(temporal_predictor_groups))) as p:
         temporal_predictor_specs: list[PredictorSpec] = p.map(

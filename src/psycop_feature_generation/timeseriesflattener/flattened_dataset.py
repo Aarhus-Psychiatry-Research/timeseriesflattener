@@ -614,7 +614,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         self.df[output_age_col_name] = (
             (
                 self.df[self.timestamp_col_name]
-                - self.df[f"eval_{input_date_of_birth_col_name}"]
+                - self.df[f"pred_{input_date_of_birth_col_name}"]
             ).dt.days
             / (365.25)
         ).round(2)

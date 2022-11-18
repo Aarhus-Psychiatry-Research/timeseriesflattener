@@ -55,7 +55,7 @@ def concat_from_physical_visits(
     dfs = [
         load_from_codes(
             codes_to_match=icd_codes,
-            column_name="diagnosegruppestreng",
+            code_col_name="diagnosegruppestreng",
             output_col_name=output_col_name,
             match_with_wildcard=wildcard_icd_code,
             n_rows=n_rows,
@@ -84,7 +84,7 @@ def from_physical_visits(
 
     Args:
         icd_code (str): Substring to match diagnoses for. Matches any diagnoses, whether a-diagnosis, b-diagnosis etc. # noqa: DAR102
-        output_col_name_override (str, optional): Name of new column string. Defaults to "value".
+        output_col_name (str, optional): Name of new column string. Defaults to "value".
         n_rows: Number of rows to return. Defaults to None.
         wildcard_icd_code (bool, optional): Whether to match on icd_code*. Defaults to False.
 
