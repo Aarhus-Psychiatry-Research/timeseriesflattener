@@ -273,7 +273,8 @@ class MinGroupSpec(BaseModel):
         if len(invalid_loaders) != 0:
             nl = "\n"  # New line variable as f-string can't handle backslashes
             raise ValueError(
-                f"""Invalid loader(s) specified.{nl}{nl}Following loaders were not found in the data_loaders registry:"""
+                f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info. 
+                {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
                 f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all().keys())}"""
             )
