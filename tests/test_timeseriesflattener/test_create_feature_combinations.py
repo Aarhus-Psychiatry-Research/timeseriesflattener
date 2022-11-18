@@ -2,9 +2,14 @@
 
 # pylint: disable=missing-function-docstring
 
-from psycop_feature_generation.loaders.synth.raw.load_synth_data import *
+from psycop_feature_generation.loaders.synth.raw.load_synth_data import (  # pylint: disable=unused-import
+    synth_predictor_float,
+)
 from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
+)
+from psycop_feature_generation.utils import (  # pylint: disable=unused-import
+    data_loaders,
 )
 
 
