@@ -10,95 +10,8 @@ from typing import Optional, Union
 
 import pandas as pd
 
-from psycop_feature_generation.loaders.raw.sql_load import sql_load
+from psycop_feature_generation.loaders.raw.utils import load_from_codes
 from psycop_feature_generation.utils import data_loaders
-
-
-def _load(
-    icd_code: Union[list[str], str],
-    source_timestamp_col_name: str,
-    fct: str,
-    output_col_name_override: Optional[str] = None,
-    wildcard_icd_code: Optional[bool] = True,
-    n_rows: Optional[int] = None,
-) -> pd.DataFrame:
-    """Load the visits that have diagnoses that match icd_code from the
-    beginning of their adiagnosekode string. Aggregates all that match.
-
-    Args:
-        icd_code (Union[list[str], str]): Substring(s) to match diagnoses for. # noqa: DAR102
-            Matches any diagnoses, whether a-diagnosis, b-diagnosis etc. If a list is passed, will
-            count a diagnosis as a match if any of the icd_codes in the list match.
-        source_timestamp_col_name (str): Name of the timestamp column in the SQL
-            view.
-        fct (str): Name of the SQL view to load from.
-        output_col_name_override (str, optional): Name of new column string. If not specified, defaults to the icd_code.
-        wildcard_icd_code (bool, optional): Whether to match on icd_code*.
-            Defaults to true.
-        n_rows: Number of rows to return. Defaults to None.
-
-    Returns:
-        pd.DataFrame: A pandas dataframe with dw_ek_borger, timestamp and
-            output_col_name = 1
-    """
-    fct = f"[{fct}]"
-
-    # Must be able to split a string like this:
-    #   A:DF431#+:ALFC3#B:DF329
-    # Which means that if wildcard_icd_code is False, we must match on icd_code# or icd_code followed by nothing.
-    # If it's true, we can match on icd_code*.
-
-    # Handle if there are multiple ICD codes to count together.
-    if isinstance(icd_code, list):
-        match_col_sql_strings = []
-
-        for code_str in icd_code:  # pylint: disable=not-an-iterable
-            if wildcard_icd_code:
-                match_col_sql_strings.append(
-                    f"lower(diagnosegruppestreng) LIKE '%{code_str.lower()}%'",
-                )
-            else:
-                # If the string is at the end of diagnosegruppestreng, it doesn't end with a hashtag
-                match_col_sql_strings.append(
-                    f"lower(diagnosegruppestreng) LIKE '%{code_str.lower()}'",
-                )
-
-                # But if it is at the end, it does
-                match_col_sql_strings.append(
-                    f"lower(diagnosegruppestreng) LIKE '%{code_str.lower()}#%'",
-                )
-
-        match_col_sql_str = " OR ".join(match_col_sql_strings)
-    else:
-        if wildcard_icd_code:
-            match_col_sql_str = (
-                f"lower(diagnosegruppestreng) LIKE '%{icd_code.lower()}%'"
-            )
-
-        else:
-            match_col_sql_str = f"lower(diagnosegruppestreng) LIKE '%{icd_code.lower()}' OR lower(diagnosegruppestreng) LIKE '%{icd_code.lower()}#%'"
-
-    sql = (
-        f"SELECT dw_ek_borger, {source_timestamp_col_name}, diagnosegruppestreng"
-        + f" FROM [fct].{fct} WHERE {source_timestamp_col_name} IS NOT NULL AND ({match_col_sql_str})"
-    )
-
-    df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
-
-    if output_col_name_override is None:
-        output_col_name = icd_code
-    else:
-        output_col_name = output_col_name_override
-
-    df[output_col_name] = 1
-
-    df.drop(["diagnosegruppestreng"], axis="columns", inplace=True)
-
-    return df.rename(
-        columns={
-            source_timestamp_col_name: "timestamp",
-        },
-    )
 
 
 def concat_from_physical_visits(
@@ -122,34 +35,34 @@ def concat_from_physical_visits(
 
     diagnoses_source_table_info = {
         "lpr3": {
-            "fct": "FOR_LPR3kontakter_psyk_somatik_inkl_2021_feb2022",
+            "view": "FOR_LPR3kontakter_psyk_somatik_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_lpr3kontaktstart",
         },
         "lpr2_inpatient": {
-            "fct": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021_feb2022",
+            "view": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_indlaeggelse",
         },
         "lpr2_acute_outpatient": {
-            "fct": "FOR_akutambulantekontakter_psyk_somatik_LPR2_inkl_2021_feb2022",
+            "view": "FOR_akutambulantekontakter_psyk_somatik_LPR2_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_start",
         },
         "lpr2_outpatient": {
-            "fct": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021_feb2022",
+            "view": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021_feb2022",
             "source_timestamp_col_name": "datotid_start",
         },
     }
 
-    # Using ._load is faster than from_physical_visits since it can process all icd_codes in the SQL request at once,
-    # rather than processing one at a time and aggregating.
     dfs = [
-        _load(
-            icd_code=icd_codes,
-            output_col_name_override=output_col_name,
-            wildcard_icd_code=wildcard_icd_code,
+        load_from_codes(
+            codes_to_match=icd_codes,
+            column_name="diagnosegruppestreng",
+            output_col_name=output_col_name,
+            match_with_wildcard=wildcard_icd_code,
             n_rows=n_rows,
+            load_diagnoses=True,
             **kwargs,
         )
-        for source_name, kwargs in diagnoses_source_table_info.items()
+        for _, kwargs in diagnoses_source_table_info.items()
     ]
 
     df = pd.concat(dfs).drop_duplicates(
@@ -160,8 +73,8 @@ def concat_from_physical_visits(
 
 
 def from_physical_visits(
-    icd_code: Union[str, list[str]],
-    output_col_name_override: Optional[str] = "value",
+    icd_code: Union[list[str], str],
+    output_col_name: Optional[str] = "value",
     n_rows: Optional[int] = None,
     wildcard_icd_code: Optional[bool] = False,
 ) -> pd.DataFrame:
@@ -181,15 +94,15 @@ def from_physical_visits(
 
     diagnoses_source_table_info = {
         "lpr3": {
-            "fct": "FOR_LPR3kontakter_psyk_somatik_inkl_2021",
+            "view": "FOR_LPR3kontakter_psyk_somatik_inkl_2021",
             "source_timestamp_col_name": "datotid_lpr3kontaktstart",
         },
         "lpr2_inpatient": {
-            "fct": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021",
+            "view": "FOR_indlaeggelser_psyk_somatik_LPR2_inkl_2021",
             "source_timestamp_col_name": "datotid_indlaeggelse",
         },
         "lpr2_outpatient": {
-            "fct": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021",
+            "view": "FOR_besoeg_psyk_somatik_LPR2_inkl_2021",
             "source_timestamp_col_name": "datotid_start",
         },
     }
@@ -200,12 +113,14 @@ def from_physical_visits(
         n_rows_per_df = None
 
     dfs = [
-        _load(
-            icd_code=icd_code,
-            output_col_name_override=output_col_name_override,
-            wildcard_icd_code=wildcard_icd_code,
+        load_from_codes(
+            codes_to_match=icd_code,
+            code_col_name="diagnosegruppestreng",
+            output_col_name=output_col_name,
             n_rows=n_rows_per_df,
+            match_with_wildcard=wildcard_icd_code,
             **kwargs,
+            load_diagnoses=True,
         )
         for _, kwargs in diagnoses_source_table_info.items()
     ]
