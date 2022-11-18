@@ -266,6 +266,19 @@ class MinGroupSpec(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
 
+        # Check that all passed loaders are valid
+        invalid_loaders = list(
+            set(self.values_loader) - set(data_loaders.get_all().keys())
+        )
+        if len(invalid_loaders) != 0:
+            nl = "\n"  # New line variable as f-string can't handle backslashes
+            raise ValueError(
+                f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info. 
+                {nl*2}Loaders that could not be resolved:"""
+                f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
+                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all().keys())}"""
+            )
+
         if self.output_col_name_override:
             input_col_name = (
                 "value"
@@ -310,6 +323,7 @@ def create_specs_from_group(
 
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
+
     feature_group_spec_dict = feature_group_spec.__dict__
 
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
