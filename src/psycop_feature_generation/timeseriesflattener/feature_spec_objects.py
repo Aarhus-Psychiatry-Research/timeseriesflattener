@@ -322,7 +322,7 @@ def create_specs_from_group(
 
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
 
-    with Pool(min(N_WORKERS, len(permuted_dicts))) as p:
+    with Pool(min(N_WORKERS, len(feature_group_spec.values_loader))) as p:
         output_list: list[AnySpec] = p.map(
             iterable=permuted_dicts,
             func=partial(create_output_class_from_kwargs, output_class),
