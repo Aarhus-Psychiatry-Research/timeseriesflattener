@@ -635,7 +635,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         # Try to infer value col name if not provided
         if static_spec.input_col_name_override is None:
             possible_value_cols = [
-                col for col in static_spec.values_df.columns if col not in self.id_col_name
+                col
+                for col in static_spec.values_df.columns
+                if col not in self.id_col_name
             ]
 
             if len(possible_value_cols) == 1:

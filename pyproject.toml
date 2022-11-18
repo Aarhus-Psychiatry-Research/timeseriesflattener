@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "psycop_feature_generation"
-version = "0.7.0"
+version = "0.8.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 
@@ -21,7 +21,6 @@ psutil = ">=5.9.1, <6.0.0"
 pandas = ">=1.4.0,<1.6.0"
 catalogue = ">=2.0.0, <2.1.0"
 numpy = ">=1.23.3,<1.23.5"
-torch = "^1.12.1"
 transformers = "^4.22.2"
 pyarrow = ">=9.0.0,<9.1.0"
 psycopmlutils = ">=0.2.4, <0.3.0"
