@@ -2,7 +2,8 @@
 
 import itertools
 from collections.abc import Sequence
-from functools import cache
+from functools import cache, partial
+from multiprocessing import Pool
 from typing import Any, Callable, Optional, Union
 
 import pandas as pd
@@ -14,7 +15,7 @@ from wasabi import Printer
 from psycop_feature_generation.timeseriesflattener.resolve_multiple_functions import (
     resolve_multiple_fns,
 )
-from psycop_feature_generation.utils import data_loaders
+from psycop_feature_generation.utils import N_WORKERS, data_loaders
 
 msg = Printer(timestamp=True)
 
@@ -305,6 +306,10 @@ def create_feature_combinations_from_dict(
     return permutations_dicts
 
 
+def create_output_class_from_kwargs(output_class, kwargs):
+    return output_class(**kwargs)
+
+
 def create_specs_from_group(
     feature_group_spec: MinGroupSpec,
     output_class: AnySpec,
@@ -317,7 +322,13 @@ def create_specs_from_group(
 
     permuted_dicts = create_feature_combinations_from_dict(d=feature_group_spec_dict)
 
-    return [output_class(**d) for d in permuted_dicts]  # type: ignore
+    with Pool(min(N_WORKERS, len(permuted_dicts))) as p:
+        output_list: list[AnySpec] = p.map(
+            iterable=permuted_dicts,
+            func=partial(create_output_class_from_kwargs, output_class),
+        )
+
+    return output_list  # type: ignore
 
 
 class PredictorGroupSpec(MinGroupSpec):
