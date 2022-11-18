@@ -610,11 +610,13 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 feature_name=input_date_of_birth_col_name,
             ),
         )
+        
+        data_of_birth_col_name = f"pred_{input_date_of_birth_col_name}"
 
         self.df[output_age_col_name] = (
             (
                 self.df[self.timestamp_col_name]
-                - self.df[f"pred_{input_date_of_birth_col_name}"]
+                - self.df[data_of_birth_col_name]
             ).dt.days
             / (365.25)
         ).round(2)
@@ -622,7 +624,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         if birth_year_as_predictor:
             # Convert datetime to year
             self.df["pred_birth_year"] = self.df[
-                f"eval_{input_date_of_birth_col_name}"
+                data_of_birth_col_name
             ].dt.year
 
     def add_static_info(
