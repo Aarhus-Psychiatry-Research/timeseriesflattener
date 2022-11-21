@@ -554,6 +554,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     ):
         """Add predictors to the flattened dataframe from a list."""
 
+        # Shuffle predictor specs to avoid IO contention
+        random.shuffle(predictor_specs)
+
         with Pool(self.n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
