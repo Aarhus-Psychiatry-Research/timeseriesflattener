@@ -27,9 +27,10 @@ def str_to_sql_match_logic(
         return f"{base_query}%'"
 
     if load_diagnoses:
-        return f"{base_query} OR {base_query}#%'"
+        return f"{base_query}' OR {base_query}#%'"
 
-    return base_query
+    return f"{base_query}'"
+
 
 
 def list_to_sql_logic(
@@ -57,7 +58,7 @@ def list_to_sql_logic(
             )
         else:
             # If the string is at the end of diagnosegruppestreng, it doesn't end with a hashtag
-            match_col_sql_strings.append(base_query)
+            match_col_sql_strings.append(f"{base_query}'")
 
             if load_diagnoses:
                 # If the string is at the beginning of diagnosegruppestreng, it doesn't start with a hashtag
@@ -77,6 +78,7 @@ def load_from_codes(
     output_col_name: Optional[str] = None,
     match_with_wildcard: bool = True,
     n_rows: Optional[int] = None,
+    exclude_codes: Optional[list[str]] = None,
 ) -> pd.DataFrame:
     """Load the visits that have diagnoses that match icd_code or atc code from
     the beginning of their adiagnosekode or atc code string. Aggregates all
@@ -100,6 +102,7 @@ def load_from_codes(
         match_with_wildcard (bool, optional): Whether to match on icd_code* / atc_code*.
             Defaults to true.
         n_rows: Number of rows to return. Defaults to None.
+        exclude_codes (list[str], optional): Drop rows if their code is in this list. Defaults to None.
 
     Returns:
         pd.DataFrame: A pandas dataframe with dw_ek_borger, timestamp and
@@ -130,6 +133,10 @@ def load_from_codes(
     )
 
     df = sql_load(sql, database="USR_PS_FORSK", chunksize=None, n_rows=n_rows)
+
+    if exclude_codes:
+        # Drop all rows whose code_col_name is in exclude_codes
+        df = df[~df[code_col_name].isin(exclude_codes)]
 
     if output_col_name is None:
         if isinstance(codes_to_match, list):

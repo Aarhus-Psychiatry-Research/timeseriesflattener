@@ -263,6 +263,9 @@ class MinGroupSpec(BaseModel):
     allowed_nan_value_prop: list[float] = [0.0]
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
+    prefix: Optional[str] = None
+    # Prefix for the column name. Overrides the default prefix for the feature type.
+
     def __init__(self, **data):
         super().__init__(**data)
 
@@ -311,7 +314,7 @@ def create_feature_combinations_from_dict(
 
     # Create all combinations of top level elements
     permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
-
+    
     return permutations_dicts
 
 
@@ -334,6 +337,8 @@ def create_specs_from_group(
 class PredictorGroupSpec(MinGroupSpec):
     """Specification for a group of predictors."""
 
+    prefix = "pred"
+
     def create_combinations(self):
         return create_specs_from_group(
             feature_group_spec=self,
@@ -343,6 +348,8 @@ class PredictorGroupSpec(MinGroupSpec):
 
 class OutcomeGroupSpec(MinGroupSpec):
     """Specification for a group of outcomes."""
+
+    prefix = "outc"
 
     incident: Sequence[bool]
 
