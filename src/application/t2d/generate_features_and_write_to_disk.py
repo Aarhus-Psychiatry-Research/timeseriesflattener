@@ -352,7 +352,7 @@ def create_flattened_dataset(
         prediction_times_df=prediction_times,
         n_workers=min(
             len(spec_set.temporal_predictors),
-            30,
+            50,
         ),
         feature_cache_dir=proj_path / "feature_cache",
     )
