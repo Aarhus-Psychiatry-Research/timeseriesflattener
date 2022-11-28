@@ -1,4 +1,9 @@
-name: Test (and release)
+# Workflow which does the following
+# 1) run pytest
+# 2) updates the version according to semantic versioning
+# 3) creates a release
+# 4) uploads the package to pypi
+name: Pytest
 
 on:
   pull_request:
