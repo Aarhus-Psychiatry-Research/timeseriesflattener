@@ -1,0 +1,64 @@
+# Workflow for building documentation using Sphinx, it does the following:
+# 1) Install dependencies and package,
+# 2) build documentation,
+# 3) and deploy to GitHub Pages
+name: Documentation
+on:
+  push:
+    branches:
+    - main
+
+
+env:
+  cache-version: 0.0.4
+  poetry-version: 1.1.15
+  python-version: 3.9
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+    ### Setup prerequisites
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    ### Caching
+    - name: Cache poetry and venv
+      id: cache-poetry-and-venv
+      uses: MartinBernstorff/cache-poetry-and-venv@latest
+      with:
+        poetry-version: ${{ env.poetry-version }}
+        cache-version: ${{ env.cache-version }}
+        python-version: ${{ env.python-version }}
+
+    # Installing
+    - name: Install Poetry
+      if: steps.cache-poetry-and-venv.outputs.poetry-cache-hit != 'true'
+      uses: snok/install-poetry@v1
+      with:
+        version: ${{ env.poetry-version }}
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Install Project
+      if: steps.cache-poetry-and-venv.outputs.venv-cache-hit != 'true'
+      shell: bash
+      run: poetry install -vvv
+
+    - name: Install dependencies
+      run: |
+        poetry install
+    - name: Build and Commit
+      uses: sphinx-notes/pages@v2
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.SPHINX_DOCUMENTATION }}
+        branch: gh-pages

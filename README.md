@@ -1,4 +1,4 @@
-<a href="https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation"><img src="https://github.com/Aarhus-Psychiatry-Research/psycop-ml-utils/blob/main/docs/_static/icon_with_title.png?raw=true" width="220" align="right"/></a>
+<a href="https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation"><img src="https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/blob/main/docs/_static/icon.png?raw=true" width="220" align="right"/></a>
 
 # PSYCOP utilites for feature generation
 
