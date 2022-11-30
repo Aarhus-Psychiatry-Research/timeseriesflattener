@@ -13,11 +13,11 @@
 
 from importlib.metadata import version as get_version
 
-__version__ = get_version("psycop_feature_generation")
+__version__ = get_version("timeseriesflattener")
 
 # -- Project information -----------------------------------------------------
 
-project = "psycop-feature-generation"
+project = "timeseriesflattener"
 author = "Bernstorff, M., Enevoldsen, K. and Hansen, L."
 github_user = "Aarhus-Psychiatry-Research"
 

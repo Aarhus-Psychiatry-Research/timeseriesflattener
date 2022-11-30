@@ -7,7 +7,7 @@ Citing this package
 
 If you wish to use this library in your research, please cite it using (Changing the version if relevant):
 
-.. the following need to be corrected:
+.. TODO: the following need to be corrected:
 .. code-block::
 
    @software{Enevoldsen_spaCy-wrap_For_Wrapping_2022,

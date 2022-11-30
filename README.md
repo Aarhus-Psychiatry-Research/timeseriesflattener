@@ -1,27 +1,27 @@
-<a href="https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation"><img src="https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/blob/main/docs/_static/icon.png?raw=true" width="220" align="right"/></a>
+<a href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"><img src="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/docs/_static/icon.png?raw=true" width="220" align="right"/></a>
 
-# PSYCOP utilites for feature generation
+# Time-series Flattener
 
 ![python versions](https://img.shields.io/badge/Python-%3E=3.10-blue)
 [![Code style: black](https://img.shields.io/badge/Code%20Style-Black-black)](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html)
-[![github actions pytest](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/actions/workflows/main_test_and_release.yml/badge.svg)](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/actions)
+[![github actions pytest](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions/workflows/main_test_and_release.yml/badge.svg)](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions)
 
 ## 🔧 Installation
-To get started using psycop-feature-generation simply install it using pip by running the following line in your terminal:
+To get started using timeseriesflattener simply install it using pip by running the following line in your terminal:
 
 ```
-pip install psycop-feature-generation
+pip install timeseriesflattener
 ```
 
 ## 📖 Documentation
 
 | Documentation          |                                                                                              |
 | ---------------------- | -------------------------------------------------------------------------------------------- |
-| 🎛 **[API References]** | The detailed reference for psycop-feature-generation's API. Including function documentation |
+| 🎛 **[API References]** | The detailed reference for timeseriesflattener's API. Including function documentation |
 | 🙋 **[FAQ]**            | Frequently asked question                                                                    |
 
-[api references]: https://Aarhus-Psychiatry-Research.github.io/psycop-feature-generation/
-[FAQ]: https://Aarhus-Psychiatry-Research.github.io/psycop-feature-generation/faq.html
+[api references]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
+[FAQ]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/faq.html
 
 ## 💬 Where to ask questions
 
@@ -32,12 +32,12 @@ pip install psycop-feature-generation
 | 👩‍💻 **Usage Questions**          | [GitHub Discussions]   |
 | 🗯 **General Discussion**       | [GitHub Discussions]   |
 
-[github issue tracker]: https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/issues
-[github discussions]: https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/discussions
+[github issue tracker]: https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues
+[github discussions]: https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/discussions
 
 
 ## 🎓 Projects
-PSYCOP projects which use `psycop-feature-generation`. Note that some of these projects have yet to be published and are thus private.
+PSYCOP projects which use `timeseriesflattener`. Note that some of these projects have yet to be published and are thus private.
 
 | Project                 | Publications |                                                                                                                                                                                                                                       |
 | ----------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

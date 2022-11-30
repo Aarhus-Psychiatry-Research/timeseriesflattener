@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "psycop_feature_generation"
+name = "timeseriesflattener"
 version = "0.10.0"
-description = "Feature generation for psycop"
+description = "A package for converting time series data from e.g. electronic health records into wide format data."
 readme = "README.md"
 authors = ["Martin Bernstorff", "Kenneth Enevoldsen",  "Jakob Grøhn Damgaard", "Frida Hæstrup", "Lasse Hansen"]
 
