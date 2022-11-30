@@ -13,16 +13,10 @@ repos:
     hooks:
       - id: pyupgrade
 
-  - repo: https://github.com/MartinBernstorff/pybetter-without-emojis
-    rev: 1208357bcc569b86a4a0dc69b108cbe28f190f54
-    hooks:
-    - id: pybetter
-      args: [--select, "B002,B007"]
-
   - repo: https://github.com/bwhmather/ssort
     rev: v0.11.6
     hooks:
-    - id: ssort
+      - id: ssort
 
   - repo: https://github.com/myint/docformatter
     rev: v1.5.0
@@ -45,10 +39,9 @@ repos:
     hooks:
       - id: pylint
         types: [python]
-        args:
-          [
+        args: [
             "-rn", # Only display messages
             "-sn", # Don't display the score
-            "--disable=R,import-error" # Refactors are not important enough to block a commit. 
-            # Unused-imports aren't testable by the github action, so don't test that here.
+            "--disable=R,import-error", # Refactors are not important enough to block a commit.
           ]
+# Unused-imports aren't testable by the github action, so don't test that here.

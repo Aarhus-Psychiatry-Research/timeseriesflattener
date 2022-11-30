@@ -3,21 +3,18 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from psycop_feature_generation.data_checks.flattened.feature_describer import (
+from data_checks.flattened.feature_describer import (
     generate_feature_description_df,
     generate_feature_description_row,
 )
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    PredictorSpec,
-    StaticSpec,
-)
-from psycop_feature_generation.utils import PROJECT_ROOT
+from timeseriesflattener.feature_spec_objects import AnySpec, PredictorSpec, StaticSpec
+from timeseriesflattener.utils import PROJECT_ROOT
 
 # pylint: disable=redefined-outer-name, missing-function-docstring
 
 
 @pytest.fixture()
-def predictor_specs(df):
+def predictor_specs():
     return [
         PredictorSpec(
             values_df=pd.DataFrame({"hba1c": [0]}),
@@ -30,7 +27,7 @@ def predictor_specs(df):
 
 
 @pytest.fixture()
-def static_spec(df):
+def static_spec():
     return [
         StaticSpec(
             values_df=pd.DataFrame({"hba1c": [0]}),
@@ -56,7 +53,7 @@ def test_load_dataset(df):
 
 def test_generate_feature_description_row_for_temporal_spec(
     df: pd.DataFrame,
-    predictor_specs: list[PredictorSpec],
+    predictor_specs: list[AnySpec],
 ):
     spec = predictor_specs[0]
 

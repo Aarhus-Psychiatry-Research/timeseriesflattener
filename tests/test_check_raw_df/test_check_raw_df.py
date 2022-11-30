@@ -2,8 +2,8 @@
 
 import pytest
 
-from psycop_feature_generation.data_checks.raw.check_raw_df import check_raw_df
-from psycop_feature_generation.utils_for_testing import (  # noqa pylint: disable=import-error
+from data_checks.raw.check_raw_df import check_raw_df
+from timeseriesflattener.utils_for_testing import (  # noqa pylint: disable=import-error
     str_to_df,
 )
 
