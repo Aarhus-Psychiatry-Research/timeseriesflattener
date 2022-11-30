@@ -23,6 +23,7 @@ def load_df_with_cache(
     kwargs: dict[str, Any],
     feature_name: str,
 ) -> pd.DataFrame:
+    """Wrapper function to cache dataframe loading."""
     msg.info(f"{feature_name}: Loading values")
     df = loader_fn(**kwargs)
     msg.good(f"{feature_name}: Loaded values")
@@ -281,7 +282,8 @@ class MinGroupSpec(BaseModel):
             set(self.values_loader) - set(data_loaders.get_all().keys()),
         )
         if len(invalid_loaders) != 0:
-            nl = "\n"  # New line variable as f-string can't handle backslashes
+            # New line variable as f-string can't handle backslashes
+            nl = "\n"  # pylint: disable = invalid-name
             raise ValueError(
                 f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info. 
                 {nl*2}Loaders that could not be resolved:"""

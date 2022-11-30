@@ -1,8 +1,11 @@
+"""Validator for a flattened dataset."""
 import pandas as pd
 from utils import df_contains_duplicates
 
 
 class ValidateInitFlattenedDataset:
+    """Validator for a flattened dataset."""
+
     def __init__(self, df: pd.DataFrame, timestamp_col_name: str, id_col_name: str):
         self.df = df
         self.timestamp_col_name = timestamp_col_name
@@ -43,6 +46,7 @@ class ValidateInitFlattenedDataset:
                 )
 
     def validate_dataset(self):
+        """Validate the entire dataset."""
         self._check_that_timestamp_and_id_columns_exist()
         self._check_for_duplicate_rows()
         self._check_timestamp_col_type()

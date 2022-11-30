@@ -7,16 +7,8 @@ import pandas as pd
 import pytest
 from utils_for_testing import assert_flattened_data_as_expected, str_to_df
 
-from loaders.raw.load_text import (  # noqa pylint: disable=unused-import; load_synth_notes,
-    _chunk_text,
-)
 from timeseriesflattener import FlattenedDataset
-from timeseriesflattener.feature_spec_objects import (
-    AnySpec,
-    OutcomeSpec,
-    PredictorGroupSpec,
-    PredictorSpec,
-)
+from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
 
 # pylint: disable=import-error
 # from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
@@ -540,100 +532,3 @@ def test_add_temporal_incident_binary_outcome():
             if df[col].dtype == "int64":
                 df[col] = df[col].astype("int32")
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
-
-
-# def test_add_tfidf_text_data():
-#     prediction_times_str = """dw_ek_borger,timestamp,
-#                             746430.0,1970-05-01 00:00:00
-#                             765709.0,1971-05-14 22:04:00
-#                             """
-
-#     prediction_times_df = str_to_df(prediction_times_str)
-
-#     flattened_dataset = FlattenedDataset(
-#         prediction_times_df=prediction_times_df,
-#         timestamp_col_name="timestamp",
-#         id_col_name="dw_ek_borger",
-#         n_workers=4,
-#     )
-
-#     synth_notes_df = data_loaders.get_all()["synth_notes"](featurizer="tfidf")
-
-#     predictor_specs = PredictorGroupSpec(
-#         df=[synth_notes_df],
-#         interval_days=[1, 365, 720],
-#         resolve_multiple_fn=["min"],
-#         fallback=[np.nan],
-#         allowed_nan_value_prop=[0],
-#         loader_kwargs=[{"featurizer": "tfidf"}],
-#         feature_name="tfidf",
-#     ).create_combinations()
-
-#     flattened_dataset.add_temporal_predictors_from_pred_specs(
-#         predictor_specs=predictor_specs,
-#     )
-
-#     outcome_df = flattened_dataset.df
-
-#     assert outcome_df.shape == (2, 33)
-
-#     # 20 nas = 2 ids * 10 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
-#     assert outcome_df.isna().sum().sum() == 20
-
-#     # assert len()
-
-
-# @pytest.mark.slow  # Only run if --runslow is passed to pytest
-# def test_add_hf_text_data():
-#     prediction_times_str = """dw_ek_borger,timestamp,
-#                             746430.0,1970-05-01 00:00:00
-#                             765709.0,1971-05-14 22:04:00
-#                             """
-
-#     prediction_times_df = str_to_df(prediction_times_str)
-
-#     flattened_dataset = FlattenedDataset(
-#         prediction_times_df=prediction_times_df,
-#         timestamp_col_name="timestamp",
-#         id_col_name="dw_ek_borger",
-#         n_workers=4,
-#     )
-
-#     predictor_list = create_feature_combinations(
-#         [
-#             {
-#                 "predictor_df": "synth_notes",
-#                 "lookbehind_days": [1, 365, 720],
-#                 "resolve_multiple_fn": "min",
-#                 "fallback": np.nan,
-#                 "loader_kwargs": {
-#                     "featurizer": "huggingface",
-#                     "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-#                 },
-#                 "new_col_name": [TEST_HF_EMBEDDINGS],
-#             },
-#         ],
-#     )
-
-#     flattened_dataset.add_temporal_predictors_from_list_of_argument_dictionaries(
-#         predictors=predictor_list,
-#     )
-
-#     outcome_df = flattened_dataset.df
-
-#     assert outcome_df.shape == (2, 1155)
-
-#     # 768 nas = 2 ids * 384 predictors with lookbehind 1 day. First get sum of each column. Then get sum of the row.
-#     assert outcome_df.isna().sum().sum() == 768
-
-
-def test_chunk_text():
-    text = "This is a test. This is another test. This is a third test. This is a fourth test."
-    expected = [
-        "This is a test.",
-        "This is another test.",
-        "This is a third",
-        "test. This is a",
-    ]
-
-    assert _chunk_text(text, 4) == expected
