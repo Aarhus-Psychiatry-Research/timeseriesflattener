@@ -2,10 +2,10 @@
 import pandas as pd
 import pytest
 
+from timeseriesflattener.feature_spec_objects import AnySpec
 from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
     synth_predictor_float,
 )
-from timeseriesflattener.feature_spec_objects import AnySpec
 
 
 def test_anyspec_init():
