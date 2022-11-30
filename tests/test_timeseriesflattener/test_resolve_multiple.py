@@ -11,7 +11,7 @@ from timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: dis
     mean,
     minimum,
 )
-from timeseriesflattener.utils_for_testing import (
+from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
 )

@@ -10,12 +10,12 @@ import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
 
-from loaders.synth.raw.load_synth_data import (
+from timeseriesflattener import FlattenedDataset
+from timeseriesflattener.feature_spec_objects import TemporalSpec
+from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
 )
-from timeseriesflattener import FlattenedDataset
-from timeseriesflattener.feature_spec_objects import TemporalSpec
 from timeseriesflattener.utils import data_loaders
 
 

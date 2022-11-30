@@ -8,7 +8,7 @@ import pytest
 
 from timeseriesflattener import FlattenedDataset
 from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
-from timeseriesflattener.utils_for_testing import (
+from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
 )
