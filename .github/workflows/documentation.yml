@@ -52,15 +52,16 @@ jobs:
       shell: bash
       run: poetry install -vvv
 
-    - name: Install dependencies
+    - name: Build documentation
       run: |
-        poetry install
-        poetry shell
-    - name: Build and Commit
-      uses: sphinx-notes/pages@v2
-    - name: Push changes
-      uses: ad-m/github-push-action@v0.6.0
+        mkdir gh-pages
+        touch gh-pages/.nojekyll
+        cd docs/
+        poetry run sphinx-build -b html . _build
+        cp -r _build/* ../gh-pages/
+
+    - name: Deploy documentation
+      uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
-        # permissions read:repo_hook, repo
-        github_token: ${{ secrets.DOCUMENTATION }}
         branch: gh-pages
+        folder: gh-pages
