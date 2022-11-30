@@ -59,7 +59,7 @@ Otherwise, please use the discussion forums.
    :caption: Changelog
    :hidden:
 
-   GitHub Repository <https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/CHANGELOG.md>
+   Changelog <https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/CHANGELOG.md>
 
 
 .. toctree::
