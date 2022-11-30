@@ -16,7 +16,6 @@ import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
-from utils import load_dataset_from_file, write_df_to_file
 from wasabi import Printer, msg
 
 from timeseriesflattener.feature_spec_objects import (
@@ -27,6 +26,7 @@ from timeseriesflattener.feature_spec_objects import (
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
+from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
 
 ProgressBar().register()
 

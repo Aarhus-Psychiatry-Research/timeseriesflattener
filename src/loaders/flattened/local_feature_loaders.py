@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from utils import load_dataset_from_file
+
+from timeseriesflattener.utils import load_dataset_from_file
 
 
 def get_predictors(df: pd.DataFrame, include_id: bool) -> pd.DataFrame:

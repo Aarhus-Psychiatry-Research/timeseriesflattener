@@ -2,12 +2,11 @@
 
 # pylint: disable=missing-function-docstring
 
-from utils import data_loaders  # pylint: disable=unused-import
-
 from loaders.synth.raw.load_synth_data import (  # pylint: disable=unused-import
     synth_predictor_float,
 )
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec
+from timeseriesflattener.utils import data_loaders  # pylint: disable=unused-import
 
 
 def test_skip_all_if_no_need_to_process():

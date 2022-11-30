@@ -9,7 +9,6 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
-from utils import data_loaders
 
 from loaders.synth.raw.load_synth_data import (
     load_synth_outcome,
@@ -17,6 +16,7 @@ from loaders.synth.raw.load_synth_data import (
 )
 from timeseriesflattener import FlattenedDataset
 from timeseriesflattener.feature_spec_objects import TemporalSpec
+from timeseriesflattener.utils import data_loaders
 
 
 def convert_cols_with_matching_colnames_to_datetime(

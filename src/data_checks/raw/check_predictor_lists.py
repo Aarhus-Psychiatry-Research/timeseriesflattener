@@ -5,10 +5,10 @@ Also check that they return meaningful dictionaries.
 from typing import Optional, Union
 
 import pandas as pd
-from utils import data_loaders
 from wasabi import Printer
 
 from data_checks.raw.check_raw_df import check_raw_df
+from timeseriesflattener.utils import data_loaders
 
 
 def check_df_conforms_to_feature_spec(

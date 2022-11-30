@@ -5,10 +5,13 @@
 import numpy as np
 import pandas as pd
 import pytest
-from utils_for_testing import assert_flattened_data_as_expected, str_to_df
 
 from timeseriesflattener import FlattenedDataset
 from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
+from timeseriesflattener.utils_for_testing import (
+    assert_flattened_data_as_expected,
+    str_to_df,
+)
 
 # pylint: disable=import-error
 # from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS

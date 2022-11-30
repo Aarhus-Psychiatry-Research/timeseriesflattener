@@ -2,7 +2,6 @@
 # pylint: disable=missing-function-docstring
 
 import numpy as np
-from utils_for_testing import assert_flattened_data_as_expected, str_to_df
 
 from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec
 from timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: disable=unused-import
@@ -11,6 +10,10 @@ from timeseriesflattener.resolve_multiple_functions import (  # noqa pylint: dis
     maximum,
     mean,
     minimum,
+)
+from timeseriesflattener.utils_for_testing import (
+    assert_flattened_data_as_expected,
+    str_to_df,
 )
 
 

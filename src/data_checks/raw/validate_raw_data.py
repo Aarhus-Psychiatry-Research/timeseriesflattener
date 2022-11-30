@@ -7,12 +7,12 @@ import numpy as np
 import pandas as pd
 from deepchecks.tabular import Dataset
 from deepchecks.tabular.suites import data_integrity
-from utils import RAW_DATA_VALIDATION_PATH
 from wasabi import Printer
 
 from data_checks.flattened.data_integrity import get_failed_check_names
 from data_checks.flattened.feature_describer import create_unicode_hist
 from data_checks.utils import save_df_to_pretty_html_table
+from timeseriesflattener.utils import RAW_DATA_VALIDATION_PATH
 
 
 def median_absolute_deviation(series: pd.Series) -> float:

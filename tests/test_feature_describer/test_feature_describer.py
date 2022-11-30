@@ -2,13 +2,13 @@
 import numpy as np
 import pandas as pd
 import pytest
-from utils import PROJECT_ROOT
 
 from data_checks.flattened.feature_describer import (
     generate_feature_description_df,
     generate_feature_description_row,
 )
 from timeseriesflattener.feature_spec_objects import AnySpec, PredictorSpec, StaticSpec
+from timeseriesflattener.utils import PROJECT_ROOT
 
 # pylint: disable=redefined-outer-name, missing-function-docstring
 

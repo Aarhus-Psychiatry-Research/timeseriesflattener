@@ -1,9 +1,11 @@
 """Tests of check_raw_df."""
 
 import pytest
-from utils_for_testing import str_to_df  # noqa pylint: disable=import-error
 
 from data_checks.raw.check_raw_df import check_raw_df
+from timeseriesflattener.utils_for_testing import (  # noqa pylint: disable=import-error
+    str_to_df,
+)
 
 # pylint: disable=missing-function-docstring
 
