@@ -2,7 +2,6 @@
 df."""
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -10,12 +9,7 @@ from wasabi import Printer
 
 from data_checks.utils import save_df_to_pretty_html_table
 from loaders.flattened.local_feature_loaders import load_split_predictors
-from timeseriesflattener.feature_spec_objects import (
-    AnySpec,
-    PredictorSpec,
-    StaticSpec,
-    TemporalSpec,
-)
+from timeseriesflattener.feature_spec_objects import AnySpec, StaticSpec, TemporalSpec
 
 UNICODE_HIST = {
     0: " ",
@@ -154,7 +148,7 @@ def generate_feature_description_row(
 
 def generate_feature_description_df(
     df: pd.DataFrame,
-    predictor_specs: list[PredictorSpec],
+    predictor_specs: list[AnySpec],
 ) -> pd.DataFrame:
     """Generate a data frame with feature descriptions.
 
@@ -189,10 +183,10 @@ def generate_feature_description_df(
 
 def save_feature_description_from_dir(
     feature_set_dir: Path,
-    feature_specs: list[Union[TemporalSpec, StaticSpec]],
+    feature_specs: list[AnySpec],
     file_suffix: str,
+    out_dir: Path,
     splits: Sequence[str] = ("train",),
-    out_dir: Path = None,
 ):
     """Write a csv with feature descriptions in the directory.
 
@@ -200,8 +194,8 @@ def save_feature_description_from_dir(
         feature_set_dir (Path): Path to directory with data frames.
         feature_specs (list[PredictorSpec]): List of feature specifications.
         file_suffix (str): Suffix of the data frames to load. Must be either ".csv" or ".parquet".
-        splits (tuple[str]): tuple of splits to include in the description. Defaults to ("train").
         out_dir (Path): Path to directory where to save the feature description. Defaults to None.
+        splits (tuple[str]): tuple of splits to include in the description. Defaults to ("train").
     """
     msg = Printer(timestamp=True)
 

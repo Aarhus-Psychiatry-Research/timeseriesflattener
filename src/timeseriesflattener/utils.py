@@ -6,7 +6,7 @@ utilities. If this file grows, consider splitting it up.
 import os
 from collections.abc import Hashable
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 import catalogue
 import pandas as pd

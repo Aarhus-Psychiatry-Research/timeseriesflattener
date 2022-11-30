@@ -105,7 +105,7 @@ class AnySpec(BaseModel):
     output_col_name_override: Optional[str] = None
     # Override the generated col name after flattening the time series.
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         data = resolve_values_df(data)
 
         if in_dict_and_not_none(d=data, key="output_col_name_override"):

@@ -8,7 +8,7 @@ from collections.abc import Callable
 from datetime import timedelta
 from multiprocessing import Pool
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
-from utils import load_dataset_from_file, write_df_to_file
+from utils import load_dataset_from_file, write_df_to_file # 
 from wasabi import Printer, msg
 
 from timeseriesflattener.feature_spec_objects import (
@@ -221,7 +221,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             DataFrame
         """
         for col_name in (timestamp_col_name, id_col_name):
-            if col_name not in output_spec.values_df.columns:
+            if col_name not in output_spec.values_df.columns:  # type: ignore
                 raise ValueError(
                     f"{col_name} does not exist in df_prediction_times, change the df or set another argument",
                 )
@@ -323,7 +323,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
             # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
             # in the cache. Saves on storage. Don't use them to check if cache is hit.
-            if not np.isnan(output_spec.fallback):
+            if not np.isnan(output_spec.fallback):  # type: ignore
                 generated_df = generated_df[
                     generated_df[value_col_str] != output_spec.fallback
                 ]
@@ -338,7 +338,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
     def _cache_is_hit(
         self,
-        output_spec: Union[PredictorSpec, PredictorSpec],
+        output_spec: TemporalSpec,
         file_pattern: str,
         file_suffix: str,
     ) -> bool:
@@ -417,7 +417,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
     def _write_feature_to_cache(
         self,
         values_df: pd.DataFrame,
-        predictor_spec: PredictorSpec,
+        predictor_spec: TemporalSpec,
         file_name: str,
     ):
         """Write feature to cache."""
@@ -437,9 +437,9 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             file_path=self.feature_cache_dir / f"{file_name}_{timestamp}.parquet",
         )
 
-    def _get_feature(
+    def _get_temporal_feature(
         self,
-        feature_spec: AnySpec,
+        feature_spec: TemporalSpec,
         file_suffix: str = "parquet",
     ) -> pd.DataFrame:
         """Get feature. Either load from cache, or generate if necessary.
@@ -567,7 +567,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         with Pool(self.n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
-                    p.imap(func=self._get_feature, iterable=predictor_specs),
+                    p.imap(func=self._get_temporal_feature, iterable=predictor_specs),
                     total=len(predictor_specs),
                 ),
             )
@@ -647,7 +647,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         if static_spec.input_col_name_override is None:
             possible_value_cols = [
                 col
-                for col in static_spec.values_df.columns
+                for col in static_spec.values_df.columns  # type: ignore
                 if col not in self.id_col_name
             ]
 
@@ -671,8 +671,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         df = pd.DataFrame(
             {
-                self.id_col_name: static_spec.values_df[self.id_col_name],
-                output_col_name: static_spec.values_df[value_col_name],
+                self.id_col_name: static_spec.values_df[self.id_col_name],  # type: ignore
+                output_col_name: static_spec.values_df[value_col_name],  # type: ignore
             },
         )
 
@@ -773,7 +773,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         Args:
             output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
         """
-        timestamp_col_type = output_spec.values_df[self.timestamp_col_name].dtype
+        timestamp_col_type = output_spec.values_df[self.timestamp_col_name].dtype  # type: ignore
 
         if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
             # Convert dtype to timestamp

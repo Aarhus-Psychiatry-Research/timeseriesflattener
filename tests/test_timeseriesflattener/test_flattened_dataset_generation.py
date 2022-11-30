@@ -3,7 +3,7 @@
 # pylint: disable=unused-import, redefined-outer-name
 
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, List
 
 import numpy as np
 import pandas as pd
@@ -22,6 +22,7 @@ from loaders.synth.raw.load_synth_data import (
 from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorGroupSpec,
+    PredictorSpec,
     TemporalSpec,
 )
 from timeseriesflattener.flattened_dataset import FlattenedDataset
@@ -90,7 +91,7 @@ def check_dfs_have_same_contents_by_column(df1, df2):
 
 def create_flattened_df(
     cache_dir: Path,
-    predictor_specs: Iterable[TemporalSpec],
+    predictor_specs: List[PredictorSpec],
     prediction_times_df: pd.DataFrame,
 ):
     """Create a dataset df for testing."""
@@ -116,6 +117,7 @@ def test_cache_hitting(
     synth_prediction_times,
     predictor_specs,
 ):
+    """Test that cache hits."""
 
     # Create the cache
     first_df = create_flattened_df(
