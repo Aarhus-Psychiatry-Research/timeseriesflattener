@@ -61,5 +61,5 @@ jobs:
       uses: ad-m/github-push-action@v0.6.0
       with:
         # permissions read:repo_hook, repo
-        github_token: ${{ secrets.SPHINX_DOCUMENTATION }}
+        github_token: ${{ secrets.DOCUMENTATION }}
         branch: gh-pages
