@@ -7,8 +7,8 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="data_classes.html" />
 <meta property="og:site_name" content="timeseriesflattener" />
-<meta property="og:description" content="timeseriesflattener.timeseriesflattener.flattened_dataset:" />
-<meta name="description" content="timeseriesflattener.timeseriesflattener.flattened_dataset:" />
+<meta property="og:description" content="timeseriesflattener.flattened_dataset: Takes a time-series and flattens it into a set of prediction times with describing values." />
+<meta name="description" content="timeseriesflattener.flattened_dataset: Takes a time-series and flattens it into a set of prediction times with describing values." />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Frequently asked questions" href="faq.html" />
 
     <link rel="shortcut icon" href="_static/favicon.ico"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
@@ -232,8 +232,178 @@
         <article role="main">
           <section id="data-classes">
 <h1>Data Classes<a class="headerlink" href="#data-classes" title="Permalink to this heading">#</a></h1>
-<section id="timeseriesflattener-timeseriesflattener-flattened-dataset">
-<h2>timeseriesflattener.timeseriesflattener.flattened_dataset<a class="headerlink" href="#timeseriesflattener-timeseriesflattener-flattened-dataset" title="Permalink to this heading">#</a></h2>
+<section id="module-timeseriesflattener.flattened_dataset">
+<span id="timeseriesflattener-flattened-dataset"></span><h2>timeseriesflattener.flattened_dataset<a class="headerlink" href="#module-timeseriesflattener.flattened_dataset" title="Permalink to this heading">#</a></h2>
+<p>Takes a time-series and flattens it into a set of prediction times with
+describing values.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">timeseriesflattener.flattened_dataset.</span></span><span class="sig-name descname"><span class="pre">FlattenedDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_times_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dw_ek_borger'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'timestamp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_col_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outcome_col_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'outc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_cache_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#FlattenedDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Turn a set of time-series into tabular prediction-time data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.df">
+<span class="sig-name descname"><span class="pre">df</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.df" title="Permalink to this definition">#</a></dt>
+<dd><p>Dataframe with prediction times, required cols: patient_id, .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.n_workers">
+<span class="sig-name descname"><span class="pre">n_workers</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.n_workers" title="Permalink to this definition">#</a></dt>
+<dd><p>Number of subprocesses to spawn for parallelization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.timestamp_col_name">
+<span class="sig-name descname"><span class="pre">timestamp_col_name</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.timestamp_col_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Column name name for timestamps. Is used across outcomes and predictors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.id_col_name">
+<span class="sig-name descname"><span class="pre">id_col_name</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.id_col_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Column namn name for patients ids. Is used across outcome and predictors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.predictor_col_name_prefix">
+<span class="sig-name descname"><span class="pre">predictor_col_name_prefix</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.predictor_col_name_prefix" title="Permalink to this definition">#</a></dt>
+<dd><p>Prefix for predictor col names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.outcome_col_name_prefix">
+<span class="sig-name descname"><span class="pre">outcome_col_name_prefix</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.outcome_col_name_prefix" title="Permalink to this definition">#</a></dt>
+<dd><p>Prefix for outcome col names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.pred_time_uuid_col_name">
+<span class="sig-name descname"><span class="pre">pred_time_uuid_col_name</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.pred_time_uuid_col_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Column name for prediction time uuids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.feature_cache_dir">
+<span class="sig-name descname"><span class="pre">feature_cache_dir</span></span><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.feature_cache_dir" title="Permalink to this definition">#</a></dt>
+<dd><p>Path to cache directory for feature dataframes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.add_age_and_birth_year">
+<span class="sig-name descname"><span class="pre">add_age_and_birth_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id2date_of_birth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_date_of_birth_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'date_of_birth'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birth_year_as_predictor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#FlattenedDataset.add_age_and_birth_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_age_and_birth_year" title="Permalink to this definition">#</a></dt>
+<dd><p>Add age at prediction time and patient’s birth year to each
+prediction time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id2date_of_birth</strong> (<em>DataFrame</em>) – Two columns, id and date_of_birth.</p></li>
+<li><p><strong>input_date_of_birth_col_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the date_of_birth column in id2date_of_birth.
+Defaults to “date_of_birth”.</p></li>
+<li><p><strong>output_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – Prefix for the output column. Defaults to “pred”.</p></li>
+<li><p><strong>birth_year_as_predictor</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to add birth year as a predictor. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.add_static_info">
+<span class="sig-name descname"><span class="pre">add_static_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">static_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnySpec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#FlattenedDataset.add_static_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_static_info" title="Permalink to this definition">#</a></dt>
+<dd><p>Add static info to each prediction time, e.g. age, sex etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>static_spec</strong> (<em>StaticSpec</em>) – Specification for the static info to add.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If input_col_name does not match a column in info_df.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_col_to_flattened_dataset">
+<span class="sig-name descname"><span class="pre">add_temporal_col_to_flattened_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TemporalSpec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#FlattenedDataset.add_temporal_col_to_flattened_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_col_to_flattened_dataset" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a column to the dataset (either predictor or outcome depending
+on the value of “direction”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_spec</strong> (<em>Union</em><em>[</em><em>OutcomeSpec</em><em>, </em><em>PredictorSpec</em><em>]</em>) – Specification of the output column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_outcome">
+<span class="sig-name descname"><span class="pre">add_temporal_outcome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OutcomeSpec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#FlattenedDataset.add_temporal_outcome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_outcome" title="Permalink to this definition">#</a></dt>
+<dd><p>Add an outcome-column to the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_spec</strong> (<em>OutcomeSpec</em>) – OutcomeSpec object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_predictor">
+<span class="sig-name descname"><span class="pre">add_temporal_predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PredictorSpec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#FlattenedDataset.add_temporal_predictor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_predictor" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a column with predictor values to the flattened dataset (e.g.
+“average value of bloodsample within n days”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_spec</strong> (<em>Union</em><em>[</em><em>PredictorSpec</em><em>]</em>) – Specification of the output column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_predictors_from_pred_specs">
+<span class="sig-name descname"><span class="pre">add_temporal_predictors_from_pred_specs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor_specs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.PredictorSpec</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#FlattenedDataset.add_temporal_predictors_from_pred_specs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_predictors_from_pred_specs" title="Permalink to this definition">#</a></dt>
+<dd><p>Add predictors to the flattened dataframe from a list.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -292,7 +462,26 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Data Classes</a><ul>
-<li><a class="reference internal" href="#timeseriesflattener-timeseriesflattener-flattened-dataset">timeseriesflattener.timeseriesflattener.flattened_dataset</a></li>
+<li><a class="reference internal" href="#module-timeseriesflattener.flattened_dataset">timeseriesflattener.flattened_dataset</a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.df"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.n_workers"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.n_workers</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.timestamp_col_name"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.timestamp_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.id_col_name"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.id_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.predictor_col_name_prefix"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.predictor_col_name_prefix</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.outcome_col_name_prefix"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.outcome_col_name_prefix</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.pred_time_uuid_col_name"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.pred_time_uuid_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.feature_cache_dir"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.feature_cache_dir</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_age_and_birth_year"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.add_age_and_birth_year()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_static_info"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.add_static_info()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_col_to_flattened_dataset"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.add_temporal_col_to_flattened_dataset()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_outcome"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.add_temporal_outcome()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_predictor"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.add_temporal_predictor()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.FlattenedDataset.add_temporal_predictors_from_pred_specs"><code class="docutils literal notranslate"><span class="pre">FlattenedDataset.add_temporal_predictors_from_pred_specs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
