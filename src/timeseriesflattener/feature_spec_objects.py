@@ -54,7 +54,7 @@ def resolve_values_df(data: dict[str, Any]):
             data["values_loader"] = data_loaders.get(data["values_loader"])
 
         if callable(data["values_loader"]):
-            if not "loader_kwargs" in data:
+            if "loader_kwargs" not in data:
                 data["loader_kwargs"] = {}
 
             data["values_df"] = load_df_with_cache(

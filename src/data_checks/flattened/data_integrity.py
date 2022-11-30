@@ -30,6 +30,7 @@ from loaders.flattened import load_split_outcomes, load_split_predictors
 
 def pruned_data_integrity_checks(**kwargs) -> Suite:
     """Deepchecks data integrity suite with only wanted checks.
+
     Disables: SpecialCharacters, StringMismatch, ConflictingLabels.
 
     Args:
@@ -75,8 +76,9 @@ def label_integrity_checks() -> Suite:
 
 
 def custom_train_test_validation(**kwargs) -> Suite:
-    """Deepchecks train/test validation suite for train/test checks which slow
-    checks disabled.
+    """Deepchecks train/test validation suite.
+
+    Slow checks disabled.
 
     Args:
         **kwargs: Keyword arguments to pass to the Suite constructor.
