@@ -55,6 +55,7 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install
+        poetry shell
     - name: Build and Commit
       uses: sphinx-notes/pages@v2
     - name: Push changes
