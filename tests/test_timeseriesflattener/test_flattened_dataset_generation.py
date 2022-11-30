@@ -91,7 +91,7 @@ def check_dfs_have_same_contents_by_column(df1, df2):
 
 def create_flattened_df(
     cache_dir: Path,
-    predictor_specs: List[PredictorSpec],
+    predictor_specs: list[PredictorSpec],
     prediction_times_df: pd.DataFrame,
 ):
     """Create a dataset df for testing."""

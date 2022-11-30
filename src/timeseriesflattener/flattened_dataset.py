@@ -16,7 +16,7 @@ import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
-from utils import load_dataset_from_file, write_df_to_file # 
+from utils import load_dataset_from_file, write_df_to_file
 from wasabi import Printer, msg
 
 from timeseriesflattener.feature_spec_objects import (

@@ -1,9 +1,9 @@
 """Templates for feature specifications."""
 
 import itertools
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from functools import cache
-from typing import Any, Callable, Optional, Union
+from typing import Any, Optional, Union
 
 import pandas as pd
 from frozendict import frozendict  # type: ignore
@@ -37,6 +37,8 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 
 def resolve_values_df(data: dict[str, Any]):
+    """Resolve the values_df attribute of a feature spec to a values
+    dataframe."""
     if "values_loader" not in data and "values_df" not in data:
         raise ValueError("Either values_loader or df must be specified.")
 
@@ -285,7 +287,7 @@ class MinGroupSpec(BaseModel):
             # New line variable as f-string can't handle backslashes
             nl = "\n"  # pylint: disable = invalid-name
             raise ValueError(
-                f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info. 
+                f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info.
                 {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
                 f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all().keys())}""",
@@ -349,6 +351,7 @@ class PredictorGroupSpec(MinGroupSpec):
     prefix = "pred"
 
     def create_combinations(self):
+        """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
             output_class=PredictorSpec,
@@ -367,6 +370,7 @@ class OutcomeGroupSpec(MinGroupSpec):
     # way during resolution, which is faster than non-incident outcomes.
 
     def create_combinations(self):
+        """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
             output_class=OutcomeSpec,
