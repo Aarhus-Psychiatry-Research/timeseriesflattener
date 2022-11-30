@@ -2,7 +2,7 @@
 
 # pylint: disable=missing-function-docstring
 
-from loaders.synth.raw.load_synth_data import (  # pylint: disable=unused-import
+from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
     synth_predictor_float,
 )
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec

@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from loaders.synth.raw.load_synth_data import (
+from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
     synth_predictor_binary,
     synth_predictor_float,
@@ -21,7 +21,7 @@ from timeseriesflattener.feature_spec_objects import (
     TemporalSpec,
 )
 from timeseriesflattener.flattened_dataset import FlattenedDataset
-from timeseriesflattener.utils_for_testing import synth_outcome, synth_prediction_times
+from timeseriesflattener.testing.utils_for_testing import synth_outcome, synth_prediction_times
 
 base_float_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_float"],
