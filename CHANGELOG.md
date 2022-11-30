@@ -2,6 +2,9 @@
 
 <!--next-version-placeholder-->
 
+## **Notice**
+`psycop-feature-generation` have been renamed timeseriesflattener
+
 ## v0.10.0 (2022-11-21)
 ### Feature
 * Add n_hba1c_within_n_lookahead_days ([`e84b591`](https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/commit/e84b5918724a55b721ec4d1a7291533227fe9ef8))

@@ -1,11 +1,11 @@
-psycop-feature-generation
+timeseriesflattener
 ================================
 
-.. image:: https://img.shields.io/github/stars/Aarhus-Psychiatry-Research/psycop-feature-generation.svg?style=social&label=Star&maxAge=2592000
-   :target: https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation
+.. image:: https://img.shields.io/github/stars/Aarhus-Psychiatry-Research/timeseriesflattener.svg?style=social&label=Star&maxAge=2592000
+   :target: https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener
 
 
-`psycop-feature-generation` is a Python package for generating features time series data
+`timeseriesflattener` is a Python package for generating features time series data
 to be used as predictors in machine learning models. The package implements a number of
 methods for aggregating time series data into features. Furthermore the package integrates
 quality control of the generated features using `deepchecks <https://deepchecks.com>`__.
@@ -16,7 +16,7 @@ Where to ask questions?
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 To ask report issues or request features, please use the
-`GitHub Issue Tracker <https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/issues>`__.
+`GitHub Issue Tracker <https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues>`__.
 Otherwise, please use the discussion forums.
 
 +------------------------------+-------------------------+
@@ -32,8 +32,8 @@ Otherwise, please use the discussion forums.
 +------------------------------+-------------------------+
 
 
-.. _GitHub Issue Tracker: https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/issues
-.. _GitHub Discussions: https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/discussions
+.. _GitHub Issue Tracker: https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues
+.. _GitHub Discussions: https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/discussions
 
 
 
@@ -59,14 +59,14 @@ Otherwise, please use the discussion forums.
    :caption: Changelog
    :hidden:
 
-   GitHub Repository <https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/blob/main/CHANGELOG.md>
+   GitHub Repository <https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/CHANGELOG.md>
 
 
 .. toctree::
    :caption: GitHub
    :hidden:
 
-   GitHub Repository <https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation>
+   GitHub Repository <https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener>
 
 
 Indices and search
