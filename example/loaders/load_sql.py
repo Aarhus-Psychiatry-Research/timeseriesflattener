@@ -1,6 +1,6 @@
 """Example of how to load IDs from sql."""
 
-from psycop_feature_generation.loaders.raw.sql_load import sql_load
+from loaders.raw.sql_load import sql_load
 
 if __name__ == "__main__":
     VIEW = "[psycop_t2d_train]"

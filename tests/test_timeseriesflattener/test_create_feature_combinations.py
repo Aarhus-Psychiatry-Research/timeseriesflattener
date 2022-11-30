@@ -2,15 +2,12 @@
 
 # pylint: disable=missing-function-docstring
 
-from psycop_feature_generation.loaders.synth.raw.load_synth_data import (  # pylint: disable=unused-import
+from utils import data_loaders  # pylint: disable=unused-import
+
+from loaders.synth.raw.load_synth_data import (  # pylint: disable=unused-import
     synth_predictor_float,
 )
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    PredictorGroupSpec,
-)
-from psycop_feature_generation.utils import (  # pylint: disable=unused-import
-    data_loaders,
-)
+from timeseriesflattener.feature_spec_objects import PredictorGroupSpec
 
 
 def test_skip_all_if_no_need_to_process():

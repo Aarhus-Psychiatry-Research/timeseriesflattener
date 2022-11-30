@@ -1,12 +1,8 @@
 """Example of how to load demographic features."""
 import pandas as pd
 
-from psycop_feature_generation.loaders.raw.load_structured_sfi import (
-    bmi,
-    height_in_cm,
-    weight_in_kg,
-)
-from psycop_feature_generation.loaders.raw.sql_load import sql_load
+from loaders.raw.load_structured_sfi import bmi, height_in_cm, weight_in_kg
+from loaders.raw.sql_load import sql_load
 
 if __name__ == "__main__":
     df = sql_load(

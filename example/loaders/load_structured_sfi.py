@@ -1,7 +1,7 @@
 """Example for loading structured SFIs."""
 
-import psycop_feature_generation.loaders.raw.load_structured_sfi as struct_sfi_loader
-from psycop_feature_generation.data_checks.raw.check_predictor_lists import (
+import loaders.raw.load_structured_sfi as struct_sfi_loader
+from data_checks.raw.check_predictor_lists import (
     check_feature_combinations_return_correct_dfs,
 )
 

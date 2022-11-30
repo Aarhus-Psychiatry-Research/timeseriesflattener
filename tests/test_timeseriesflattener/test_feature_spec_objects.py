@@ -2,10 +2,10 @@
 import pandas as pd
 import pytest
 
-from psycop_feature_generation.loaders.synth.raw.load_synth_data import (  # pylint: disable=unused-import
+from loaders.synth.raw.load_synth_data import (  # pylint: disable=unused-import
     synth_predictor_float,
 )
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import AnySpec
+from timeseriesflattener.feature_spec_objects import AnySpec
 
 
 def test_anyspec_init():
@@ -22,6 +22,7 @@ def test_anyspec_init():
 
 
 def test_loader_kwargs():
+    """Test that loader kwargs are passed correctly."""
     spec = AnySpec(
         values_loader="synth_predictor_float",
         prefix="test",
@@ -32,9 +33,6 @@ def test_loader_kwargs():
 
 
 def test_anyspec_incorrect_values_loader_str():
+    """Test that AnySpec raises an error if the values loader is not a key in the loader registry."""
     with pytest.raises(ValueError, match=r".*in registry.*"):
         AnySpec(values_loader="I don't exist", prefix="test")
-
-
-if __name__ == "__main__":
-    test_anyspec_output_col_name_override()

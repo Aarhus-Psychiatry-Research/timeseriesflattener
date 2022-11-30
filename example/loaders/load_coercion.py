@@ -2,7 +2,7 @@
 
 # pylint: disable=non-ascii-name
 
-import psycop_feature_generation.loaders.raw.load_coercion as c
+import loaders.raw.load_coercion as c
 
 if __name__ == "__main__":
     df = c.coercion_duration(n_rows=100)

@@ -16,20 +16,15 @@ import numpy as np
 import pandas as pd
 import psutil
 import wandb
+from utils import FEATURE_SETS_PATH, N_WORKERS, PROJECT_ROOT, write_df_to_file
 from wasabi import Printer
 
-import psycop_feature_generation.loaders.raw  # noqa
-from psycop_feature_generation.data_checks.flattened.data_integrity import (
-    save_feature_set_integrity_from_dir,
-)
-from psycop_feature_generation.data_checks.flattened.feature_describer import (
-    save_feature_description_from_dir,
-)
-from psycop_feature_generation.loaders.raw.load_demographic import birthdays
-from psycop_feature_generation.loaders.raw.load_visits import (
-    physical_visits_to_psychiatry,
-)
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+import loaders.raw  # noqa
+from data_checks.flattened.data_integrity import save_feature_set_integrity_from_dir
+from data_checks.flattened.feature_describer import save_feature_description_from_dir
+from loaders.raw.load_demographic import birthdays
+from loaders.raw.load_visits import physical_visits_to_psychiatry
+from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     BaseModel,
     OutcomeGroupSpec,
@@ -39,15 +34,7 @@ from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
     StaticSpec,
     TemporalSpec,
 )
-from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
-    FlattenedDataset,
-)
-from psycop_feature_generation.utils import (
-    FEATURE_SETS_PATH,
-    N_WORKERS,
-    PROJECT_ROOT,
-    write_df_to_file,
-)
+from timeseriesflattener.flattened_dataset import FlattenedDataset
 
 LOOKAHEAD_YEARS = (1, 2, 3, 4, 5)
 msg = Printer(timestamp=True)
@@ -182,7 +169,7 @@ def split_and_save_dataset_to_disk(
     # Create splits
     for dataset_name in splits:
         if split_ids_dict is None:
-            df_split_ids = psycop_feature_generation.loaders.raw.load_ids(
+            df_split_ids = loaders.raw.load_ids(
                 split=dataset_name,
             )
         else:
@@ -290,7 +277,8 @@ def add_predictors_to_ds(
         )
 
     flattened_dataset.add_age_and_birth_year(
-        id2date_of_birth=birthdays, birth_year_as_predictor=True
+        id2date_of_birth=birthdays,
+        birth_year_as_predictor=True,
     )
 
     start_time = time.time()
@@ -574,7 +562,8 @@ def get_temporal_predictor_specs() -> list[PredictorSpec]:
 
     with Pool(min(N_WORKERS, len(temporal_predictor_groups))) as p:
         temporal_predictor_specs: list[PredictorSpec] = p.map(
-            func=resolve_group_spec, iterable=temporal_predictor_groups
+            func=resolve_group_spec,
+            iterable=temporal_predictor_groups,
         )
 
         # Unpack list of lists

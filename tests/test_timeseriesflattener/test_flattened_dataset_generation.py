@@ -8,28 +8,23 @@ from typing import Iterable
 import numpy as np
 import pandas as pd
 import pytest
+from utils_for_testing import synth_outcome, synth_prediction_times
 
 from application.t2d.generate_features_and_write_to_disk import (
     save_feature_set_description_to_disk,
     split_and_save_dataset_to_disk,
 )
-from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
+from loaders.synth.raw.load_synth_data import (
     load_synth_prediction_times,
     synth_predictor_binary,
     synth_predictor_float,
 )
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
+from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorGroupSpec,
     TemporalSpec,
 )
-from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
-    FlattenedDataset,
-)
-from psycop_feature_generation.utils_for_testing import (
-    synth_outcome,
-    synth_prediction_times,
-)
+from timeseriesflattener.flattened_dataset import FlattenedDataset
 
 base_float_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_float"],

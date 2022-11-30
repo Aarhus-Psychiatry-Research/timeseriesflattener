@@ -1,5 +1,5 @@
 """Example loader for admissions."""
-import psycop_feature_generation.loaders.raw as r
+import loaders.raw as r
 
 if __name__ == "__main__":
     df = r.load_admissions.admissions(n_rows=1000)

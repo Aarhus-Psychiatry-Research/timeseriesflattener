@@ -1,16 +1,10 @@
 """Tests for errors raised from flattened dataset class."""
 
 import pytest
+from utils_for_testing import str_to_df  # pylint: disable=import-error
 
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    PredictorSpec,
-)
-from psycop_feature_generation.timeseriesflattener.flattened_dataset import (
-    FlattenedDataset,
-)
-from psycop_feature_generation.utils_for_testing import (
-    str_to_df,  # pylint: disable=import-error
-)
+from timeseriesflattener.feature_spec_objects import PredictorSpec
+from timeseriesflattener.flattened_dataset import FlattenedDataset
 
 # pylint: disable=missing-function-docstring
 

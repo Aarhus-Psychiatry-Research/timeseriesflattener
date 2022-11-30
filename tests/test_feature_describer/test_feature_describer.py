@@ -2,16 +2,13 @@
 import numpy as np
 import pandas as pd
 import pytest
+from utils import PROJECT_ROOT
 
-from psycop_feature_generation.data_checks.flattened.feature_describer import (
+from data_checks.flattened.feature_describer import (
     generate_feature_description_df,
     generate_feature_description_row,
 )
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    PredictorSpec,
-    StaticSpec,
-)
-from psycop_feature_generation.utils import PROJECT_ROOT
+from timeseriesflattener.feature_spec_objects import PredictorSpec, StaticSpec
 
 # pylint: disable=redefined-outer-name, missing-function-docstring
 

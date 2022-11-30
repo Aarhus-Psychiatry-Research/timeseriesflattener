@@ -9,16 +9,14 @@ import pandas as pd
 import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
+from utils import data_loaders
 
-from psycop_feature_generation.loaders.synth.raw.load_synth_data import (
+from loaders.synth.raw.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
 )
-from psycop_feature_generation.timeseriesflattener import FlattenedDataset
-from psycop_feature_generation.timeseriesflattener.feature_spec_objects import (
-    TemporalSpec,
-)
-from psycop_feature_generation.utils import data_loaders
+from timeseriesflattener import FlattenedDataset
+from timeseriesflattener.feature_spec_objects import TemporalSpec
 
 
 def convert_cols_with_matching_colnames_to_datetime(
@@ -82,7 +80,8 @@ def assert_flattened_data_as_expected(
     expected_df: Optional[pd.DataFrame] = None,
     expected_values: Optional[Sequence[Any]] = None,
 ):
-    """Take a prediction times df and output spec and assert that the flattened data is as expected."""
+    """Take a prediction times df and output spec and assert that the flattened
+    data is as expected."""
     if isinstance(prediction_times_df, str):
         prediction_times_df = str_to_df(prediction_times_df)
 

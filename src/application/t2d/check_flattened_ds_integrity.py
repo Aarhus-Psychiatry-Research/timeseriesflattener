@@ -2,9 +2,7 @@
 
 from pathlib import Path
 
-from psycop_feature_generation.data_checks.flattened.data_integrity import (
-    save_feature_set_integrity_from_dir,
-)
+from data_checks.flattened.data_integrity import save_feature_set_integrity_from_dir
 
 if __name__ == "__main__":
     subdir = Path(
