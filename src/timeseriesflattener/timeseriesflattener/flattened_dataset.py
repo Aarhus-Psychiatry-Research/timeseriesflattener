@@ -36,7 +36,18 @@ ProgressBar().register()
 
 
 class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
-    """Turn a set of time-series into tabular prediction-time data."""
+    """Turn a set of time-series into tabular prediction-time data.
+    
+    Attributes:
+        df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
+        n_workers (int): Number of subprocesses to spawn for parallelization.
+        timestamp_col_name (str): Column name name for timestamps. Is used across outcomes and predictors.
+        id_col_name (str): Column namn name for patients ids. Is used across outcome and predictors.
+        predictor_col_name_prefix (str): Prefix for predictor col names.
+        outcome_col_name_prefix (str): Prefix for outcome col names.
+        pred_time_uuid_col_name (str): Column name for prediction time uuids.
+        feature_cache_dir (Path): Path to cache directory for feature dataframes.
+    """
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
@@ -586,9 +597,6 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 Defaults to "date_of_birth".
             output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
             birth_year_as_predictor (bool, optional): Whether to add birth year as a predictor. Defaults to False.
-
-        Raises:
-            ValueError: _description_
         """
         if id2date_of_birth[input_date_of_birth_col_name].dtype != "<M8[ns]":
             try:
