@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.11.0 (2022-11-30)
+### Documentation
+* Added explanation comment to token ([`9ae8716`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9ae8716435b766eca0338b179446b569dbdf1ee6))
+
 ## **Notice**
 `psycop-feature-generation` have been renamed timeseriesflattener
 
