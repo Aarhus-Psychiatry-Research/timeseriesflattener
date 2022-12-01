@@ -68,6 +68,38 @@ class DiskCache(FeatureCache):
             file_path=path_of_most_recent_file,
         )
 
+    def _get_file_name(
+        self,
+        feature_spec: TemporalSpec,
+    ) -> str:
+        """Get file name for feature spec.
+
+        Args:
+            feature_spec (AnySpec): Feature spec
+
+        Returns:
+            str: File name
+        """
+        n_rows = feature_spec.values_df.shape[0]  # type: ignore
+
+        return f"{feature_spec.get_col_str()}_{n_rows}_uuids"
+
+    def _get_file_pattern(
+        self,
+        feature_spec: TemporalSpec,
+    ) -> str:
+        """Get file pattern for feature spec.
+
+        Args:
+            feature_spec (AnySpec): Feature spec
+
+        Returns:
+            str: File pattern
+        """
+        file_name = self._get_file_name(feature_spec=feature_spec)
+
+        return f"*{file_name}*.{self.cache_file_suffix}*"
+
     def read_feature(self, feature_spec: TemporalSpec) -> pd.DataFrame:
         """Load most recent df matching pattern, and expand fallback column.
 
@@ -91,7 +123,7 @@ class DiskCache(FeatureCache):
         )
 
         df[feature_spec.get_col_str()] = df[feature_spec.get_col_str()].fillna(
-            feature_spec.fallback
+            feature_spec.fallback,
         )
 
         return df
@@ -141,35 +173,3 @@ class DiskCache(FeatureCache):
             return False
 
         return True
-
-    def _get_file_name(
-        self,
-        feature_spec: TemporalSpec,
-    ) -> str:
-        """Get file name for feature spec.
-
-        Args:
-            feature_spec (AnySpec): Feature spec
-
-        Returns:
-            str: File name
-        """
-        n_rows = feature_spec.values_df.shape[0]  # type: ignore
-
-        return f"{feature_spec.get_col_str()}_{n_rows}_uuids"
-
-    def _get_file_pattern(
-        self,
-        feature_spec: TemporalSpec,
-    ) -> str:
-        """Get file pattern for feature spec.
-
-        Args:
-            feature_spec (AnySpec): Feature spec
-
-        Returns:
-            str: File pattern
-        """
-        file_name = self._get_file_name(feature_spec=feature_spec)
-
-        return f"*{file_name}*.{self.cache_file_suffix}*"

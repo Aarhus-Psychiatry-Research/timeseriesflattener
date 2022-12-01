@@ -15,7 +15,7 @@ def test_write_and_check_feature(tmp_path):
         pred_time_uuid_col_name="pred_time_uuid",
         cache_file_suffix="csv",
         prediction_times_df=pd.DataFrame(
-            {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]}
+            {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]},
         ),
     )
 
@@ -24,7 +24,7 @@ def test_write_and_check_feature(tmp_path):
             "dw_ek_borger": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
-        }
+        },
     )
 
     test_spec = PredictorSpec(
@@ -42,7 +42,7 @@ def test_write_and_check_feature(tmp_path):
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_col_str()}": [1, 2, 3],
-        }
+        },
     )
 
     assert cache.feature_exists(feature_spec=test_spec) is False
@@ -55,14 +55,17 @@ def test_write_and_check_feature(tmp_path):
 def test_read_feature(tmp_path):
     """Test that read_feature writes a feature to disk.
 
-    Important that one row contains the fallback because we then test removing fallback vals when saving and expanding them again when reading."""
+    Important that one row contains the fallback because we then test
+    removing fallback vals when saving and expanding them again when
+    reading.
+    """
 
     cache = DiskCache(
         feature_cache_dir=tmp_path,
         pred_time_uuid_col_name="pred_time_uuid",
         cache_file_suffix="csv",
         prediction_times_df=pd.DataFrame(
-            {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]}
+            {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]},
         ),
     )
 
@@ -71,7 +74,7 @@ def test_read_feature(tmp_path):
             "dw_ek_borger": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
-        }
+        },
     )
 
     test_spec = PredictorSpec(
@@ -89,7 +92,7 @@ def test_read_feature(tmp_path):
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_col_str()}": [1, 2, np.nan],
-        }
+        },
     )
 
     cache.write_feature(feature_spec=test_spec, df=generated_df)
