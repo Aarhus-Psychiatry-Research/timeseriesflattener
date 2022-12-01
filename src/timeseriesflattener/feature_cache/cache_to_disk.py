@@ -2,6 +2,7 @@
 import datetime as dt
 import os
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 
@@ -14,11 +15,20 @@ class DiskCache(FeatureCache):
     def __init__(
         self,
         feature_cache_dir: Path,
-        prediction_times_df: pd.DataFrame,
+        prediction_times_df: Optional[pd.DataFrame] = None,
         pred_time_uuid_col_name: str = "pred_time_uuid",
         cache_file_suffix: str = ".parquet",
     ):
-        """Initialize DiskCache."""
+        """Initialize DiskCache.
+
+        Args:
+            feature_cache_dir (Path): Path to directory where features are cached
+            prediction_times_df (Optional[pd.DataFrame], optional): DataFrame containing prediction times.
+                Must be set at some point, but doesn't have to be set at init.
+                Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer. Defaults to None.
+            pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids. Defaults to "pred_time_uuid".
+            cache_file_suffix (str, optional): File suffix for cache files. Defaults to ".parquet".
+        """
 
         super().__init__(
             prediction_times_df=prediction_times_df,

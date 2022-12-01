@@ -121,7 +121,7 @@ def test_cache_hitting(
     """Test that cache hits."""
 
     cache = DiskCache(
-        feature_cache_dir=tmp_path, prediction_times_df=synth_prediction_times
+        feature_cache_dir=tmp_path,
     )
 
     # Create the cache

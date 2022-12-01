@@ -1,5 +1,6 @@
 """Abstract method that defines a feature cache."""
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
 import pandas as pd
 
@@ -11,9 +12,17 @@ class FeatureCache(metaclass=ABCMeta):
     def __init__(
         self,
         *args,
-        prediction_times_df: pd.DataFrame = None,
+        prediction_times_df: Optional[pd.DataFrame] = None,
         pred_time_uuid_col_name: str = "pred_time_uuid",
     ):
+        """Initialize a FeatureCache.
+
+        Args:
+            prediction_times_df (Optional[pd.DataFrame], optional): DataFrame containing prediction times.
+                Must be set at some point, but doesn't have to be set at init.
+                Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer. Defaults to None.
+            pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids. Defaults to "pred_time_uuid".
+        """
         self.prediction_times_df = prediction_times_df
         self.pred_time_uuid_col_name = pred_time_uuid_col_name
 
