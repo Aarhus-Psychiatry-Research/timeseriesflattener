@@ -31,7 +31,7 @@ from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
 ProgressBar().register()
 
 
-class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
+class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     """Turn a set of time-series into tabular prediction-time data.
 
     Attributes:
@@ -111,18 +111,18 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         if "value" in prediction_times_df.columns:
             prediction_times_df.drop("value", axis=1, inplace=True)
 
-        self.df = prediction_times_df
+        self._df = prediction_times_df
 
         ValidateInitFlattenedDataset(
-            df=self.df,
+            df=self._df,
             timestamp_col_name=self.timestamp_col_name,
             id_col_name=self.id_col_name,
         ).validate_dataset()
 
         # Create pred_time_uuid_columne
-        self.df[self.pred_time_uuid_col_name] = self.df[self.id_col_name].astype(
+        self._df[self.pred_time_uuid_col_name] = self._df[self.id_col_name].astype(
             str,
-        ) + self.df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
+        ) + self._df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
     def _load_most_recent_df_matching_pattern(
         self,
@@ -179,7 +179,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         # Expand fallback column
         df = pd.merge(
-            left=self.df[self.pred_time_uuid_col_name],
+            left=self._df[self.pred_time_uuid_col_name],
             right=df,
             how="left",
             on=self.pred_time_uuid_col_name,
@@ -245,7 +245,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         else:
             raise ValueError(f"Unknown output_spec type {type(output_spec)}")
 
-        df = FlattenedDataset._drop_records_outside_interval_days(
+        df = TimeseriesFlattener._drop_records_outside_interval_days(
             df,
             direction=direction,
             interval_days=output_spec.interval_days,
@@ -254,7 +254,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         )
 
         # Add back prediction times that don't have a value, and fill them with fallback
-        df = FlattenedDataset._add_back_prediction_times_without_value(
+        df = TimeseriesFlattener._add_back_prediction_times_without_value(
             df=df,
             pred_times_with_uuid=prediction_times_with_uuid_df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
@@ -262,7 +262,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         df["timestamp_val"].replace({output_spec.fallback: pd.NaT}, inplace=True)
 
-        df = FlattenedDataset._resolve_multiple_values_within_interval_days(
+        df = TimeseriesFlattener._resolve_multiple_values_within_interval_days(
             resolve_multiple=output_spec.resolve_multiple_fn,
             df=df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
@@ -308,10 +308,10 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                     f"{value_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
                 )
 
-            n_to_generate = int(min(n_to_generate, len(self.df)))
+            n_to_generate = int(min(n_to_generate, len(self._df)))
 
             generated_df = self._flatten_temporal_values_to_df(
-                prediction_times_with_uuid_df=self.df.sample(
+                prediction_times_with_uuid_df=self._df.sample(
                     n=n_to_generate,
                     replace=False,
                 ),
@@ -470,7 +470,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             msg.info("No cache dir specified, not attempting load")
 
         df = self._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self.df[
+            prediction_times_with_uuid_df=self._df[
                 [
                     self.pred_time_uuid_col_name,
                     self.id_col_name,
@@ -553,7 +553,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         msg.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
 
         msg.info("Merging with original df")
-        self.df = self.df.merge(right=new_features, on=self.pred_time_uuid_col_name)
+        self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
     def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
         self,
@@ -621,14 +621,16 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         data_of_birth_col_name = f"{output_prefix}_{input_date_of_birth_col_name}"
 
-        self.df[output_age_col_name] = (
-            (self.df[self.timestamp_col_name] - self.df[data_of_birth_col_name]).dt.days
+        self._df[output_age_col_name] = (
+            (
+                self._df[self.timestamp_col_name] - self._df[data_of_birth_col_name]
+            ).dt.days
             / (365.25)
         ).round(2)
 
         if birth_year_as_predictor:
             # Convert datetime to year
-            self.df["pred_birth_year"] = self.df[data_of_birth_col_name].dt.year
+            self._df["pred_birth_year"] = self._df[data_of_birth_col_name].dt.year
 
     def add_static_info(
         self,
@@ -676,8 +678,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             },
         )
 
-        self.df = pd.merge(
-            self.df,
+        self._df = pd.merge(
+            self._df,
             df,
             how="left",
             on=self.id_col_name,
@@ -697,7 +699,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
         outcome_timestamp_col_name = f"{self.timestamp_col_name}_outcome"
 
         df = pd.merge(
-            self.df,
+            self._df,
             outcome_spec.values_df,
             how="left",
             on=self.id_col_name,
@@ -727,7 +729,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
 
         df.drop(["value"], axis=1, inplace=True)
 
-        self.df = df
+        self._df = df
 
     def add_temporal_outcome(
         self,
@@ -781,8 +783,8 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
                 f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset.",
             )
 
-        df = FlattenedDataset._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self.df[
+        df = TimeseriesFlattener._flatten_temporal_values_to_df(
+            prediction_times_with_uuid_df=self._df[
                 [
                     self.id_col_name,
                     self.timestamp_col_name,
@@ -795,7 +797,7 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
         )
 
-        self.df = self.df.merge(
+        self._df = self._df.merge(
             right=df,
             on=self.pred_time_uuid_col_name,
             validate="1:1",
@@ -911,3 +913,11 @@ class FlattenedDataset:  # pylint: disable=too-many-instance-attributes
             ["is_in_interval", "time_from_pred_to_val_in_days"],
             axis=1,
         )
+
+    def get_df(self) -> DataFrame:
+        """Get the flattened dataframe.
+
+        Returns:
+            DataFrame: Flattened dataframe.
+        """
+        return self._df

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from timeseriesflattener import FlattenedDataset
+from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
@@ -203,7 +203,7 @@ def test_static_predictor():
                         1,1994-12-31 00:00:01
                         """
 
-    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
     dataset.add_static_info(
         static_spec=AnySpec(
             values_df=str_to_df(static_predictor),
@@ -224,7 +224,7 @@ def test_static_predictor():
     )
 
     pd.testing.assert_series_equal(
-        left=dataset.df[output_col_name].reset_index(drop=True),
+        left=dataset._df[output_col_name].reset_index(drop=True),
         right=expected_values[output_col_name].reset_index(drop=True),
         check_dtype=False,
     )
@@ -240,7 +240,7 @@ def test_add_age():
                         1,1994-12-31 00:00:00
                         """
 
-    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
 
     output_prefix = "eval"
 
@@ -262,7 +262,7 @@ def test_add_age():
     )
 
     pd.testing.assert_series_equal(
-        left=dataset.df["eval_age_in_years"].reset_index(drop=True),
+        left=dataset._df["eval_age_in_years"].reset_index(drop=True),
         right=expected_values[f"{output_prefix}_age_in_years"].reset_index(drop=True),
         check_dtype=False,
     )
@@ -278,7 +278,7 @@ def test_add_age_error():
                         1,94-12-31 00:00:00
                         """
 
-    dataset = FlattenedDataset(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
 
     with pytest.raises(ValueError):
         dataset.add_age_and_birth_year(
@@ -311,7 +311,7 @@ def test_incident_outcome_removing_prediction_times():
     event_times_df = str_to_df(event_times_str)
     expected_df = str_to_df(expected_df_str)
 
-    flattened_dataset = FlattenedDataset(
+    flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
@@ -329,7 +329,7 @@ def test_incident_outcome_removing_prediction_times():
         ),
     )
 
-    outcome_df = flattened_dataset.df.reset_index(drop=True)
+    outcome_df = flattened_dataset._df.reset_index(drop=True)
 
     for col in expected_df.columns:
         pd.testing.assert_series_equal(
@@ -375,7 +375,7 @@ def test_add_multiple_static_predictors():
     birthdates_df = str_to_df(birthdates_df_str)
     male_df = str_to_df(male_df_str)
 
-    flattened_dataset = FlattenedDataset(
+    flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
@@ -403,7 +403,7 @@ def test_add_multiple_static_predictors():
         static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred"),
     )
 
-    outcome_df = flattened_dataset.df
+    outcome_df = flattened_dataset._df
 
     for col in (
         "dw_ek_borger",
@@ -446,7 +446,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
     event_times_df = str_to_df(event_times_str)
     expected_df = str_to_df(expected_df_str)
 
-    flattened_dataset = FlattenedDataset(
+    flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
@@ -477,7 +477,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         ),
     )
 
-    outcome_df = flattened_dataset.df.set_index("dw_ek_borger").sort_index()
+    outcome_df = flattened_dataset._df.set_index("dw_ek_borger").sort_index()
     expected_df = expected_df.set_index("dw_ek_borger").sort_index()
 
     for col in expected_df.columns:
@@ -508,7 +508,7 @@ def test_add_temporal_incident_binary_outcome():
     event_times_df = str_to_df(event_times_str)
     expected_df = str_to_df(expected_df_str)
 
-    flattened_dataset = FlattenedDataset(
+    flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
@@ -526,7 +526,7 @@ def test_add_temporal_incident_binary_outcome():
         ),
     )
 
-    outcome_df = flattened_dataset.df
+    outcome_df = flattened_dataset._df
 
     for col in [c for c in expected_df.columns if "outc" in c]:
         for df in (outcome_df, expected_df):
