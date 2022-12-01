@@ -8,7 +8,7 @@ from timeseriesflattener.feature_spec_objects import TemporalSpec
 
 class FeatureCache(ABC):
     @abstractmethod
-    def __init__(self, validate: bool = True, prediction_times_df: pd.DataFrame = None):
+    def __init__(self, prediction_times_df: pd.DataFrame = None):
         """Initialize a feature cache.
 
         Args:
@@ -18,7 +18,7 @@ class FeatureCache(ABC):
         pass
 
     @abstractmethod
-    def feature_exists(self, feature_spec: TemporalSpec, validate: bool = True) -> bool:
+    def feature_exists(self, feature_spec: TemporalSpec) -> bool:
         pass
 
     @abstractmethod

@@ -3,10 +3,8 @@ import os
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import pandas as pd
 
-from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import TemporalSpec
 from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
@@ -32,59 +30,6 @@ class DiskCache(FeatureCache):
             self.feature_cache_dir.mkdir()
 
         self.validate = validate
-
-    def _generate_values_for_cache_checking(
-        self,
-        msg,
-        prediction_times_df,
-        id_col_name,
-        timestamp_col_name,
-        pred_time_uuid_col_name,
-        output_spec: TemporalSpec,
-        value_col_str: str,
-        n_to_generate: int = 100_000,
-    ):
-        generated_df = pd.DataFrame({value_col_str: []})
-
-        # Check that some values in generated_df differ from fallback
-        # Otherwise, comparison to cache is meaningless
-        n_trials = 0
-
-        while not any(
-            generated_df[value_col_str] != output_spec.fallback,
-        ):
-            if n_trials != 0:
-                msg.info(
-                    f"{value_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
-                )
-
-            n_to_generate = int(min(n_to_generate, len(prediction_times_df)))
-
-            generated_df = TimeseriesFlattener.flatten_temporal_values_to_df(
-                prediction_times_with_uuid_df=prediction_times_df.sample(
-                    n=n_to_generate,
-                    replace=False,
-                ),
-                id_col_name=id_col_name,
-                timestamp_col_name=timestamp_col_name,
-                pred_time_uuid_col_name=pred_time_uuid_col_name,
-                output_spec=output_spec,
-            ).dropna()
-
-            # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
-            # in the cache. Saves on storage. Don't use them to check if cache is hit.
-            if not np.isnan(output_spec.fallback):  # type: ignore
-                generated_df = generated_df[
-                    generated_df[value_col_str] != output_spec.fallback
-                ]
-
-            n_to_generate = (
-                n_to_generate**1.5
-            )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
-
-            n_trials += 1
-
-        return generated_df
 
     def load_most_recent_df_matching_pattern(
         self,
@@ -118,7 +63,6 @@ class DiskCache(FeatureCache):
 
     def load_cached_df_and_expand_fallback(
         self,
-        feature_cache_dir,
         _df,
         pred_time_uuid_col_name,
         file_pattern: str,
@@ -155,6 +99,9 @@ class DiskCache(FeatureCache):
 
         return df
 
+    def get_feature(feature_spec: TemporalSpec) -> pd.DataFrame:
+        pass
+
     def write_feature(
         self,
         feature_spec: TemporalSpec,
@@ -180,7 +127,6 @@ class DiskCache(FeatureCache):
     def feature_exists(
         self,
         feature_spec: TemporalSpec,
-        validate: bool = True,
     ) -> bool:
         """Check if cache is hit.
 
@@ -203,11 +149,5 @@ class DiskCache(FeatureCache):
 
         if len(file_pattern_hits) == 0:
             return False
-
-        if validate:
-            return self._validate_feature_cache_matches_source(
-                output_spec=feature_spec,
-                file_pattern=file_pattern,
-            )
 
         return True

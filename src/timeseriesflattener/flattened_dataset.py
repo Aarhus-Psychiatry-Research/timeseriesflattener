@@ -18,11 +18,6 @@ from pandas import DataFrame
 from wasabi import Printer, msg
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_cache.cache_to_disk import (
-    _cache_is_hit,
-    load_cached_df_and_expand_fallback,
-    write_feature,
-)
 from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
