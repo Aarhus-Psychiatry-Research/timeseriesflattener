@@ -1,7 +1,7 @@
+"""Cache module for writing features to disk."""
 import datetime as dt
 import os
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
 
@@ -14,22 +14,22 @@ class DiskCache(FeatureCache):
     def __init__(
         self,
         feature_cache_dir: Path,
-        pred_time_uuid_col_name: str,
-        cache_file_suffix: str,
         prediction_times_df: pd.DataFrame,
-        validate: bool = True,
+        pred_time_uuid_col_name: str = "pred_time_uuid",
+        cache_file_suffix: str = ".parquet",
     ):
         """Initialize DiskCache."""
 
+        super().__init__(
+            prediction_times_df=prediction_times_df,
+            pred_time_uuid_col_name=pred_time_uuid_col_name,
+        )
+
         self.feature_cache_dir = feature_cache_dir
         self.cache_file_suffix = cache_file_suffix
-        self.prediction_times_df = prediction_times_df
-        self.pred_time_uuid_col_name = pred_time_uuid_col_name
 
         if not self.feature_cache_dir.exists():
             self.feature_cache_dir.mkdir()
-
-        self.validate = validate
 
     def _load_most_recent_df_matching_pattern(
         self,
@@ -144,9 +144,9 @@ class DiskCache(FeatureCache):
         Returns:
             str: File name
         """
-        n_uuids = feature_spec.values_df[self.pred_time_uuid_col_name].nunique()
+        n_rows = feature_spec.values_df.shape[0]  # type: ignore
 
-        return f"{feature_spec.get_col_str()}_{n_uuids}_uuids"
+        return f"{feature_spec.get_col_str()}_{n_rows}_uuids"
 
     def _get_file_pattern(
         self,

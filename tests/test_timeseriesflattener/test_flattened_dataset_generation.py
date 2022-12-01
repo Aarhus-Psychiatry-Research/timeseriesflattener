@@ -3,12 +3,14 @@
 # pylint: disable=unused-import, redefined-outer-name
 
 from pathlib import Path
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 import numpy as np
 import pandas as pd
 import pytest
 
+from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
+from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     OutcomeSpec,
@@ -89,15 +91,15 @@ def check_dfs_have_same_contents_by_column(df1, df2):
 
 
 def create_flattened_df(
-    cache_dir: Path,
     predictor_specs: list[PredictorSpec],
     prediction_times_df: pd.DataFrame,
+    cache: Optional[FeatureCache] = None,
 ):
     """Create a dataset df for testing."""
     flat_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         n_workers=1,
-        feature_cache_dir=cache_dir,
+        cache=cache,
     )
 
     flat_ds.add_temporal_predictors_from_pred_specs(
@@ -118,18 +120,22 @@ def test_cache_hitting(
 ):
     """Test that cache hits."""
 
+    cache = DiskCache(
+        feature_cache_dir=tmp_path, prediction_times_df=synth_prediction_times
+    )
+
     # Create the cache
     first_df = create_flattened_df(
-        cache_dir=tmp_path,
         predictor_specs=predictor_specs.copy(),
         prediction_times_df=synth_prediction_times,
+        cache=cache,
     )
 
     # Load the cache
     cache_df = create_flattened_df(
-        cache_dir=tmp_path,
         predictor_specs=predictor_specs.copy(),
         prediction_times_df=synth_prediction_times,
+        cache=cache,
     )
 
     # Assert that each column has the same contents

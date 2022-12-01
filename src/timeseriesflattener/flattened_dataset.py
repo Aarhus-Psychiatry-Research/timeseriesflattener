@@ -6,7 +6,6 @@ import time
 from collections.abc import Callable
 from datetime import timedelta
 from multiprocessing import Pool
-from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -18,7 +17,12 @@ from pandas import DataFrame
 from wasabi import Printer, msg
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
+from timeseriesflattener.feature_spec_objects import (
+    AnySpec,
+    OutcomeSpec,
+    PredictorSpec,
+    TemporalSpec,
+)
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 
@@ -48,7 +52,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
         n_workers: int = 60,
-        feature_cache_dir: Optional[Path] = None,
     ):
         """Class containing a time-series, flattened.
 
@@ -95,7 +98,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self.pred_time_uuid_col_name = "prediction_time_uuid"
         self.cache = cache
 
-        self.n_uuids = len(prediction_times_df)
+        if self.cache:
+            self.cache.prediction_times_df = prediction_times_df
+            self.cache.pred_time_uuid_col_name = self.pred_time_uuid_col_name
+
+        self.n_uuids = prediction_times_df.shape[0]
 
         self.msg = Printer(timestamp=True)
 
@@ -215,8 +222,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _get_temporal_feature(
         self,
-        feature_spec: AnySpec,
-        file_suffix: str = "parquet",
+        feature_spec: TemporalSpec,
     ) -> pd.DataFrame:
         """Get feature. Either load from cache, or generate if necessary.
 
@@ -227,10 +233,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             pd.DataFrame: Feature
         """
 
-        if self.cache:
-            if self.cache.feature_exists(feature_spec=feature_spec):
-                df = self.cache.load_feature(feature_spec=feature_spec)
-                return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+        if self.cache and self.cache.feature_exists(feature_spec=feature_spec):
+            df = self.cache.read_feature(feature_spec=feature_spec)
+            return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
         else:
             msg.info("No cache specified, not attempting load")
 
@@ -252,7 +257,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if self.cache:
             self.cache.write_feature(
                 feature_spec=feature_spec,
-                file_name=file_name,
                 df=df,
             )
 
