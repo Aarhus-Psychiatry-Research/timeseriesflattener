@@ -5,7 +5,6 @@ from collections.abc import Callable, Sequence
 from functools import cache
 from typing import Any, Optional, Union
 
-import numpy as np
 import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel

@@ -12,6 +12,8 @@ from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
 
 
 class DiskCache(FeatureCache):
+    """Cache module for writing features to disk."""
+
     def __init__(
         self,
         feature_cache_dir: Path,
