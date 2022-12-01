@@ -149,7 +149,7 @@ class StaticSpec(AnySpec):
     """Specification for a static feature."""
 
 
-class TemporalSpec(AnySpec):
+class AnySpec(AnySpec):
     """The minimum specification required for all collapsed time series
     (temporal features), whether looking ahead or behind.
 
@@ -205,13 +205,13 @@ class TemporalSpec(AnySpec):
         return col_str
 
 
-class PredictorSpec(TemporalSpec):
+class PredictorSpec(AnySpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "pred"
 
 
-class OutcomeSpec(TemporalSpec):
+class OutcomeSpec(AnySpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "outc"

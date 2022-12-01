@@ -10,10 +10,10 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener.feature_spec_objects import (
+    AnySpec,
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
-    TemporalSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.load_synth_data import (
