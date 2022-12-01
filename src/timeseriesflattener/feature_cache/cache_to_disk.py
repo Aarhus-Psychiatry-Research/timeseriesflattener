@@ -31,10 +31,9 @@ class DiskCache(FeatureCache):
 
         self.validate = validate
 
-    def load_most_recent_df_matching_pattern(
+    def _load_most_recent_df_matching_pattern(
         self,
         file_pattern: str,
-        file_suffix: str,
     ) -> pd.DataFrame:
         """Load most recent df matching pattern.
 
@@ -48,9 +47,7 @@ class DiskCache(FeatureCache):
         Raises:
             FileNotFoundError: If no file matching pattern is found
         """
-        files_with_suffix = list(
-            self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}")
-        )
+        files_with_suffix = list(self.feature_cache_dir.glob(file_pattern))
 
         if len(files_with_suffix) == 0:
             raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
@@ -61,46 +58,33 @@ class DiskCache(FeatureCache):
             file_path=path_of_most_recent_file,
         )
 
-    def load_cached_df_and_expand_fallback(
-        self,
-        _df,
-        pred_time_uuid_col_name,
-        file_pattern: str,
-        file_suffix: str,
-        fallback: Any,
-        full_col_str: str,
-    ) -> pd.DataFrame:
+    def read_feature(self, feature_spec: TemporalSpec) -> pd.DataFrame:
         """Load most recent df matching pattern, and expand fallback column.
 
         Args:
-            file_pattern (str): File pattern to search for
-            file_suffix (str): File suffix to search for
-            fallback (Any): Fallback value
-            full_col_str (str): Full column name for values
+            feature_spec (AnySpec): Feature spec
 
         Returns:
             DataFrame: DataFrame with fallback column expanded
         """
-        df = self.load_most_recent_df_matching_pattern(
-            file_pattern=file_pattern,
-            file_suffix=file_suffix,
+        df = self._load_most_recent_df_matching_pattern(
+            file_pattern=self._get_file_pattern(feature_spec=feature_spec),
         )
 
         # Expand fallback column
         df = pd.merge(
-            left=_df[pred_time_uuid_col_name],
+            left=self.prediction_times_df[self.pred_time_uuid_col_name],
             right=df,
             how="left",
-            on=pred_time_uuid_col_name,
+            on=self.pred_time_uuid_col_name,
             validate="m:1",
         )
 
-        df[full_col_str] = df[full_col_str].fillna(fallback)
+        df[feature_spec.get_col_str()] = df[feature_spec.get_col_str()].fillna(
+            feature_spec.fallback
+        )
 
         return df
-
-    def get_feature(feature_spec: TemporalSpec) -> pd.DataFrame:
-        pass
 
     def write_feature(
         self,
@@ -132,15 +116,11 @@ class DiskCache(FeatureCache):
 
         Args:
             feature_spec (AnySpec): Feature spec
-            validate (bool, optional): Whether to validate cache hit by computing a subset of values and comparing them to the cache. Defaults to True.
 
         Returns:
             bool: True if cache is hit, False otherwise
         """
-        n_uuids = feature_spec.values_df[self.uuid_col_name].nunique()  # type: ignore
-
-        file_name = f"{feature_spec.get_col_str()}_{n_uuids}_uuids"
-        file_pattern = rf"*{file_name}*\.*{self.cache_file_suffix}*"
+        file_pattern = self._get_file_pattern(feature_spec=feature_spec)
 
         # Check that file exists
         file_pattern_hits = list(
@@ -151,3 +131,35 @@ class DiskCache(FeatureCache):
             return False
 
         return True
+
+    def _get_file_name(
+        self,
+        feature_spec: TemporalSpec,
+    ) -> str:
+        """Get file name for feature spec.
+
+        Args:
+            feature_spec (AnySpec): Feature spec
+
+        Returns:
+            str: File name
+        """
+        n_uuids = feature_spec.values_df[self.pred_time_uuid_col_name].nunique()
+
+        return f"{feature_spec.get_col_str()}_{n_uuids}_uuids"
+
+    def _get_file_pattern(
+        self,
+        feature_spec: TemporalSpec,
+    ) -> str:
+        """Get file pattern for feature spec.
+
+        Args:
+            feature_spec (AnySpec): Feature spec
+
+        Returns:
+            str: File pattern
+        """
+        file_name = self._get_file_name(feature_spec=feature_spec)
+
+        return f"*{file_name}*.{self.cache_file_suffix}*"

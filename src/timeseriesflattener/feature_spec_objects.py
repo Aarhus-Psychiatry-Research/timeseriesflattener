@@ -5,6 +5,7 @@ from collections.abc import Callable, Sequence
 from functools import cache
 from typing import Any, Optional, Union
 
+import numpy as np
 import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
@@ -205,13 +206,13 @@ class TemporalSpec(AnySpec):
         return col_str
 
 
-class PredictorSpec(AnySpec):
+class PredictorSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "pred"
 
 
-class OutcomeSpec(AnySpec):
+class OutcomeSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "outc"
