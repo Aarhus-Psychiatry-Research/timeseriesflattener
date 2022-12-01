@@ -104,7 +104,7 @@ def create_flattened_df(
         predictor_specs=predictor_specs,
     )
 
-    return flat_ds._df
+    return flat_ds.get_df()
 
 
 @pytest.mark.parametrize(

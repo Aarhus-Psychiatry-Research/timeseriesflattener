@@ -96,12 +96,12 @@ def assert_flattened_data_as_expected(
     if expected_df:
         for col in expected_df.columns:
             assert_series_equal(
-                left=flattened_ds._df[col],
+                left=flattened_ds.get_df()[col],
                 right=expected_df[col],
                 check_dtype=False,
             )
     elif expected_values:
-        output = flattened_ds._df[output_spec.get_col_str()].values.tolist()
+        output = flattened_ds.get_df()[output_spec.get_col_str()].values.tolist()
         expected = list(expected_values)
 
         for i, expected_val in enumerate(expected):

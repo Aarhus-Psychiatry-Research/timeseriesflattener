@@ -224,7 +224,7 @@ def test_static_predictor():
     )
 
     pd.testing.assert_series_equal(
-        left=dataset._df[output_col_name].reset_index(drop=True),
+        left=dataset.get_df()[output_col_name].reset_index(drop=True),
         right=expected_values[output_col_name].reset_index(drop=True),
         check_dtype=False,
     )
@@ -262,7 +262,7 @@ def test_add_age():
     )
 
     pd.testing.assert_series_equal(
-        left=dataset._df["eval_age_in_years"].reset_index(drop=True),
+        left=dataset.get_df()["eval_age_in_years"].reset_index(drop=True),
         right=expected_values[f"{output_prefix}_age_in_years"].reset_index(drop=True),
         check_dtype=False,
     )
@@ -329,7 +329,7 @@ def test_incident_outcome_removing_prediction_times():
         ),
     )
 
-    outcome_df = flattened_dataset._df.reset_index(drop=True)
+    outcome_df = flattened_dataset.get_df().reset_index(drop=True)
 
     for col in expected_df.columns:
         pd.testing.assert_series_equal(
@@ -403,7 +403,7 @@ def test_add_multiple_static_predictors():
         static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred"),
     )
 
-    outcome_df = flattened_dataset._df
+    outcome_df = flattened_dataset.get_df()
 
     for col in (
         "dw_ek_borger",
@@ -477,7 +477,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         ),
     )
 
-    outcome_df = flattened_dataset._df.set_index("dw_ek_borger").sort_index()
+    outcome_df = flattened_dataset.get_df().set_index("dw_ek_borger").sort_index()
     expected_df = expected_df.set_index("dw_ek_borger").sort_index()
 
     for col in expected_df.columns:
@@ -526,7 +526,7 @@ def test_add_temporal_incident_binary_outcome():
         ),
     )
 
-    outcome_df = flattened_dataset._df
+    outcome_df = flattened_dataset.get_df()
 
     for col in [c for c in expected_df.columns if "outc" in c]:
         for df in (outcome_df, expected_df):
