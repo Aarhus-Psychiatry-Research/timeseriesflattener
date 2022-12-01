@@ -31,14 +31,11 @@ class FeatureCache(metaclass=ABCMeta):
     @abstractmethod
     def feature_exists(self, feature_spec: TemporalSpec) -> bool:
         """Check if feature exists in cache."""
-        pass
 
     @abstractmethod
     def read_feature(self, feature_spec: TemporalSpec) -> pd.DataFrame:
         """Read feature from cache."""
-        pass
 
     @abstractmethod
     def write_feature(self, feature_spec: TemporalSpec, df: pd.DataFrame) -> None:
         """Write feature to cache."""
-        pass
