@@ -10,7 +10,7 @@ import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
 
-from timeseriesflattener import FlattenedDataset
+from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import TemporalSpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
@@ -86,7 +86,7 @@ def assert_flattened_data_as_expected(
     if isinstance(prediction_times_df, str):
         prediction_times_df = str_to_df(prediction_times_df)
 
-    flattened_ds = FlattenedDataset(
+    flattened_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         n_workers=4,
     )
@@ -96,12 +96,12 @@ def assert_flattened_data_as_expected(
     if expected_df:
         for col in expected_df.columns:
             assert_series_equal(
-                left=flattened_ds.df[col],
+                left=flattened_ds.get_df()[col],
                 right=expected_df[col],
                 check_dtype=False,
             )
     elif expected_values:
-        output = flattened_ds.df[output_spec.get_col_str()].values.tolist()
+        output = flattened_ds.get_df()[output_spec.get_col_str()].values.tolist()
         expected = list(expected_values)
 
         for i, expected_val in enumerate(expected):

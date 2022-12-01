@@ -15,7 +15,7 @@ from timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
     TemporalSpec,
 )
-from timeseriesflattener.flattened_dataset import FlattenedDataset
+from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
     synth_predictor_binary,
@@ -94,7 +94,7 @@ def create_flattened_df(
     prediction_times_df: pd.DataFrame,
 ):
     """Create a dataset df for testing."""
-    flat_ds = FlattenedDataset(
+    flat_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         n_workers=1,
         feature_cache_dir=cache_dir,
@@ -104,7 +104,7 @@ def create_flattened_df(
         predictor_specs=predictor_specs,
     )
 
-    return flat_ds.df
+    return flat_ds.get_df()
 
 
 @pytest.mark.parametrize(

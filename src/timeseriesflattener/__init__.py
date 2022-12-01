@@ -1,2 +1,2 @@
 """Init timeseriesflattener."""
-from .flattened_dataset import FlattenedDataset
+from .flattened_dataset import TimeseriesFlattener

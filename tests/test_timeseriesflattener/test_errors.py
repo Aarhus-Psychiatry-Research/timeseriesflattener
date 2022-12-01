@@ -3,7 +3,7 @@
 import pytest
 
 from timeseriesflattener.feature_spec_objects import PredictorSpec
-from timeseriesflattener.flattened_dataset import FlattenedDataset
+from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.utils_for_testing import (
     str_to_df,  # pylint: disable=import-error
 )
@@ -19,7 +19,7 @@ def test_col_does_not_exist_in_prediction_times():
     prediction_times_df = str_to_df(prediction_times_str)
 
     with pytest.raises(ValueError):
-        FlattenedDataset(  # noqa
+        TimeseriesFlattener(  # noqa
             prediction_times_df=prediction_times_df,
             timestamp_col_name="timestamp",
             id_col_name="dw_ek_borger",
@@ -39,7 +39,7 @@ def test_col_does_not_exist():
     prediction_times_df = str_to_df(prediction_times_str)
     event_times_df = str_to_df(event_times_str)
 
-    flattened_df = FlattenedDataset(
+    flattened_df = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
@@ -64,6 +64,6 @@ def test_duplicate_prediction_times():
                                 1,2021-11-31 00:00:00
                                 """
 
-        FlattenedDataset(
+        TimeseriesFlattener(
             prediction_times_df=str_to_df(prediction_times_df_str),
         )
