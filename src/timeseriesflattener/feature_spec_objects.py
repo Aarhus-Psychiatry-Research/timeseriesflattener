@@ -149,7 +149,7 @@ class StaticSpec(AnySpec):
     """Specification for a static feature."""
 
 
-class AnySpec(AnySpec):
+class TemporalSpec(AnySpec):
     """The minimum specification required for all collapsed time series
     (temporal features), whether looking ahead or behind.
 

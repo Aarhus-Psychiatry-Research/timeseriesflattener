@@ -1,11 +1,14 @@
+import datetime as dt
 import os
 from pathlib import Path
+from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_caching.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_spec_objects import AnySpec
+from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
+from timeseriesflattener.feature_spec_objects import TemporalSpec
 from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
 
 
@@ -15,7 +18,6 @@ class DiskCache(FeatureCache):
         feature_cache_dir: Path,
         pred_time_uuid_col_name: str,
         cache_file_suffix: str,
-        uuid_col_name: str,
         prediction_times_df: pd.DataFrame,
         validate: bool = True,
     ):
@@ -23,7 +25,6 @@ class DiskCache(FeatureCache):
 
         self.feature_cache_dir = feature_cache_dir
         self.cache_file_suffix = cache_file_suffix
-        self.uuid_col_name = uuid_col_name
         self.prediction_times_df = prediction_times_df
         self.pred_time_uuid_col_name = pred_time_uuid_col_name
 
@@ -39,7 +40,7 @@ class DiskCache(FeatureCache):
         id_col_name,
         timestamp_col_name,
         pred_time_uuid_col_name,
-        output_spec: AnySpec,
+        output_spec: TemporalSpec,
         value_col_str: str,
         n_to_generate: int = 100_000,
     ):
@@ -89,7 +90,7 @@ class DiskCache(FeatureCache):
         self,
         file_pattern: str,
         file_suffix: str,
-    ) -> DataFrame:
+    ) -> pd.DataFrame:
         """Load most recent df matching pattern.
 
         Args:
@@ -137,7 +138,6 @@ class DiskCache(FeatureCache):
             DataFrame: DataFrame with fallback column expanded
         """
         df = self.load_most_recent_df_matching_pattern(
-            dir_path=feature_cache_dir,
             file_pattern=file_pattern,
             file_suffix=file_suffix,
         )
@@ -155,110 +155,46 @@ class DiskCache(FeatureCache):
 
         return df
 
-    def _validate_feature_cache_matches_source(
-        self,
-        cache_df: pd.DataFrame,
-        pred_time_uuid_col_name: str,
-        output_spec: AnySpec,
-        file_pattern: str,
-    ) -> bool:
-        value_col_str = output_spec.get_col_str()
-
-        # Check that file contents match expected
-        # NAs are not interesting when comparing if computed values are identical
-        # TODO: Handle if the file doesn't exist. Write a test that covers it.
-        cache_df = self.load_most_recent_df_matching_pattern(
-            file_pattern=file_pattern,
-            file_suffix=self.cache_file_suffix,
-        )
-
-        generated_df = self._generate_values_for_cache_checking(
-            prediction_times_df=self.prediction_times_df,
-            id_col_name=id_col_name,
-            timestamp_col_name=timestamp_col_name,
-            pred_time_uuid_col_name=pred_time_uuid_col_name,
-            value_col_str=value_col_str,
-        )
-
-        cached_suffix = "_c"
-        generated_suffix = "_g"
-
-        # We frequently hit rounding errors with cache hits, so we round to 3 decimal places
-        generated_df[value_col_str] = generated_df[value_col_str].round(3)
-        cache_df[value_col_str] = cache_df[value_col_str].round(3)
-
-        # Merge cache_df onto generated_df
-        merged_df = pd.merge(
-            left=generated_df,
-            right=cache_df,
-            how="left",
-            on=pred_time_uuid_col_name,
-            suffixes=(generated_suffix, cached_suffix),
-            validate="1:1",
-            indicator=True,
-        )
-
-        # Check that all rows in generated_df are in cache_df
-        if not merged_df[value_col_str + generated_suffix].equals(
-            merged_df[value_col_str + cached_suffix],
-        ):
-            msg1.info(f"Cache miss, computed values didn't match {file_pattern}")
-
-            # Keep this variable for easier inspection
-            unequal_rows = merged_df[  # pylint: disable=unused-variable
-                merged_df[value_col_str + generated_suffix]
-                != merged_df[value_col_str + cached_suffix]
-            ]
-
-            return False
-
-        # If all checks passed, return true
-        msg.good(f"Cache hit for {value_col_str}")
-        return True
-
     def write_feature(
         self,
-        values_df: pd.DataFrame,
-        feature_spec: AnySpec,
+        feature_spec: TemporalSpec,
+        df: pd.DataFrame,
     ):
         """Write feature to cache."""
-        n_uuids = len(unique(values_df[self.uuid_col_name]))
+        n_uuids = df[self.pred_time_uuid_col_name].nunique()
         file_name = f"{feature_spec.get_col_str()}_{n_uuids}_uuids"
 
         # Drop rows containing fallback, since it's non-informative
-        values_df = values_df[
-            values_df[feature_spec.get_col_str()] != feature_spec.fallback
-        ].dropna()
+        df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()
 
         # Write df to cache
         timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         # Write df to cache
         write_df_to_file(
-            df=values_df,
+            df=df,
             file_path=self.feature_cache_dir
             / f"{file_name}_{timestamp}.{self.cache_file_suffix}",
         )
 
     def feature_exists(
         self,
-        feature_spec: AnySpec,
+        feature_spec: TemporalSpec,
+        validate: bool = True,
     ) -> bool:
         """Check if cache is hit.
 
         Args:
-            kwargs_dict (dict): dictionary of kwargs
-            file_pattern (str): File pattern to match. Looks for *file_pattern* in cache dir.
-            e.g. "*feature_name*_uuids*.file_suffix"
-            full_col_str (str): Full column string. e.g. "feature_name_ahead_interval_days_resolve_multiple_fallback"
-            file_suffix (str): File suffix to match. e.g. "csv"
+            feature_spec (AnySpec): Feature spec
+            validate (bool, optional): Whether to validate cache hit by computing a subset of values and comparing them to the cache. Defaults to True.
 
         Returns:
             bool: True if cache is hit, False otherwise
         """
+        n_uuids = feature_spec.values_df[self.uuid_col_name].nunique()  # type: ignore
 
-        file_name = f"{feature_spec.get_col_str()}_{self.n_uuids}_uuids"
-        file_pattern = f"*{file_name}*\.*{self.cache_file_suffix}*"
+        file_name = f"{feature_spec.get_col_str()}_{n_uuids}_uuids"
+        file_pattern = rf"*{file_name}*\.*{self.cache_file_suffix}*"
 
         # Check that file exists
         file_pattern_hits = list(
@@ -268,10 +204,10 @@ class DiskCache(FeatureCache):
         if len(file_pattern_hits) == 0:
             return False
 
-        if self.validate:
+        if validate:
             return self._validate_feature_cache_matches_source(
                 output_spec=feature_spec,
-                file_name=file_pattern,
+                file_pattern=file_pattern,
             )
 
         return True

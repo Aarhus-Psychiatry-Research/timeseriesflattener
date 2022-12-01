@@ -17,8 +17,8 @@ from dask.diagnostics import ProgressBar
 from pandas import DataFrame
 from wasabi import Printer, msg
 
-from timeseriesflattener.feature_caching.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_caching.cache_to_disk import (
+from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
+from timeseriesflattener.feature_cache.cache_to_disk import (
     _cache_is_hit,
     load_cached_df_and_expand_fallback,
     write_feature,
