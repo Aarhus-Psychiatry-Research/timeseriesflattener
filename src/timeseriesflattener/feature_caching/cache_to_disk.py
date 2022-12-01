@@ -11,13 +11,21 @@ from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
 
 class DiskCache(FeatureCache):
     def __init__(
-        self, feature_cache_dir: Path, cache_file_suffix: str, validate: bool = True, uuid_col_name: str
+        self,
+        feature_cache_dir: Path,
+        pred_time_uuid_col_name: str,
+        cache_file_suffix: str,
+        uuid_col_name: str,
+        prediction_times_df: pd.DataFrame,
+        validate: bool = True,
     ):
         """Initialize DiskCache."""
 
         self.feature_cache_dir = feature_cache_dir
         self.cache_file_suffix = cache_file_suffix
-        self.uuid_col_name: str
+        self.uuid_col_name = uuid_col_name
+        self.prediction_times_df = prediction_times_df
+        self.pred_time_uuid_col_name = pred_time_uuid_col_name
 
         if not self.feature_cache_dir.exists():
             self.feature_cache_dir.mkdir()
@@ -150,13 +158,22 @@ class DiskCache(FeatureCache):
     def _validate_feature_cache_matches_source(
         self,
         cache_df: pd.DataFrame,
-        prediction_times_df: pd.DataFrame,
         pred_time_uuid_col_name: str,
-        value_col_str: str,
+        output_spec: AnySpec,
+        file_pattern: str,
     ) -> bool:
+        value_col_str = output_spec.get_col_str()
+
+        # Check that file contents match expected
+        # NAs are not interesting when comparing if computed values are identical
+        # TODO: Handle if the file doesn't exist. Write a test that covers it.
+        cache_df = self.load_most_recent_df_matching_pattern(
+            file_pattern=file_pattern,
+            file_suffix=self.cache_file_suffix,
+        )
 
         generated_df = self._generate_values_for_cache_checking(
-            prediction_times_df=raw_df,
+            prediction_times_df=self.prediction_times_df,
             id_col_name=id_col_name,
             timestamp_col_name=timestamp_col_name,
             pred_time_uuid_col_name=pred_time_uuid_col_name,
@@ -225,11 +242,7 @@ class DiskCache(FeatureCache):
 
     def feature_exists(
         self,
-        prediction_times_df: pd.DataFrame,
-        pred_time_uuid_col_name: str,
         feature_spec: AnySpec,
-        file_pattern: str,
-        file_suffix: str,
     ) -> bool:
         """Check if cache is hit.
 
@@ -245,31 +258,20 @@ class DiskCache(FeatureCache):
         """
 
         file_name = f"{feature_spec.get_col_str()}_{self.n_uuids}_uuids"
+        file_pattern = f"*{file_name}*\.*{self.cache_file_suffix}*"
+
         # Check that file exists
         file_pattern_hits = list(
-            self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"),
+            self.feature_cache_dir.glob(file_pattern),
         )
 
         if len(file_pattern_hits) == 0:
             return False
 
-        value_col_str = feature_spec.get_col_str()
-
-        # Check that file contents match expected
-        # NAs are not interesting when comparing if computed values are identical
-        # TODO: Handle if the file doesn't exist. Write a test that covers it.
-        cache_df = self.load_most_recent_df_matching_pattern(
-            file_pattern=file_pattern,
-            file_suffix=file_suffix,
-        )
-
         if self.validate:
             return self._validate_feature_cache_matches_source(
-                cache_df=cache_df,
-                pred_time_uuid_col_name=pred_time_uuid_col_name,
-                value_col_str=value_col_str,
                 output_spec=feature_spec,
-                prediction_times_df=prediction_times_df,
+                file_name=file_pattern,
             )
 
         return True

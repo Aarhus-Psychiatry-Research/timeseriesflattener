@@ -8,11 +8,12 @@ from timeseriesflattener.feature_spec_objects import AnyS, AnySpecpecAnySpec
 
 class FeatureCache(ABC):
     @abstractmethod
-    def __init__(self, validate: bool = True):
+    def __init__(self, validate: bool = True, prediction_times_df: pd.DataFrame = None):
         """Initialize a feature cache.
 
         Args:
             validate (bool): Whether to validate the cache. Defaults to True.
+            prediction_times_df (pd.DataFrame): Prediction times dataframe. Required for validation. Defaults to None.
         """
         pass
 
