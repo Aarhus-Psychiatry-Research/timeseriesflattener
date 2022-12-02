@@ -161,9 +161,9 @@ class TemporalSpec(AnySpec):
 
     resolve_multiple_fn: Callable
 
-    key_for_resolve_multiple: str
+    key_for_resolve_multiple: Optional[str] = None
     # Key used to lookup the resolve_multiple_fn in the resolve_multiple_fns registry.
-    # Used for column name generation.
+    # Used for column name generation. Only required if you don't specify a resolve_multiple_fn.
 
     fallback: Union[Callable, int, float, str]
     # Which value to use if no values are found within interval_days.
