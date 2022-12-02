@@ -15,14 +15,14 @@ if __name__ == "__main__":
                 "column_type": "uniform_int",
                 "min": 0,
                 "max": 10_000,
-            }
+            },
         },
         {
             "timestamp": {
                 "column_type": "datetime_uniform",
                 "min": -5 * 365,
                 "max": 0 * 365,
-            }
+            },
         },
         {"value": {"column_type": "uniform_float", "min": 0, "max": 10}},
     ]

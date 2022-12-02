@@ -16,7 +16,7 @@ if __name__ == "__main__":
                 "column_type": "uniform_int",
                 "min": 0,
                 "max": 10_000,
-            }
+            },
         },
         {"female": {"column_type": "uniform_int", "min": 0, "max": 2}},
     ]
