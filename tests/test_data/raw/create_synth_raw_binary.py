@@ -10,19 +10,23 @@ if __name__ == "__main__":
     # Get project root directory
     project_root = Path(__file__).resolve().parents[3]
 
-    column_specs = {
-        "dw_ek_borger": {
-            "column_type": "uniform_int",
-            "min": 0,
-            "max": 10_000,
+    column_specs = [
+        {
+            "dw_ek_borger": {
+                "column_type": "uniform_int",
+                "min": 0,
+                "max": 10_000,
+            }
         },
-        "timestamp": {
-            "column_type": "datetime_uniform",
-            "min": -5 * 365,
-            "max": 0 * 365,
+        {
+            "timestamp": {
+                "column_type": "datetime_uniform",
+                "min": -5 * 365,
+                "max": 0 * 365,
+            }
         },
-        "value": {"column_type": "uniform_int", "min": 0, "max": 1},
-    }
+        {"value": {"column_type": "uniform_int", "min": 0, "max": 2}},
+    ]
 
     for i in (1, 2):
         df = generate_data_columns(
