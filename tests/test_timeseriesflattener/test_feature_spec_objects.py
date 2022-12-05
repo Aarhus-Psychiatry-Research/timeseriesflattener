@@ -2,9 +2,9 @@
 import pandas as pd
 import pytest
 
-from timeseriesflattener.feature_spec_objects import AnySpec
-from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
-    synth_predictor_float,
+from timeseriesflattener.feature_spec_objects import (
+    AnySpec,
+    check_that_col_names_in_kwargs_exist_in_df,
 )
 
 
@@ -34,6 +34,22 @@ def test_loader_kwargs():
 
 def test_anyspec_incorrect_values_loader_str():
     """Test that AnySpec raises an error if the values loader is not a key in
-    the loader registry."""
+
+    the loader registry.
+    """
     with pytest.raises(ValueError, match=r".*in registry.*"):
         AnySpec(values_loader="I don't exist", prefix="test")
+
+
+def test_that_col_names_in_kwargs_exist_in_df():
+    # Create a sample dataframe
+    df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
+
+    # Test valid column names
+    data = {"col_name_1": "A", "col_name_2": "B", "values_df": df}
+    check_that_col_names_in_kwargs_exist_in_df(data=data, df=df)
+
+    # Test invalid column names
+    data = {"col_name_1": "A", "col_name_2": "D", "values_df": df}
+    with pytest.raises(ValueError, match="D is not in df"):
+        check_that_col_names_in_kwargs_exist_in_df(data=data, df=df)
