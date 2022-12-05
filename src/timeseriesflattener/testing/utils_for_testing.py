@@ -11,7 +11,7 @@ from pandas import DataFrame
 from pandas.testing import assert_series_equal
 
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_spec_objects import TemporalSpec
+from timeseriesflattener.feature_spec_objects import AnySpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
@@ -77,7 +77,7 @@ def str_to_df(
 
 def assert_flattened_data_as_expected(
     prediction_times_df: Union[pd.DataFrame, str],
-    output_spec: TemporalSpec,
+    output_spec: AnySpec,
     expected_df: Optional[pd.DataFrame] = None,
     expected_values: Optional[Sequence[Any]] = None,
 ):
