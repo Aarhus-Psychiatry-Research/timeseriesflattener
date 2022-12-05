@@ -1,4 +1,4 @@
-"""Abstract method that defines a feature cache."""
+"""Base method that defines a feature cache."""
 from abc import ABCMeta, abstractmethod
 from typing import Optional
 
@@ -8,7 +8,7 @@ from timeseriesflattener.feature_spec_objects import TemporalSpec
 
 
 class FeatureCache(metaclass=ABCMeta):
-    """Abstract class that defines a feature cache."""
+    """Base class that defines a feature cache."""
 
     @abstractmethod
     def __init__(
@@ -22,7 +22,7 @@ class FeatureCache(metaclass=ABCMeta):
         Args:
             prediction_times_df (Optional[pd.DataFrame], optional): DataFrame containing prediction times.
                 Must be set at some point, but doesn't have to be set at init.
-                Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer. Defaults to None.
+                Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer during initialization. Defaults to None. Defaults to None.
             pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids. Defaults to "pred_time_uuid".
         """
         self.prediction_times_df = prediction_times_df

@@ -78,12 +78,12 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         Args:
             prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
-            timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
+            cache (Optional[FeatureCache], optional): Object for feature caching. Should be initialised when passed to init. Defaults to None.
             id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "dw_ek_borger".
+            timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
             predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to "pred_".
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
             n_workers (int): Number of subprocesses to spawn for parallelization. Defaults to 60.
-            feature_cache_dir (Path): Path to cache directory for feature dataframes. Defaults to None.
 
         Raises:
             ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df
@@ -236,7 +236,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if self.cache and self.cache.feature_exists(feature_spec=feature_spec):
             df = self.cache.read_feature(feature_spec=feature_spec)
             return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
-        else:
+        elif not self.cache:
             msg.info("No cache specified, not attempting load")
 
         df = self.flatten_temporal_values_to_df(
