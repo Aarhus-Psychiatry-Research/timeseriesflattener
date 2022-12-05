@@ -53,27 +53,24 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         Avoids duplicate specification.
         """
-        if self.cache.prediction_times_df != prediction_times_df:
+        if (
+            not hasattr(self.cache, "prediction_times_df")
+            or self.cache.prediction_times_df is None
+        ):
+            self.cache.prediction_times_df = prediction_times_df
+        elif not self.cache.prediction_times_df.equals(prediction_times_df):
             msg.warn(
-                "Overriding prediction_times_df in cache with prediction_times_df passed to init",
+                "Overriding prediction_times_df in cache with prediction_times_df passed to init"
             )
             self.cache.prediction_times_df = prediction_times_df
 
-        if self.cache.pred_time_uuid_col_name != self.pred_time_uuid_col_name:
-            msg.warn(
-                "Overriding pred_time_uuid_col_name in cache with pred_time_uuid_col_name passed to init",
-            )
-            self.cache.pred_time_uuid_col_name = self.pred_time_uuid_col_name
-
-        if self.cache.timestamp_col_name != self.timestamp_col_name:
-            msg.warn(
-                "Overriding timestamp_col_name in cache with timestamp_col_name passed to init",
-            )
-            self.cache.timestamp_col_name = self.timestamp_col_name
-
-        if self.cache.id_col_name != self.id_col_name:
-            msg.warn("Overriding id_col_name in cache with id_col_name passed to init")
-            self.cache.id_col_name = self.id_col_name
+        for attr in ["pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"]:
+            if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
+                if getattr(self.cache, attr) != getattr(self, attr):
+                    msg.warn(
+                        f"Overriding {attr} in cache with {attr} passed to init of flattened dataset"
+                    )
+                    setattr(self.cache, attr, getattr(self, attr))
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
