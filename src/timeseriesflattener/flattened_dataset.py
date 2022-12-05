@@ -60,7 +60,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             self.cache.prediction_times_df = prediction_times_df
         elif not self.cache.prediction_times_df.equals(prediction_times_df):
             msg.warn(
-                "Overriding prediction_times_df in cache with prediction_times_df passed to init"
+                "Overriding prediction_times_df in cache with prediction_times_df passed to init",
             )
             self.cache.prediction_times_df = prediction_times_df
 
@@ -68,7 +68,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
                 if getattr(self.cache, attr) != getattr(self, attr):
                     msg.warn(
-                        f"Overriding {attr} in cache with {attr} passed to init of flattened dataset"
+                        f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
                     )
                     setattr(self.cache, attr, getattr(self, attr))
 
