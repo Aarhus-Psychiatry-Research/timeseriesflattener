@@ -7,6 +7,12 @@
 [![github actions pytest](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions/workflows/main_test_and_release.yml/badge.svg)](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions)
 [![PyPI version](https://badge.fury.io/py/timeseriesflattener.svg)](https://pypi.org/project/timeseriesflattener/)
 
+Time series from e.g. electronic health records often have a large number of variables, are sampled at irregular intervals, and tend to have a large number of missing values. Before this type of data can be used for training using traditional machine learning methods, the data needs to be reshaped. In essense, the time series need to be flattened to only contain a single value for prediction, which is an aggregate of the preceeding values in a certain time window. This process is fraught with methodological pitfalls which can compromise the validity of succeeding analyses.
+
+`timeseriesflattener` aims to simplify this process, by providing an easy-to-use and fully-specified pipeline for flattening complex time series. `timeseriesflattener` implements all the functionality required for aggregating features in specific time windows, grouped by e.g. patient IDs, in a computationally efficient manner.
+
+The package is currently used for feature extraction from electronic health records in the [PSYCOP projects](https://www.cambridge.org/core/journals/acta-neuropsychiatrica/article/psychiatric-clinical-outcome-prediction-psycop-cohort-leveraging-the-potential-of-electronic-health-records-in-the-treatment-of-mental-disorders/73CDCC5B36FF1347E6419EC7B80DEC48).
+
 ## 🔧 Installation
 To get started using timeseriesflattener simply install it using pip by running the following line in your terminal:
 
