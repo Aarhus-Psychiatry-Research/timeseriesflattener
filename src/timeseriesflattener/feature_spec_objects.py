@@ -37,10 +37,7 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 
 def resolve_values_df(data: dict[str, Any]):
-    """Resolve the values_df attribute of a feature spec to a values
-
-    dataframe.
-    """
+    """Resolve values_df attribute to a values dataframe."""
     if "values_loader" not in data and "values_df" not in data:
         raise ValueError("Either values_loader or df must be specified.")
 
@@ -75,10 +72,7 @@ class BaseModel(PydanticBaseModel):
     """."""
 
     class Config:
-        """A pydantic basemodel, which doesn't allow attributes that are not
-
-        defined in the class.
-        """
+        """Disallow  attributes not in the the class."""
 
         arbitrary_types_allowed = True
         extra = Extra.forbid
@@ -180,11 +174,9 @@ class StaticSpec(AnySpec):
 
 
 class TemporalSpec(AnySpec):
-    """The minimum specification required for all collapsed time series
+    """The minimum specification required for all collapsed time series.
 
-    (temporal features), whether looking ahead or behind.
-
-    Mostly used for inheritance below.
+    Both if looking ahead or behind. Mostly used for inheritance below.
     """
 
     interval_days: Union[int, float]

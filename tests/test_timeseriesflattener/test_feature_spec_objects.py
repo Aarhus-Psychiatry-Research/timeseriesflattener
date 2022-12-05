@@ -33,10 +33,7 @@ def test_loader_kwargs():
 
 
 def test_anyspec_incorrect_values_loader_str():
-    """Test that AnySpec raises an error if the values loader is not a key in
-
-    the loader registry.
-    """
+    """Raise error if values loader is not a key in registry."""
     with pytest.raises(ValueError, match=r".*in registry.*"):
         AnySpec(values_loader="I don't exist", prefix="test")
 
