@@ -1,6 +1,7 @@
 """Templates for feature specifications."""
 
 import itertools
+import logging
 from collections.abc import Callable, Sequence
 from functools import cache
 from typing import Any, Optional, Union
@@ -16,6 +17,8 @@ from timeseriesflattener.utils import data_loaders
 
 msg = Printer(timestamp=True)
 
+log = logging.getLogger(__name__)
+
 
 @cache
 def load_df_with_cache(
@@ -24,9 +27,9 @@ def load_df_with_cache(
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
-    msg.info(f"{feature_name}: Loading values")
+    log.info(f"{feature_name}: Loading values")
     df = loader_fn(**kwargs)
-    msg.good(f"{feature_name}: Loaded values")
+    log.info(f"{feature_name}: Loaded values")
 
     return df
 
@@ -38,7 +41,9 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 def resolve_values_df(data: dict[str, Any]):
     """Resolve the values_df attribute of a feature spec to a values
-    dataframe."""
+
+    dataframe.
+    """
     if "values_loader" not in data and "values_df" not in data:
         raise ValueError("Either values_loader or df must be specified.")
 
@@ -74,7 +79,9 @@ class BaseModel(PydanticBaseModel):
 
     class Config:
         """A pydantic basemodel, which doesn't allow attributes that are not
-        defined in the class."""
+
+        defined in the class.
+        """
 
         arbitrary_types_allowed = True
         extra = Extra.forbid
@@ -127,6 +134,7 @@ class AnySpec(BaseModel):
 
     def __eq__(self, other):
         """Trying to run `spec in list_of_specs` works for all attributes
+
         except for df, since the truth value of a dataframe is ambiguous. To
         remedy this, we use pandas'.
 
@@ -151,6 +159,7 @@ class StaticSpec(AnySpec):
 
 class TemporalSpec(AnySpec):
     """The minimum specification required for all collapsed time series
+
     (temporal features), whether looking ahead or behind.
 
     Mostly used for inheritance below.
@@ -243,6 +252,7 @@ class OutcomeSpec(TemporalSpec):
 
 class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
+
     ahead or behind.
 
     Used to generate combinations of features.
@@ -310,6 +320,7 @@ def create_feature_combinations_from_dict(
     d: dict[str, Union[str, list]],
 ) -> list[dict[str, Union[str, float, int]]]:
     """Create feature combinations from a dictionary of feature specifications.
+
     Only unpacks the top level of lists.
 
     Args:

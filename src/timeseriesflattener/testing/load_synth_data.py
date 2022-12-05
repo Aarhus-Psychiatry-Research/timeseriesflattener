@@ -1,10 +1,13 @@
 """Loaders for synth data."""
 
+import logging
 from typing import Optional
 
 import pandas as pd
 
 from timeseriesflattener.utils import PROJECT_ROOT, data_loaders
+
+log = logging.getLogger(__name__)
 
 
 def load_raw_test_csv(filename: str, n_rows: Optional[int] = None) -> pd.DataFrame:
