@@ -8,7 +8,7 @@
 [![PyPI version](https://badge.fury.io/py/timeseriesflattener.svg)](https://pypi.org/project/timeseriesflattener/)
 
 ## Roadmap
-Roadmap is tracked on our kanban board here: https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1
+Roadmap is tracked on our [kanban board]([url](https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1)).
 
 ## 🔧 Installation
 To get started using timeseriesflattener simply install it using pip by running the following line in your terminal:
