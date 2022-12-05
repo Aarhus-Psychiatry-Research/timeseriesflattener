@@ -227,6 +227,11 @@ class OutcomeSpec(TemporalSpec):
 
     lookahead_days: Union[int, float]
 
+    def __init__(self, **data):
+        data["interval_days"] = data["lookahead_days"]
+
+        super().__init__(**data)
+
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
     # For example, type 2 diabetes is incident. Incident outcomes cna be handled in a vectorised
     # way during resolution, which is faster than non-incident outcomes.
@@ -248,11 +253,6 @@ class OutcomeSpec(TemporalSpec):
         )
 
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
-
-    def __init__(self, **data):
-        data["interval_days"] = data["lookahead_days"]
-
-        super().__init__(**data)
 
 
 class MinGroupSpec(BaseModel):
