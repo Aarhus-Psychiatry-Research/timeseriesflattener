@@ -1,5 +1,7 @@
-"""Takes a time-series and flattens it into a set of prediction times with
-describing values."""
+"""Flattens a dataset.
+
+Takes a time-series and flattens it into a set of prediction times describing values.
+"""
 import datetime as dt
 import os
 import random
@@ -197,10 +199,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         id_col_name: str,
         timestamp_col_name: str,
         pred_time_uuid_col_name: str,
-        verbose: bool = False,
+        verbose: bool = False,  # noqa
     ) -> DataFrame:
-
         """Create a dataframe with flattened values (either predictor or
+
         outcome depending on the value of "direction").
 
         Args:
@@ -403,7 +405,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             self.msg.info(f"Cache miss, computed values didn't match {file_pattern}")
 
             # Keep this variable for easier inspection
-            unequal_rows = merged_df[  # pylint: disable=unused-variable
+            unequal_rows = merged_df[  # pylint: disable=unused-variable # noqa
                 merged_df[value_col_str + generated_suffix]
                 != merged_df[value_col_str + cached_suffix]
             ]
@@ -510,6 +512,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
         """Randomly sample 50 positions in each df and check that their indeces
+
         are identical.
 
         This checks that all the dataframes are aligned before
@@ -526,9 +529,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     def _concatenate_flattened_timeseries(
         self,
         flattened_predictor_dfs: list[pd.DataFrame],
-    ):
+    ) -> None:
         """Concatenate flattened predictor dfs."""
-
         msg = Printer(timestamp=True)
         msg.info(
             "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
@@ -560,7 +562,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         predictor_specs: list[PredictorSpec],
     ):
         """Add predictors to the flattened dataframe from a list."""
-
         # Shuffle predictor specs to avoid IO contention
         random.shuffle(predictor_specs)
 
@@ -583,9 +584,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         id2date_of_birth: DataFrame,
         input_date_of_birth_col_name: Optional[str] = "date_of_birth",
         output_prefix: str = "pred",
-        birth_year_as_predictor: bool = False,
+        birth_year_as_predictor: bool = False,  # noqa
     ):
         """Add age at prediction time and patient's birth year to each
+
         prediction time.
 
         Args:
@@ -601,7 +603,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                     id2date_of_birth[input_date_of_birth_col_name],
                     format="%Y-%m-%d",
                 )
-            except Exception as e:
+            except ValueError as e:
                 raise ValueError(
                     f"Conversion of {input_date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
                 ) from e
@@ -644,7 +646,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Raises:
             ValueError: If input_col_name does not match a column in info_df.
         """
-
         # Try to infer value col name if not provided
         if static_spec.input_col_name_override is None:
             possible_value_cols = [
@@ -740,7 +741,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Args:
             output_spec (OutcomeSpec): OutcomeSpec object.
         """
-
         if output_spec.incident:
             self._add_incident_outcome(
                 outcome_spec=output_spec,
@@ -756,6 +756,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         output_spec: PredictorSpec,
     ):
         """Add a column with predictor values to the flattened dataset (e.g.
+
         "average value of bloodsample within n days").
 
         Args:
@@ -770,6 +771,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         output_spec: TemporalSpec,
     ):
         """Add a column to the dataset (either predictor or outcome depending
+
         on the value of "direction").
 
         Args:
@@ -810,6 +812,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         pred_time_uuid_colname: str,
     ) -> DataFrame:
         """Ensure all prediction times are represented in the returned
+
         dataframe.
 
         Args:
@@ -835,6 +838,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         pred_time_uuid_colname: str,
     ) -> DataFrame:
         """Apply the resolve_multiple function to prediction_times where there
+
         are multiple values within the interval_days lookahead.
 
         Args:
@@ -876,6 +880,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         timestamp_value_colname: str,
     ) -> DataFrame:
         """Keep only rows where timestamp_value is within interval_days in
+
         direction of timestamp_pred.
 
         Args:

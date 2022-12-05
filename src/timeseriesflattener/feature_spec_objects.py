@@ -38,7 +38,9 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 def resolve_values_df(data: dict[str, Any]):
     """Resolve the values_df attribute of a feature spec to a values
-    dataframe."""
+
+    dataframe.
+    """
     if "values_loader" not in data and "values_df" not in data:
         raise ValueError("Either values_loader or df must be specified.")
 
@@ -74,7 +76,9 @@ class BaseModel(PydanticBaseModel):
 
     class Config:
         """A pydantic basemodel, which doesn't allow attributes that are not
-        defined in the class."""
+
+        defined in the class.
+        """
 
         arbitrary_types_allowed = True
         extra = Extra.forbid
@@ -125,8 +129,9 @@ class AnySpec(BaseModel):
 
         return col_str
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Trying to run `spec in list_of_specs` works for all attributes
+
         except for df, since the truth value of a dataframe is ambiguous. To
         remedy this, we use pandas'.
 
@@ -140,7 +145,7 @@ class AnySpec(BaseModel):
             if attr != "values_df"
         )
 
-        dfs_equal = self.values_df.equals(other.values_df)
+        dfs_equal = self.values_df.equals(other.values_df)  # type: ignore
 
         return other_attributes_equal and dfs_equal
 
@@ -151,6 +156,7 @@ class StaticSpec(AnySpec):
 
 class TemporalSpec(AnySpec):
     """The minimum specification required for all collapsed time series
+
     (temporal features), whether looking ahead or behind.
 
     Mostly used for inheritance below.
@@ -223,8 +229,6 @@ class PredictorSpec(TemporalSpec):
 
         super().__init__(**data)
 
-        pass
-
 
 class OutcomeSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
@@ -248,6 +252,7 @@ class OutcomeSpec(TemporalSpec):
     # way during resolution, which is faster than non-incident outcomes.
 
     def get_col_str(self) -> str:
+        """Get the column name for the output column."""
         col_str = super().get_col_str()
 
         if self.is_dichotomous():
@@ -268,6 +273,7 @@ class OutcomeSpec(TemporalSpec):
 
 class MinGroupSpec(BaseModel):
     """Minimum specification for a group of features, whether they're looking
+
     ahead or behind.
 
     Used to generate combinations of features.
@@ -315,7 +321,7 @@ class MinGroupSpec(BaseModel):
                 f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info.
                 {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
-                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all().keys())}""",
+                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all())}"""
             )
 
         if self.output_col_name_override:
@@ -335,15 +341,16 @@ def create_feature_combinations_from_dict(
     d: dict[str, Union[str, list]],
 ) -> list[dict[str, Union[str, float, int]]]:
     """Create feature combinations from a dictionary of feature specifications.
+
     Only unpacks the top level of lists.
 
     Args:
         d (dict[str]): A dictionary of feature specifications.
 
-    Returns:
+    Returns
+    -------
         list[dict[str]]: list of all possible combinations of the arguments.
     """
-
     # Make all elements iterable
     d = {k: v if isinstance(v, (list, tuple)) else [v] for k, v in d.items()}
     keys, values = zip(*d.items())
@@ -359,7 +366,6 @@ def create_specs_from_group(
     output_class: AnySpec,
 ) -> list[AnySpec]:
     """Create a list of specs from a GroupSpec."""
-
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
 

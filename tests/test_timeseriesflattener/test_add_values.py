@@ -14,8 +14,6 @@ from timeseriesflattener.testing.utils_for_testing import (
 )
 
 # pylint: disable=import-error
-# from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
-# from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
 
 
 # Predictors
