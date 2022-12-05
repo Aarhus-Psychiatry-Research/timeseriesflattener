@@ -27,7 +27,7 @@ def load_raw_test_csv(filename: str, n_rows: Optional[int] = None) -> pd.DataFra
 
 
 @data_loaders.register("synth_predictor_float")
-def synth_predictor_float(
+def load_synth_predictor_float(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
     """Load synth predictor data.".

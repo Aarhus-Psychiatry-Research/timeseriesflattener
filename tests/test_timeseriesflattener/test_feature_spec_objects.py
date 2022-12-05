@@ -4,7 +4,7 @@ import pytest
 
 from timeseriesflattener.feature_spec_objects import AnySpec
 from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
-    synth_predictor_float,
+    load_synth_predictor_float,
 )
 
 
