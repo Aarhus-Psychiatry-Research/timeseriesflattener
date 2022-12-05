@@ -10,13 +10,12 @@ If you wish to use this library in your research, please cite it using (Changing
 .. TODO: the following need to be corrected:
 .. code-block::
 
-   @software{Enevoldsen_spaCy-wrap_For_Wrapping_2022,
-      author = {Enevoldsen, Kenneth},
-      doi = {10.5281/zenodo.6675315},
-      month = {8},
-      title = {{spaCy-wrap: For Wrapping fine-tuned transformers in spaCy pipelines}},
-      url = {https://github.com/KennethEnevoldsen/spacy-wrap},
-      version = {1.0.2},
+   @software{Bernstorff_timeseriesflattener_2022,
+      author = {Bernstorff, Martin and Enevoldsen, Kenneth and Damgaard, Jakob Grøhn and Hæstrup, Frida and Hansen, Lasse},
+      doi = {10.5281/zenodo.7389672},
+      month = {11},
+      title = {{timeseriesflattener}},
+      url = {https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener},
       year = {2022}
    }
 
@@ -25,7 +24,7 @@ Or if you prefer APA:
 
 .. code-block:: 
 
-   Enevoldsen, K. (2022). spaCy-wrap: For Wrapping fine-tuned transformers in spaCy pipelines (Version 1.0.2) [Computer software]. https://doi.org/10.5281/zenodo.6675315
+   Bernstorff, M., Enevoldsen, K., Damgaard, J. G., Hæstrup, F., & Hansen, L. (2022). timeseriesflattener [Computer software]. https://doi.org/10.5281/zenodo.7389672
 
 
 
