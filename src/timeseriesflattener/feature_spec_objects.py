@@ -213,9 +213,17 @@ class PredictorSpec(TemporalSpec):
     lookbehind_days: Union[int, float]
 
     def __init__(self, **data):
-        data["interval_days"] = data["lookbehind_days"]
+        if "lookbehind_days" in data:
+            data["interval_days"] = data["lookbehind_days"]
+
+        data["lookbehind_days"] = data["interval_days"]
+
+        if not data["interval_days"] and not data["lookbehind_days"]:
+            raise ValueError("lookbehind_days or interval_days must be specified.")
 
         super().__init__(**data)
+
+        pass
 
 
 class OutcomeSpec(TemporalSpec):
@@ -228,7 +236,10 @@ class OutcomeSpec(TemporalSpec):
     lookahead_days: Union[int, float]
 
     def __init__(self, **data):
-        data["interval_days"] = data["lookahead_days"]
+        if "lookahead_days" in data:
+            data["interval_days"] = data["lookahead_days"]
+
+        data["lookahead_days"] = data["interval_days"]
 
         super().__init__(**data)
 
