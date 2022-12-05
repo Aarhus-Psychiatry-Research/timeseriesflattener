@@ -39,6 +39,7 @@ def test_anyspec_incorrect_values_loader_str():
 
 
 def test_that_col_names_in_kwargs_exist_in_df():
+    """Raise error if col name specified which is not in df."""
     # Create a sample dataframe
     df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
 

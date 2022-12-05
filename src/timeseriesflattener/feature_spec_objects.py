@@ -149,7 +149,7 @@ class AnySpec(BaseModel):
         return col_str
 
     def __eq__(self, other):
-        """Trying to run `spec in list_of_specs` works for all attributes
+        """Trying to run `spec in list_of_specs` works for all attributes.
 
         except for df, since the truth value of a dataframe is ambiguous. To
         remedy this, we use pandas'.
@@ -265,7 +265,7 @@ class OutcomeSpec(TemporalSpec):
 
 
 class MinGroupSpec(BaseModel):
-    """Minimum specification for a group of features, whether they're looking
+    """Minimum specification for a group of features, whether they're looking.
 
     ahead or behind.
 
