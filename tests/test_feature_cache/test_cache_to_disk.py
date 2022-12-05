@@ -1,5 +1,4 @@
 """Testing of the DiskCache class."""
-from html import entities
 
 import numpy as np
 import pandas as pd
