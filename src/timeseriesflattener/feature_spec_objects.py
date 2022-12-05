@@ -210,6 +210,13 @@ class PredictorSpec(TemporalSpec):
 
     prefix: str = "pred"
 
+    lookbehind_days: Union[int, float]
+
+    def __init__(self, **data):
+        data["interval_days"] = data["lookbehind_days"]
+
+        super().__init__(**data)
+
 
 class OutcomeSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
@@ -217,6 +224,8 @@ class OutcomeSpec(TemporalSpec):
     prefix: str = "outc"
 
     incident: bool
+
+    lookahead_days: Union[int, float]
 
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
     # For example, type 2 diabetes is incident. Incident outcomes cna be handled in a vectorised
@@ -239,6 +248,11 @@ class OutcomeSpec(TemporalSpec):
         )
 
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
+
+    def __init__(self, **data):
+        data["interval_days"] = data["lookahead_days"]
+
+        super().__init__(**data)
 
 
 class MinGroupSpec(BaseModel):
