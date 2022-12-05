@@ -15,6 +15,7 @@ authors:
     given-names: "Lasse"
     orcid: "https://orcid.org/0000-0003-1113-4779"
 
+doi: 10.5281/zenodo.7389672
 title: "timeseriesflattener"
 date-released: 2022-11-03
 url: "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
