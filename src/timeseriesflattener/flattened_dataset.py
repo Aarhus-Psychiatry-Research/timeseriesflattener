@@ -1,5 +1,7 @@
 """Takes a time-series and flattens it into a set of prediction times with
-describing values."""
+
+describing values.
+"""
 import datetime as dt
 import random
 import time
@@ -99,17 +101,16 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self.cache = cache
 
         if self.cache:
-            self.cache.prediction_times_df = prediction_times_df
-            self.cache.pred_time_uuid_col_name = self.pred_time_uuid_col_name
-            self.cache.timestamp_col_name = self.timestamp_col_name
-            self.cache.id_col_name = self.id_col_name
+            self._override_cache_attributes_with_self_attributes(prediction_times_df)
 
         self.n_uuids = prediction_times_df.shape[0]
 
         self.msg = Printer(timestamp=True)
 
         if "value" in prediction_times_df.columns:
-            prediction_times_df.drop("value", axis=1, inplace=True)
+            raise ValueError(
+                "Column 'value' should not occur in prediction_times_df, only timestamps and ids."
+            )
 
         self._df = prediction_times_df
 
@@ -124,6 +125,35 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             str,
         ) + self._df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
+    def _override_cache_attributes_with_self_attributes(
+        self, prediction_times_df: DataFrame
+    ):
+        """Make cache inherit attributes from flattened dataset.
+
+        Avoids duplicate specification.
+        """
+        if self.cache.prediction_times_df != prediction_times_df:
+            msg.warn(
+                "Overriding prediction_times_df in cache with prediction_times_df passed to init"
+            )
+            self.cache.prediction_times_df = prediction_times_df
+
+        if self.cache.pred_time_uuid_col_name != self.pred_time_uuid_col_name:
+            msg.warn(
+                "Overriding pred_time_uuid_col_name in cache with pred_time_uuid_col_name passed to init"
+            )
+            self.cache.pred_time_uuid_col_name = self.pred_time_uuid_col_name
+
+        if self.cache.timestamp_col_name != self.timestamp_col_name:
+            msg.warn(
+                "Overriding timestamp_col_name in cache with timestamp_col_name passed to init"
+            )
+            self.cache.timestamp_col_name = self.timestamp_col_name
+
+        if self.cache.id_col_name != self.id_col_name:
+            msg.warn("Overriding id_col_name in cache with id_col_name passed to init")
+            self.cache.id_col_name = self.id_col_name
+
     @staticmethod
     def flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
@@ -133,8 +163,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         pred_time_uuid_col_name: str,
         verbose: bool = False,
     ) -> DataFrame:
-
         """Create a dataframe with flattened values (either predictor or
+
         outcome depending on the value of "direction").
 
         Args:
@@ -281,6 +311,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
         """Randomly sample 50 positions in each df and check that their indeces
+
         are identical.
 
         This checks that all the dataframes are aligned before
@@ -357,6 +388,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         birth_year_as_predictor: bool = False,
     ):
         """Add age at prediction time and patient's birth year to each
+
         prediction time.
 
         Args:
@@ -527,6 +559,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         output_spec: PredictorSpec,
     ):
         """Add a column with predictor values to the flattened dataset (e.g.
+
         "average value of bloodsample within n days").
 
         Args:
@@ -541,6 +574,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         output_spec: AnySpec,
     ):
         """Add a column to the dataset (either predictor or outcome depending
+
         on the value of "direction").
 
         Args:
@@ -581,6 +615,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         pred_time_uuid_colname: str,
     ) -> DataFrame:
         """Ensure all prediction times are represented in the returned
+
         dataframe.
 
         Args:
@@ -606,6 +641,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         pred_time_uuid_colname: str,
     ) -> DataFrame:
         """Apply the resolve_multiple function to prediction_times where there
+
         are multiple values within the interval_days lookahead.
 
         Args:
@@ -647,6 +683,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         timestamp_value_colname: str,
     ) -> DataFrame:
         """Keep only rows where timestamp_value is within interval_days in
+
         direction of timestamp_pred.
 
         Args:
