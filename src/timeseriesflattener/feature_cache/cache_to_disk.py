@@ -19,6 +19,8 @@ class DiskCache(FeatureCache):
         feature_cache_dir: Path,
         prediction_times_df: Optional[pd.DataFrame] = None,
         pred_time_uuid_col_name: str = "pred_time_uuid",
+        id_col_name: str = "entity_id",
+        timestamp_col_name: str = "timestamp",
         cache_file_suffix: str = ".parquet",
     ):
         """Initialize DiskCache.
@@ -39,6 +41,8 @@ class DiskCache(FeatureCache):
 
         self.feature_cache_dir = feature_cache_dir
         self.cache_file_suffix = cache_file_suffix
+        self.entity_id_col_name = id_col_name
+        self.timestamp_col_name = timestamp_col_name
 
         if not self.feature_cache_dir.exists():
             self.feature_cache_dir.mkdir()
@@ -124,6 +128,7 @@ class DiskCache(FeatureCache):
             validate="m:1",
         )
 
+        # Replace NaNs with fallback
         df[feature_spec.get_col_str()] = df[feature_spec.get_col_str()].fillna(
             feature_spec.fallback,
         )
@@ -142,10 +147,13 @@ class DiskCache(FeatureCache):
         # Drop rows containing fallback, since it's non-informative
         df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()
 
-        # Write df to cache
-        timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        # Drop entity and timestamp columns if they exists
+        for col in [self.entity_id_col_name, self.timestamp_col_name]:
+            if col in df.columns:
+                df = df.drop(columns=col)
 
         # Write df to cache
+        timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         write_df_to_file(
             df=df,
             file_path=self.feature_cache_dir

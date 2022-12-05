@@ -101,6 +101,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if self.cache:
             self.cache.prediction_times_df = prediction_times_df
             self.cache.pred_time_uuid_col_name = self.pred_time_uuid_col_name
+            self.cache.timestamp_col_name = self.timestamp_col_name
+            self.cache.id_col_name = self.id_col_name
 
         self.n_uuids = prediction_times_df.shape[0]
 

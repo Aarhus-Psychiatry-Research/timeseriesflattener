@@ -1,6 +1,9 @@
 """Testing of the DiskCache class."""
+from html import entities
+
 import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import PredictorSpec
@@ -13,6 +16,7 @@ def test_write_and_check_feature(tmp_path):
     cache = DiskCache(
         feature_cache_dir=tmp_path,
         pred_time_uuid_col_name="pred_time_uuid",
+        id_col_name="dw_ek_borger",
         cache_file_suffix="csv",
         prediction_times_df=pd.DataFrame(
             {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]},
@@ -53,19 +57,24 @@ def test_write_and_check_feature(tmp_path):
 
 
 def test_read_feature(tmp_path):
-    """Test that read_feature writes a feature to disk.
+    """Test that read_feature reads a feature from disk.
 
     Important that one row contains the fallback because we then test
     removing fallback vals when saving and expanding them again when
     reading.
     """
 
+    # Note that initialisation is much simpler i flattened dataset, since
+    # many of the col names are specified in the instantiation of the
+    # flattened dataset, and passed along to the cache.
     cache = DiskCache(
         feature_cache_dir=tmp_path,
         pred_time_uuid_col_name="pred_time_uuid",
+        id_col_name="dw_ek_borger",
+        timestamp_col_name="timestamp",
         cache_file_suffix="csv",
         prediction_times_df=pd.DataFrame(
-            {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]},
+            {"pred_time_uuid": [1, 2, 3], "dw_ek_borger": [1, 2, 3]},
         ),
     )
 
@@ -88,7 +97,11 @@ def test_read_feature(tmp_path):
 
     generated_df = pd.DataFrame(
         {
-            "dw_ek_borger": [1, 2, 3],
+            "dw_ek_borger": [
+                1,
+                2,
+                3,
+            ],  # The merge recasts to the most general type, int -> float
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_col_str()}": [1, 2, np.nan],
@@ -99,5 +112,9 @@ def test_read_feature(tmp_path):
 
     df = cache.read_feature(feature_spec=test_spec)
 
-    assert df.shape[0] == 3
-    assert df[df["timestamp"].isna()].shape[0] == 1
+    # For each column in df, check that the values are equal to generated_df
+    for col in df.columns:
+        assert_frame_equal(
+            df[col].to_frame(),
+            generated_df[col].to_frame(),
+        )

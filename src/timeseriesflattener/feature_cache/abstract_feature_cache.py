@@ -16,6 +16,8 @@ class FeatureCache(metaclass=ABCMeta):
         *args,
         prediction_times_df: Optional[pd.DataFrame] = None,
         pred_time_uuid_col_name: str = "pred_time_uuid",
+        id_col_name: str = "entity_id",
+        timestamp_col_name: str = "timestamp",
     ):
         """Initialize a FeatureCache.
 
@@ -23,7 +25,10 @@ class FeatureCache(metaclass=ABCMeta):
             prediction_times_df (Optional[pd.DataFrame], optional): DataFrame containing prediction times.
                 Must be set at some point, but doesn't have to be set at init.
                 Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer during initialization. Defaults to None. Defaults to None.
-            pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids. Defaults to "pred_time_uuid".
+            pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids.
+            id_col_name (str, optional): Name of column containing entity ids. Defaults to "entity_id".
+            timestamp_col_name (str, optional): Name of column containing timestamps. Defaults to "timestamp".
+            Defaults to "pred_time_uuid".
         """
         self.prediction_times_df = prediction_times_df
         self.pred_time_uuid_col_name = pred_time_uuid_col_name
