@@ -21,7 +21,7 @@ class DiskCache(FeatureCache):
         pred_time_uuid_col_name: str = "pred_time_uuid",
         id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
-        cache_file_suffix: str = ".parquet",
+        cache_file_suffix: str = "parquet",
     ):
         """Initialize DiskCache.
 
