@@ -40,7 +40,6 @@ jobs:
           poetry-version: ${{ env.poetry-version }}
           cache-version: ${{ env.cache-version }}
 
-<<<<<<< HEAD
   jupyter-tutorials:
     runs-on: ${{ matrix.os }}
 
@@ -64,8 +63,6 @@ jobs:
           poetry-version: ${{ env.poetry-version }}
           cache-version: ${{ env.cache-version }}
 
-=======
->>>>>>> parent of 602cf5e (ci: test tutorials)
   release:
     runs-on: ubuntu-latest
     concurrency: release
