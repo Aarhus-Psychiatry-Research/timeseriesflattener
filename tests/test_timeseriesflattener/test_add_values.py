@@ -462,8 +462,8 @@ def test_add_temporal_predictors_then_temporal_outcome():
         feature_name="value",
     )
 
-    flattened_dataset.add_temporal_predictors_from_pred_specs(
-        predictor_specs=[predictor_spec_list],
+    flattened_dataset.add_temporal_predictor_batch(
+        predictor_batch=[predictor_spec_list],
     )
 
     flattened_dataset.add_temporal_outcome(
