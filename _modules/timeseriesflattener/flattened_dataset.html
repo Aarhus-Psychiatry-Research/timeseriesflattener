@@ -369,8 +369,8 @@
             <span class="nb">str</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;-%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TimeseriesFlattener.flatten_temporal_values_to_df"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.flatten_temporal_values_to_df">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">flatten_temporal_values_to_df</span><span class="p">(</span>  <span class="c1"># noqa pylint: disable=too-many-locals</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_flatten_temporal_values_to_df</span><span class="p">(</span>  <span class="c1"># noqa pylint: disable=too-many-locals</span>
         <span class="n">prediction_times_with_uuid_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">output_spec</span><span class="p">:</span> <span class="n">AnySpec</span><span class="p">,</span>
         <span class="n">id_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -465,7 +465,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Returning </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> rows of flattened dataframe for </span><span class="si">{</span><span class="n">output_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()]]</span></div>
+        <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()]]</span>
 
     <span class="k">def</span> <span class="nf">_get_temporal_feature</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -486,7 +486,7 @@
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No cache specified, not attempting load&quot;</span><span class="p">)</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten_temporal_values_to_df</span><span class="p">(</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_temporal_values_to_df</span><span class="p">(</span>
             <span class="n">prediction_times_with_uuid_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span>
                 <span class="p">[</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span>
@@ -574,20 +574,20 @@
         <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging with original df&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">new_features</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TimeseriesFlattener.add_temporal_predictors_from_pred_specs"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_predictors_from_pred_specs">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_predictors_from_pred_specs</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
+<div class="viewcode-block" id="TimeseriesFlattener.add_temporal_predictor_batch"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_predictor_batch">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_predictor_batch</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">predictor_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">],</span>
+        <span class="n">predictor_batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">],</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add predictors to the flattened dataframe from a list.&quot;&quot;&quot;</span>
 
         <span class="c1"># Shuffle predictor specs to avoid IO contention</span>
-        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">predictor_specs</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">predictor_batch</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
             <span class="n">flattened_predictor_dfs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
                 <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_temporal_feature</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="n">predictor_specs</span><span class="p">),</span>
-                    <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">predictor_specs</span><span class="p">),</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_temporal_feature</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="n">predictor_batch</span><span class="p">),</span>
+                    <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">predictor_batch</span><span class="p">),</span>
                 <span class="p">),</span>
             <span class="p">)</span>
 
@@ -604,9 +604,9 @@
         <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span><span class="p">,</span>
         <span class="n">birth_year_as_predictor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add age at prediction time and patient&#39;s birth year to each.</span>
+        <span class="sd">&quot;&quot;&quot;Add age at prediction time as predictor.</span>
 
-<span class="sd">        prediction time.</span>
+<span class="sd">        Also add patient&#39;s birth date. Has its own function because of its very frequent use.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            id2date_of_birth (DataFrame): Two columns, id and date_of_birth.</span>
@@ -751,48 +751,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="TimeseriesFlattener.add_temporal_outcome"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_outcome">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_outcome</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">output_spec</span><span class="p">:</span> <span class="n">OutcomeSpec</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add an outcome-column to the dataset.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            output_spec (OutcomeSpec): OutcomeSpec object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">incident</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_add_incident_outcome</span><span class="p">(</span>
-                <span class="n">outcome_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_temporal_col_to_flattened_dataset</span><span class="p">(</span>
-                <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
-            <span class="p">)</span></div>
-
-<div class="viewcode-block" id="TimeseriesFlattener.add_temporal_predictor"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_predictor">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_predictor</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">output_spec</span><span class="p">:</span> <span class="n">PredictorSpec</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a column with predictor values to the flattened dataset (e.g.</span>
-
-<span class="sd">        &quot;average value of bloodsample within n days&quot;).</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            output_spec (Union[PredictorSpec]): Specification of the output column.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_temporal_col_to_flattened_dataset</span><span class="p">(</span>
-            <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
-<div class="viewcode-block" id="TimeseriesFlattener.add_temporal_col_to_flattened_dataset"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_col_to_flattened_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_col_to_flattened_dataset</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_add_temporal_col_to_flattened_dataset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">output_spec</span><span class="p">:</span> <span class="n">AnySpec</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a column to the dataset (either predictor or outcome depending.</span>
+        <span class="sd">&quot;&quot;&quot;Add a column to the dataset.</span>
 
-<span class="sd">        on the value of &quot;direction&quot;).</span>
+<span class="sd">        Either predictor or outcome depending on the type of specification.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.</span>
@@ -805,7 +770,7 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="si">}</span><span class="s2"> is of type </span><span class="si">{</span><span class="n">timestamp_col_type</span><span class="si">}</span><span class="s2">, not &#39;Timestamp&#39; from Pandas. Will cause problems. Convert before initialising FlattenedDataset.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">flatten_temporal_values_to_df</span><span class="p">(</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">_flatten_temporal_values_to_df</span><span class="p">(</span>
             <span class="n">prediction_times_with_uuid_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span>
                 <span class="p">[</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">,</span>
@@ -823,6 +788,39 @@
             <span class="n">right</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
             <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span>
             <span class="n">validate</span><span class="o">=</span><span class="s2">&quot;1:1&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="TimeseriesFlattener.add_temporal_outcome"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_outcome">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_outcome</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output_spec</span><span class="p">:</span> <span class="n">OutcomeSpec</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add an outcome-column to the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_spec (OutcomeSpec): OutcomeSpec object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">incident</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_incident_outcome</span><span class="p">(</span>
+                <span class="n">outcome_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_temporal_col_to_flattened_dataset</span><span class="p">(</span>
+                <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeseriesFlattener.add_temporal_predictor"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_predictor">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_predictor</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output_spec</span><span class="p">:</span> <span class="n">PredictorSpec</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a column with predictor values to the flattened dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_spec (Union[PredictorSpec]): Specification of the output column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_temporal_col_to_flattened_dataset</span><span class="p">(</span>
+            <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
         <span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
