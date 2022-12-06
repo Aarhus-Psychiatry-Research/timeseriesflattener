@@ -3,10 +3,8 @@
 # pylint: disable=missing-function-docstring
 
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec
-from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
-    synth_predictor_float,
-)
-from timeseriesflattener.utils import data_loaders  # pylint: disable=unused-import
+from timeseriesflattener.testing.load_synth_data import synth_predictor_float  # noqa
+from timeseriesflattener.utils import data_loaders  # noqa
 
 
 def test_skip_all_if_no_need_to_process():
@@ -14,7 +12,7 @@ def test_skip_all_if_no_need_to_process():
         len(
             PredictorGroupSpec(
                 values_loader=["synth_predictor_float"],
-                input_col_name_override="val",
+                input_col_name_override="value",
                 interval_days=[1],
                 resolve_multiple_fn=["max"],
                 fallback=[0],
@@ -28,7 +26,7 @@ def test_skip_all_if_no_need_to_process():
 def test_skip_one_if_no_need_to_process():
     created_combinations = PredictorGroupSpec(
         values_loader=["synth_predictor_float"],
-        input_col_name_override="val",
+        input_col_name_override="value",
         interval_days=[1, 2],
         resolve_multiple_fn=["max", "min"],
         fallback=[0],

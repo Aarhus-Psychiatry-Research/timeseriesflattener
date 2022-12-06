@@ -56,7 +56,7 @@ known_third_party = ["wandb"]
 [tool.pylint]
 load-plugins = "pylint.extensions.docparams,pylint.extensions.code_style,pylint.extensions.for_any_all,pylint.extensions.typing"
 good-names = "df,p,f,d,e,n,k,i,v"
-disable = "too-many-lines,line-too-long,missing-raises-doc,no-self-argument,unused-wildcard-import,wildcard-import,no-else-return,too-many-arguments,redefined-outer-name,c-extension-no-member,wrong-import-order"
+disable = "too-many-lines,line-too-long,missing-raises-doc,no-self-argument,unused-wildcard-import,wildcard-import,no-else-return,too-many-arguments,redefined-outer-name,c-extension-no-member,wrong-import-order,unused-import"
 ignore-paths = ['docs/*']
 
 [tool.semantic_release]
