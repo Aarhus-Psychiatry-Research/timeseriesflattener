@@ -2,6 +2,7 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -152,10 +153,8 @@ def test_cache_hitting(
 
 
 if __name__ == "__main__":
-    base_float_predictor_combinations = PredictorGroupSpec(
-        values_loader=["synth_predictor_float"],
-        interval_days=[365, 730],
-        resolve_multiple_fn=["mean"],
-        fallback=[np.NaN],
-        allowed_nan_value_prop=[0.0],
-    ).create_combinations()
+    test_cache_hitting(
+        tmp_path=Path("tmp"),
+        synth_prediction_times=load_synth_prediction_times(),
+        predictor_specs=base_float_predictor_combinations,
+    )

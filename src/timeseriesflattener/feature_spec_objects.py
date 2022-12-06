@@ -1,6 +1,7 @@
 """Templates for feature specifications."""
 
 import itertools
+import logging
 from collections.abc import Callable, Sequence
 from functools import cache
 from typing import Any, Optional, Union
@@ -9,12 +10,11 @@ import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
-from wasabi import Printer
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders
 
-msg = Printer(timestamp=True)
+log = logging.getLogger(__name__)
 
 
 @cache
@@ -24,9 +24,13 @@ def load_df_with_cache(
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
-    msg.info(f"{feature_name}: Loading values")
+    log.info(
+        f"{feature_name}: Loading values",
+    )  # pylint: disable=logging-fstring-interpolation
     df = loader_fn(**kwargs)
-    msg.good(f"{feature_name}: Loaded values")
+    log.info(
+        f"{feature_name}: Loaded values",
+    )  # pylint: disable=logging-fstring-interpolation
 
     return df
 
@@ -37,9 +41,9 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 
 def resolve_values_df(data: dict[str, Any]):
-    """Resolve values_df attribute to a values dataframe."""
+    """Resolve the values_df attribute to a dataframe."""
     if "values_loader" not in data and "values_df" not in data:
-        raise ValueError("Either values_loader or df must be specified.")
+        raise ValueError("Either values_loader or a dataframe must be specified.")
 
     if in_dict_and_not_none(d=data, key="values_loader") and in_dict_and_not_none(
         key="values_df",
@@ -150,14 +154,10 @@ class AnySpec(BaseModel):
         return col_str
 
     def __eq__(self, other):
-        """Trying to run `spec in list_of_specs` works for all attributes.
+        """Add equality check for dataframes.
 
-        except for df, since the truth value of a dataframe is ambiguous. To
-        remedy this, we use pandas'.
-
-        .equals() method for comparing the dfs, and get the combined truth value.
-
-        We need to override the __eq__ method.
+        Trying to run `spec in list_of_specs` works for all attributes except for df, since the truth value of a dataframe is ambiguous.
+        To remedy this, we use pandas' .equals() method for comparing the dfs, and get the combined truth value.
         """
         other_attributes_equal = all(
             getattr(self, attr) == getattr(other, attr)
@@ -175,7 +175,9 @@ class StaticSpec(AnySpec):
 
 
 class TemporalSpec(AnySpec):
-    """The minimum specification required for all collapsed time series.
+    """The minimum specification required for all collapsed time series
+
+    (temporal features), whether looking ahead or behind.
 
     Both if looking ahead or behind. Mostly used for inheritance below.
     """
@@ -266,7 +268,7 @@ class OutcomeSpec(TemporalSpec):
 
 
 class MinGroupSpec(BaseModel):
-    """Minimum specification for a group of features, whether they're looking.
+    """Minimum specification for a group of features, whether they're looking
 
     ahead or behind.
 

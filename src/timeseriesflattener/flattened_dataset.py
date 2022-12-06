@@ -3,6 +3,7 @@
 describing values.
 """
 import datetime as dt
+import logging
 import random
 import time
 from collections.abc import Callable
@@ -10,13 +11,13 @@ from datetime import timedelta
 from multiprocessing import Pool
 from typing import Optional
 
+import coloredlogs
 import numpy as np
 import pandas as pd
 import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
-from wasabi import Printer, msg
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
@@ -30,20 +31,11 @@ from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 
 ProgressBar().register()
 
+log = logging.getLogger(__name__)
+
 
 class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
-    """Turn a set of time-series into tabular prediction-time data.
-
-    Attributes:
-        df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
-        n_workers (int): Number of subprocesses to spawn for parallelization.
-        timestamp_col_name (str): Column name name for timestamps. Is used across outcomes and predictors.
-        id_col_name (str): Column namn name for patients ids. Is used across outcome and predictors.
-        predictor_col_name_prefix (str): Prefix for predictor col names.
-        outcome_col_name_prefix (str): Prefix for outcome col names.
-        pred_time_uuid_col_name (str): Column name for prediction time uuids.
-        feature_cache_dir (Path): Path to cache directory for feature dataframes.
-    """
+    """Turn a set of time-series into tabular prediction-time data."""
 
     def _override_cache_attributes_with_self_attributes(
         self,
@@ -59,7 +51,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         ):
             self.cache.prediction_times_df = prediction_times_df
         elif not self.cache.prediction_times_df.equals(prediction_times_df):
-            msg.warn(
+            log.warning(
                 "Overriding prediction_times_df in cache with prediction_times_df passed to init",
             )
             self.cache.prediction_times_df = prediction_times_df
@@ -67,7 +59,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         for attr in ["pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"]:
             if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
                 if getattr(self.cache, attr) != getattr(self, attr):
-                    msg.warn(
+                    log.warning(
                         f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
                     )
                     setattr(self.cache, attr, getattr(self, attr))
@@ -81,6 +73,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
         n_workers: int = 60,
+        log_to_stdout: bool = True,
     ):
         """Class containing a time-series, flattened.
 
@@ -113,6 +106,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to "pred_".
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
             n_workers (int): Number of subprocesses to spawn for parallelization. Defaults to 60.
+            log_to_stdout (bool): Whether to log to stdout. Either way, also logs to the __name__ namespace, which you can capture with a root logger. Defaults to True.
 
         Raises:
             ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df
@@ -132,8 +126,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         self.n_uuids = prediction_times_df.shape[0]
 
-        self.msg = Printer(timestamp=True)
-
         if "value" in prediction_times_df.columns:
             raise ValueError(
                 "Column 'value' should not occur in prediction_times_df, only timestamps and ids.",
@@ -151,6 +143,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self._df[self.pred_time_uuid_col_name] = self._df[self.id_col_name].astype(
             str,
         ) + self._df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
+
+        if log_to_stdout:
+            # Setup logging to stdout by default
+            coloredlogs.install(
+                level=logging.INFO,
+                fmt="%(asctime)s [%(levelname)s] %(message)s",
+            )
 
     @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
@@ -244,7 +243,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
         if verbose:
-            msg.good(
+            log.info(
                 f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",
             )
 
@@ -267,7 +266,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             df = self.cache.read_feature(feature_spec=feature_spec)
             return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
         elif not self.cache:
-            msg.info("No cache specified, not attempting load")
+            log.info("No cache specified, not attempting load")
 
         df = self._flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
@@ -330,9 +329,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         flattened_predictor_dfs: list[pd.DataFrame],
     ):
         """Concatenate flattened predictor dfs."""
-
-        msg = Printer(timestamp=True)
-        msg.info(
+        log.info(
             "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
         )
 
@@ -352,9 +349,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         end_time = time.time()
 
-        msg.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
+        log.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
 
-        msg.info("Merging with original df")
+        log.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
     def add_temporal_predictor_batch(  # pylint: disable=too-many-branches
@@ -374,7 +371,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 ),
             )
 
-        msg.info("Feature generation complete, concatenating")
+        log.info("Feature generation complete, concatenating")
 
         self._concatenate_flattened_timeseries(
             flattened_predictor_dfs=flattened_predictor_dfs,
@@ -657,7 +654,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 df["timestamp_val"] - dt.datetime(1970, 1, 1)
             ).dt.total_seconds() / 86400
         except TypeError:
-            msg.info("All values are NaT, returning empty dataframe")
+            log.info("All values are NaT, returning empty dataframe")
 
         # Sort by timestamp_pred in case resolve_multiple needs dates
         df = df.sort_values(by="timestamp_val").groupby(pred_time_uuid_colname)
