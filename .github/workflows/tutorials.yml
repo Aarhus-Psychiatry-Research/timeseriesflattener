@@ -1,5 +1,0 @@
-name: Check that tutorial notebooks work
-
-on: [push]
-
-jobs:
