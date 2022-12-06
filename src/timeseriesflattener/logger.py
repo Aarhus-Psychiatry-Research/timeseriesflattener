@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
 
+from timeseriesflattener.utils import PROJECT_ROOT
+
 
 def setup_logger(
     name: str,
@@ -66,6 +68,12 @@ def setup_logger(
     return logger
 
 
-logger = setup_logger(
-    __name__, logging.DEBUG, "test.log", "%(asctime)s [%(levelname)s]: %(message)s"
-)
+if __name__ == "__main__":
+    # This is an example of how to setup a root logger
+    logger = setup_logger(
+        "",
+        level=logging.DEBUG,
+        log_file_path=PROJECT_ROOT / "logs" / "test.log",
+        format="%(asctime)s [%(levelname)s]: %(message)s",
+    )
+    )
