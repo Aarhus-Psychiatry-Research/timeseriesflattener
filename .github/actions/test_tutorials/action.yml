@@ -48,12 +48,11 @@ runs:
     - name: Install jupyter
       shell: bash
       run: |
-        python -m pip install --upgrade pip
         pip install jupyter
     - name: Compile notebooks and check for errors
       shell: bash
       run: |
-        jupyter nbconvert --to notebook --execute tutorials/*.ipynb
+        poetry run jupyter nbconvert --to notebook --execute tutorials/*.ipynb
         for notebook in tutorials/*.ipynb; do
           if grep -q "\"cell_type\": \"error\"" $notebook; then
             echo "Error cell found in $notebook"
