@@ -1,4 +1,4 @@
-"""Exampel of how to setup a logger with sensible defaults."""
+"""Example of how to setup a logger with sensible defaults."""
 
 import logging
 from pathlib import Path

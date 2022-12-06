@@ -10,12 +10,9 @@ import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
-from wasabi import Printer
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders
-
-msg = Printer(timestamp=True)
 
 log = logging.getLogger(__name__)
 
@@ -44,12 +41,9 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 
 def resolve_values_df(data: dict[str, Any]):
-    """Resolve the values_df attribute of a feature spec to a values
-
-    dataframe.
-    """
+    """Resolve the values_df attribute to a dataframe."""
     if "values_loader" not in data and "values_df" not in data:
-        raise ValueError("Either values_loader or df must be specified.")
+        raise ValueError("Either values_loader or a dataframe must be specified.")
 
     if in_dict_and_not_none(d=data, key="values_loader") and in_dict_and_not_none(
         key="values_df",
@@ -82,10 +76,7 @@ class BaseModel(PydanticBaseModel):
     """."""
 
     class Config:
-        """A pydantic basemodel, which doesn't allow attributes that are not
-
-        defined in the class.
-        """
+        """Block attributes that are not defined in the class."""
 
         arbitrary_types_allowed = True
         extra = Extra.forbid
@@ -137,14 +128,10 @@ class AnySpec(BaseModel):
         return col_str
 
     def __eq__(self, other):
-        """Trying to run `spec in list_of_specs` works for all attributes
+        """Add equality check for dataframes.
 
-        except for df, since the truth value of a dataframe is ambiguous. To
-        remedy this, we use pandas'.
-
-        .equals() method for comparing the dfs, and get the combined truth value.
-
-        We need to override the __eq__ method.
+        Trying to run `spec in list_of_specs` works for all attributes except for df, since the truth value of a dataframe is ambiguous.
+        To remedy this, we use pandas' .equals() method for comparing the dfs, and get the combined truth value.
         """
         other_attributes_equal = all(
             getattr(self, attr) == getattr(other, attr)
