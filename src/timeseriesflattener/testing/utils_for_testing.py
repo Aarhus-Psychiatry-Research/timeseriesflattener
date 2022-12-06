@@ -81,10 +81,7 @@ def assert_flattened_data_as_expected(
     expected_df: Optional[pd.DataFrame] = None,
     expected_values: Optional[Sequence[Any]] = None,
 ):
-    """Take a prediction times df and output spec and assert that the flattened
-
-    data is as expected.
-    """
+    """Flatten spec and assert that flattened data is as expected."""
     if isinstance(prediction_times_df, str):
         prediction_times_df = str_to_df(prediction_times_df)
 
@@ -93,7 +90,9 @@ def assert_flattened_data_as_expected(
         n_workers=4,
     )
 
-    flattened_ds._add_temporal_col_to_flattened_dataset(output_spec=output_spec)
+    flattened_ds._add_temporal_col_to_flattened_dataset(  # pylint: disable=protected-access
+        output_spec=output_spec,
+    )
 
     if expected_df:
         for col in expected_df.columns:

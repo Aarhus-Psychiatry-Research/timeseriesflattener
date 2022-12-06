@@ -534,39 +534,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         self._df = df
 
-    def add_temporal_outcome(
-        self,
-        output_spec: OutcomeSpec,
-    ):
-        """Add an outcome-column to the dataset.
-
-        Args:
-            output_spec (OutcomeSpec): OutcomeSpec object.
-        """
-
-        if output_spec.incident:
-            self._add_incident_outcome(
-                outcome_spec=output_spec,
-            )
-
-        else:
-            self._add_temporal_col_to_flattened_dataset(
-                output_spec=output_spec,
-            )
-
-    def add_temporal_predictor(
-        self,
-        output_spec: PredictorSpec,
-    ):
-        """Add a column with predictor values to the flattened dataset.
-
-        Args:
-            output_spec (Union[PredictorSpec]): Specification of the output column.
-        """
-        self._add_temporal_col_to_flattened_dataset(
-            output_spec=output_spec,
-        )
-
     def _add_temporal_col_to_flattened_dataset(
         self,
         output_spec: AnySpec,
@@ -604,6 +571,39 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             right=df,
             on=self.pred_time_uuid_col_name,
             validate="1:1",
+        )
+
+    def add_temporal_outcome(
+        self,
+        output_spec: OutcomeSpec,
+    ):
+        """Add an outcome-column to the dataset.
+
+        Args:
+            output_spec (OutcomeSpec): OutcomeSpec object.
+        """
+
+        if output_spec.incident:
+            self._add_incident_outcome(
+                outcome_spec=output_spec,
+            )
+
+        else:
+            self._add_temporal_col_to_flattened_dataset(
+                output_spec=output_spec,
+            )
+
+    def add_temporal_predictor(
+        self,
+        output_spec: PredictorSpec,
+    ):
+        """Add a column with predictor values to the flattened dataset.
+
+        Args:
+            output_spec (Union[PredictorSpec]): Specification of the output column.
+        """
+        self._add_temporal_col_to_flattened_dataset(
+            output_spec=output_spec,
         )
 
     @staticmethod
