@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.13.0 (2022-12-06)
+### Feature
+* Check that all col names exist in df before creating spec ([`7e75001`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7e7500146c75b854f4a6565283a07364fd2c63e7))
+
+### Documentation
+* Style ([`d56926e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d56926e74b80c1bf777a5109b55ca3b711b4de82))
+
 ## v0.12.1 (2022-12-06)
 ### Fix
 * Override cache attributes if unset or None ([`9f896c8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9f896c89be7f194c61de9d99ac0bfe8488ccb27f))
