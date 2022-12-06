@@ -37,6 +37,33 @@ log = logging.getLogger(__name__)
 class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     """Turn a set of time-series into tabular prediction-time data."""
 
+    def _override_cache_attributes_with_self_attributes(
+        self,
+        prediction_times_df: DataFrame,
+    ):
+        """Make cache inherit attributes from flattened dataset.
+
+        Avoids duplicate specification.
+        """
+        if (
+            not hasattr(self.cache, "prediction_times_df")
+            or self.cache.prediction_times_df is None
+        ):
+            self.cache.prediction_times_df = prediction_times_df
+        elif not self.cache.prediction_times_df.equals(prediction_times_df):
+            log.warning(
+                "Overriding prediction_times_df in cache with prediction_times_df passed to init",
+            )
+            self.cache.prediction_times_df = prediction_times_df
+
+        for attr in ["pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"]:
+            if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
+                if getattr(self.cache, attr) != getattr(self, attr):
+                    log.warning(
+                        f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
+                    )
+                    setattr(self.cache, attr, getattr(self, attr))
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
@@ -123,33 +150,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 level=logging.INFO,
                 fmt="%(asctime)s [%(levelname)s] %(message)s",
             )
-
-    def _override_cache_attributes_with_self_attributes(
-        self,
-        prediction_times_df: DataFrame,
-    ):
-        """Make cache inherit attributes from flattened dataset.
-
-        Avoids duplicate specification.
-        """
-        if (
-            not hasattr(self.cache, "prediction_times_df")
-            or self.cache.prediction_times_df is None
-        ):
-            self.cache.prediction_times_df = prediction_times_df
-        elif not self.cache.prediction_times_df.equals(prediction_times_df):
-            log.warning(
-                "Overriding prediction_times_df in cache with prediction_times_df passed to init",
-            )
-            self.cache.prediction_times_df = prediction_times_df
-
-        for attr in ["pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"]:
-            if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
-                if getattr(self.cache, attr) != getattr(self, attr):
-                    log.warning(
-                        f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
-                    )
-                    setattr(self.cache, attr, getattr(self, attr))
 
     @staticmethod
     def flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
