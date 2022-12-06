@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "timeseriesflattener"
-version = "0.12.0"
+version = "0.13.0"
 description = "A package for converting time series data from e.g. electronic health records into wide format data."
 readme = "README.md"
 authors = ["Martin Bernstorff", "Kenneth Enevoldsen", "Jakob Grøhn Damgaard", "Frida Hæstrup", "Lasse Hansen"]
@@ -57,7 +57,7 @@ known_third_party = ["wandb"]
 [tool.pylint]
 load-plugins = "pylint.extensions.docparams,pylint.extensions.code_style,pylint.extensions.for_any_all,pylint.extensions.typing"
 good-names = "df,p,f,d,e,n,k,i,v"
-disable = "too-many-lines,line-too-long,missing-raises-doc,no-self-argument,unused-wildcard-import,wildcard-import,no-else-return,too-many-arguments,redefined-outer-name,c-extension-no-member,wrong-import-order,logging-fstring-interpolation "
+disable = "too-many-lines,line-too-long,missing-raises-doc,no-self-argument,unused-wildcard-import,wildcard-import,no-else-return,too-many-arguments,redefined-outer-name,c-extension-no-member,wrong-import-order,logging-fstring-interpolation,unused-import"
 ignore-paths = ['docs/*']
 
 [tool.semantic_release]
