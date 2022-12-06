@@ -85,17 +85,17 @@ def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.Data
 
     The dataframe should be in the values_df key of data.
     """
-    col_name_keys = [
+    attributes_with_col_name = [
         key for key in data.keys() if "col_name" in key and isinstance(data[key], str)
     ]
 
     errors = []
 
-    for key in col_name_keys:
-        col_name = data[key]
+    for attribute_key in attributes_with_col_name:
+        col_name = data[attribute_key]
 
         if col_name not in df.columns:
-            errors.append(f"{key}: {col_name} is not in df")
+            errors.append(f"{attribute_key}: {col_name} is not in df")
 
     if len(errors) > 0:
         raise ValueError("\n".join(errors))
@@ -134,6 +134,7 @@ class AnySpec(BaseModel):
         check_that_col_names_in_kwargs_exist_in_df(kwargs, df=kwargs["values_df"])
 
         if in_dict_and_not_none(d=kwargs, key="output_col_name_override"):
+            # If an output_col_name_override is specified, don't prepend a prefix to it
             kwargs["prefix"] = ""
 
         super().__init__(**kwargs)
