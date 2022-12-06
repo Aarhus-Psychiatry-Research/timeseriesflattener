@@ -1,6 +1,7 @@
 """Flattens timeseries.
 
 Takes a time-series and flattens it into a set of prediction times with describing values.
+Takes a time-series and flattens it into a set of prediction times describing values.
 """
 import datetime as dt
 import random
@@ -161,7 +162,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         pred_time_uuid_col_name: str,
         verbose: bool = False,  # noqa
     ) -> DataFrame:
-        """Create a dataframe with flattened values (either predictor or.
+        """Create a dataframe with flattened values (either predictor or
 
         outcome depending on the value of "direction").
 
@@ -381,7 +382,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         output_prefix: str = "pred",
         birth_year_as_predictor: bool = False,  # noqa
     ):
-        """Add age at prediction time and patient's birth year to each.
+        """Add age at prediction time and patient's birth year to each
 
         prediction time.
 
@@ -565,7 +566,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self,
         output_spec: AnySpec,
     ):
-        """Add a column to the dataset (either predictor or outcome depending.
+        """Add a column to the dataset (either predictor or outcome depending
 
         on the value of "direction").
 
@@ -606,7 +607,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         pred_times_with_uuid: DataFrame,
         pred_time_uuid_colname: str,
     ) -> DataFrame:
-        """Ensure all prediction times are represented in the returned.
+        """Ensure all prediction times are represented in the returned
 
         dataframe.
 
@@ -632,7 +633,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         df: DataFrame,
         pred_time_uuid_colname: str,
     ) -> DataFrame:
-        """Apply the resolve_multiple function to prediction_times where there.
+        """Apply the resolve_multiple function to prediction_times where there
 
         are multiple values within the interval_days lookahead.
 
@@ -674,7 +675,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         timestamp_pred_colname: str,
         timestamp_value_colname: str,
     ) -> DataFrame:
-        """Keep only rows where timestamp_value is within interval_days in.
+        """Keep only rows where timestamp_value is within interval_days in
 
         direction of timestamp_pred.
 

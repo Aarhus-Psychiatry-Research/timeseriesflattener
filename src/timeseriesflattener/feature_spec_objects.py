@@ -37,7 +37,7 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 
 def resolve_values_df(data: dict[str, Any]):
-    """Resolve the values_df attribute of a feature spec to a values.
+    """Resolve the values_df attribute of a feature spec to a values
 
     dataframe.
     """
@@ -75,7 +75,7 @@ class BaseModel(PydanticBaseModel):
     """."""
 
     class Config:
-        """A pydantic basemodel, which doesn't allow attributes that are not.
+        """A pydantic basemodel, which doesn't allow attributes that are not
 
         defined in the class.
         """
@@ -130,7 +130,7 @@ class AnySpec(BaseModel):
         return col_str
 
     def __eq__(self, other: object) -> bool:
-        """Trying to run `spec in list_of_specs` works for all attributes.
+        """Trying to run `spec in list_of_specs` works for all attributes
 
         except for df, since the truth value of a dataframe is ambiguous. To
         remedy this, we use pandas'.
@@ -155,7 +155,7 @@ class StaticSpec(AnySpec):
 
 
 class TemporalSpec(AnySpec):
-    """The minimum specification required for all collapsed time series.
+    """The minimum specification required for all collapsed time series
 
     (temporal features), whether looking ahead or behind.
 
@@ -272,7 +272,7 @@ class OutcomeSpec(TemporalSpec):
 
 
 class MinGroupSpec(BaseModel):
-    """Minimum specification for a group of features, whether they're looking.
+    """Minimum specification for a group of features, whether they're looking
 
     ahead or behind.
 
@@ -321,7 +321,7 @@ class MinGroupSpec(BaseModel):
                 f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info.
                 {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
-                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all())}""",
+                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all())}"""
             )
 
         if self.output_col_name_override:
