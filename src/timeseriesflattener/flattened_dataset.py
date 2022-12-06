@@ -3,6 +3,7 @@
 describing values.
 """
 import datetime as dt
+import logging
 import random
 import time
 from collections.abc import Callable
@@ -16,7 +17,7 @@ import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
-from wasabi import Printer, msg
+from wasabi import Printer
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
@@ -29,6 +30,8 @@ from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedData
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 
 ProgressBar().register()
+
+log = logging.getLogger(__name__)
 
 
 class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
@@ -59,7 +62,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         ):
             self.cache.prediction_times_df = prediction_times_df
         elif not self.cache.prediction_times_df.equals(prediction_times_df):
-            msg.warn(
+            log.warning(
                 "Overriding prediction_times_df in cache with prediction_times_df passed to init",
             )
             self.cache.prediction_times_df = prediction_times_df
@@ -67,7 +70,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         for attr in ["pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"]:
             if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
                 if getattr(self.cache, attr) != getattr(self, attr):
-                    msg.warn(
+                    log.warning(
                         f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
                     )
                     setattr(self.cache, attr, getattr(self, attr))
@@ -244,7 +247,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
         if verbose:
-            msg.good(
+            log.info(
                 f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",
             )
 
@@ -267,7 +270,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             df = self.cache.read_feature(feature_spec=feature_spec)
             return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
         elif not self.cache:
-            msg.info("No cache specified, not attempting load")
+            log.info("No cache specified, not attempting load")
 
         df = self.flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
@@ -332,7 +335,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         """Concatenate flattened predictor dfs."""
 
         msg = Printer(timestamp=True)
-        msg.info(
+        log.info(
             "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
         )
 
@@ -352,9 +355,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         end_time = time.time()
 
-        msg.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
+        log.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
 
-        msg.info("Merging with original df")
+        log.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
     def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
@@ -374,7 +377,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 ),
             )
 
-        msg.info("Feature generation complete, concatenating")
+        log.info("Feature generation complete, concatenating")
 
         self._concatenate_flattened_timeseries(
             flattened_predictor_dfs=flattened_predictor_dfs,
@@ -659,7 +662,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 df["timestamp_val"] - dt.datetime(1970, 1, 1)
             ).dt.total_seconds() / 86400
         except TypeError:
-            msg.info("All values are NaT, returning empty dataframe")
+            log.info("All values are NaT, returning empty dataframe")
 
         # Sort by timestamp_pred in case resolve_multiple needs dates
         df = df.sort_values(by="timestamp_val").groupby(pred_time_uuid_colname)
