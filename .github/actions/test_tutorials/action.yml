@@ -46,10 +46,12 @@ runs:
 
     ### Run tests
     - name: Install jupyter
+      shell: bash
       run: |
         python -m pip install --upgrade pip
         pip install jupyter
     - name: Compile notebooks and check for errors
+      shell: bash
       run: |
         jupyter nbconvert --to notebook --execute tutorials/*.ipynb
         for notebook in tutorials/*.ipynb; do
