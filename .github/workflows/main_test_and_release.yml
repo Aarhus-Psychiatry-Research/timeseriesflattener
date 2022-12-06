@@ -40,6 +40,29 @@ jobs:
           poetry-version: ${{ env.poetry-version }}
           cache-version: ${{ env.cache-version }}
 
+  jupyter-tutorials:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    # This allows a subsequently queued workflow run to interrupt previous runs
+    concurrency:
+      group: "${{ github.workflow }} - jupyter-tutorials - ${{ matrix.os }} @ ${{ github.ref }}"
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run tests
+        uses: ./.github/actions/test_tutorials
+        with:
+          python-version: ${{ env.python-version }}
+          poetry-version: ${{ env.poetry-version }}
+          cache-version: ${{ env.cache-version }}
+
   release:
     runs-on: ubuntu-latest
     concurrency: release

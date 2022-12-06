@@ -14,8 +14,6 @@ from timeseriesflattener.testing.utils_for_testing import (
 )
 
 # pylint: disable=import-error
-# from tests.test_data.test_hf.test_hf_embeddings import TEST_HF_EMBEDDINGS
-# from tests.test_data.test_tfidf.test_tfidf_vocab import TEST_TFIDF_VOCAB
 
 
 # Predictors
@@ -35,7 +33,7 @@ def test_predictor_after_prediction_time():
         prediction_times_df=prediction_times_df,
         output_spec=PredictorSpec(
             values_df=predictor_df,
-            interval_days=2,
+            lookbehind_days=2,
             resolve_multiple_fn="max",
             fallback=np.NaN,
             feature_name="value",
@@ -56,7 +54,7 @@ def test_predictor_before_prediction():
         prediction_times_df=prediction_times_df,
         output_spec=PredictorSpec(
             values_df=str_to_df(predictor_df_str),
-            interval_days=2,
+            lookbehind_days=2,
             resolve_multiple_fn="max",
             fallback=np.NaN,
             feature_name="value",
@@ -107,7 +105,7 @@ def test_event_after_prediction_time():
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
-            interval_days=2,
+            lookahead_days=2,
             resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,
@@ -129,7 +127,7 @@ def test_event_before_prediction():
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
-            interval_days=2,
+            lookahead_days=2,
             resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,
@@ -157,7 +155,7 @@ def test_multiple_citizens_outcome():
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
-            interval_days=2,
+            lookahead_days=2,
             resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,
@@ -179,7 +177,7 @@ def test_citizen_without_outcome():
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
             values_df=str_to_df(outcome_df_str),
-            interval_days=2,
+            lookahead_days=2,
             resolve_multiple_fn="max",
             incident=True,
             fallback=np.NaN,

@@ -165,7 +165,7 @@ class AnySpec(BaseModel):
             if attr != "values_df"
         )
 
-        dfs_equal = self.values_df.equals(other.values_df)
+        dfs_equal = self.values_df.equals(other.values_df)  # type: ignore
 
         return other_attributes_equal and dfs_equal
 
@@ -187,9 +187,9 @@ class TemporalSpec(AnySpec):
 
     resolve_multiple_fn: Callable
 
-    key_for_resolve_multiple: str
+    key_for_resolve_multiple: Optional[str] = None
     # Key used to lookup the resolve_multiple_fn in the resolve_multiple_fns registry.
-    # Used for column name generation.
+    # Used for column name generation. Only required if you don't specify a resolve_multiple_fn.
 
     fallback: Union[Callable, int, float, str]
     # Which value to use if no values are found within interval_days.
@@ -236,6 +236,19 @@ class PredictorSpec(TemporalSpec):
 
     prefix: str = "pred"
 
+    lookbehind_days: Union[int, float]
+
+    def __init__(self, **data):
+        if "lookbehind_days" in data:
+            data["interval_days"] = data["lookbehind_days"]
+
+        data["lookbehind_days"] = data["interval_days"]
+
+        if not data["interval_days"] and not data["lookbehind_days"]:
+            raise ValueError("lookbehind_days or interval_days must be specified.")
+
+        super().__init__(**data)
+
 
 class OutcomeSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
@@ -244,11 +257,22 @@ class OutcomeSpec(TemporalSpec):
 
     incident: bool
 
+    lookahead_days: Union[int, float]
+
+    def __init__(self, **data):
+        if "lookahead_days" in data:
+            data["interval_days"] = data["lookahead_days"]
+
+        data["lookahead_days"] = data["interval_days"]
+
+        super().__init__(**data)
+
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
     # For example, type 2 diabetes is incident. Incident outcomes cna be handled in a vectorised
     # way during resolution, which is faster than non-incident outcomes.
 
     def get_col_str(self) -> str:
+        """Get the column name for the output column."""
         col_str = super().get_col_str()
 
         if self.is_dichotomous():
@@ -352,10 +376,10 @@ def create_feature_combinations_from_dict(
     Args:
         d (dict[str]): A dictionary of feature specifications.
 
-    Returns:
+    Returns
+    -------
         list[dict[str]]: list of all possible combinations of the arguments.
     """
-
     # Make all elements iterable
     d = {k: v if isinstance(v, (list, tuple)) else [v] for k, v in d.items()}
     keys, values = zip(*d.items())

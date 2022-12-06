@@ -6,6 +6,12 @@ from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     check_that_col_names_in_kwargs_exist_in_df,
 )
+from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
+    load_synth_predictor_float,
+)
+
+# Avoid ruff removing as unused
+used_loaders = [load_synth_predictor_float]
 
 
 def test_anyspec_init():

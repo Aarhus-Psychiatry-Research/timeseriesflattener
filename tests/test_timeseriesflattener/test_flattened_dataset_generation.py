@@ -15,8 +15,8 @@ from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, Predict
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
+    load_synth_predictor_float,
     synth_predictor_binary,
-    synth_predictor_float,
 )
 from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
@@ -26,10 +26,10 @@ from timeseriesflattener.testing.utils_for_testing import (
 # Avoid automatically being removed by ruff
 used_synth_datasets = [
     synth_predictor_binary,
-    synth_predictor_float,
+    load_synth_predictor_float,
     synth_outcome,
     synth_prediction_times,
-    synth_predictor_float,
+    load_synth_predictor_float,
     load_synth_prediction_times,
 ]
 

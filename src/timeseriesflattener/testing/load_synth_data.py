@@ -30,7 +30,7 @@ def load_raw_test_csv(filename: str, n_rows: Optional[int] = None) -> pd.DataFra
 
 
 @data_loaders.register("synth_predictor_float")
-def synth_predictor_float(
+def load_synth_predictor_float(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
     """Load synth predictor data.".
@@ -42,6 +42,21 @@ def synth_predictor_float(
         pd.DataFrame
     """
     return load_raw_test_csv("synth_raw_float_1.csv", n_rows=n_rows)
+
+
+@data_loaders.register("synth_sex")
+def load_synth_sex(
+    n_rows: Optional[int] = None,
+) -> pd.DataFrame:
+    """Load synth sex data.".
+
+    Args:
+        n_rows: Number of rows to return. Defaults to None which returns entire coercion data view.
+
+    Returns:
+        pd.DataFrame
+    """
+    return load_raw_test_csv("synth_sex.csv", n_rows=n_rows)
 
 
 @data_loaders.register("synth_predictor_binary")
@@ -74,6 +89,9 @@ def load_synth_outcome(
     # Get first row for each id
     df = load_raw_test_csv("synth_raw_binary_2.csv", n_rows=n_rows)
     df = df.groupby("dw_ek_borger").last().reset_index()
+
+    # Drop all rows with a value equal to 1
+    df = df[df["value"] == 1]
     return df
 
 
