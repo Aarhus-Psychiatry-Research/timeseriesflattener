@@ -2,8 +2,7 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
-from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -11,12 +10,7 @@ import pytest
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_spec_objects import (
-    AnySpec,
-    OutcomeSpec,
-    PredictorGroupSpec,
-    PredictorSpec,
-)
+from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
@@ -27,6 +21,16 @@ from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
 )
+
+# Avoid automatically being removed by ruff
+used_synth_datasets = [
+    synth_predictor_binary,
+    synth_predictor_float,
+    synth_outcome,
+    synth_prediction_times,
+    synth_predictor_float,
+    load_synth_prediction_times,
+]
 
 base_float_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_float"],
@@ -102,8 +106,8 @@ def create_flattened_df(
         cache=cache,
     )
 
-    flat_ds.add_temporal_predictors_from_pred_specs(
-        predictor_specs=predictor_specs,
+    flat_ds.add_temporal_predictor_batch(
+        predictor_batch=predictor_specs,
     )
 
     return flat_ds.get_df()
@@ -115,8 +119,8 @@ def create_flattened_df(
 )
 def test_cache_hitting(
     tmp_path,
-    synth_prediction_times,
     predictor_specs,
+    synth_prediction_times,
 ):
     """Test that cache hits."""
 

@@ -153,7 +153,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         ) + self._df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
     @staticmethod
-    def flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
+    def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
         output_spec: AnySpec,
         id_col_name: str,
@@ -269,7 +269,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         elif not self.cache:
             msg.info("No cache specified, not attempting load")
 
-        df = self.flatten_temporal_values_to_df(
+        df = self._flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
                 [
                     self.pred_time_uuid_col_name,
@@ -357,20 +357,20 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         msg.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
-    def add_temporal_predictors_from_pred_specs(  # pylint: disable=too-many-branches
+    def add_temporal_predictor_batch(  # pylint: disable=too-many-branches
         self,
-        predictor_specs: list[PredictorSpec],
+        predictor_batch: list[PredictorSpec],
     ):
         """Add predictors to the flattened dataframe from a list."""
 
         # Shuffle predictor specs to avoid IO contention
-        random.shuffle(predictor_specs)
+        random.shuffle(predictor_batch)
 
         with Pool(self.n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
-                    p.imap(func=self._get_temporal_feature, iterable=predictor_specs),
-                    total=len(predictor_specs),
+                    p.imap(func=self._get_temporal_feature, iterable=predictor_batch),
+                    total=len(predictor_batch),
                 ),
             )
 
@@ -387,9 +387,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         output_prefix: str = "pred",
         birth_year_as_predictor: bool = False,
     ):
-        """Add age at prediction time and patient's birth year to each.
+        """Add age at prediction time as predictor.
 
-        prediction time.
+        Also add patient's birth date. Has its own function because of its very frequent use.
 
         Args:
             id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
@@ -534,48 +534,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         self._df = df
 
-    def add_temporal_outcome(
-        self,
-        output_spec: OutcomeSpec,
-    ):
-        """Add an outcome-column to the dataset.
-
-        Args:
-            output_spec (OutcomeSpec): OutcomeSpec object.
-        """
-
-        if output_spec.incident:
-            self._add_incident_outcome(
-                outcome_spec=output_spec,
-            )
-
-        else:
-            self.add_temporal_col_to_flattened_dataset(
-                output_spec=output_spec,
-            )
-
-    def add_temporal_predictor(
-        self,
-        output_spec: PredictorSpec,
-    ):
-        """Add a column with predictor values to the flattened dataset (e.g.
-
-        "average value of bloodsample within n days").
-
-        Args:
-            output_spec (Union[PredictorSpec]): Specification of the output column.
-        """
-        self.add_temporal_col_to_flattened_dataset(
-            output_spec=output_spec,
-        )
-
-    def add_temporal_col_to_flattened_dataset(
+    def _add_temporal_col_to_flattened_dataset(
         self,
         output_spec: AnySpec,
     ):
-        """Add a column to the dataset (either predictor or outcome depending.
+        """Add a column to the dataset.
 
-        on the value of "direction").
+        Either predictor or outcome depending on the type of specification.
 
         Args:
             output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
@@ -588,7 +553,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset.",
             )
 
-        df = TimeseriesFlattener.flatten_temporal_values_to_df(
+        df = TimeseriesFlattener._flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
                 [
                     self.id_col_name,
@@ -606,6 +571,39 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             right=df,
             on=self.pred_time_uuid_col_name,
             validate="1:1",
+        )
+
+    def add_temporal_outcome(
+        self,
+        output_spec: OutcomeSpec,
+    ):
+        """Add an outcome-column to the dataset.
+
+        Args:
+            output_spec (OutcomeSpec): OutcomeSpec object.
+        """
+
+        if output_spec.incident:
+            self._add_incident_outcome(
+                outcome_spec=output_spec,
+            )
+
+        else:
+            self._add_temporal_col_to_flattened_dataset(
+                output_spec=output_spec,
+            )
+
+    def add_temporal_predictor(
+        self,
+        output_spec: PredictorSpec,
+    ):
+        """Add a column with predictor values to the flattened dataset.
+
+        Args:
+            output_spec (Union[PredictorSpec]): Specification of the output column.
+        """
+        self._add_temporal_col_to_flattened_dataset(
+            output_spec=output_spec,
         )
 
     @staticmethod
