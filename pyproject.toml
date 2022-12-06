@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "timeseriesflattener"
-version = "0.12.0"
+version = "0.12.2"
 description = "A package for converting time series data from e.g. electronic health records into wide format data."
 readme = "README.md"
 authors = ["Martin Bernstorff", "Kenneth Enevoldsen", "Jakob Grøhn Damgaard", "Frida Hæstrup", "Lasse Hansen"]
