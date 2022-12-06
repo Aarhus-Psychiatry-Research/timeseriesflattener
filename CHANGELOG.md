@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v0.14.0 (2022-12-06)
+### Feature
+* Add colored logging ([`d230213`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d230213b0fde3a26329e3c5bab6737ef3391fa09))
+* Add logging by default ([`d254b69`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d254b69057792a1088a1b35c70e2698206aedce4))
+* Refactor flattened_dataset to use logging instead of msg ([`d9fc31d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d9fc31db5b4f42bb29cfed96a5edd2fbc1a43c7c))
+
+### Documentation
+* Improve API ([`44be982`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/44be9826772d4c167ef22e0cc856fb0812e67dd1))
+* Add example of adding a root logger ([`64b0002`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/64b000266468230a1d1c0e0217f6bcff1aa9d557))
+
 ## v0.13.0 (2022-12-06)
 ### Feature
 * Check that all col names exist in df before creating spec ([`7e75001`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7e7500146c75b854f4a6565283a07364fd2c63e7))
