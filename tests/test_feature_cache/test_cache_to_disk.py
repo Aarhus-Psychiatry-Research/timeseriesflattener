@@ -79,9 +79,8 @@ def test_read_feature(tmp_path):
 
     values_df = pd.DataFrame(
         {
-            "dw_ek_borger": [1, 2, 3],
-            "pred_time_uuid": [1, 2, 3],
-            "timestamp": [1, 2, 3],
+            "dw_ek_borger": [1, 2, 3, 4, 5],
+            "timestamp": [1, 2, 3, 4, 5],
         },
     )
 
@@ -100,7 +99,7 @@ def test_read_feature(tmp_path):
                 1,
                 2,
                 3,
-            ],  # The merge recasts to the most general type, int -> float
+            ],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_col_str()}": [1, 2, np.nan],

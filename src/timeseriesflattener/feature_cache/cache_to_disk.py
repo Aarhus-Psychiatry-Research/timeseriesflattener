@@ -88,7 +88,7 @@ class DiskCache(FeatureCache):
         """
         n_rows = feature_spec.values_df.shape[0]  # type: ignore
 
-        return f"{feature_spec.get_col_str()}_{n_rows}_rows"
+        return f"{feature_spec.get_col_str()}_{n_rows}_rows_in_values_df"
 
     def _get_file_pattern(
         self,
