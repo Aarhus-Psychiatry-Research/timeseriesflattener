@@ -18,7 +18,6 @@ import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
-from wasabi import Printer
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
@@ -126,8 +125,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             self._override_cache_attributes_with_self_attributes(prediction_times_df)
 
         self.n_uuids = prediction_times_df.shape[0]
-
-        self.msg = Printer(timestamp=True)
 
         if "value" in prediction_times_df.columns:
             raise ValueError(

@@ -8,7 +8,6 @@ authors = ["Martin Bernstorff", "Kenneth Enevoldsen", "Jakob Grøhn Damgaard", "
 [tool.poetry.dependencies]
 python = ">=3.9, <3.11"
 scipy = ">=1.8.0,<1.9.4"
-wasabi = ">=0.9.1,<0.10.2"
 scikit-learn = ">=1.1.2, <1.1.3"
 wandb = ">=0.12.0,<0.13.5"
 deepchecks = ">=0.8.0,<0.10.0"

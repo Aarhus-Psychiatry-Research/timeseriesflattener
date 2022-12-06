@@ -10,12 +10,9 @@ import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
-from wasabi import Printer
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders
-
-msg = Printer(timestamp=True)
 
 log = logging.getLogger(__name__)
 
