@@ -2,7 +2,6 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
-import logging
 from pathlib import Path
 from typing import Optional
 
@@ -14,7 +13,6 @@ from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCach
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
-from timeseriesflattener.logger import setup_logger
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
     synth_predictor_binary,
@@ -24,7 +22,6 @@ from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
 )
-from timeseriesflattener.utils import PROJECT_ROOT
 
 funcs = [
     synth_predictor_binary,
@@ -49,13 +46,6 @@ base_binary_predictor_combinations = PredictorGroupSpec(
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
 ).create_combinations()
-
-log = setup_logger(
-    name=None,
-    level=logging.DEBUG,
-    log_file_path=PROJECT_ROOT / "logs" / "test_timeseriesflattener" / "test.log",
-    format="%(asctime)s [%(levelname)s] [%(name)s]: %(message)s",
-)
 
 
 def check_dfs_have_same_contents_by_column(df1, df2):
@@ -109,8 +99,6 @@ def create_flattened_df(
     cache: Optional[FeatureCache] = None,
 ):
     """Create a dataset df for testing."""
-    log.info("Creating flattened df")
-
     flat_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         n_workers=1,

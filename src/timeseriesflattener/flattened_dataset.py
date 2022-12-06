@@ -35,18 +35,7 @@ log = logging.getLogger(__name__)
 
 
 class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
-    """Turn a set of time-series into tabular prediction-time data.
-
-    Attributes:
-        df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
-        n_workers (int): Number of subprocesses to spawn for parallelization.
-        timestamp_col_name (str): Column name name for timestamps. Is used across outcomes and predictors.
-        id_col_name (str): Column namn name for patients ids. Is used across outcome and predictors.
-        predictor_col_name_prefix (str): Prefix for predictor col names.
-        outcome_col_name_prefix (str): Prefix for outcome col names.
-        pred_time_uuid_col_name (str): Column name for prediction time uuids.
-        feature_cache_dir (Path): Path to cache directory for feature dataframes.
-    """
+    """Turn a set of time-series into tabular prediction-time data."""
 
     def _override_cache_attributes_with_self_attributes(
         self,
@@ -84,6 +73,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
         n_workers: int = 60,
+        log_to_stdout: bool = True,
     ):
         """Class containing a time-series, flattened.
 
@@ -116,6 +106,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to "pred_".
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
             n_workers (int): Number of subprocesses to spawn for parallelization. Defaults to 60.
+            log_to_stdout (bool): Whether to log to stdout. Either way, also logs to the __name__ namespace, which you can capture with a root logger. Defaults to True.
 
         Raises:
             ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df
@@ -154,6 +145,12 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self._df[self.pred_time_uuid_col_name] = self._df[self.id_col_name].astype(
             str,
         ) + self._df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
+
+        if log_to_stdout:
+            # Setup logging to stdout by default
+            logging.basicConfig(
+                level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+            )
 
     @staticmethod
     def flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
