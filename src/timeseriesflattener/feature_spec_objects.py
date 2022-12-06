@@ -321,7 +321,7 @@ class MinGroupSpec(BaseModel):
                 f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info.
                 {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
-                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all())}"""
+                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all())}""",
             )
 
         if self.output_col_name_override:
