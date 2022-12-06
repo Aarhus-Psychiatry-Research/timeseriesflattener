@@ -150,7 +150,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if log_to_stdout:
             # Setup logging to stdout by default
             coloredlogs.install(
-                level=logging.INFO, fmt="%(asctime)s [%(levelname)s] %(message)s"
+                level=logging.INFO,
+                fmt="%(asctime)s [%(levelname)s] %(message)s",
             )
 
     @staticmethod
@@ -331,8 +332,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         flattened_predictor_dfs: list[pd.DataFrame],
     ):
         """Concatenate flattened predictor dfs."""
-
-        msg = Printer(timestamp=True)
         log.info(
             "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
         )

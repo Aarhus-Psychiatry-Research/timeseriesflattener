@@ -12,7 +12,7 @@ def setup_logger(
     name: str,
     level: int = logging.DEBUG,
     log_file_path: str = None,
-    format: str = "%(asctime)s [%(levelname)s] %(message)s",
+    fmt: str = "%(asctime)s [%(levelname)s] %(message)s",
 ) -> logging.Logger:
     """
     Set up a logger with the given name and log level.
@@ -23,7 +23,7 @@ def setup_logger(
         log_file_path (str): The path to the log file where the logger should
             output log messages. If not specified, the logger does not output
             log messages to a file.
-        format (str): The format of the log messages.
+        fmt (str): The fmt of the log messages.
 
     Returns:
         The logger object.
@@ -40,19 +40,19 @@ def setup_logger(
         logger.setLevel(level)
 
     # create console handler and set level to debug
-    ch = logging.StreamHandler()
+    channel = logging.StreamHandler()
 
     if level:
-        ch.setLevel(level)
+        channel.setLevel(level)
 
-    if format:
+    if fmt:
         # create formatter
-        formatter = logging.Formatter(format)
+        formatter = logging.Formatter(fmt)
         # add formatter to ch
-        ch.setFormatter(formatter)
+        channel.setFormatter(formatter)
 
     # add ch to logger
-    logger.addHandler(ch)
+    logger.addHandler(channel)
 
     # create a file handler and set level to debug
     if log_file_path:
@@ -61,14 +61,14 @@ def setup_logger(
         if not logfile_dir.exists():
             logfile_dir.mkdir(parents=True)
 
-        fh = logging.FileHandler(log_file_path)
+        file_handler = logging.FileHandler(log_file_path)
 
         if level:
-            fh.setLevel(level)
-        if format:
-            fh.setFormatter(formatter)
+            file_handler.setLevel(level)
+        if fmt:
+            file_handler.setFormatter(formatter)
 
-        logger.addHandler(fh)
+        logger.addHandler(file_handler)
 
     return logger
 
@@ -79,5 +79,5 @@ if __name__ == "__main__":
         "",
         level=logging.DEBUG,
         log_file_path=PROJECT_ROOT / "logs" / "test.log",
-        format="%(asctime)s [%(levelname)s]: %(message)s",
+        fmt="%(asctime)s [%(levelname)s]: %(message)s",
     )

@@ -27,9 +27,13 @@ def load_df_with_cache(
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
-    log.info(f"{feature_name}: Loading values")
+    log.info(
+        f"{feature_name}: Loading values",
+    )  # pylint: disable=logging-fstring-interpolation
     df = loader_fn(**kwargs)
-    log.info(f"{feature_name}: Loaded values")
+    log.info(
+        f"{feature_name}: Loaded values",
+    )  # pylint: disable=logging-fstring-interpolation
 
     return df
 
