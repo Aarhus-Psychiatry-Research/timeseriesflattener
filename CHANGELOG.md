@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v0.15.0 (2022-12-06)
+### Feature
+* Allow either interval_days or lookahead/lookbehind days ([`a270801`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a2708014eaad78622a5447cf6958f544ad095945))
+
+### Fix
+* Failing imports after merge ([`dd17771`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/dd177711c8aff74619d962845ab7dd32df00a91b))
+* Unify file naming in cache module ([`f155217`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f155217edc860cbde68e60f6d102dc1fc2191347))
+* Use correct suffix ([`6e737b8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6e737b8010c06f62ef320c868fc3821d524ec117))
+* Remove seconds from diskcache to avoid ([`f9ac05c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f9ac05c46ca13649c248588470f000aa70ec6650))
+* Key_for_resolve_multiple should be optional ([`c569b74`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c569b749e9c47a60d0e66eae8c0633519ed0e0de))
+
+### Documentation
+* Add basic tutorial ([`8136a1b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8136a1b3db20f30df7898363dfa68e584a6cfe8d))
+
 ## v0.14.0 (2022-12-06)
 ### Feature
 * Add colored logging ([`d230213`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d230213b0fde3a26329e3c5bab6737ef3391fa09))
