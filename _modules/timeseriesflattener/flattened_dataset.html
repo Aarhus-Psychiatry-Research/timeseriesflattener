@@ -220,6 +220,7 @@
 <span class="sd">describing values.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
@@ -227,13 +228,13 @@
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">import</span> <span class="nn">coloredlogs</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tqdm</span>
 <span class="kn">from</span> <span class="nn">catalogue</span> <span class="kn">import</span> <span class="n">Registry</span>  <span class="c1"># noqa # pylint: disable=unused-import</span>
 <span class="kn">from</span> <span class="nn">dask.diagnostics</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
-<span class="kn">from</span> <span class="nn">wasabi</span> <span class="kn">import</span> <span class="n">Printer</span><span class="p">,</span> <span class="n">msg</span>
 
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_cache.abstract_feature_cache</span> <span class="kn">import</span> <span class="n">FeatureCache</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_spec_objects</span> <span class="kn">import</span> <span class="p">(</span>
@@ -247,20 +248,11 @@
 
 <span class="n">ProgressBar</span><span class="p">()</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="TimeseriesFlattener"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">[docs]</a><span class="k">class</span> <span class="nc">TimeseriesFlattener</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
-    <span class="sd">&quot;&quot;&quot;Turn a set of time-series into tabular prediction-time data.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        df (DataFrame): Dataframe with prediction times, required cols: patient_id, .</span>
-<span class="sd">        n_workers (int): Number of subprocesses to spawn for parallelization.</span>
-<span class="sd">        timestamp_col_name (str): Column name name for timestamps. Is used across outcomes and predictors.</span>
-<span class="sd">        id_col_name (str): Column namn name for patients ids. Is used across outcome and predictors.</span>
-<span class="sd">        predictor_col_name_prefix (str): Prefix for predictor col names.</span>
-<span class="sd">        outcome_col_name_prefix (str): Prefix for outcome col names.</span>
-<span class="sd">        pred_time_uuid_col_name (str): Column name for prediction time uuids.</span>
-<span class="sd">        feature_cache_dir (Path): Path to cache directory for feature dataframes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Turn a set of time-series into tabular prediction-time data.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_override_cache_attributes_with_self_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -276,7 +268,7 @@
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span> <span class="o">=</span> <span class="n">prediction_times_df</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">prediction_times_df</span><span class="p">):</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Overriding prediction_times_df in cache with prediction_times_df passed to init&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span> <span class="o">=</span> <span class="n">prediction_times_df</span>
@@ -284,7 +276,7 @@
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pred_time_uuid_col_name&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp_col_name&quot;</span><span class="p">,</span> <span class="s2">&quot;id_col_name&quot;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-                    <span class="n">msg</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Overriding </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> in cache with </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> passed to init of flattened dataset&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
@@ -298,6 +290,7 @@
         <span class="n">predictor_col_name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span><span class="p">,</span>
         <span class="n">outcome_col_name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;outc&quot;</span><span class="p">,</span>
         <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+        <span class="n">log_to_stdout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Class containing a time-series, flattened.</span>
 
@@ -330,6 +323,7 @@
 <span class="sd">            predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to &quot;pred_&quot;.</span>
 <span class="sd">            outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to &quot;outc_&quot;.</span>
 <span class="sd">            n_workers (int): Number of subprocesses to spawn for parallelization. Defaults to 60.</span>
+<span class="sd">            log_to_stdout (bool): Whether to log to stdout. Either way, also logs to the __name__ namespace, which you can capture with a root logger. Defaults to True.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df</span>
@@ -349,8 +343,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_uuids</span> <span class="o">=</span> <span class="n">prediction_times_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">Printer</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">prediction_times_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Column &#39;value&#39; should not occur in prediction_times_df, only timestamps and ids.&quot;</span><span class="p">,</span>
@@ -368,6 +360,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
             <span class="nb">str</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;-%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">log_to_stdout</span><span class="p">:</span>
+            <span class="c1"># Setup logging to stdout by default</span>
+            <span class="n">coloredlogs</span><span class="o">.</span><span class="n">install</span><span class="p">(</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> [</span><span class="si">%(levelname)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_flatten_temporal_values_to_df</span><span class="p">(</span>  <span class="c1"># noqa pylint: disable=too-many-locals</span>
@@ -461,7 +460,7 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">good</span><span class="p">(</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Returning </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> rows of flattened dataframe for </span><span class="si">{</span><span class="n">output_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -484,7 +483,7 @@
             <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">read_feature</span><span class="p">(</span><span class="n">feature_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No cache specified, not attempting load&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No cache specified, not attempting load&quot;</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_temporal_values_to_df</span><span class="p">(</span>
             <span class="n">prediction_times_with_uuid_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span>
@@ -547,9 +546,7 @@
         <span class="n">flattened_predictor_dfs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Concatenate flattened predictor dfs.&quot;&quot;&quot;</span>
-
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">Printer</span><span class="p">(</span><span class="n">timestamp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -569,9 +566,9 @@
 
         <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-        <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concatenation took </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concatenation took </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
 
-        <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging with original df&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging with original df&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">new_features</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TimeseriesFlattener.add_temporal_predictor_batch"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_temporal_predictor_batch">[docs]</a>    <span class="k">def</span> <span class="nf">add_temporal_predictor_batch</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
@@ -591,7 +588,7 @@
                 <span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Feature generation complete, concatenating&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Feature generation complete, concatenating&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_concatenate_flattened_timeseries</span><span class="p">(</span>
             <span class="n">flattened_predictor_dfs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">,</span>
@@ -874,7 +871,7 @@
                 <span class="n">df</span><span class="p">[</span><span class="s2">&quot;timestamp_val&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="p">)</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">86400</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All values are NaT, returning empty dataframe&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All values are NaT, returning empty dataframe&quot;</span><span class="p">)</span>
 
         <span class="c1"># Sort by timestamp_pred in case resolve_multiple needs dates</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;timestamp_val&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">pred_time_uuid_colname</span><span class="p">)</span>
