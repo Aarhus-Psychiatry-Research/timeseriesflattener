@@ -3,8 +3,15 @@
 # pylint: disable=missing-function-docstring
 
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec
-from timeseriesflattener.testing.load_synth_data import synth_predictor_float  # noqa
+from timeseriesflattener.testing.load_synth_data import (  # noqa
+    load_synth_predictor_float,
+)
 from timeseriesflattener.utils import data_loaders  # noqa
+
+# Avoid ruff removing as unused
+used_loaders = [
+    load_synth_predictor_float,
+]
 
 
 def test_skip_all_if_no_need_to_process():
