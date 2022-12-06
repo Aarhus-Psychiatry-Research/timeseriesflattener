@@ -88,7 +88,7 @@ class DiskCache(FeatureCache):
         """
         n_rows = feature_spec.values_df.shape[0]  # type: ignore
 
-        return f"{feature_spec.get_col_str()}_{n_rows}_uuids"
+        return f"{feature_spec.get_col_str()}_{n_rows}_rows"
 
     def _get_file_pattern(
         self,
@@ -141,8 +141,7 @@ class DiskCache(FeatureCache):
         df: pd.DataFrame,
     ):
         """Write feature to cache."""
-        n_uuids = df[self.pred_time_uuid_col_name].nunique()
-        file_name = f"{feature_spec.get_col_str()}_{n_uuids}_uuids"
+        file_name = self._get_file_name(feature_spec=feature_spec)
 
         # Drop rows containing fallback, since it's non-informative
         df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()
