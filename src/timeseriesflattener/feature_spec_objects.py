@@ -1,6 +1,7 @@
 """Templates for feature specifications."""
 
 import itertools
+import logging
 from collections.abc import Callable, Sequence
 from functools import cache
 from typing import Any, Optional, Union
@@ -9,12 +10,11 @@ import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
-from wasabi import Printer
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders
 
-msg = Printer(timestamp=True)
+log = logging.getLogger(__name__)
 
 
 @cache
@@ -24,9 +24,13 @@ def load_df_with_cache(
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
-    msg.info(f"{feature_name}: Loading values")
+    log.info(
+        f"{feature_name}: Loading values",
+    )  # pylint: disable=logging-fstring-interpolation
     df = loader_fn(**kwargs)
-    msg.good(f"{feature_name}: Loaded values")
+    log.info(
+        f"{feature_name}: Loaded values",
+    )  # pylint: disable=logging-fstring-interpolation
 
     return df
 
@@ -37,12 +41,9 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 
 def resolve_values_df(data: dict[str, Any]):
-    """Resolve the values_df attribute of a feature spec to a values
-
-    dataframe.
-    """
+    """Resolve the values_df attribute to a dataframe."""
     if "values_loader" not in data and "values_df" not in data:
-        raise ValueError("Either values_loader or df must be specified.")
+        raise ValueError("Either values_loader or a dataframe must be specified.")
 
     if in_dict_and_not_none(d=data, key="values_loader") and in_dict_and_not_none(
         key="values_df",
@@ -75,13 +76,33 @@ class BaseModel(PydanticBaseModel):
     """."""
 
     class Config:
-        """A pydantic basemodel, which doesn't allow attributes that are not
-
-        defined in the class.
-        """
+        """Disallow  attributes not in the the class."""
 
         arbitrary_types_allowed = True
         extra = Extra.forbid
+
+
+def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.DataFrame):
+    """Check that all column names in data are in the dataframe.
+
+    Keys with "col_name" in them specify a column name.
+
+    The dataframe should be in the values_df key of data.
+    """
+    attributes_with_col_name = [
+        key for key in data.keys() if "col_name" in key and isinstance(data[key], str)
+    ]
+
+    errors = []
+
+    for attribute_key in attributes_with_col_name:
+        col_name = data[attribute_key]
+
+        if col_name not in df.columns:
+            errors.append(f"{attribute_key}: {col_name} is not in df")
+
+    if len(errors) > 0:
+        raise ValueError("\n".join(errors))
 
 
 class AnySpec(BaseModel):
@@ -111,13 +132,16 @@ class AnySpec(BaseModel):
     output_col_name_override: Optional[str] = None
     # Override the generated col name after flattening the time series.
 
-    def __init__(self, **data: Any):
-        data = resolve_values_df(data)
+    def __init__(self, **kwargs: Any):
+        kwargs = resolve_values_df(kwargs)
 
-        if in_dict_and_not_none(d=data, key="output_col_name_override"):
-            data["prefix"] = ""
+        check_that_col_names_in_kwargs_exist_in_df(kwargs, df=kwargs["values_df"])
 
-        super().__init__(**data)
+        if in_dict_and_not_none(d=kwargs, key="output_col_name_override"):
+            # If an output_col_name_override is specified, don't prepend a prefix to it
+            kwargs["prefix"] = ""
+
+        super().__init__(**kwargs)
 
         # Type-hint the values_df to no longer be optional. Changes the outwards-facing
         # type hint so that mypy doesn't complain.
@@ -129,15 +153,11 @@ class AnySpec(BaseModel):
 
         return col_str
 
-    def __eq__(self, other: object) -> bool:
-        """Trying to run `spec in list_of_specs` works for all attributes
+    def __eq__(self, other):
+        """Add equality check for dataframes.
 
-        except for df, since the truth value of a dataframe is ambiguous. To
-        remedy this, we use pandas'.
-
-        .equals() method for comparing the dfs, and get the combined truth value.
-
-        We need to override the __eq__ method.
+        Trying to run `spec in list_of_specs` works for all attributes except for df, since the truth value of a dataframe is ambiguous.
+        To remedy this, we use pandas' .equals() method for comparing the dfs, and get the combined truth value.
         """
         other_attributes_equal = all(
             getattr(self, attr) == getattr(other, attr)
@@ -159,7 +179,7 @@ class TemporalSpec(AnySpec):
 
     (temporal features), whether looking ahead or behind.
 
-    Mostly used for inheritance below.
+    Both if looking ahead or behind. Mostly used for inheritance below.
     """
 
     interval_days: Union[int, float]
@@ -317,11 +337,20 @@ class MinGroupSpec(BaseModel):
         if len(invalid_loaders) != 0:
             # New line variable as f-string can't handle backslashes
             nl = "\n"  # pylint: disable = invalid-name
+            available_loaders = [
+                str(loader) for loader in data_loaders.get_all().keys()
+            ]
+
+            avail_loaders_str = nl.join(available_loaders)
+
+            if len(available_loaders) == 0:
+                avail_loaders_str = "No loaders available."
+
             raise ValueError(
                 f"""Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info.
                 {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
-                f"""Available loaders:{nl}{nl.join(str(loader) for loader in data_loaders.get_all())}""",
+                f"""Available loaders:{nl}{avail_loaders_str}""",
             )
 
         if self.output_col_name_override:

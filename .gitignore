@@ -164,3 +164,4 @@ poetry.lock
 
 # PyCharm
 /.idea/*
+**/tmp/
