@@ -1,14 +1,18 @@
+"""Exampel of how to setup a logger with sensible defaults."""
+
 import logging
 from pathlib import Path
+
+import coloredlogs
 
 from timeseriesflattener.utils import PROJECT_ROOT
 
 
 def setup_logger(
     name: str,
-    level: int = None,
+    level: int = logging.DEBUG,
     log_file_path: str = None,
-    format: str = None,
+    format: str = "%(asctime)s [%(levelname)s] %(message)s",
 ) -> logging.Logger:
     """
     Set up a logger with the given name and log level.
@@ -27,6 +31,7 @@ def setup_logger(
     The logger outputs log messages to the console and to a log file, if a
     log file path is specified.
     """
+    coloredlogs.install()
 
     # create logger
     logger = logging.getLogger(name)
@@ -75,5 +80,4 @@ if __name__ == "__main__":
         level=logging.DEBUG,
         log_file_path=PROJECT_ROOT / "logs" / "test.log",
         format="%(asctime)s [%(levelname)s]: %(message)s",
-    )
     )

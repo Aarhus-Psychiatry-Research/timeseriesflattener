@@ -11,6 +11,7 @@ from datetime import timedelta
 from multiprocessing import Pool
 from typing import Optional
 
+import coloredlogs
 import numpy as np
 import pandas as pd
 import tqdm
@@ -148,8 +149,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         if log_to_stdout:
             # Setup logging to stdout by default
-            logging.basicConfig(
-                level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+            coloredlogs.install(
+                level=logging.INFO, fmt="%(asctime)s [%(levelname)s] %(message)s"
             )
 
     @staticmethod
