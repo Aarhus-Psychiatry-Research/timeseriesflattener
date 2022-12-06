@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run tests
-        uses: ./.github/actions/tutorials
+        uses: ./.github/actions/test_tutorials
         with:
           python-version: ${{ env.python-version }}
           poetry-version: ${{ env.poetry-version }}
