@@ -1,17 +1,14 @@
-"""Flattens a dataset.
+"""Flattens timeseries.
 
-Takes a time-series and flattens it into a set of prediction times
-describing values.
+Takes a time-series and flattens it into a set of prediction times with describing values.
 """
 import datetime as dt
-import os
 import random
 import time
 from collections.abc import Callable
 from datetime import timedelta
 from multiprocessing import Pool
-from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -21,6 +18,7 @@ from dask.diagnostics import ProgressBar
 from pandas import DataFrame
 from wasabi import Printer, msg
 
+from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     OutcomeSpec,
@@ -29,7 +27,6 @@ from timeseriesflattener.feature_spec_objects import (
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
-from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
 
 ProgressBar().register()
 
@@ -48,15 +45,42 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         feature_cache_dir (Path): Path to cache directory for feature dataframes.
     """
 
+    def _override_cache_attributes_with_self_attributes(
+        self,
+        prediction_times_df: DataFrame,
+    ):
+        """Make cache inherit attributes from flattened dataset.
+
+        Avoids duplicate specification.
+        """
+        if (
+            not hasattr(self.cache, "prediction_times_df")
+            or self.cache.prediction_times_df is None
+        ):
+            self.cache.prediction_times_df = prediction_times_df
+        elif not self.cache.prediction_times_df.equals(prediction_times_df):
+            msg.warn(
+                "Overriding prediction_times_df in cache with prediction_times_df passed to init",
+            )
+            self.cache.prediction_times_df = prediction_times_df
+
+        for attr in ["pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"]:
+            if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
+                if getattr(self.cache, attr) != getattr(self, attr):
+                    msg.warn(
+                        f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
+                    )
+                    setattr(self.cache, attr, getattr(self, attr))
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
+        cache: Optional[FeatureCache] = None,
         id_col_name: str = "dw_ek_borger",
         timestamp_col_name: str = "timestamp",
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
         n_workers: int = 60,
-        feature_cache_dir: Optional[Path] = None,
     ):
         """Class containing a time-series, flattened.
 
@@ -83,12 +107,12 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         Args:
             prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
-            timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
+            cache (Optional[FeatureCache], optional): Object for feature caching. Should be initialised when passed to init. Defaults to None.
             id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "dw_ek_borger".
+            timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
             predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to "pred_".
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
             n_workers (int): Number of subprocesses to spawn for parallelization. Defaults to 60.
-            feature_cache_dir (Path): Path to cache directory for feature dataframes. Defaults to None.
 
         Raises:
             ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df
@@ -101,18 +125,19 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self.predictor_col_name_prefix = predictor_col_name_prefix
         self.outcome_col_name_prefix = outcome_col_name_prefix
         self.pred_time_uuid_col_name = "prediction_time_uuid"
+        self.cache = cache
 
-        if feature_cache_dir:
-            self.feature_cache_dir = feature_cache_dir
-            if not self.feature_cache_dir.exists():
-                self.feature_cache_dir.mkdir()
+        if self.cache:
+            self._override_cache_attributes_with_self_attributes(prediction_times_df)
 
-        self.n_uuids = len(prediction_times_df)
+        self.n_uuids = prediction_times_df.shape[0]
 
         self.msg = Printer(timestamp=True)
 
         if "value" in prediction_times_df.columns:
-            prediction_times_df.drop("value", axis=1, inplace=True)
+            raise ValueError(
+                "Column 'value' should not occur in prediction_times_df, only timestamps and ids.",
+            )
 
         self._df = prediction_times_df
 
@@ -127,76 +152,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             str,
         ) + self._df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
-    def _load_most_recent_df_matching_pattern(
-        self,
-        dir_path: Path,
-        file_pattern: str,
-        file_suffix: str,
-    ) -> DataFrame:
-        """Load most recent df matching pattern.
-
-        Args:
-            file_pattern (str): Pattern to match
-            file_suffix (str, optional): File suffix to match.
-
-        Returns:
-            DataFrame: DataFrame matching pattern
-
-        Raises:
-            FileNotFoundError: If no file matching pattern is found
-        """
-        files_with_suffix = list(dir_path.glob(f"*{file_pattern}*.{file_suffix}"))
-
-        if len(files_with_suffix) == 0:
-            raise FileNotFoundError(f"No files matching pattern {file_pattern} found")
-
-        path_of_most_recent_file = max(files_with_suffix, key=os.path.getctime)
-
-        return load_dataset_from_file(
-            file_path=path_of_most_recent_file,
-        )
-
-    def _load_cached_df_and_expand_fallback(
-        self,
-        file_pattern: str,
-        file_suffix: str,
-        fallback: Any,
-        full_col_str: str,
-    ) -> pd.DataFrame:
-        """Load most recent df matching pattern, and expand fallback column.
-
-        Args:
-            file_pattern (str): File pattern to search for
-            file_suffix (str): File suffix to search for
-            fallback (Any): Fallback value
-            full_col_str (str): Full column name for values
-
-        Returns:
-            DataFrame: DataFrame with fallback column expanded
-        """
-        df = self._load_most_recent_df_matching_pattern(
-            dir_path=self.feature_cache_dir,
-            file_pattern=file_pattern,
-            file_suffix=file_suffix,
-        )
-
-        # Expand fallback column
-        df = pd.merge(
-            left=self._df[self.pred_time_uuid_col_name],
-            right=df,
-            how="left",
-            on=self.pred_time_uuid_col_name,
-            validate="m:1",
-        )
-
-        df[full_col_str] = df[full_col_str].fillna(fallback)
-
-        return df
-
     @staticmethod
-    def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
+    def flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
-        output_spec: TemporalSpec,
+        output_spec: AnySpec,
         id_col_name: str,
         timestamp_col_name: str,
         pred_time_uuid_col_name: str,
@@ -291,159 +250,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         return df[[pred_time_uuid_col_name, output_spec.get_col_str()]]
 
-    def _generate_values_for_cache_checking(
-        self,
-        output_spec: TemporalSpec,
-        value_col_str: str,
-        n_to_generate: int = 100_000,
-    ):
-        generated_df = pd.DataFrame({value_col_str: []})
-
-        # Check that some values in generated_df differ from fallback
-        # Otherwise, comparison to cache is meaningless
-        n_trials = 0
-
-        while not any(
-            generated_df[value_col_str] != output_spec.fallback,
-        ):
-            if n_trials != 0:
-                self.msg.info(
-                    f"{value_col_str[20]}, {n_trials}: Generated_df was all fallback values, regenerating",
-                )
-
-            n_to_generate = int(min(n_to_generate, len(self._df)))
-
-            generated_df = self._flatten_temporal_values_to_df(
-                prediction_times_with_uuid_df=self._df.sample(
-                    n=n_to_generate,
-                    replace=False,
-                ),
-                id_col_name=self.id_col_name,
-                timestamp_col_name=self.timestamp_col_name,
-                pred_time_uuid_col_name=self.pred_time_uuid_col_name,
-                output_spec=output_spec,
-            ).dropna()
-
-            # Fallback values are not interesting for cache hit. If they exist in generated_df, they should be dropped
-            # in the cache. Saves on storage. Don't use them to check if cache is hit.
-            if not np.isnan(output_spec.fallback):  # type: ignore
-                generated_df = generated_df[
-                    generated_df[value_col_str] != output_spec.fallback
-                ]
-
-            n_to_generate = (
-                n_to_generate**1.5
-            )  # Increase n_to_generate by 1.5x each time to increase chance of non_fallback values
-
-            n_trials += 1
-
-        return generated_df
-
-    def _cache_is_hit(
-        self,
-        output_spec: TemporalSpec,
-        file_pattern: str,
-        file_suffix: str,
-    ) -> bool:
-        """Check if cache is hit.
-
-        Args:
-            kwargs_dict (dict): dictionary of kwargs
-            file_pattern (str): File pattern to match. Looks for *file_pattern* in cache dir.
-            e.g. "*feature_name*_uuids*.file_suffix"
-            full_col_str (str): Full column string. e.g. "feature_name_ahead_interval_days_resolve_multiple_fallback"
-            file_suffix (str): File suffix to match. e.g. "csv"
-
-        Returns:
-            bool: True if cache is hit, False otherwise
-        """
-        # Check that file exists
-        file_pattern_hits = list(
-            self.feature_cache_dir.glob(f"*{file_pattern}*.{file_suffix}"),
-        )
-
-        if len(file_pattern_hits) == 0:
-            self.msg.info(f"Cache miss, {file_pattern} didn't exist")
-            return False
-
-        value_col_str = output_spec.get_col_str()
-
-        # Check that file contents match expected
-        # NAs are not interesting when comparing if computed values are identical
-        cache_df = self._load_most_recent_df_matching_pattern(
-            dir_path=self.feature_cache_dir,
-            file_pattern=file_pattern,
-            file_suffix=file_suffix,
-        )
-
-        generated_df = self._generate_values_for_cache_checking(
-            output_spec=output_spec,
-            value_col_str=value_col_str,
-        )
-
-        cached_suffix = "_c"
-        generated_suffix = "_g"
-
-        # We frequently hit rounding errors with cache hits, so we round to 3 decimal places
-        generated_df[value_col_str] = generated_df[value_col_str].round(3)
-        cache_df[value_col_str] = cache_df[value_col_str].round(3)
-
-        # Merge cache_df onto generated_df
-        merged_df = pd.merge(
-            left=generated_df,
-            right=cache_df,
-            how="left",
-            on=self.pred_time_uuid_col_name,
-            suffixes=(generated_suffix, cached_suffix),
-            validate="1:1",
-            indicator=True,
-        )
-
-        # Check that all rows in generated_df are in cache_df
-        if not merged_df[value_col_str + generated_suffix].equals(
-            merged_df[value_col_str + cached_suffix],
-        ):
-            self.msg.info(f"Cache miss, computed values didn't match {file_pattern}")
-
-            # Keep this variable for easier inspection
-            unequal_rows = merged_df[  # pylint: disable=unused-variable # noqa
-                merged_df[value_col_str + generated_suffix]
-                != merged_df[value_col_str + cached_suffix]
-            ]
-
-            return False
-
-        # If all checks passed, return true
-        msg.good(f"Cache hit for {value_col_str}")
-        return True
-
-    def _write_feature_to_cache(
-        self,
-        values_df: pd.DataFrame,
-        predictor_spec: TemporalSpec,
-        file_name: str,
-    ):
-        """Write feature to cache."""
-        out_df = values_df
-
-        # Drop rows containing fallback, since it's non-informative
-        out_df = out_df[
-            out_df[predictor_spec.get_col_str()] != predictor_spec.fallback
-        ].dropna()
-
-        # Write df to cache
-        timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-        # Write df to cache
-        write_df_to_file(
-            df=out_df,
-            file_path=self.feature_cache_dir / f"{file_name}_{timestamp}.parquet",
-        )
-
     def _get_temporal_feature(
         self,
         feature_spec: TemporalSpec,
-        file_suffix: str = "parquet",
     ) -> pd.DataFrame:
         """Get feature. Either load from cache, or generate if necessary.
 
@@ -453,26 +262,14 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Returns:
             pd.DataFrame: Feature
         """
-        file_name = f"{feature_spec.get_col_str()}_{self.n_uuids}_uuids"
 
-        if hasattr(self, "feature_cache_dir"):
-            if self._cache_is_hit(
-                file_pattern=file_name,
-                output_spec=feature_spec,
-                file_suffix="parquet",
-            ):
-                df = self._load_cached_df_and_expand_fallback(
-                    file_pattern=file_name,
-                    full_col_str=feature_spec.get_col_str(),
-                    fallback=feature_spec.fallback,
-                    file_suffix=file_suffix,
-                )
+        if self.cache and self.cache.feature_exists(feature_spec=feature_spec):
+            df = self.cache.read_feature(feature_spec=feature_spec)
+            return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+        elif not self.cache:
+            msg.info("No cache specified, not attempting load")
 
-                return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
-        else:
-            msg.info("No cache dir specified, not attempting load")
-
-        df = self._flatten_temporal_values_to_df(
+        df = self.flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
                 [
                     self.pred_time_uuid_col_name,
@@ -487,11 +284,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
         # Write df to cache if exists
-        if hasattr(self, "feature_cache_dir"):
-            self._write_feature_to_cache(
-                predictor_spec=feature_spec,
-                file_name=file_name,
-                values_df=df,
+        if self.cache:
+            self.cache.write_feature(
+                feature_spec=feature_spec,
+                df=df,
             )
 
         return (
@@ -512,10 +308,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                     raise ValueError("Dataframes are not of equal length")
 
     def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
-        """Randomly sample 50 positions in each df and check that their
-        indeces.
-
-        are identical.
+        """Sample each df and check for identical indeces.
 
         This checks that all the dataframes are aligned before
         concatenation.
@@ -770,7 +563,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def add_temporal_col_to_flattened_dataset(
         self,
-        output_spec: TemporalSpec,
+        output_spec: AnySpec,
     ):
         """Add a column to the dataset (either predictor or outcome depending.
 
@@ -787,7 +580,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset.",
             )
 
-        df = TimeseriesFlattener._flatten_temporal_values_to_df(
+        df = TimeseriesFlattener.flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
                 [
                     self.id_col_name,
