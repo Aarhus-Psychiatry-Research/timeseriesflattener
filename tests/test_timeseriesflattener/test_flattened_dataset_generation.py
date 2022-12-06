@@ -2,7 +2,6 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
-from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -23,13 +22,15 @@ from timeseriesflattener.testing.utils_for_testing import (
     synth_prediction_times,
 )
 
-funcs = [
+# Avoid automatically being removed by ruff
+used_synth_datasets = [
     synth_predictor_binary,
     synth_predictor_float,
-    load_synth_prediction_times,
     synth_outcome,
     synth_prediction_times,
-]  # List to avoid them being removed as unused imports
+    synth_predictor_float,
+    load_synth_prediction_times,
+]
 
 base_float_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_float"],
@@ -105,8 +106,8 @@ def create_flattened_df(
         cache=cache,
     )
 
-    flat_ds.add_temporal_predictors_from_pred_specs(
-        predictor_specs=predictor_specs,
+    flat_ds.add_temporal_predictor_batch(
+        predictor_batch=predictor_specs,
     )
 
     return flat_ds.get_df()
@@ -118,8 +119,8 @@ def create_flattened_df(
 )
 def test_cache_hitting(
     tmp_path,
-    synth_prediction_times,
     predictor_specs,
+    synth_prediction_times,
 ):
     """Test that cache hits."""
 
