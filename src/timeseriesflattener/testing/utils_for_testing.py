@@ -26,8 +26,8 @@ def convert_cols_with_matching_colnames_to_datetime(
     """Convert columns that contain colname_substr in their name to datetimes.
 
     Args:
-        df (DataFrame): The df to convert. # noqa: DAR101
-        colname_substr (str): Substring to match on. # noqa: DAR101
+        df (DataFrame): The df to convert.
+        colname_substr (str): Substring to match on.
 
     Returns:
         DataFrame: The converted df
