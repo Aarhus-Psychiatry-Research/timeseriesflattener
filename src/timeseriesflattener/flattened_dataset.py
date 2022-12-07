@@ -10,7 +10,7 @@ import time
 from collections.abc import Callable
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Optional
+from typing import Optional, Union
 
 import coloredlogs
 import numpy as np
@@ -19,12 +19,14 @@ import tqdm
 from catalogue import Registry  # noqa # pylint: disable=unused-import
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
+from pydantic import BaseModel as PydanticBaseModel
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     OutcomeSpec,
     PredictorSpec,
+    StaticSpec,
     TemporalSpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
@@ -33,6 +35,12 @@ from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 ProgressBar().register()
 
 log = logging.getLogger(__name__)
+
+
+class SpecCollection(PydanticBaseModel):
+    outcome_specs: list[OutcomeSpec] = []
+    predictor_specs: list[PredictorSpec] = []
+    static_specs: list[AnySpec] = []
 
 
 class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
@@ -121,6 +129,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self.outcome_col_name_prefix = outcome_col_name_prefix
         self.pred_time_uuid_col_name = "prediction_time_uuid"
         self.cache = cache
+        self.unprocessed_specs: SpecCollection = SpecCollection()
 
         if self.cache:
             self._override_cache_attributes_with_self_attributes(prediction_times_df)
@@ -711,6 +720,31 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             ["is_in_interval", "time_from_pred_to_val_in_days"],
             axis=1,
         )
+
+    def add_spec(
+        self,
+        spec: Union[list[AnySpec], AnySpec],
+    ):
+        """Add a specification to the flattened dataset."""
+        if isinstance(spec, AnySpec):
+            specs_to_process: list[AnySpec] = [spec]
+        else:
+            specs_to_process = spec
+
+        for spec_i in specs_to_process:
+            allowed_spec_types = (OutcomeSpec, PredictorSpec, StaticSpec)
+
+            if not isinstance(spec_i, allowed_spec_types):
+                raise ValueError(
+                    f"Input is not allowed. Must be one of: {allowed_spec_types}"
+                )
+
+            if isinstance(spec_i, OutcomeSpec):
+                self.unprocessed_specs.outcome_specs.append(spec_i)
+            elif isinstance(spec_i, PredictorSpec):
+                self.unprocessed_specs.predictor_specs.append(spec_i)
+            elif isinstance(spec_i, StaticSpec):
+                self.unprocessed_specs.static_specs.append(spec_i)
 
     def get_df(self) -> DataFrame:
         """Get the flattened dataframe.
