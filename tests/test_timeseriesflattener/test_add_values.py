@@ -8,7 +8,6 @@ import pytest
 
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import (
-    AnySpec,
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
@@ -210,8 +209,9 @@ def test_static_predictor():
         prediction_times_df=str_to_df(prediction_times_df),
         drop_pred_times_with_insufficient_look_distance=False,
     )
+
     dataset.add_spec(
-        AnySpec(
+        StaticSpec(
             values_df=str_to_df(static_predictor),
             feature_name=feature_name,
             prefix=prefix,
