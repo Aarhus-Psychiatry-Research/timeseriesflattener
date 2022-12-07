@@ -413,7 +413,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         output_age_col_name = f"{output_prefix}_age_in_years"
 
-        self.add_static_info(
+        self._add_static_info(
             static_spec=AnySpec(
                 values_df=id2date_of_birth,
                 input_col_name_override=input_date_of_birth_col_name,
@@ -437,7 +437,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             # Convert datetime to year
             self._df["pred_birth_year"] = self._df[data_of_birth_col_name].dt.year
 
-    def add_static_info(
+    def _add_static_info(
         self,
         static_spec: AnySpec,
     ):
@@ -573,26 +573,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             on=self.pred_time_uuid_col_name,
             validate="1:1",
         )
-
-    def add_temporal_outcome(
-        self,
-        output_spec: OutcomeSpec,
-    ):
-        """Add an outcome-column to the dataset.
-
-        Args:
-            output_spec (OutcomeSpec): OutcomeSpec object.
-        """
-
-        if output_spec.incident:
-            self._add_incident_outcome(
-                outcome_spec=output_spec,
-            )
-
-        else:
-            self._add_temporal_col_to_flattened_dataset(
-                output_spec=output_spec,
-            )
 
     def add_temporal_predictor(
         self,
@@ -746,10 +726,56 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)
 
+    def _process_outcome_specs(self):
+        """Process outcome specs."""
+        # TODO: Drop based on min_lookahead
+
+        for spec in self.unprocessed_specs.outcome_specs:
+            if spec.incident:
+                self._add_incident_outcome(
+                    outcome_spec=spec,
+                )
+
+            else:
+                self._add_temporal_col_to_flattened_dataset(
+                    output_spec=spec,
+                )
+
+            self.unprocessed_specs.outcome_specs.remove(spec)
+
+    def _process_predictor_specs(self):
+        """Process predictor specs."""
+
+        # TODO: Drop based om max_lookbehind
+
+        self.add_temporal_predictor_batch(
+            predictor_batch=self.unprocessed_specs.predictor_specs
+        )
+
+        self.unprocessed_specs.predictor_specs = []
+
+    def _process_static_specs(self):
+        """Process static specs."""
+        for spec in self.unprocessed_specs.static_specs:
+            self._add_static_info(
+                static_spec=spec,
+            )
+
+            self.unprocessed_specs.static_specs.remove(spec)
+
+    def compute(self):
+        """Compute the flattened dataset."""
+        self._process_outcome_specs()
+        self._process_predictor_specs()
+        self._process_static_specs()
+
     def get_df(self) -> DataFrame:
         """Get the flattened dataframe.
 
         Returns:
             DataFrame: Flattened dataframe.
         """
+        self.compute()
+
+        # Process
         return self._df

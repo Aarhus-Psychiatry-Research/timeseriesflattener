@@ -202,7 +202,7 @@ def test_static_predictor():
                         """
 
     dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
-    dataset.add_static_info(
+    dataset._add_static_info(
         static_spec=AnySpec(
             values_df=str_to_df(static_predictor),
             feature_name=feature_name,
@@ -316,7 +316,7 @@ def test_incident_outcome_removing_prediction_times():
         n_workers=4,
     )
 
-    flattened_dataset.add_temporal_outcome(
+    flattened_dataset._add_temporal_outcome(
         output_spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
@@ -389,7 +389,7 @@ def test_add_multiple_static_predictors():
         feature_name="value",
     )
 
-    flattened_dataset.add_temporal_outcome(
+    flattened_dataset._add_temporal_outcome(
         output_spec=output_spec,
     )
 
@@ -397,7 +397,7 @@ def test_add_multiple_static_predictors():
         input_date_of_birth_col_name="date_of_birth",
         id2date_of_birth=birthdates_df,
     )
-    flattened_dataset.add_static_info(
+    flattened_dataset._add_static_info(
         static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred"),
     )
 
@@ -464,7 +464,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         predictor_batch=[predictor_spec_list],
     )
 
-    flattened_dataset.add_temporal_outcome(
+    flattened_dataset._add_temporal_outcome(
         output_spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
@@ -513,7 +513,7 @@ def test_add_temporal_incident_binary_outcome():
         n_workers=4,
     )
 
-    flattened_dataset.add_temporal_outcome(
+    flattened_dataset._add_temporal_outcome(
         output_spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
