@@ -586,9 +586,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         timestamp_pred_colname: str,
         timestamp_value_colname: str,
     ) -> DataFrame:
-        """Drop rows where timestamp_value is outside interval_days.
-
-        Looks in direction of timestamp_pred.
+        """Filter by time from from predictions to values.
+        
+        Drop if distance from timestamp_pred to timestamp_value is outside interval_days. Looks in `direction`.
 
         Args:
             direction (str): Whether to look ahead or behind.
@@ -625,6 +625,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             ["is_in_interval", "time_from_pred_to_val_in_days"],
             axis=1,
         )
+        
+    def _drop_if_
 
     def _process_temporal_specs(self):
         """Process outcome specs."""
