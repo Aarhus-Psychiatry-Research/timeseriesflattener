@@ -56,3 +56,41 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     # Test adding an invalid spec type
     with pytest.raises(ValueError):
         dataset.add_spec("invalid spec")
+
+
+def test_compute_specs(
+    synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame
+):
+    # Create an instance of the class that contains the `add_spec` method
+    dataset = TimeseriesFlattener(
+        prediction_times_df=synth_prediction_times,
+    )
+
+    # Create sample specs
+    outcome_spec = OutcomeSpec(
+        values_df=synth_outcome,
+        feature_name="outcome",
+        lookahead_days=1,
+        resolve_multiple_fn=mean,
+        fallback=0,
+        incident=False,
+    )
+    predictor_spec = PredictorSpec(
+        values_df=synth_outcome,
+        feature_name="predictor",
+        lookbehind_days=1,
+        resolve_multiple_fn=mean,
+        fallback=np.nan,
+    )
+    static_spec = StaticSpec(
+        values_df=synth_outcome[["value", "dw_ek_borger"]],
+        feature_name="static",
+        prefix="pred",
+    )
+
+    # Test adding a single spec
+    dataset.add_spec([outcome_spec, predictor_spec, static_spec])
+
+    df = dataset.get_df()
+
+    assert isinstance(df, pd.DataFrame)
