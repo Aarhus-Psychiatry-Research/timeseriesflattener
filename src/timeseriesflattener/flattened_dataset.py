@@ -587,7 +587,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         timestamp_value_colname: str,
     ) -> DataFrame:
         """Filter by time from from predictions to values.
-        
+
         Drop if distance from timestamp_pred to timestamp_value is outside interval_days. Looks in `direction`.
 
         Args:
@@ -625,8 +625,32 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             ["is_in_interval", "time_from_pred_to_val_in_days"],
             axis=1,
         )
-        
-    def _drop_if_
+
+    def _drop_pred_time_if_insufficient_look_distance(
+        self, spec_batch: list[TemporalSpec]
+    ):
+        """Drop prediction times if there is insufficient look distance.
+
+        Args:
+            spec_batch (list[TemporalSpec]): A batch of specs.
+        """
+        # Check that all specs are of the same type
+        if not len({type(spec) for spec in spec_batch}) == 1:
+            raise ValueError("All specs must be of the same type")
+
+        # Handle for predictors
+        cutoff_date = None
+
+        for spec in spec_batch:
+            min_date: pd.Timestamp = spec.values_df[self.timestamp_colname].min()  # type: ignore
+
+            lookbehind = spec.lookbehind
+
+            if min_date < cutoff_date or cutoff_date is None:
+                cutoff_date = min_date
+
+        # Drop all prediction times before cutoff_date
+        self._df = self._df[self._df[self.timestamp_col_name] >= cutoff_date]
 
     def _process_temporal_specs(self):
         """Process outcome specs."""
