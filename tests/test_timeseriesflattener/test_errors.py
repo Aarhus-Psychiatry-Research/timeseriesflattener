@@ -23,6 +23,7 @@ def test_col_does_not_exist_in_prediction_times():
             prediction_times_df=prediction_times_df,
             timestamp_col_name="timestamp",
             id_col_name="dw_ek_borger",
+            drop_pred_times_with_insufficient_look_distance=False,
         )
 
 
@@ -43,11 +44,12 @@ def test_col_does_not_exist():
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     with pytest.raises(KeyError):
-        flattened_df.add_temporal_predictor(
-            output_spec=PredictorSpec(
+        flattened_df.add_spec(
+            spec=PredictorSpec(
                 values_df=event_times_df,
                 interval_days=2,
                 resolve_multiple_fn="max",
@@ -66,4 +68,5 @@ def test_duplicate_prediction_times():
 
         TimeseriesFlattener(
             prediction_times_df=str_to_df(prediction_times_df_str),
+            drop_pred_times_with_insufficient_look_distance=False,
         )
