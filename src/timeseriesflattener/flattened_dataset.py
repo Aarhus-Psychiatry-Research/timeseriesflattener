@@ -54,6 +54,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         Avoids duplicate specification.
         """
+        if self.cache is None:
+            raise ValueError("Cache is None, cannot override attributes")
+
         if (
             not hasattr(self.cache, "prediction_times_df")
             or self.cache.prediction_times_df is None
@@ -65,7 +68,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             )
             self.cache.prediction_times_df = prediction_times_df
 
-        for attr in ["pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"]:
+        for attr in ("pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"):
             if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
                 if getattr(self.cache, attr) != getattr(self, attr):
                     log.warning(
