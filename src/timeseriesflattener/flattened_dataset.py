@@ -681,9 +681,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         timestamp_pred_colname: str,
         timestamp_value_colname: str,
     ) -> DataFrame:
-        """Keep only rows where timestamp_value is within interval_days in
+        """Drop rows where timestamp_value is outside interval_days.
 
-        direction of timestamp_pred.
+        Looks in direction of timestamp_pred.
 
         Args:
             direction (str): Whether to look ahead or behind.
