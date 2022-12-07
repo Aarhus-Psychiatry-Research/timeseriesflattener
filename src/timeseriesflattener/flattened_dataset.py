@@ -666,7 +666,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         if self._df.shape[0] == 0:
             raise ValueError(
-                "No records left after dropping records outside look distance"
+                "No records left after dropping records outside look distance",
             )
 
     def _process_temporal_specs(self):
@@ -727,7 +727,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
             if not isinstance(spec_i, allowed_spec_types):
                 raise ValueError(
-                    f"Input is not allowed. Must be one of: {allowed_spec_types}"
+                    f"Input is not allowed. Must be one of: {allowed_spec_types}",
                 )
 
             self._check_that_spec_df_has_required_columns(spec=spec_i)

@@ -210,8 +210,8 @@ def test_static_predictor():
         prediction_times_df=str_to_df(prediction_times_df),
         drop_pred_times_with_insufficient_look_distance=False,
     )
-    dataset._add_static_info(
-        static_spec=AnySpec(
+    dataset.add_spec(
+        AnySpec(
             values_df=str_to_df(static_predictor),
             feature_name=feature_name,
             prefix=prefix,
@@ -414,7 +414,7 @@ def test_add_multiple_static_predictors():
                 prefix="pred",
                 input_col_name_override="male",
             ),
-        ]
+        ],
     )
 
     flattened_dataset.add_age_and_birth_year(
@@ -491,7 +491,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
                 incident=True,
                 feature_name="value",
             ),
-        ]
+        ],
     )
 
     outcome_df = flattened_dataset.get_df().set_index("dw_ek_borger").sort_index()

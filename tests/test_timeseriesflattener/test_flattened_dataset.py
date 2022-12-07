@@ -1,3 +1,4 @@
+"""Larger tests for the `flattened_dataset.py` module."""
 import numpy as np
 import pandas as pd
 import pytest
@@ -16,6 +17,8 @@ from timeseriesflattener.testing.utils_for_testing import (
 
 # To avoid ruff auto-removing unused imports
 used_funcs = [synth_prediction_times, synth_outcome]
+
+# pylint: disable=missing-function-docstring
 
 
 def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame):
@@ -42,7 +45,9 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         fallback=np.nan,
     )
     static_spec = StaticSpec(
-        values_df=synth_outcome, feature_name="static", prefix="pred"
+        values_df=synth_outcome,
+        feature_name="static",
+        prefix="pred",
     )
 
     # Test adding a single spec
@@ -60,7 +65,8 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
 
 
 def test_compute_specs(
-    synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame
+    synth_prediction_times: pd.DataFrame,
+    synth_outcome: pd.DataFrame,
 ):
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
@@ -104,7 +110,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
         {
             "dw_ek_borger": [1, 1, 1, 1],
             "timestamp": ["2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04"],
-        }
+        },
     )
 
     ts_flattener = TimeseriesFlattener(

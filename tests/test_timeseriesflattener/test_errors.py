@@ -49,7 +49,7 @@ def test_col_does_not_exist():
 
     with pytest.raises(KeyError):
         flattened_df.add_spec(
-            output_spec=PredictorSpec(
+            spec=PredictorSpec(
                 values_df=event_times_df,
                 interval_days=2,
                 resolve_multiple_fn="max",
@@ -68,4 +68,5 @@ def test_duplicate_prediction_times():
 
         TimeseriesFlattener(
             prediction_times_df=str_to_df(prediction_times_df_str),
+            drop_pred_times_with_insufficient_look_distance=False,
         )

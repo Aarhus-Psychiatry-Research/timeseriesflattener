@@ -143,7 +143,7 @@ class AnySpec(BaseModel):
             and "value" not in kwargs["values_df"].columns
         ):
             raise KeyError(
-                f"The values_df must have a column named 'value' or an input_col_name_override must be specified. Columns in values_df: {list(kwargs['values_df'].columns)}"
+                f"The values_df must have a column named 'value' or an input_col_name_override must be specified. Columns in values_df: {list(kwargs['values_df'].columns)}",
             )
 
         if in_dict_and_not_none(d=kwargs, key="output_col_name_override"):
@@ -235,18 +235,18 @@ class TemporalSpec(AnySpec):
         if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
             # Convert column dtype to datetime64[ns] if it isn't already
             log.info(
-                f"{self.feature_name}: Converting timestamp column to datetime64[ns]"
+                f"{self.feature_name}: Converting timestamp column to datetime64[ns]",
             )
 
             self.values_df[self.timestamp_col_name] = pd.to_datetime(
-                self.values_df[self.timestamp_col_name]
+                self.values_df[self.timestamp_col_name],
             )
 
             min_timestamp = min(self.values_df[self.timestamp_col_name])
 
             if min_timestamp < pd.Timestamp("1971-01-01"):
                 log.warning(
-                    f"{self.feature_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?"
+                    f"{self.feature_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?",
                 )
 
         self.resolve_multiple_fn = data["resolve_multiple_fn"]
