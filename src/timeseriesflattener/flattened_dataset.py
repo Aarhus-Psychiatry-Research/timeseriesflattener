@@ -84,6 +84,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
+        drop_pred_times_with_insufficient_look_distance: bool,  # noqa
         cache: Optional[FeatureCache] = None,
         id_col_name: str = "dw_ek_borger",
         timestamp_col_name: str = "timestamp",
@@ -91,7 +92,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         outcome_col_name_prefix: str = "outc",
         n_workers: int = 60,
         log_to_stdout: bool = True,  # noqa
-        drop_pred_times_with_insufficient_look_distance: bool = True,  # noqa
     ):
         """Class containing a time-series, flattened.
 
@@ -128,7 +128,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             drop_pred_times_with_insufficient_look_distance (bool): Whether to drop prediction times with insufficient look distance.
                 For example, say your feature has a lookbehind of 2 years, and your first datapoint is 2013-01-01.
                 The first prediction time that has sufficient look distance will be on 2015-01-1.
-                Otherwise, your feature will imply that you've looked two years into the past, even though you have less than two years of data to look at. Defaults to True.
+                Otherwise, your feature will imply that you've looked two years into the past, even though you have less than two years of data to look at.
 
         Raises:
             ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df

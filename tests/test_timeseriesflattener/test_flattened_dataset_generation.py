@@ -105,6 +105,7 @@ def create_flattened_df(
         prediction_times_df=prediction_times_df,
         n_workers=1,
         cache=cache,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     flat_ds._add_temporal_batch(

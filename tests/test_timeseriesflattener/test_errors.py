@@ -23,6 +23,7 @@ def test_col_does_not_exist_in_prediction_times():
             prediction_times_df=prediction_times_df,
             timestamp_col_name="timestamp",
             id_col_name="dw_ek_borger",
+            drop_pred_times_with_insufficient_look_distance=False,
         )
 
 
@@ -43,6 +44,7 @@ def test_col_does_not_exist():
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     with pytest.raises(KeyError):

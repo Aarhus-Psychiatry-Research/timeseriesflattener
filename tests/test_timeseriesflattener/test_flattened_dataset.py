@@ -22,6 +22,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
         prediction_times_df=synth_prediction_times,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     # Create sample specs
@@ -64,6 +65,7 @@ def test_compute_specs(
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
         prediction_times_df=synth_prediction_times,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     # Create sample specs
@@ -105,7 +107,10 @@ def test_drop_pred_time_if_insufficient_look_distance():
         }
     )
 
-    ts_flattener = TimeseriesFlattener(prediction_times_df=pred_time_df)
+    ts_flattener = TimeseriesFlattener(
+        prediction_times_df=pred_time_df,
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
 
     pred_val_df = pd.DataFrame(
         {

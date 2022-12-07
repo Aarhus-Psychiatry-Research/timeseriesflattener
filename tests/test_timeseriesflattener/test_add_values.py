@@ -206,7 +206,10 @@ def test_static_predictor():
                         1,1994-12-31 00:00:01
                         """
 
-    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(
+        prediction_times_df=str_to_df(prediction_times_df),
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
     dataset._add_static_info(
         static_spec=AnySpec(
             values_df=str_to_df(static_predictor),
@@ -243,7 +246,10 @@ def test_add_age():
                         1,1994-12-31 00:00:00
                         """
 
-    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(
+        prediction_times_df=str_to_df(prediction_times_df),
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
 
     output_prefix = "eval"
 
@@ -281,7 +287,10 @@ def test_add_age_error():
                         1,94-12-31 00:00:00
                         """
 
-    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(
+        prediction_times_df=str_to_df(prediction_times_df),
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
 
     with pytest.raises(ValueError):
         dataset.add_age_and_birth_year(
@@ -319,6 +328,7 @@ def test_incident_outcome_removing_prediction_times():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     flattened_dataset.add_spec(
@@ -383,6 +393,7 @@ def test_add_multiple_static_predictors():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     output_spec = OutcomeSpec(
@@ -519,6 +530,7 @@ def test_add_temporal_incident_binary_outcome():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     flattened_dataset.add_spec(
