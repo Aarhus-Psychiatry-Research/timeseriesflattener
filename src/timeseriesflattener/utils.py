@@ -9,8 +9,8 @@ from pathlib import Path
 from typing import Any, Optional
 
 import catalogue
-from catalogue import Catalogue
 import pandas as pd
+from catalogue import Catalogue
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
 
