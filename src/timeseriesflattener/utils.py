@@ -6,9 +6,9 @@ utilities. If this file grows, consider splitting it up.
 import functools
 import logging
 import os
-from collections.abc import Hashable
+from collections.abc import Callable, Hashable
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 
 import catalogue
 import pandas as pd
@@ -161,7 +161,9 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]])
 
 
 def print_df_dimensions_diff(
-    func: Callable, print_when_starting: bool = False, print_when_no_diff=False
+    func: Callable,
+    print_when_starting: bool = False,
+    print_when_no_diff=False,
 ):
     """Print the difference in rows between the input and output dataframes."""
 
@@ -188,7 +190,7 @@ def print_df_dimensions_diff(
 
             if print_when_no_diff:
                 log.info(
-                    f"{func.__name__}: {n_in_dim_before_func} {dim} before function"
+                    f"{func.__name__}: {n_in_dim_before_func} {dim} before function",
                 )
 
             result = func(*args, **kwargs)
