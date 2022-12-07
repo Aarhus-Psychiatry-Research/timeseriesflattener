@@ -251,7 +251,7 @@ class PredictorSpec(TemporalSpec):
 
 
 class OutcomeSpec(TemporalSpec):
-    """Specification for a single predictor, where the df has been resolved."""
+    """Specification for a single outcome, where the df has been resolved."""
 
     prefix: str = "outc"
 
@@ -292,15 +292,13 @@ class OutcomeSpec(TemporalSpec):
 
 
 class MinGroupSpec(BaseModel):
-    """Minimum specification for a group of features, whether they're looking
-
-    ahead or behind.
+    """Minimum specification for a group of features, whether they're looking ahead or behind.
 
     Used to generate combinations of features.
     """
 
     values_loader: list[str]
-    # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
+    # Loader for the df. Tries to resolve from the data_loaders registry,
     # then calls the function which should return a dataframe.
 
     values_df: Optional[pd.DataFrame] = None

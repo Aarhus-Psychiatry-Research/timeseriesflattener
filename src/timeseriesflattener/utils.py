@@ -15,6 +15,69 @@ data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
+from catalogue import Catalogue
+
+
+def create_registry_from_long_df(
+    df: pd.DataFrame,
+    id_col_name: str = "dw_ek_borger",
+    timestamp_col_name: str = "timestamp",
+    value_col_name: str = "values",
+    value_keys_col_name: str = "value_keys",
+) -> Catalogue:
+    """
+    Creates a Catalogue of dataframes containing values for different value types.
+
+    The input dataframe should be in long format and should contain at least the following columns:
+      - patient_id: A column with the patient id for each value.
+      - timestamp: A column with the timestamp for each value.
+      - value: A column with the value for each value.
+      - value_keys: A column with the names of the different types of values for each value.
+
+    The function will create a separate dataframe for each unique value type, and will add these dataframes
+    to a Catalogue object, with the value type names as keys. The resulting Catalogue object will be returned.
+
+    Args:
+        df (pd.DataFrame): A dataframe in long format containing the values to be grouped into a catalogue.
+        id_col_name (str): Name of the column containing the patient id for each value.
+        timestamp_col_name (str): Name of the column containing the timestamp for each value.
+        value_col_name (str): Name of the column containing the value for each value.
+        value_keys_col_name (str): Name of the column containing the names of the different types of values for each value.
+
+    Returns:
+        A Catalogue object containing dataframes for each unique value type in the input dataframe.
+    """
+    passed_columns = [
+        id_col_name,
+        timestamp_col_name,
+        value_col_name,
+        value_keys_col_name,
+    ]
+    missing_columns = [col for col in [passed_columns] if col not in df.columns]
+
+    # If any of the required columns is missing, raise an error
+    if len(missing_columns) > 0:
+        raise ValueError(
+            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}"
+        )
+
+    long_format_catalogue = catalogue.create()
+
+    # Get the unique value names from the dataframe
+    value_names = df[value_col_name].unique()
+
+    for value_name in value_names:
+
+        value_df = df[df[value_keys_col_name] == value_name][
+            [id_col_name, timestamp_col_name, value_col_name]
+        ]
+
+        # Add the dataframe to the catalogue using the value name as the key
+        long_format_catalogue.add(value_name, value_df)
+
+    # Return the catalogue
+    return long_format_catalogue
+
 
 def format_dict_for_printing(d: dict) -> str:
     """Format a dictionary for printing. Removes extra apostrophes, formats
