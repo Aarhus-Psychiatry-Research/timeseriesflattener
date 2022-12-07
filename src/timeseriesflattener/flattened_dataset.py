@@ -90,7 +90,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
         n_workers: int = 60,
-        log_to_stdout: bool = True,
+        log_to_stdout: bool = True,  # noqa
+        drop_pred_times_with_insufficient_look_distance: bool = True,  # noqa
     ):
         """Class containing a time-series, flattened.
 
@@ -124,6 +125,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
             n_workers (int): Number of subprocesses to spawn for parallelization. Defaults to 60.
             log_to_stdout (bool): Whether to log to stdout. Either way, also logs to the __name__ namespace, which you can capture with a root logger. Defaults to True.
+            drop_pred_times_with_insufficient_look_distance (bool): Whether to drop prediction times with insufficient look distance.
+                For example, say your feature has a lookbehind of 2 years, and your first datapoint is 2013-01-01.
+                The first prediction time that has sufficient look distance will be on 2015-01-1.
+                Otherwise, your feature will imply that you've looked two years into the past, even though you have less than two years of data to look at. Defaults to True.
 
         Raises:
             ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df
@@ -138,6 +143,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self.pred_time_uuid_col_name = "prediction_time_uuid"
         self.cache = cache
         self.unprocessed_specs: SpecCollection = SpecCollection()
+        self.drop_pred_times_with_insufficient_look_distance = (
+            drop_pred_times_with_insufficient_look_distance
+        )
 
         if self.cache:
             self._override_cache_attributes_with_self_attributes(prediction_times_df)
@@ -174,7 +182,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         prediction_times_with_uuid_df: DataFrame,
         output_spec: AnySpec,
         id_col_name: str,
-        timestamp_col_name: str,
         pred_time_uuid_col_name: str,
         verbose: bool = False,  # noqa
     ) -> DataFrame:
@@ -289,7 +296,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 ]
             ],
             id_col_name=self.id_col_name,
-            timestamp_col_name=self.timestamp_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             output_spec=feature_spec,
         )
@@ -370,7 +376,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Shuffle predictor specs to avoid IO contention
         random.shuffle(temporal_batch)
 
-        with Pool(self.n_workers) as p:
+        n_workers = min(self.n_workers, len(temporal_batch))
+
+        with Pool(n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
                     p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
@@ -627,35 +635,39 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             axis=1,
         )
 
-    def _drop_pred_time_if_insufficient_look_distance(
-        self, spec_batch: list[TemporalSpec]
-    ):
+    def _drop_pred_time_if_insufficient_look_distance(self):
         """Drop prediction times if there is insufficient look distance.
 
         Args:
             spec_batch (list[TemporalSpec]): A batch of specs.
         """
-        # Check that all specs are of the same type
-        if not len({type(spec) for spec in spec_batch}) == 1:
-            raise ValueError("All specs must be of the same type")
+        spec_batch = (
+            self.unprocessed_specs.outcome_specs
+            + self.unprocessed_specs.predictor_specs
+        )
 
         # Handle for predictors
-        cutoff_date = None
+        cutoff_date_behind = None
+        cutoff_date_ahead = None
 
         for spec in spec_batch:
-            min_date: pd.Timestamp = spec.values_df[self.timestamp_colname].min()  # type: ignore
+            spec_cutoff_date = spec.get_cutoff_date()
 
-            lookbehind = spec.lookbehind
+            if isinstance(spec, OutcomeSpec):
+                if cutoff_date_ahead is None or cutoff_date_ahead > spec_cutoff_date:
+                    cutoff_date_ahead = spec_cutoff_date
+            elif isinstance(spec, PredictorSpec):
+                if cutoff_date_behind is None or cutoff_date_behind < spec_cutoff_date:
+                    cutoff_date_behind = spec_cutoff_date
 
-            if min_date < cutoff_date or cutoff_date is None:
-                cutoff_date = min_date
-
-        # Drop all prediction times before cutoff_date
-        self._df = self._df[self._df[self.timestamp_col_name] >= cutoff_date]
+        # Drop all prediction that are not within the cutoff window
+        self._df = self._df[
+            (self._df[self.timestamp_col_name] >= cutoff_date_behind)
+            & (self._df[self.timestamp_col_name] <= cutoff_date_ahead)
+        ]
 
     def _process_temporal_specs(self):
         """Process outcome specs."""
-        # TODO: Drop based on min_lookahead for outcomes and max_lookbehind for predictors
 
         for spec in self.unprocessed_specs.outcome_specs:
             # Handle incident specs separately, since their operations can be vectorised,
@@ -669,6 +681,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         temporal_batch = self.unprocessed_specs.outcome_specs
         temporal_batch += self.unprocessed_specs.predictor_specs
+
+        if self.drop_pred_times_with_insufficient_look_distance:
+            self._drop_pred_time_if_insufficient_look_distance()
 
         if len(temporal_batch) > 0:
             self._add_temporal_batch(temporal_batch=temporal_batch)

@@ -135,7 +135,16 @@ class AnySpec(BaseModel):
     def __init__(self, **kwargs: Any):
         kwargs = resolve_values_df(kwargs)
 
+        # Check that required columns exist
         check_that_col_names_in_kwargs_exist_in_df(kwargs, df=kwargs["values_df"])
+
+        if (
+            "input_col_name_override" not in kwargs
+            and "value" not in kwargs["values_df"].columns
+        ):
+            raise ValueError(
+                "The values_df must have a column named 'value' or an input_col_name_override must be specified."
+            )
 
         if in_dict_and_not_none(d=kwargs, key="output_col_name_override"):
             # If an output_col_name_override is specified, don't prepend a prefix to it
@@ -271,6 +280,20 @@ class PredictorSpec(TemporalSpec):
 
         super().__init__(**data)
 
+    def get_cutoff_date(self) -> pd.Timestamp:
+        """Get the cutoff date from a spec.
+
+        A cutoff date is the earliest date that a prediction time can get data from the values_df.
+        We do not want to include those prediction times, as we might make incorrect inferences.
+        For example, if a spec says to look 5 years into the future, but we only have one year of data,
+        there will necessarily be fewer outcomes - without that reflecting reality. This means our model won't generalise.
+
+        Returns:
+            pd.Timestamp: A cutoff date.
+        """
+        min_val_date = self.values_df[self.timestamp_col_name].min()  # type: ignore
+        return min_val_date + pd.Timedelta(days=self.lookbehind_days)
+
 
 class OutcomeSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
@@ -311,6 +334,21 @@ class OutcomeSpec(TemporalSpec):
         )
 
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
+
+    def get_cutoff_date(self) -> pd.Timestamp:
+        """Get the cutoff date from a spec.
+
+        A cutoff date is the earliest date that a prediction time can get data from the values_df.
+        We do not want to include those prediction times, as we might make incorrect inferences.
+        For example, if a spec says to look 5 years into the future, but we only have one year of data,
+        there will necessarily be fewer outcomes - without that reflecting reality. This means our model won't generalise.
+
+        Returns:
+            pd.Timestamp: A cutoff date.
+        """
+        max_val_date = self.values_df[self.timestamp_col_name].max()  # type: ignore
+
+        return max_val_date - pd.Timedelta(days=self.lookahead_days)
 
 
 class MinGroupSpec(BaseModel):
