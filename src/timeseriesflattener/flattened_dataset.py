@@ -618,14 +618,22 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     @print_df_dimensions_diff
     def _drop_pred_time_if_insufficient_look_distance(self):
-        """Drop prediction times if there is insufficient look distance."""
+        """Drop prediction times if there is insufficient look distance.
+
+        A prediction time has insufficient look distance if the feature spec
+            tries to look beyond the boundary of the data.
+        For example, if a predictor specifies two years of lookbehind,
+            but you only have one year of data prior to the prediction time.
+        """
         spec_batch = (
             self.unprocessed_specs.outcome_specs
             + self.unprocessed_specs.predictor_specs
         )
 
-        # Handle for predictors
+        # Find the latest cutoff date for predictors
         cutoff_date_behind = pd.Timestamp("1700-01-01")
+
+        # Find the earliest cutoff date for outcomes
         cutoff_date_ahead = pd.Timestamp("2200-01-01")
 
         for spec in spec_batch:
@@ -636,7 +644,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             elif isinstance(spec, PredictorSpec):
                 cutoff_date_behind = max(cutoff_date_behind, spec_cutoff_date)
 
-        # Drop all prediction that are not within the cutoff window
+        # Drop all prediction that are outside the cutoffs window
         self._df = self._df[
             (self._df[self.timestamp_col_name] >= cutoff_date_behind)
             & (self._df[self.timestamp_col_name] <= cutoff_date_ahead)
