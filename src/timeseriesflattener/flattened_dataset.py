@@ -429,30 +429,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             .sort_index()
         )
 
-    def _add_temporal_batch(  # pylint: disable=too-many-branches
-        self,
-        temporal_batch: list[TemporalSpec],
-    ):
-        """Add predictors to the flattened dataframe from a list."""
-        # Shuffle predictor specs to avoid IO contention
-        random.shuffle(temporal_batch)
-
-        n_workers = min(self.n_workers, len(temporal_batch))
-
-        with Pool(n_workers) as p:
-            flattened_predictor_dfs = list(
-                tqdm.tqdm(
-                    p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
-                    total=len(temporal_batch),
-                ),
-            )
-
-        log.info("Processing complete, concatenating")
-
-        self._concatenate_flattened_timeseries(
-            flattened_predictor_dfs=flattened_predictor_dfs,
-        )
-
     def _check_dfs_have_same_lengths(self, dfs: list[pd.DataFrame]):
         """Check that all dfs have the same length."""
         df_lengths = 0
@@ -507,6 +483,30 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         log.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
+
+    def _add_temporal_batch(  # pylint: disable=too-many-branches
+        self,
+        temporal_batch: list[TemporalSpec],
+    ):
+        """Add predictors to the flattened dataframe from a list."""
+        # Shuffle predictor specs to avoid IO contention
+        random.shuffle(temporal_batch)
+
+        n_workers = min(self.n_workers, len(temporal_batch))
+
+        with Pool(n_workers) as p:
+            flattened_predictor_dfs = list(
+                tqdm.tqdm(
+                    p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
+                    total=len(temporal_batch),
+                ),
+            )
+
+        log.info("Processing complete, concatenating")
+
+        self._concatenate_flattened_timeseries(
+            flattened_predictor_dfs=flattened_predictor_dfs,
+        )
 
     def _add_static_info(
         self,
