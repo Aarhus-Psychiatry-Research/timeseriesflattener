@@ -46,7 +46,7 @@ def test_col_does_not_exist():
     )
 
     with pytest.raises(KeyError):
-        flattened_df.add_temporal_predictor(
+        flattened_df.add_spec(
             output_spec=PredictorSpec(
                 values_df=event_times_df,
                 interval_days=2,

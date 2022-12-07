@@ -7,7 +7,12 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
+from timeseriesflattener.feature_spec_objects import (
+    AnySpec,
+    OutcomeSpec,
+    PredictorSpec,
+    StaticSpec,
+)
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
@@ -316,8 +321,8 @@ def test_incident_outcome_removing_prediction_times():
         n_workers=4,
     )
 
-    flattened_dataset._add_temporal_outcome(
-        output_spec=OutcomeSpec(
+    flattened_dataset.add_spec(
+        spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
             incident=True,
@@ -389,16 +394,16 @@ def test_add_multiple_static_predictors():
         feature_name="value",
     )
 
-    flattened_dataset._add_temporal_outcome(
-        output_spec=output_spec,
+    flattened_dataset.add_spec(
+        spec=[
+            output_spec,
+            StaticSpec(values_df=male_df, feature_name="male", prefix="pred"),
+        ]
     )
 
     flattened_dataset.add_age_and_birth_year(
         input_date_of_birth_col_name="date_of_birth",
         id2date_of_birth=birthdates_df,
-    )
-    flattened_dataset._add_static_info(
-        static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred"),
     )
 
     outcome_df = flattened_dataset.get_df()
@@ -451,28 +456,25 @@ def test_add_temporal_predictors_then_temporal_outcome():
         n_workers=4,
     )
 
-    predictor_spec_list = PredictorSpec(
-        values_df=predictors_df,
-        interval_days=365,
-        resolve_multiple_fn="min",
-        fallback=np.nan,
-        allowed_nan_value_prop=0,
-        feature_name="value",
-    )
-
-    flattened_dataset._add_temporal_predictor_batch(
-        predictor_batch=[predictor_spec_list],
-    )
-
-    flattened_dataset._add_temporal_outcome(
-        output_spec=OutcomeSpec(
-            values_df=event_times_df,
-            interval_days=2,
-            resolve_multiple_fn="max",
-            fallback=0,
-            incident=True,
-            feature_name="value",
-        ),
+    flattened_dataset.add_spec(
+        spec=[
+            PredictorSpec(
+                values_df=predictors_df,
+                interval_days=365,
+                resolve_multiple_fn="min",
+                fallback=np.nan,
+                allowed_nan_value_prop=0,
+                feature_name="value",
+            ),
+            OutcomeSpec(
+                values_df=event_times_df,
+                interval_days=2,
+                resolve_multiple_fn="max",
+                fallback=0,
+                incident=True,
+                feature_name="value",
+            ),
+        ]
     )
 
     outcome_df = flattened_dataset.get_df().set_index("dw_ek_borger").sort_index()
@@ -513,8 +515,8 @@ def test_add_temporal_incident_binary_outcome():
         n_workers=4,
     )
 
-    flattened_dataset._add_temporal_outcome(
-        output_spec=OutcomeSpec(
+    flattened_dataset.add_spec(
+        spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
             incident=True,
@@ -532,4 +534,5 @@ def test_add_temporal_incident_binary_outcome():
             # which is not a meaningful error here. So we force the dtype.
             if df[col].dtype == "int64":
                 df[col] = df[col].astype("int32")
+
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
