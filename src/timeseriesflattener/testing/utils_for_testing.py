@@ -88,6 +88,7 @@ def assert_flattened_data_as_expected(
     flattened_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     flattened_ds.add_spec(  # pylint: disable=protected-access
