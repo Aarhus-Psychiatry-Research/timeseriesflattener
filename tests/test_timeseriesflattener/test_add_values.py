@@ -10,8 +10,8 @@ from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     OutcomeSpec,
-    PredictorSpec,
     StaticSpec,
+    TemporalSpec,
 )
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
@@ -36,7 +36,7 @@ def test_predictor_after_prediction_time():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
-        output_spec=PredictorSpec(
+        output_spec=TemporalSpec(
             values_df=predictor_df,
             lookbehind_days=2,
             resolve_multiple_fn="max",
@@ -57,7 +57,7 @@ def test_predictor_before_prediction():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
-        output_spec=PredictorSpec(
+        output_spec=TemporalSpec(
             values_df=str_to_df(predictor_df_str),
             lookbehind_days=2,
             resolve_multiple_fn="max",
@@ -86,7 +86,7 @@ def test_multiple_citizens_predictor():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
-        output_spec=PredictorSpec(
+        output_spec=TemporalSpec(
             values_df=str_to_df(predictor_df_str),
             interval_days=2,
             fallback=np.NaN,
@@ -458,7 +458,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
 
     flattened_dataset.add_spec(
         spec=[
-            PredictorSpec(
+            TemporalSpec(
                 values_df=predictors_df,
                 interval_days=365,
                 resolve_multiple_fn="min",

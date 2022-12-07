@@ -253,7 +253,7 @@ class TemporalSpec(AnySpec):
         return col_str
 
 
-class PredictorSpec(TemporalSpec):
+class TemporalSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "pred"
@@ -436,7 +436,7 @@ class PredictorGroupSpec(MinGroupSpec):
         """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
-            output_class=PredictorSpec,
+            output_class=TemporalSpec,
         )
 
 

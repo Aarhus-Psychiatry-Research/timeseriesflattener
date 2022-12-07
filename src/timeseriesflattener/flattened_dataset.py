@@ -25,7 +25,6 @@ from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCach
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     OutcomeSpec,
-    PredictorSpec,
     StaticSpec,
     TemporalSpec,
 )
@@ -39,7 +38,7 @@ log = logging.getLogger(__name__)
 
 class SpecCollection(PydanticBaseModel):
     outcome_specs: list[OutcomeSpec] = []
-    predictor_specs: list[PredictorSpec] = []
+    predictor_specs: list[TemporalSpec] = []
     static_specs: list[AnySpec] = []
 
 
@@ -208,7 +207,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
             direction = "ahead"
-        elif isinstance(output_spec, PredictorSpec):
+        elif isinstance(output_spec, TemporalSpec):
             direction = "behind"
         else:
             raise ValueError(f"Unknown output_spec type {type(output_spec)}")
@@ -357,23 +356,23 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         log.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
-    def _add_temporal_predictor_batch(  # pylint: disable=too-many-branches
+    def _add_temporal_batch(  # pylint: disable=too-many-branches
         self,
-        predictor_batch: list[PredictorSpec],
+        temporal_batch: list[TemporalSpec],
     ):
         """Add predictors to the flattened dataframe from a list."""
         # Shuffle predictor specs to avoid IO contention
-        random.shuffle(predictor_batch)
+        random.shuffle(temporal_batch)
 
         with Pool(self.n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
-                    p.imap(func=self._get_temporal_feature, iterable=predictor_batch),
-                    total=len(predictor_batch),
+                    p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
+                    total=len(temporal_batch),
                 ),
             )
 
-        log.info("Feature generation complete, concatenating")
+        log.info("Processing complete, concatenating")
 
         self._concatenate_flattened_timeseries(
             flattened_predictor_dfs=flattened_predictor_dfs,
@@ -622,22 +621,24 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             axis=1,
         )
 
-    def _process_outcome_specs(self):
+    def _process_temporal_specs(self):
         """Process outcome specs."""
-        # TODO: Drop based on min_lookahead
+        # TODO: Drop based on min_lookahead for outcomes and max_lookbehind for predictors
 
         for spec in self.unprocessed_specs.outcome_specs:
+            # Handle incident specs separately, since their operations can be vectorised,
+            # making them much faster
             if spec.incident:
                 self._add_incident_outcome(
                     outcome_spec=spec,
                 )
 
-            else:
-                self._add_temporal_col_to_flattened_dataset(
-                    output_spec=spec,
-                )
+                self.unprocessed_specs.outcome_specs.remove(spec)
 
-            self.unprocessed_specs.outcome_specs.remove(spec)
+        temporal_batch = self.unprocessed_specs.outcome_specs
+        temporal_batch += self.unprocessed_specs.predictor_specs
+
+        self._add_temporal_batch(temporal_batch=temporal_batch)
 
     def _process_predictor_specs(self):
         """Process predictor specs."""
@@ -647,9 +648,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             log.warning("No predictors added to dataset (yet).")
             return
 
-        self._add_temporal_predictor_batch(
-            predictor_batch=self.unprocessed_specs.predictor_specs
-        )
+        self._add_temporal_batch(temporal_batch=self.unprocessed_specs.predictor_specs)
 
         self.unprocessed_specs.predictor_specs = []
 
@@ -673,7 +672,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             specs_to_process = spec
 
         for spec_i in specs_to_process:
-            allowed_spec_types = (OutcomeSpec, PredictorSpec, StaticSpec)
+            allowed_spec_types = (OutcomeSpec, TemporalSpec, StaticSpec)
 
             if not isinstance(spec_i, allowed_spec_types):
                 raise ValueError(
@@ -682,7 +681,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
-            elif isinstance(spec_i, PredictorSpec):
+            elif isinstance(spec_i, TemporalSpec):
                 self.unprocessed_specs.predictor_specs.append(spec_i)
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)
@@ -744,8 +743,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def compute(self):
         """Compute the flattened dataset."""
-        self._process_outcome_specs()
-        self._process_predictor_specs()
+        self._process_temporal_specs()
         self._process_static_specs()
 
     def get_df(self) -> DataFrame:
