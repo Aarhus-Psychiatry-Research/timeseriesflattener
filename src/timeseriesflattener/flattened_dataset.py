@@ -38,6 +38,8 @@ log = logging.getLogger(__name__)
 
 
 class SpecCollection(PydanticBaseModel):
+    """A collection of specs."""
+
     outcome_specs: list[OutcomeSpec] = []
     predictor_specs: list[PredictorSpec] = []
     static_specs: list[AnySpec] = []
@@ -511,7 +513,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             ],
             output_spec=output_spec,
             id_col_name=self.id_col_name,
-            timestamp_col_name=self.timestamp_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
         )
 
