@@ -9,13 +9,12 @@ from pathlib import Path
 from typing import Any, Optional
 
 import catalogue
+from catalogue import Catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-from catalogue import Catalogue
 
 
 def create_registry_from_long_df(
@@ -39,10 +38,10 @@ def create_registry_from_long_df(
 
     Args:
         df (pd.DataFrame): A dataframe in long format containing the values to be grouped into a catalogue.
-        id_col_name (str): Name of the column containing the patient id for each value.
-        timestamp_col_name (str): Name of the column containing the timestamp for each value.
-        value_col_name (str): Name of the column containing the value for each value.
-        value_keys_col_name (str): Name of the column containing the names of the different types of values for each value.
+        id_col_name (str): Name of the column containing the patient id for each value. Defaults to "dw_ek_borger".
+        timestamp_col_name (str): Name of the column containing the timestamp for each value. Defaults to "timestamp".
+        value_col_name (str): Name of the column containing the value for each value. Defaults to "values".
+        value_keys_col_name (str): Name of the column containing the names of the different types of values for each value. Defaults to "value_keys".
 
     Returns:
         A Catalogue object containing dataframes for each unique value type in the input dataframe.
