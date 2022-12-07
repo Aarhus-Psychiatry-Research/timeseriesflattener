@@ -224,10 +224,21 @@ class TemporalSpec(AnySpec):
         timestamp_col_type = self.values_df[self.timestamp_col_name].dtype  # type: ignore
 
         if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
-            # Convert dtype to timestamp
-            raise ValueError(
-                f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems.",
+            # Convert column dtype to datetime64[ns] if it isn't already
+            log.info(
+                f"{self.feature_name}: Converting timestamp column to datetime64[ns]"
             )
+
+            self.values_df[self.timestamp_col_name] = pd.to_datetime(
+                self.values_df[self.timestamp_col_name]
+            )
+
+            min_timestamp = min(self.values_df[self.timestamp_col_name])
+
+            if min_timestamp < pd.Timestamp("1971-01-01"):
+                log.warning(
+                    f"{self.feature_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?"
+                )
 
         self.resolve_multiple_fn = data["resolve_multiple_fn"]
 
