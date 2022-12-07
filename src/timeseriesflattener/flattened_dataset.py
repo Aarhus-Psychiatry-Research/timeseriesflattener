@@ -664,6 +664,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             & (self._df[self.timestamp_col_name] <= cutoff_date_ahead)
         ]
 
+        if self._df.shape[0] == 0:
+            raise ValueError(
+                "No records left after dropping records outside look distance"
+            )
+
     def _process_temporal_specs(self):
         """Process outcome specs."""
 
