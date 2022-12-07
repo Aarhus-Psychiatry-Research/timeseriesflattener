@@ -115,7 +115,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
 
     ts_flattener = TimeseriesFlattener(
         prediction_times_df=pred_time_df,
-        drop_pred_times_with_insufficient_look_distance=False,
+        drop_pred_times_with_insufficient_look_distance=True,
     )
 
     pred_val_df = pd.DataFrame(
