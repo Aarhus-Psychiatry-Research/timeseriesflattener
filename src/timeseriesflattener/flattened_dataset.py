@@ -41,6 +41,11 @@ class SpecCollection(PydanticBaseModel):
     predictor_specs: list[TemporalSpec] = []
     static_specs: list[AnySpec] = []
 
+    def __len__(self):
+        return (
+            len(self.outcome_specs) + len(self.predictor_specs) + len(self.static_specs)
+        )
+
 
 class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     """Turn a set of time-series into tabular prediction-time data."""
@@ -638,7 +643,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         temporal_batch = self.unprocessed_specs.outcome_specs
         temporal_batch += self.unprocessed_specs.predictor_specs
 
-        self._add_temporal_batch(temporal_batch=temporal_batch)
+        if len(temporal_batch) > 0:
+            self._add_temporal_batch(temporal_batch=temporal_batch)
 
     def _process_predictor_specs(self):
         """Process predictor specs."""
@@ -743,6 +749,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def compute(self):
         """Compute the flattened dataset."""
+        if len(self.unprocessed_specs) == 0:
+            log.warning("No unprocessed specs, skipping")
+            return
+
         self._process_temporal_specs()
         self._process_static_specs()
 
@@ -752,7 +762,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Returns:
             DataFrame: Flattened dataframe.
         """
-        self.compute()
+        if len(self.unprocessed_specs) > 0:
+            self.compute()
 
         # Process
         return self._df

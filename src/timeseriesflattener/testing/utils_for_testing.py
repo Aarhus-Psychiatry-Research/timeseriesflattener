@@ -90,8 +90,8 @@ def assert_flattened_data_as_expected(
         n_workers=4,
     )
 
-    flattened_ds._add_temporal_col_to_flattened_dataset(  # pylint: disable=protected-access
-        output_spec=output_spec,
+    flattened_ds.add_spec(  # pylint: disable=protected-access
+        spec=output_spec,
     )
 
     if expected_df:
