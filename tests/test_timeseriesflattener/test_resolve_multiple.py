@@ -28,7 +28,7 @@ def test_resolve_multiple_catalogue():
             resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1],
     )
@@ -51,7 +51,7 @@ def test_resolve_multiple_max():
             resolve_multiple_fn="max",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[2],
     )
@@ -74,7 +74,7 @@ def test_resolve_multiple_min():
             resolve_multiple_fn="min",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1],
     )
@@ -124,7 +124,7 @@ def test_resolve_multiple_latest():
             resolve_multiple_fn="latest",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[3, 9],
     )
@@ -148,7 +148,7 @@ def test_resolve_multiple_latest_no_values():
             resolve_multiple_fn="latest",
             interval_days=2,
             fallback=np.nan,
-            incident=True,
+            incident=False,
         ),
         expected_values=[2, np.nan],
     )
@@ -170,7 +170,7 @@ def test_resolve_multiple_latest_one_vlaue():
             resolve_multiple_fn="latest",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1],
     )
@@ -198,7 +198,7 @@ def test_resolve_multiple_earliest():
             resolve_multiple_fn="earliest",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1, 1],
     )
@@ -243,7 +243,7 @@ def test_resolve_multiple_count():
             resolve_multiple_fn="count",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[2],
     )
@@ -267,7 +267,7 @@ def test_resolve_multiple_bool():
             resolve_multiple_fn="bool",
             interval_days=2,
             fallback=0,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1, 0],
     )
@@ -293,7 +293,7 @@ def test_resolve_multiple_change_per_day():
             resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1, np.NaN],
     )
@@ -319,7 +319,7 @@ def test_resolve_multiple_change_per_day_unordered():
             resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1, 1],
     )
@@ -345,7 +345,7 @@ def test_resolve_multiple_change_per_day_negative():
             resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=np.NaN,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1, -1],
     )
@@ -371,7 +371,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
             resolve_multiple_fn="change_per_day",
             interval_days=4,
             fallback=99999,
-            incident=True,
+            incident=False,
         ),
         expected_values=[1, 99999],
     )
@@ -397,7 +397,7 @@ def test_resolve_multiple_variance():
             resolve_multiple_fn="variance",
             interval_days=4,
             fallback=np.NaN,
-            incident=True,
+            incident=False,
         ),
         expected_values=[0.5, np.NaN],
     )
