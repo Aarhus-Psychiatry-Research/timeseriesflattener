@@ -655,6 +655,18 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
             self.unprocessed_specs.static_specs.remove(spec)
 
+    def _check_that_spec_df_has_required_columns(self, spec: AnySpec):
+        """Check that df has required columns."""
+        # Find all attributes in self that contain col_name
+        required_columns = [self.id_col_name]
+
+        if not isinstance(spec, StaticSpec):
+            required_columns += [self.timestamp_col_name]
+
+        for col in required_columns:
+            if col not in spec.values_df.columns:  # type: ignore
+                raise ValueError(f"Missing required column: {col}")
+
     def add_spec(
         self,
         spec: Union[list[AnySpec], AnySpec],
@@ -672,6 +684,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 raise ValueError(
                     f"Input is not allowed. Must be one of: {allowed_spec_types}"
                 )
+
+            self._check_that_spec_df_has_required_columns(spec=spec_i)
 
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
