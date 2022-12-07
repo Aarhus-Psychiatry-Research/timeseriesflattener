@@ -26,7 +26,7 @@ def create_registry_from_long_df(
     value_keys_col_name: str = "value_keys",
 ) -> Catalogue:
     """
-    Creates a Catalogue of dataframes containing values for different value types.
+    Creates a Catalogue of dataframes containing values for different value types from a long format df.
 
     The input dataframe should be in long format and should contain at least the following columns:
       - patient_id: A column with the patient id for each value.
