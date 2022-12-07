@@ -107,7 +107,7 @@ def create_flattened_df(
         cache=cache,
     )
 
-    flat_ds.add_temporal_predictor_batch(
+    flat_ds._add_temporal_predictor_batch(
         predictor_batch=predictor_specs,
     )
 
