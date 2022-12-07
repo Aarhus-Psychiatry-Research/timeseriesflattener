@@ -58,7 +58,7 @@ def create_registry_from_long_df(
     # If any of the required columns is missing, raise an error
     if len(missing_columns) > 0:
         raise ValueError(
-            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}"
+            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}",
         )
 
     long_format_catalogue = catalogue.create()

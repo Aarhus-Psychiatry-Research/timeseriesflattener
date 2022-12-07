@@ -175,7 +175,7 @@ class StaticSpec(AnySpec):
 
 
 class TemporalSpec(AnySpec):
-    """The minimum specification required for all collapsed time series
+    """The minimum specification required for all collapsed time series.
 
     (temporal features), whether looking ahead or behind.
 
