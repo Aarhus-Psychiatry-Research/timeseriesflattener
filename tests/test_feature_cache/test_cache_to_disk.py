@@ -5,7 +5,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_spec_objects import TemporalSpec
+from timeseriesflattener.feature_spec_objects import PredictorSpec
 from timeseriesflattener.resolve_multiple_functions import latest
 
 
@@ -30,7 +30,7 @@ def test_write_and_check_feature(tmp_path):
         },
     )
 
-    test_spec = TemporalSpec(
+    test_spec = PredictorSpec(
         values_df=values_df,
         interval_days=5,
         resolve_multiple_fn=latest,
@@ -84,7 +84,7 @@ def test_read_feature(tmp_path):
         },
     )
 
-    test_spec = TemporalSpec(
+    test_spec = PredictorSpec(
         values_df=values_df,
         interval_days=5,
         resolve_multiple_fn=latest,

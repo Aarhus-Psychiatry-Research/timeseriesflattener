@@ -25,6 +25,7 @@ from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCach
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
     OutcomeSpec,
+    PredictorSpec,
     StaticSpec,
     TemporalSpec,
 )
@@ -38,7 +39,7 @@ log = logging.getLogger(__name__)
 
 class SpecCollection(PydanticBaseModel):
     outcome_specs: list[OutcomeSpec] = []
-    predictor_specs: list[TemporalSpec] = []
+    predictor_specs: list[PredictorSpec] = []
     static_specs: list[AnySpec] = []
 
     def __len__(self):
@@ -212,7 +213,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
             direction = "ahead"
-        elif isinstance(output_spec, TemporalSpec):
+        elif isinstance(output_spec, PredictorSpec):
             direction = "behind"
         else:
             raise ValueError(f"Unknown output_spec type {type(output_spec)}")
@@ -704,7 +705,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             specs_to_process = spec
 
         for spec_i in specs_to_process:
-            allowed_spec_types = (OutcomeSpec, TemporalSpec, StaticSpec)
+            allowed_spec_types = (OutcomeSpec, PredictorSpec, StaticSpec)
 
             if not isinstance(spec_i, allowed_spec_types):
                 raise ValueError(
@@ -715,7 +716,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
-            elif isinstance(spec_i, TemporalSpec):
+            elif isinstance(spec_i, PredictorSpec):
                 self.unprocessed_specs.predictor_specs.append(spec_i)
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)

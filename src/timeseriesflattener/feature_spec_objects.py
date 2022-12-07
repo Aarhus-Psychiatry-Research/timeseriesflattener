@@ -253,7 +253,7 @@ class TemporalSpec(AnySpec):
         return col_str
 
 
-class TemporalSpec(TemporalSpec):
+class PredictorSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved."""
 
     prefix: str = "pred"

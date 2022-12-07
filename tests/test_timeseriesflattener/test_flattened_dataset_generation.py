@@ -11,7 +11,7 @@ import pytest
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, TemporalSpec
+from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
@@ -96,7 +96,7 @@ def check_dfs_have_same_contents_by_column(df1, df2):
 
 
 def create_flattened_df(
-    predictor_specs: list[TemporalSpec],
+    predictor_specs: list[PredictorSpec],
     prediction_times_df: pd.DataFrame,
     cache: Optional[FeatureCache] = None,
 ):

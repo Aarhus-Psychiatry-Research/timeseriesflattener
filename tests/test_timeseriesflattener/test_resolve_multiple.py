@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from timeseriesflattener.feature_spec_objects import OutcomeSpec, TemporalSpec
+from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
@@ -91,7 +91,7 @@ def test_resolve_multiple_avg():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=TemporalSpec(
+        output_spec=PredictorSpec(
             feature_name="value",
             values_df=str_to_df(predictor_df_str),
             resolve_multiple_fn="mean",
@@ -215,7 +215,7 @@ def test_resolve_multiple_sum():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
-        output_spec=TemporalSpec(
+        output_spec=PredictorSpec(
             feature_name="value",
             values_df=str_to_df(predictor_df_str),
             resolve_multiple_fn="sum",
