@@ -574,19 +574,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             validate="1:1",
         )
 
-    def add_temporal_predictor(
-        self,
-        output_spec: PredictorSpec,
-    ):
-        """Add a column with predictor values to the flattened dataset.
-
-        Args:
-            output_spec (Union[PredictorSpec]): Specification of the output column.
-        """
-        self._add_temporal_col_to_flattened_dataset(
-            output_spec=output_spec,
-        )
-
     @staticmethod
     def _add_back_prediction_times_without_value(
         df: DataFrame,
