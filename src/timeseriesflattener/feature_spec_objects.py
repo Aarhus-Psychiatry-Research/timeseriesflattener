@@ -221,6 +221,14 @@ class TemporalSpec(AnySpec):
 
         super().__init__(**data)
 
+        timestamp_col_type = self.values_df[self.timestamp_col_name].dtype  # type: ignore
+
+        if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
+            # Convert dtype to timestamp
+            raise ValueError(
+                f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems.",
+            )
+
         self.resolve_multiple_fn = data["resolve_multiple_fn"]
 
         # override fallback strings with objects

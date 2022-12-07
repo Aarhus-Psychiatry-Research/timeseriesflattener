@@ -191,12 +191,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Returns:
             DataFrame
         """
-        for col_name in (timestamp_col_name, id_col_name):
-            if col_name not in output_spec.values_df.columns:  # type: ignore
-                raise ValueError(
-                    f"{col_name} does not exist in df_prediction_times, change the df or set another argument",
-                )
-
         # Generate df with one row for each prediction time x event time combination
         # Drop dw_ek_borger for faster merge
         df = pd.merge(
