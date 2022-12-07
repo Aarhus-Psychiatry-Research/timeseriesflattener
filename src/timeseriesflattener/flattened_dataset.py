@@ -693,7 +693,15 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self,
         spec: Union[list[AnySpec], AnySpec],
     ):
-        """Add a specification to the flattened dataset."""
+        """Add a specification to the flattened dataset.
+
+        This adds it to a queue of unprocessed specs, which are not processed
+        until you call the .compute() or .get_df() methods. This allows us to
+        more effectiely parallelise the processing of the specs.
+
+        Most of the complexity lies in the OutcomeSpec and PredictorSpec objects.
+        For further documentation, see those objects and the tutorial.
+        """
         if isinstance(spec, AnySpec):
             specs_to_process: list[AnySpec] = [spec]
         else:
@@ -716,28 +724,26 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)
 
-    def add_age_and_birth_year(
+    def add_age(
         self,
-        id2date_of_birth: DataFrame,
+        date_of_birth_df: DataFrame,
         input_date_of_birth_col_name: Optional[str] = "date_of_birth",
         output_prefix: str = "pred",
-        birth_year_as_predictor: bool = False,  # noqa
     ):
         """Add age at prediction time as predictor.
 
         Also add patient's birth date. Has its own function because of its very frequent use.
 
         Args:
-            id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
+            date_of_birth_df (DataFrame): Two columns, id and date_of_birth.
             input_date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
                 Defaults to "date_of_birth".
             output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
-            birth_year_as_predictor (bool, optional): Whether to add birth year as a predictor. Defaults to False.
         """
-        if id2date_of_birth[input_date_of_birth_col_name].dtype != "<M8[ns]":
+        if date_of_birth_df[input_date_of_birth_col_name].dtype != "<M8[ns]":
             try:
-                id2date_of_birth[input_date_of_birth_col_name] = pd.to_datetime(
-                    id2date_of_birth[input_date_of_birth_col_name],
+                date_of_birth_df[input_date_of_birth_col_name] = pd.to_datetime(
+                    date_of_birth_df[input_date_of_birth_col_name],
                     format="%Y-%m-%d",
                 )
             except ValueError as e:
@@ -749,7 +755,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         self._add_static_info(
             static_spec=AnySpec(
-                values_df=id2date_of_birth,
+                values_df=date_of_birth_df,
                 input_col_name_override=input_date_of_birth_col_name,
                 prefix=output_prefix,
                 # We typically don't want to use date of birth as a predictor,
@@ -767,9 +773,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             / (365.25)
         ).round(2)
 
-        if birth_year_as_predictor:
-            # Convert datetime to year
-            self._df["pred_birth_year"] = self._df[data_of_birth_col_name].dt.year
+        # Remove date of birth column
+        self._df.drop(columns=data_of_birth_col_name, inplace=True)
 
     def compute(self):
         """Compute the flattened dataset."""

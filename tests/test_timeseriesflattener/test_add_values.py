@@ -253,11 +253,10 @@ def test_add_age():
 
     output_prefix = "eval"
 
-    dataset.add_age_and_birth_year(
-        id2date_of_birth=str_to_df(static_predictor),
+    dataset.add_age(
+        date_of_birth_df=str_to_df(static_predictor),
         input_date_of_birth_col_name="date_of_birth",
         output_prefix=output_prefix,
-        birth_year_as_predictor=True,
     )
 
     expected_values = pd.DataFrame(
@@ -293,8 +292,8 @@ def test_add_age_error():
     )
 
     with pytest.raises(ValueError):
-        dataset.add_age_and_birth_year(
-            id2date_of_birth=str_to_df(static_predictor),
+        dataset.add_age(
+            date_of_birth_df=str_to_df(static_predictor),
             input_date_of_birth_col_name="date_of_birth",
         )
 
@@ -417,9 +416,9 @@ def test_add_multiple_static_predictors():
         ],
     )
 
-    flattened_dataset.add_age_and_birth_year(
+    flattened_dataset.add_age(
         input_date_of_birth_col_name="date_of_birth",
-        id2date_of_birth=birthdates_df,
+        date_of_birth_df=birthdates_df,
     )
 
     outcome_df = flattened_dataset.get_df()
