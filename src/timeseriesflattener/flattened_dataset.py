@@ -646,18 +646,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if len(temporal_batch) > 0:
             self._add_temporal_batch(temporal_batch=temporal_batch)
 
-    def _process_predictor_specs(self):
-        """Process predictor specs."""
-
-        # TODO: Drop based om max_lookbehind
-        if len(self.unprocessed_specs.predictor_specs) == 0:
-            log.warning("No predictors added to dataset (yet).")
-            return
-
-        self._add_temporal_batch(temporal_batch=self.unprocessed_specs.predictor_specs)
-
-        self.unprocessed_specs.predictor_specs = []
-
     def _process_static_specs(self):
         """Process static specs."""
         for spec in self.unprocessed_specs.static_specs:
