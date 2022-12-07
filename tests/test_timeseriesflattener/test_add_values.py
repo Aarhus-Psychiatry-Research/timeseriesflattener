@@ -397,7 +397,12 @@ def test_add_multiple_static_predictors():
     flattened_dataset.add_spec(
         spec=[
             output_spec,
-            StaticSpec(values_df=male_df, feature_name="male", prefix="pred"),
+            StaticSpec(
+                values_df=male_df,
+                feature_name="male",
+                prefix="pred",
+                input_col_name_override="male",
+            ),
         ]
     )
 
@@ -454,6 +459,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     flattened_dataset.add_spec(

@@ -143,7 +143,7 @@ class AnySpec(BaseModel):
             and "value" not in kwargs["values_df"].columns
         ):
             raise ValueError(
-                f"The values_df must have a column named 'value' or an input_col_name_override must be specified. Columns in values_df: {kwargs['values_df'].columns}"
+                f"The values_df must have a column named 'value' or an input_col_name_override must be specified. Columns in values_df: {list(kwargs['values_df'].columns)}"
             )
 
         if in_dict_and_not_none(d=kwargs, key="output_col_name_override"):
