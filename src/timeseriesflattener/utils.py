@@ -186,11 +186,14 @@ def print_df_dimensions_diff(
 
             n_in_dim_before_func = df.shape[dim_int]
 
-            log.info(f"{func.__name__}: {n_in_dim_before_func} {dim} before function")
+            if print_when_no_diff:
+                log.info(
+                    f"{func.__name__}: {n_in_dim_before_func} {dim} before function"
+                )
 
             result = func(*args, **kwargs)
 
-            diff = df.shape[dim_int] - n_in_dim_before_func
+            diff = n_in_dim_before_func - result.shape[dim_int]
 
             if diff != 0:
                 percent_diff = round(

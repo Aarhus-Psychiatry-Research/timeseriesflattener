@@ -617,13 +617,16 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self._df = df
 
     @print_df_dimensions_diff
-    def _drop_pred_time_if_insufficient_look_distance(self):
+    def _drop_pred_time_if_insufficient_look_distance(self, df: pd.DataFrame):
         """Drop prediction times if there is insufficient look distance.
 
         A prediction time has insufficient look distance if the feature spec
             tries to look beyond the boundary of the data.
         For example, if a predictor specifies two years of lookbehind,
             but you only have one year of data prior to the prediction time.
+
+        Takes a dataframe as input to conform to a standard filtering interface,
+            which we can easily decorate.
         """
         spec_batch = (
             self.unprocessed_specs.outcome_specs
@@ -645,15 +648,17 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 cutoff_date_behind = max(cutoff_date_behind, spec_cutoff_date)
 
         # Drop all prediction that are outside the cutoffs window
-        self._df = self._df[
-            (self._df[self.timestamp_col_name] >= cutoff_date_behind)
-            & (self._df[self.timestamp_col_name] <= cutoff_date_ahead)
+        output_df = df[
+            (df[self.timestamp_col_name] >= cutoff_date_behind)
+            & (df[self.timestamp_col_name] <= cutoff_date_ahead)
         ]
 
-        if self._df.shape[0] == 0:
+        if output_df.shape[0] == 0:
             raise ValueError(
                 "No records left after dropping records outside look distance",
             )
+
+        return output_df
 
     def _process_temporal_specs(self):
         """Process outcome specs."""
@@ -672,7 +677,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         temporal_batch += self.unprocessed_specs.predictor_specs
 
         if self.drop_pred_times_with_insufficient_look_distance:
-            self._drop_pred_time_if_insufficient_look_distance()
+            self._df = self._drop_pred_time_if_insufficient_look_distance(df=self._df)
 
         if len(temporal_batch) > 0:
             self._add_temporal_batch(temporal_batch=temporal_batch)
