@@ -751,6 +751,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             DataFrame: Flattened dataframe.
         """
         if len(self.unprocessed_specs) > 0:
+            log.info("There were unprocessed specs, computing...")
             self.compute()
 
         # Process
