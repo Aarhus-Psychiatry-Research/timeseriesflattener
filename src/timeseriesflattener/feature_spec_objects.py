@@ -159,11 +159,14 @@ class AnySpec(BaseModel):
         Trying to run `spec in list_of_specs` works for all attributes except for df, since the truth value of a dataframe is ambiguous.
         To remedy this, we use pandas' .equals() method for comparing the dfs, and get the combined truth value.
         """
-        other_attributes_equal = all(
-            getattr(self, attr) == getattr(other, attr)
-            for attr in self.__dict__
-            if attr != "values_df"
-        )
+        try:
+            other_attributes_equal = all(
+                getattr(self, attr) == getattr(other, attr)
+                for attr in self.__dict__
+                if attr != "values_df"
+            )
+        except AttributeError:
+            return False
 
         dfs_equal = self.values_df.equals(other.values_df)  # type: ignore
 
