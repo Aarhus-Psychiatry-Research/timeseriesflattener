@@ -492,36 +492,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         self._df = df
 
-    def _add_temporal_col_to_flattened_dataset(
-        self,
-        output_spec: AnySpec,
-    ):
-        """Add a column to the dataset.
-
-        Either predictor or outcome depending on the type of specification.
-
-        Args:
-            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
-        """
-        df = TimeseriesFlattener._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self._df[
-                [
-                    self.id_col_name,
-                    self.timestamp_col_name,
-                    self.pred_time_uuid_col_name,
-                ]
-            ],
-            output_spec=output_spec,
-            id_col_name=self.id_col_name,
-            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
-        )
-
-        self._df = self._df.merge(
-            right=df,
-            on=self.pred_time_uuid_col_name,
-            validate="1:1",
-        )
-
     @staticmethod
     def _add_back_prediction_times_without_value(
         df: DataFrame,
