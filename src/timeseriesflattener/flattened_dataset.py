@@ -357,7 +357,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         log.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
-    def add_temporal_predictor_batch(  # pylint: disable=too-many-branches
+    def _add_temporal_predictor_batch(  # pylint: disable=too-many-branches
         self,
         predictor_batch: list[PredictorSpec],
     ):
@@ -378,61 +378,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self._concatenate_flattened_timeseries(
             flattened_predictor_dfs=flattened_predictor_dfs,
         )
-
-    def add_age_and_birth_year(
-        self,
-        id2date_of_birth: DataFrame,
-        input_date_of_birth_col_name: Optional[str] = "date_of_birth",
-        output_prefix: str = "pred",
-        birth_year_as_predictor: bool = False,  # noqa
-    ):
-        """Add age at prediction time as predictor.
-
-        Also add patient's birth date. Has its own function because of its very frequent use.
-
-        Args:
-            id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
-            input_date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
-                Defaults to "date_of_birth".
-            output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
-            birth_year_as_predictor (bool, optional): Whether to add birth year as a predictor. Defaults to False.
-        """
-        if id2date_of_birth[input_date_of_birth_col_name].dtype != "<M8[ns]":
-            try:
-                id2date_of_birth[input_date_of_birth_col_name] = pd.to_datetime(
-                    id2date_of_birth[input_date_of_birth_col_name],
-                    format="%Y-%m-%d",
-                )
-            except ValueError as e:
-                raise ValueError(
-                    f"Conversion of {input_date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
-                ) from e
-
-        output_age_col_name = f"{output_prefix}_age_in_years"
-
-        self._add_static_info(
-            static_spec=AnySpec(
-                values_df=id2date_of_birth,
-                input_col_name_override=input_date_of_birth_col_name,
-                prefix=output_prefix,
-                # We typically don't want to use date of birth as a predictor,
-                # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
-                feature_name=input_date_of_birth_col_name,
-            ),
-        )
-
-        data_of_birth_col_name = f"{output_prefix}_{input_date_of_birth_col_name}"
-
-        self._df[output_age_col_name] = (
-            (
-                self._df[self.timestamp_col_name] - self._df[data_of_birth_col_name]
-            ).dt.days
-            / (365.25)
-        ).round(2)
-
-        if birth_year_as_predictor:
-            # Convert datetime to year
-            self._df["pred_birth_year"] = self._df[data_of_birth_col_name].dt.year
 
     def _add_static_info(
         self,
@@ -677,6 +622,43 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             axis=1,
         )
 
+    def _process_outcome_specs(self):
+        """Process outcome specs."""
+        # TODO: Drop based on min_lookahead
+
+        for spec in self.unprocessed_specs.outcome_specs:
+            if spec.incident:
+                self._add_incident_outcome(
+                    outcome_spec=spec,
+                )
+
+            else:
+                self._add_temporal_col_to_flattened_dataset(
+                    output_spec=spec,
+                )
+
+            self.unprocessed_specs.outcome_specs.remove(spec)
+
+    def _process_predictor_specs(self):
+        """Process predictor specs."""
+
+        # TODO: Drop based om max_lookbehind
+
+        self._add_temporal_predictor_batch(
+            predictor_batch=self.unprocessed_specs.predictor_specs
+        )
+
+        self.unprocessed_specs.predictor_specs = []
+
+    def _process_static_specs(self):
+        """Process static specs."""
+        for spec in self.unprocessed_specs.static_specs:
+            self._add_static_info(
+                static_spec=spec,
+            )
+
+            self.unprocessed_specs.static_specs.remove(spec)
+
     def add_spec(
         self,
         spec: Union[list[AnySpec], AnySpec],
@@ -702,42 +684,60 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)
 
-    def _process_outcome_specs(self):
-        """Process outcome specs."""
-        # TODO: Drop based on min_lookahead
+    def add_age_and_birth_year(
+        self,
+        id2date_of_birth: DataFrame,
+        input_date_of_birth_col_name: Optional[str] = "date_of_birth",
+        output_prefix: str = "pred",
+        birth_year_as_predictor: bool = False,  # noqa
+    ):
+        """Add age at prediction time as predictor.
 
-        for spec in self.unprocessed_specs.outcome_specs:
-            if spec.incident:
-                self._add_incident_outcome(
-                    outcome_spec=spec,
+        Also add patient's birth date. Has its own function because of its very frequent use.
+
+        Args:
+            id2date_of_birth (DataFrame): Two columns, id and date_of_birth.
+            input_date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
+                Defaults to "date_of_birth".
+            output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
+            birth_year_as_predictor (bool, optional): Whether to add birth year as a predictor. Defaults to False.
+        """
+        if id2date_of_birth[input_date_of_birth_col_name].dtype != "<M8[ns]":
+            try:
+                id2date_of_birth[input_date_of_birth_col_name] = pd.to_datetime(
+                    id2date_of_birth[input_date_of_birth_col_name],
+                    format="%Y-%m-%d",
                 )
+            except ValueError as e:
+                raise ValueError(
+                    f"Conversion of {input_date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
+                ) from e
 
-            else:
-                self._add_temporal_col_to_flattened_dataset(
-                    output_spec=spec,
-                )
+        output_age_col_name = f"{output_prefix}_age_in_years"
 
-            self.unprocessed_specs.outcome_specs.remove(spec)
-
-    def _process_predictor_specs(self):
-        """Process predictor specs."""
-
-        # TODO: Drop based om max_lookbehind
-
-        self.add_temporal_predictor_batch(
-            predictor_batch=self.unprocessed_specs.predictor_specs
+        self._add_static_info(
+            static_spec=AnySpec(
+                values_df=id2date_of_birth,
+                input_col_name_override=input_date_of_birth_col_name,
+                prefix=output_prefix,
+                # We typically don't want to use date of birth as a predictor,
+                # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
+                feature_name=input_date_of_birth_col_name,
+            ),
         )
 
-        self.unprocessed_specs.predictor_specs = []
+        data_of_birth_col_name = f"{output_prefix}_{input_date_of_birth_col_name}"
 
-    def _process_static_specs(self):
-        """Process static specs."""
-        for spec in self.unprocessed_specs.static_specs:
-            self._add_static_info(
-                static_spec=spec,
-            )
+        self._df[output_age_col_name] = (
+            (
+                self._df[self.timestamp_col_name] - self._df[data_of_birth_col_name]
+            ).dt.days
+            / (365.25)
+        ).round(2)
 
-            self.unprocessed_specs.static_specs.remove(spec)
+        if birth_year_as_predictor:
+            # Convert datetime to year
+            self._df["pred_birth_year"] = self._df[data_of_birth_col_name].dt.year
 
     def compute(self):
         """Compute the flattened dataset."""
@@ -746,7 +746,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self._process_static_specs()
 
     def get_df(self) -> DataFrame:
-        """Get the flattened dataframe.
+        """Get the flattened dataframe. Computes if any unprocessed specs are present.
 
         Returns:
             DataFrame: Flattened dataframe.
