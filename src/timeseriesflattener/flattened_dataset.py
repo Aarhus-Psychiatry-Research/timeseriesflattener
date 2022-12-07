@@ -546,14 +546,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Args:
             output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
         """
-        timestamp_col_type = output_spec.values_df[self.timestamp_col_name].dtype  # type: ignore
-
-        if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
-            # Convert dtype to timestamp
-            raise ValueError(
-                f"{self.timestamp_col_name} is of type {timestamp_col_type}, not 'Timestamp' from Pandas. Will cause problems. Convert before initialising FlattenedDataset.",
-            )
-
         df = TimeseriesFlattener._flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
                 [
