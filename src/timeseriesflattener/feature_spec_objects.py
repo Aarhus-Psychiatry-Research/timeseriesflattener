@@ -142,7 +142,7 @@ class AnySpec(BaseModel):
             "input_col_name_override" not in kwargs
             and "value" not in kwargs["values_df"].columns
         ):
-            raise ValueError(
+            raise KeyError(
                 f"The values_df must have a column named 'value' or an input_col_name_override must be specified. Columns in values_df: {list(kwargs['values_df'].columns)}"
             )
 
