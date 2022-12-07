@@ -474,7 +474,7 @@ class PredictorGroupSpec(MinGroupSpec):
         """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
-            output_class=TemporalSpec,
+            output_class=PredictorSpec,
         )
 
 

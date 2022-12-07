@@ -6,7 +6,6 @@ from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
-    TemporalSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.resolve_multiple_functions import latest, mean
@@ -34,7 +33,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         fallback=0,
         incident=False,
     )
-    predictor_spec = TemporalSpec(
+    predictor_spec = PredictorSpec(
         values_df=synth_outcome,
         feature_name="predictor",
         lookbehind_days=1,
@@ -76,7 +75,7 @@ def test_compute_specs(
         fallback=0,
         incident=False,
     )
-    predictor_spec = TemporalSpec(
+    predictor_spec = PredictorSpec(
         values_df=synth_outcome,
         feature_name="predictor",
         lookbehind_days=1,
