@@ -31,6 +31,7 @@ from timeseriesflattener.feature_spec_objects import (
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
+from timeseriesflattener.utils import print_df_dimensions_diff
 
 ProgressBar().register()
 
@@ -615,12 +616,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         self._df = df
 
+    @print_df_dimensions_diff
     def _drop_pred_time_if_insufficient_look_distance(self):
-        """Drop prediction times if there is insufficient look distance.
-
-        Args:
-            spec_batch (list[TemporalSpec]): A batch of specs.
-        """
+        """Drop prediction times if there is insufficient look distance."""
         spec_batch = (
             self.unprocessed_specs.outcome_specs
             + self.unprocessed_specs.predictor_specs
