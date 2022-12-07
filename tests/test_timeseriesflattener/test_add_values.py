@@ -255,7 +255,7 @@ def test_add_age():
 
     dataset.add_age(
         date_of_birth_df=str_to_df(static_predictor),
-        input_date_of_birth_col_name="date_of_birth",
+        date_of_birth_col_name="date_of_birth",
         output_prefix=output_prefix,
     )
 
@@ -294,7 +294,7 @@ def test_add_age_error():
     with pytest.raises(ValueError):
         dataset.add_age(
             date_of_birth_df=str_to_df(static_predictor),
-            input_date_of_birth_col_name="date_of_birth",
+            date_of_birth_col_name="date_of_birth",
         )
 
 
@@ -417,7 +417,7 @@ def test_add_multiple_static_predictors():
     )
 
     flattened_dataset.add_age(
-        input_date_of_birth_col_name="date_of_birth",
+        date_of_birth_col_name="date_of_birth",
         date_of_birth_df=birthdates_df,
     )
 

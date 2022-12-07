@@ -647,7 +647,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             elif isinstance(spec, PredictorSpec):
                 cutoff_date_behind = max(cutoff_date_behind, spec_cutoff_date)
 
-        # Drop all prediction that are outside the cutoffs window
+        # Drop all prediction times that are outside the cutoffs window
         output_df = df[
             (df[self.timestamp_col_name] >= cutoff_date_behind)
             & (df[self.timestamp_col_name] <= cutoff_date_ahead)
@@ -732,28 +732,28 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     def add_age(
         self,
         date_of_birth_df: DataFrame,
-        input_date_of_birth_col_name: Optional[str] = "date_of_birth",
+        date_of_birth_col_name: Optional[str] = "date_of_birth",
         output_prefix: str = "pred",
     ):
         """Add age at prediction time as predictor.
 
-        Also add patient's birth date. Has its own function because of its very frequent use.
+        Has its own function because of its very frequent use.
 
         Args:
-            date_of_birth_df (DataFrame): Two columns, id and date_of_birth.
-            input_date_of_birth_col_name (str, optional): Name of the date_of_birth column in id2date_of_birth.
+            date_of_birth_df (DataFrame): Two columns, one matching self.id_col_name and one containing date_of_birth.
+            date_of_birth_col_name (str, optional): Name of the date_of_birth column in date_of_birth_df.
                 Defaults to "date_of_birth".
             output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
         """
-        if date_of_birth_df[input_date_of_birth_col_name].dtype != "<M8[ns]":
+        if date_of_birth_df[date_of_birth_col_name].dtype != "<M8[ns]":
             try:
-                date_of_birth_df[input_date_of_birth_col_name] = pd.to_datetime(
-                    date_of_birth_df[input_date_of_birth_col_name],
+                date_of_birth_df[date_of_birth_col_name] = pd.to_datetime(
+                    date_of_birth_df[date_of_birth_col_name],
                     format="%Y-%m-%d",
                 )
             except ValueError as e:
                 raise ValueError(
-                    f"Conversion of {input_date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
+                    f"Conversion of {date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
                 ) from e
 
         output_age_col_name = f"{output_prefix}_age_in_years"
@@ -761,25 +761,25 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self._add_static_info(
             static_spec=AnySpec(
                 values_df=date_of_birth_df,
-                input_col_name_override=input_date_of_birth_col_name,
-                prefix=output_prefix,
+                input_col_name_override=date_of_birth_col_name,
+                prefix="temp",
                 # We typically don't want to use date of birth as a predictor,
                 # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
-                feature_name=input_date_of_birth_col_name,
+                feature_name=date_of_birth_col_name,
             ),
         )
 
-        data_of_birth_col_name = f"{output_prefix}_{input_date_of_birth_col_name}"
+        tmp_date_of_birth_col_name = f"temp_{date_of_birth_col_name}"
 
         self._df[output_age_col_name] = (
             (
-                self._df[self.timestamp_col_name] - self._df[data_of_birth_col_name]
+                self._df[self.timestamp_col_name] - self._df[tmp_date_of_birth_col_name]
             ).dt.days
             / (365.25)
         ).round(2)
 
         # Remove date of birth column
-        self._df.drop(columns=data_of_birth_col_name, inplace=True)
+        self._df.drop(columns=tmp_date_of_birth_col_name, inplace=True)
 
     def compute(self):
         """Compute the flattened dataset."""
