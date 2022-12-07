@@ -119,9 +119,9 @@ def create_flattened_df(
     [base_float_predictor_combinations, base_binary_predictor_combinations],
 )
 def test_cache_hitting(
-    tmp_path,
-    predictor_specs,
-    synth_prediction_times,
+    tmp_path: Path,
+    predictor_specs: list[PredictorSpec],
+    synth_prediction_times: pd.DataFrame,
 ):
     """Test that cache hits."""
 
