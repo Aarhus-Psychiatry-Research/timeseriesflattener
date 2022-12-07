@@ -180,6 +180,120 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             )
 
     @staticmethod
+    def _add_back_prediction_times_without_value(
+        df: DataFrame,
+        pred_times_with_uuid: DataFrame,
+        pred_time_uuid_colname: str,
+    ) -> DataFrame:
+        """Ensure all prediction times are represented in the returned
+
+        dataframe.
+
+        Args:
+            df (DataFrame): Dataframe with prediction times but without uuid.
+            pred_times_with_uuid (DataFrame): Dataframe with prediction times and uuid.
+            pred_time_uuid_colname (str): Name of uuid column in both df and pred_times_with_uuid.
+
+        Returns:
+            DataFrame: A merged dataframe with all prediction times.
+        """
+        return pd.merge(
+            pred_times_with_uuid,
+            df,
+            how="left",
+            on=pred_time_uuid_colname,
+            suffixes=("", "_temp"),
+        ).drop(["timestamp_pred"], axis=1)
+
+    @staticmethod
+    def _resolve_multiple_values_within_interval_days(
+        resolve_multiple: Callable,
+        df: DataFrame,
+        pred_time_uuid_colname: str,
+    ) -> DataFrame:
+        """Apply the resolve_multiple function to prediction_times where there
+
+        are multiple values within the interval_days lookahead.
+
+        Args:
+            resolve_multiple (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
+            df (DataFrame): Source dataframe with all prediction time x val combinations.
+            pred_time_uuid_colname (str): Name of uuid column in df.
+
+        Returns:
+            DataFrame: DataFrame with one row pr. prediction time.
+        """
+        # Convert timestamp val to numeric that can be used for resolve_multiple functions
+        # Numeric value amounts to days passed since 1/1/1970
+        try:
+            df["timestamp_val"] = (
+                df["timestamp_val"] - dt.datetime(1970, 1, 1)
+            ).dt.total_seconds() / 86400
+        except TypeError:
+            log.info("All values are NaT, returning empty dataframe")
+
+        # Sort by timestamp_pred in case resolve_multiple needs dates
+        df = df.sort_values(by="timestamp_val").groupby(pred_time_uuid_colname)
+
+        if isinstance(resolve_multiple, str):
+            resolve_multiple = resolve_multiple_fns.get(resolve_multiple)
+
+        if callable(resolve_multiple):
+            df = resolve_multiple(df).reset_index()
+        else:
+            raise ValueError("resolve_multiple must be or resolve to a Callable")
+
+        return df
+
+    @staticmethod
+    def _drop_records_outside_interval_days(
+        df: DataFrame,
+        direction: str,
+        interval_days: float,
+        timestamp_pred_colname: str,
+        timestamp_value_colname: str,
+    ) -> DataFrame:
+        """Filter by time from from predictions to values.
+
+        Drop if distance from timestamp_pred to timestamp_value is outside interval_days. Looks in `direction`.
+
+        Args:
+            direction (str): Whether to look ahead or behind.
+            interval_days (float): How far to look
+            df (DataFrame): Source dataframe
+            timestamp_pred_colname (str): Name of timestamp column for predictions in df.
+            timestamp_value_colname (str): Name of timestamp column for values in df.
+
+        Raises:
+            ValueError: If direction is niether ahead nor behind.
+
+        Returns:
+            DataFrame
+        """
+        df["time_from_pred_to_val_in_days"] = (
+            (df[timestamp_value_colname] - df[timestamp_pred_colname])
+            / (np.timedelta64(1, "s"))
+            / 86_400
+        )
+        # Divide by 86.400 seconds/day
+
+        if direction == "ahead":
+            df["is_in_interval"] = (
+                df["time_from_pred_to_val_in_days"] <= interval_days
+            ) & (df["time_from_pred_to_val_in_days"] > 0)
+        elif direction == "behind":
+            df["is_in_interval"] = (
+                df["time_from_pred_to_val_in_days"] >= -interval_days
+            ) & (df["time_from_pred_to_val_in_days"] < 0)
+        else:
+            raise ValueError("direction can only be 'ahead' or 'behind'")
+
+        return df[df["is_in_interval"]].drop(
+            ["is_in_interval", "time_from_pred_to_val_in_days"],
+            axis=1,
+        )
+
+    @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
         output_spec: AnySpec,
@@ -315,6 +429,30 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             .sort_index()
         )
 
+    def _add_temporal_batch(  # pylint: disable=too-many-branches
+        self,
+        temporal_batch: list[TemporalSpec],
+    ):
+        """Add predictors to the flattened dataframe from a list."""
+        # Shuffle predictor specs to avoid IO contention
+        random.shuffle(temporal_batch)
+
+        n_workers = min(self.n_workers, len(temporal_batch))
+
+        with Pool(n_workers) as p:
+            flattened_predictor_dfs = list(
+                tqdm.tqdm(
+                    p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
+                    total=len(temporal_batch),
+                ),
+            )
+
+        log.info("Processing complete, concatenating")
+
+        self._concatenate_flattened_timeseries(
+            flattened_predictor_dfs=flattened_predictor_dfs,
+        )
+
     def _check_dfs_have_same_lengths(self, dfs: list[pd.DataFrame]):
         """Check that all dfs have the same length."""
         df_lengths = 0
@@ -370,30 +508,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         log.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
-    def _add_temporal_batch(  # pylint: disable=too-many-branches
-        self,
-        temporal_batch: list[TemporalSpec],
-    ):
-        """Add predictors to the flattened dataframe from a list."""
-        # Shuffle predictor specs to avoid IO contention
-        random.shuffle(temporal_batch)
-
-        n_workers = min(self.n_workers, len(temporal_batch))
-
-        with Pool(n_workers) as p:
-            flattened_predictor_dfs = list(
-                tqdm.tqdm(
-                    p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
-                    total=len(temporal_batch),
-                ),
-            )
-
-        log.info("Processing complete, concatenating")
-
-        self._concatenate_flattened_timeseries(
-            flattened_predictor_dfs=flattened_predictor_dfs,
-        )
-
     def _add_static_info(
         self,
         static_spec: AnySpec,
@@ -448,6 +562,15 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             validate="m:1",
         )
 
+    def _process_static_specs(self):
+        """Process static specs."""
+        for spec in self.unprocessed_specs.static_specs:
+            self._add_static_info(
+                static_spec=spec,
+            )
+
+            self.unprocessed_specs.static_specs.remove(spec)
+
     def _add_incident_outcome(
         self,
         outcome_spec: OutcomeSpec,
@@ -491,120 +614,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         df.drop(["value"], axis=1, inplace=True)
 
         self._df = df
-
-    @staticmethod
-    def _add_back_prediction_times_without_value(
-        df: DataFrame,
-        pred_times_with_uuid: DataFrame,
-        pred_time_uuid_colname: str,
-    ) -> DataFrame:
-        """Ensure all prediction times are represented in the returned
-
-        dataframe.
-
-        Args:
-            df (DataFrame): Dataframe with prediction times but without uuid.
-            pred_times_with_uuid (DataFrame): Dataframe with prediction times and uuid.
-            pred_time_uuid_colname (str): Name of uuid column in both df and pred_times_with_uuid.
-
-        Returns:
-            DataFrame: A merged dataframe with all prediction times.
-        """
-        return pd.merge(
-            pred_times_with_uuid,
-            df,
-            how="left",
-            on=pred_time_uuid_colname,
-            suffixes=("", "_temp"),
-        ).drop(["timestamp_pred"], axis=1)
-
-    @staticmethod
-    def _resolve_multiple_values_within_interval_days(
-        resolve_multiple: Callable,
-        df: DataFrame,
-        pred_time_uuid_colname: str,
-    ) -> DataFrame:
-        """Apply the resolve_multiple function to prediction_times where there
-
-        are multiple values within the interval_days lookahead.
-
-        Args:
-            resolve_multiple (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
-            df (DataFrame): Source dataframe with all prediction time x val combinations.
-            pred_time_uuid_colname (str): Name of uuid column in df.
-
-        Returns:
-            DataFrame: DataFrame with one row pr. prediction time.
-        """
-        # Convert timestamp val to numeric that can be used for resolve_multiple functions
-        # Numeric value amounts to days passed since 1/1/1970
-        try:
-            df["timestamp_val"] = (
-                df["timestamp_val"] - dt.datetime(1970, 1, 1)
-            ).dt.total_seconds() / 86400
-        except TypeError:
-            log.info("All values are NaT, returning empty dataframe")
-
-        # Sort by timestamp_pred in case resolve_multiple needs dates
-        df = df.sort_values(by="timestamp_val").groupby(pred_time_uuid_colname)
-
-        if isinstance(resolve_multiple, str):
-            resolve_multiple = resolve_multiple_fns.get(resolve_multiple)
-
-        if callable(resolve_multiple):
-            df = resolve_multiple(df).reset_index()
-        else:
-            raise ValueError("resolve_multiple must be or resolve to a Callable")
-
-        return df
-
-    @staticmethod
-    def _drop_records_outside_interval_days(
-        df: DataFrame,
-        direction: str,
-        interval_days: float,
-        timestamp_pred_colname: str,
-        timestamp_value_colname: str,
-    ) -> DataFrame:
-        """Filter by time from from predictions to values.
-
-        Drop if distance from timestamp_pred to timestamp_value is outside interval_days. Looks in `direction`.
-
-        Args:
-            direction (str): Whether to look ahead or behind.
-            interval_days (float): How far to look
-            df (DataFrame): Source dataframe
-            timestamp_pred_colname (str): Name of timestamp column for predictions in df.
-            timestamp_value_colname (str): Name of timestamp column for values in df.
-
-        Raises:
-            ValueError: If direction is niether ahead nor behind.
-
-        Returns:
-            DataFrame
-        """
-        df["time_from_pred_to_val_in_days"] = (
-            (df[timestamp_value_colname] - df[timestamp_pred_colname])
-            / (np.timedelta64(1, "s"))
-            / 86_400
-        )
-        # Divide by 86.400 seconds/day
-
-        if direction == "ahead":
-            df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] <= interval_days
-            ) & (df["time_from_pred_to_val_in_days"] > 0)
-        elif direction == "behind":
-            df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] >= -interval_days
-            ) & (df["time_from_pred_to_val_in_days"] < 0)
-        else:
-            raise ValueError("direction can only be 'ahead' or 'behind'")
-
-        return df[df["is_in_interval"]].drop(
-            ["is_in_interval", "time_from_pred_to_val_in_days"],
-            axis=1,
-        )
 
     def _drop_pred_time_if_insufficient_look_distance(self):
         """Drop prediction times if there is insufficient look distance.
@@ -661,15 +670,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         if len(temporal_batch) > 0:
             self._add_temporal_batch(temporal_batch=temporal_batch)
-
-    def _process_static_specs(self):
-        """Process static specs."""
-        for spec in self.unprocessed_specs.static_specs:
-            self._add_static_info(
-                static_spec=spec,
-            )
-
-            self.unprocessed_specs.static_specs.remove(spec)
 
     def _check_that_spec_df_has_required_columns(self, spec: AnySpec):
         """Check that df has required columns."""
