@@ -146,6 +146,12 @@ def synth_prediction_times():
 
 
 @pytest.fixture(scope="function")
+def synth_predictor():
+    """Load the synth outcome times."""
+    return load_synth_outcome(n_rows=1_000)
+
+
+@pytest.fixture(scope="function")
 def synth_outcome():
     """Load the synth outcome times."""
-    return load_synth_outcome()
+    return load_synth_outcome(n_rows=1_000)

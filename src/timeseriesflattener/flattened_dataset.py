@@ -647,17 +647,17 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
         # Handle for predictors
-        cutoff_date_behind = None
-        cutoff_date_ahead = None
+        cutoff_date_behind = pd.Timestamp("0001-01-01")
+        cutoff_date_ahead = pd.Timestamp("9999-01-01")
 
         for spec in spec_batch:
             spec_cutoff_date = spec.get_cutoff_date()
 
             if isinstance(spec, OutcomeSpec):
-                if cutoff_date_ahead is None or cutoff_date_ahead > spec_cutoff_date:
+                if cutoff_date_ahead > spec_cutoff_date:
                     cutoff_date_ahead = spec_cutoff_date
             elif isinstance(spec, PredictorSpec):
-                if cutoff_date_behind is None or cutoff_date_behind < spec_cutoff_date:
+                if cutoff_date_behind < spec_cutoff_date:
                     cutoff_date_behind = spec_cutoff_date
 
         # Drop all prediction that are not within the cutoff window

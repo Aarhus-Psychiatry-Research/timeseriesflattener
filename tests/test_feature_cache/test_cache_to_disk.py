@@ -1,5 +1,7 @@
 """Testing of the DiskCache class."""
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -7,9 +9,15 @@ from pandas.testing import assert_frame_equal
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import PredictorSpec
 from timeseriesflattener.resolve_multiple_functions import latest
+from timeseriesflattener.testing.utils_for_testing import synth_outcome, synth_predictor
+
+# Avoid ruff auto-removing unused imports
+fixtures = [synth_predictor, synth_outcome]
 
 
-def test_write_and_check_feature(tmp_path):
+def test_write_and_check_feature(
+    tmp_path: Path,
+):
     """Test that write_feature writes a feature to disk."""
 
     cache = DiskCache(
@@ -27,11 +35,12 @@ def test_write_and_check_feature(tmp_path):
             "dw_ek_borger": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
+            "value": [1, 2, 3],
         },
     )
 
     test_spec = PredictorSpec(
-        values_df=values_df,
+        values_df=synth_predictor,
         interval_days=5,
         resolve_multiple_fn=latest,
         key_for_resolve_multiple="latest",
@@ -81,6 +90,7 @@ def test_read_feature(tmp_path):
         {
             "dw_ek_borger": [1, 2, 3, 4, 5],
             "timestamp": [1, 2, 3, 4, 5],
+            "value": [1, 2, 3, 4, 5],
         },
     )
 
