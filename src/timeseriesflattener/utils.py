@@ -14,8 +14,54 @@ import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
+split_df_dict = {}
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def split_df_and_register_to_dict(
+    df: pd.DataFrame,
+    id_col_name: str = "dw_ek_borger",
+    timestamp_col_name: str = "timestamp",
+    value_col_name: str = "value",
+    value_names_col_name: str = "value_names",
+):
+    """Split a df with multiple different value types into dataframes only containing values for each specific value type.
+
+    Registers the seperated dfs in the df_dict.
+
+    Args:
+        df (pd.DataFrame): A dataframe in long format containing the values to be grouped into a catalogue.
+        id_col_name (str): Name of the column containing the patient id for each value. Defaults to "dw_ek_borger".
+        timestamp_col_name (str): Name of the column containing the timestamp for each value. Defaults to "timestamp".
+        value_col_name (str): Name of the column containing the value for each value. Defaults to "values".
+        value_names_col_name (str): Name of the column containing the names of the different types of values for each value. Defaults to "value_names".
+    """
+    passed_columns = [
+        id_col_name,
+        timestamp_col_name,
+        value_col_name,
+        value_names_col_name,
+    ]
+    missing_columns = [col for col in passed_columns if col not in list(df.columns)]
+
+    # If any of the required columns is missing, raise an error
+    if len(missing_columns) > 0:
+        raise ValueError(
+            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}. Available columns are {df.columns}.",
+        )
+
+    # Get the unique value names from the dataframe
+    value_names = df[value_names_col_name].unique()
+
+    for value_name in value_names:
+
+        value_df = df[df[value_names_col_name] == value_name][
+            [id_col_name, timestamp_col_name, value_col_name]
+        ]
+
+        split_df_dict[value_name] = value_df
 
 
 def format_dict_for_printing(d: dict) -> str:

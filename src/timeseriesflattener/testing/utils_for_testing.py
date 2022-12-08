@@ -15,6 +15,7 @@ from timeseriesflattener.feature_spec_objects import AnySpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
+    synth_predictor_binary,
 )
 from timeseriesflattener.utils import data_loaders
 
@@ -155,4 +156,22 @@ def synth_predictor():
 @pytest.fixture(scope="function")
 def synth_outcome():
     """Load the synth outcome times."""
-    return load_synth_outcome(n_rows=1_000)
+    return load_synth_outcome()
+
+
+@pytest.fixture(scope="function")
+def long_df():
+    """Create a long df."""
+    synth_df = synth_predictor_binary()
+    synth_df = synth_df.rename(columns={"value": "value_name_1"})
+    synth_df["value_name_2"] = synth_df["value_name_1"]
+
+    df = pd.melt(
+        synth_df,
+        id_vars=["dw_ek_borger", "timestamp"],
+        value_vars=["value_name_1", "value_name_2"],
+        var_name="value_names",
+        value_name="value",
+    )
+
+    return df

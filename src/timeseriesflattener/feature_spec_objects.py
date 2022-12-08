@@ -12,7 +12,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
-from timeseriesflattener.utils import data_loaders
+from timeseriesflattener.utils import data_loaders, split_df_dict
 
 log = logging.getLogger(__name__)
 
@@ -40,18 +40,12 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
     return key in d and d[key] is not None
 
 
-def resolve_values_df(data: dict[str, Any]):
-    """Resolve the values_df attribute to a dataframe."""
-    if "values_loader" not in data and "values_df" not in data:
-        raise ValueError("Either values_loader or a dataframe must be specified.")
-
-    if in_dict_and_not_none(d=data, key="values_loader") and in_dict_and_not_none(
-        key="values_df",
-        d=data,
-    ):
-        raise ValueError("Only one of values_loader or df can be specified.")
-
-    if "values_df" not in data or data["values_df"] is None:
+def resolve_from_dict_or_registry(data: dict[str, Any]):
+    """Resolve values_df from a dictionary or registry."""
+    if "values_name" in data and data["values_name"] is not None:
+        data["values_df"] = split_df_dict.get(data["values_name"])
+        data["feature_name"] = data["values_name"]
+    else:
         if isinstance(data["values_loader"], str):
             data["feature_name"] = data["values_loader"]
             data["values_loader"] = data_loaders.get(data["values_loader"])
@@ -65,6 +59,28 @@ def resolve_values_df(data: dict[str, Any]):
                 kwargs=frozendict(data["loader_kwargs"]),
                 feature_name=data["feature_name"],
             )
+
+
+def resolve_values_df(data: dict[str, Any]):
+    """Resolve the values_df attribute to a dataframe."""
+    if not any(key in data for key in ["values_loader", "values_name", "values_df"]):
+        raise ValueError(
+            "Either values_loader or a dictionary containing dataframes or a single dataframe must be specified.",
+        )
+
+    if (
+        sum(
+            in_dict_and_not_none(data, key)
+            for key in ["values_loader", "values_name", "values_df"]
+        )
+        > 1
+    ):
+        raise ValueError(
+            "Only one of values_loader or values_name or df can be specified.",
+        )
+
+    if "values_df" not in data or data["values_df"] is None:
+        resolve_from_dict_or_registry(data)
 
     if not isinstance(data["values_df"], pd.DataFrame):
         raise ValueError("values_df must be or resolve to a pandas DataFrame.")
@@ -114,6 +130,10 @@ class AnySpec(BaseModel):
     values_loader: Optional[Callable] = None
     # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
     # then calls the function which should return a dataframe.
+
+    values_name: Optional[str] = None
+    # A string that corresponds to a key in a dictionary of multiple dataframes that
+    # correspods to a name of a type of values.
 
     loader_kwargs: Optional[dict[str, Any]] = None
     # Optional kwargs for the values_loader
@@ -187,7 +207,7 @@ class StaticSpec(AnySpec):
 
 
 class TemporalSpec(AnySpec):
-    """The minimum specification required for all collapsed time series
+    """The minimum specification required for all collapsed time series.
 
     (temporal features), whether looking ahead or behind.
 
@@ -301,7 +321,7 @@ class PredictorSpec(TemporalSpec):
 
 
 class OutcomeSpec(TemporalSpec):
-    """Specification for a single predictor, where the df has been resolved."""
+    """Specification for a single outcome, where the df has been resolved."""
 
     prefix: str = "outc"
 
@@ -357,16 +377,18 @@ class OutcomeSpec(TemporalSpec):
 
 
 class MinGroupSpec(BaseModel):
-    """Minimum specification for a group of features, whether they're looking
-
-    ahead or behind.
+    """Minimum specification for a group of features, whether they're looking ahead or behind.
 
     Used to generate combinations of features.
     """
 
-    values_loader: list[str]
-    # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
+    values_loader: Optional[list[str]] = None
+    # Loader for the df. Tries to resolve from the data_loaders registry,
     # then calls the function which should return a dataframe.
+
+    values_name: Optional[list[str]] = None
+    # List of strings that corresponds to a key in a dictionary of multiple dataframes
+    # that correspods to a name of a type of values.
 
     values_df: Optional[pd.DataFrame] = None
     # Dataframe with the values.
@@ -387,12 +409,9 @@ class MinGroupSpec(BaseModel):
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
     prefix: Optional[str] = None
-    # Prefix for the column name. Overrides the default prefix for the feature type.
 
-    def __init__(self, **data):
-        super().__init__(**data)
-
-        # Check that all passed loaders are valid
+    def _check_loaders_are_valid(self):
+        """Check that all loaders can be resolved from the data_loaders catalogue."""
         invalid_loaders = list(
             set(self.values_loader) - set(data_loaders.get_all().keys()),
         )
@@ -414,6 +433,15 @@ class MinGroupSpec(BaseModel):
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
                 f"""Available loaders:{nl}{avail_loaders_str}""",
             )
+
+    # Prefix for the column name. Overrides the default prefix for the feature type.
+
+    def __init__(self, **data):
+        super().__init__(**data)
+
+        # Check that all passed loaders are valid
+        if self.values_loader is not None:
+            self._check_loaders_are_valid()
 
         if self.output_col_name_override:
             input_col_name = (
