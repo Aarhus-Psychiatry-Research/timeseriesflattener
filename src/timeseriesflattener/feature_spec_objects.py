@@ -40,38 +40,6 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
     return key in d and d[key] is not None
 
 
-def resolve_values_df(data: dict[str, Any]):
-    """Resolve the values_df attribute to a dataframe."""
-    if (
-        "values_loader" not in data
-        and "values_df_dict" not in data
-        and "values_df" not in data
-    ):
-        raise ValueError(
-            "Either values_loader or a dictionary containing dataframes or a single dataframe must be specified."
-        )
-
-    if (
-        in_dict_and_not_none(d=data, key="values_loader")
-        and in_dict_and_not_none(d=data, key="values_df_dict")
-        and in_dict_and_not_none(
-            key="values_df",
-            d=data,
-        )
-    ):
-        raise ValueError(
-            "Only one of values_loader or values_df_dcict or df can be specified."
-        )
-
-    if "values_df" not in data or data["values_df"] is None:
-        resolve_from_dict_or_registry(data)
-
-    if not isinstance(data["values_df"], pd.DataFrame):
-        raise ValueError("values_df must be or resolve to a pandas DataFrame.")
-
-    return data
-
-
 def resolve_from_dict_or_registry(data: dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
     if "values_df_dict" in data and data["values_df_dict"] is not None:
@@ -90,6 +58,38 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
                 kwargs=frozendict(data["loader_kwargs"]),
                 feature_name=data["feature_name"],
             )
+
+
+def resolve_values_df(data: dict[str, Any]):
+    """Resolve the values_df attribute to a dataframe."""
+    if (
+        "values_loader" not in data
+        and "values_df_dict" not in data
+        and "values_df" not in data
+    ):
+        raise ValueError(
+            "Either values_loader or a dictionary containing dataframes or a single dataframe must be specified.",
+        )
+
+    if (
+        in_dict_and_not_none(d=data, key="values_loader")
+        and in_dict_and_not_none(d=data, key="values_df_dict")
+        and in_dict_and_not_none(
+            key="values_df",
+            d=data,
+        )
+    ):
+        raise ValueError(
+            "Only one of values_loader or values_df_dcict or df can be specified.",
+        )
+
+    if "values_df" not in data or data["values_df"] is None:
+        resolve_from_dict_or_registry(data)
+
+    if not isinstance(data["values_df"], pd.DataFrame):
+        raise ValueError("values_df must be or resolve to a pandas DataFrame.")
+
+    return data
 
 
 class BaseModel(PydanticBaseModel):

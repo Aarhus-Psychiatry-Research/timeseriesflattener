@@ -2,11 +2,9 @@
 import pandas as pd
 import pytest
 
-from timeseriesflattener.utils import long_df_registry, hydrate_dict_from_long_df
-from timeseriesflattener.testing.load_synth_data import (  # noqa
-    synth_predictor_binary,
-)
 from timeseriesflattener.feature_spec_objects import AnySpec
+from timeseriesflattener.testing.load_synth_data import synth_predictor_binary  # noqa
+from timeseriesflattener.utils import hydrate_dict_from_long_df, long_df_registry
 
 
 @pytest.fixture(scope="function")
