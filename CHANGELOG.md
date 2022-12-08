@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.19.0 (2022-12-08)
+### Feature
+* More informative errors ([`3141487`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3141487a04cb815ac492e632a601265c5c72d65f))
+
+### Documentation
+* More docstrings ([`e1134d4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e1134d40949af8ca5f547f9f015ea57e5ea6ee4c))
+
 ## v0.18.0 (2022-12-08)
 ### Feature
 * Take multiple features as long format ([`7f771e4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7f771e4ece71bff5bbf24a2718121709ead1792b))
