@@ -220,14 +220,18 @@ class TemporalSpec(AnySpec):
     # Optional keyword arguments for the data loader
 
     def __init__(self, **data):
+        # Convert resolve_multiple_str to fn and add appropriate name
         if isinstance(data["resolve_multiple_fn"], str):
-
             data["key_for_resolve_multiple"] = data["resolve_multiple_fn"]
 
-            # Convert resolve_multiple_str to fn
             data["resolve_multiple_fn"] = resolve_multiple_fns.get_all()[
                 data["resolve_multiple_fn"]
             ]
+
+        if hasattr(self, "key_for_resolve_multiple") is not None and callable(
+            data["resolve_multiple_fn"]
+        ):
+            data["key_for_resolve_multiple"] = data["resolve_multiple_fn"].__name__
 
         super().__init__(**data)
 
@@ -373,7 +377,7 @@ class MinGroupSpec(BaseModel):
     output_col_name_override: Optional[str] = None
     # Override for the column name to use as values in the output df.
 
-    resolve_multiple_fn: list[str]
+    resolve_multiple_fn: list[Union[str, Callable]]
     # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
 
     fallback: list[Union[Callable, str]]
