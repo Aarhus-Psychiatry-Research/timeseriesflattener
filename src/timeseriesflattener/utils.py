@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def split_df_and_register_to_dict(
     df: pd.DataFrame,
-    id_col_name: str = "dw_ek_borger",
+    id_col_name: str = "id",
     timestamp_col_name: str = "timestamp",
     value_col_name: str = "value",
     value_names_col_name: str = "value_names",
@@ -33,7 +33,7 @@ def split_df_and_register_to_dict(
 
     Args:
         df (pd.DataFrame): A dataframe in long format containing the values to be grouped into a catalogue.
-        id_col_name (str): Name of the column containing the patient id for each value. Defaults to "dw_ek_borger".
+        id_col_name (str): Name of the column containing the patient id for each value. Defaults to "id".
         timestamp_col_name (str): Name of the column containing the timestamp for each value. Defaults to "timestamp".
         value_col_name (str): Name of the column containing the value for each value. Defaults to "values".
         value_names_col_name (str): Name of the column containing the names of the different types of values for each value. Defaults to "value_names".

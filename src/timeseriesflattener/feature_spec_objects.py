@@ -229,7 +229,7 @@ class TemporalSpec(AnySpec):
     allowed_nan_value_prop: float = 0.0
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
-    id_col_name: str = "dw_ek_borger"
+    id_col_name: str = "id"
     # Col name for ids in the input dataframe.
 
     timestamp_col_name: str = "timestamp"

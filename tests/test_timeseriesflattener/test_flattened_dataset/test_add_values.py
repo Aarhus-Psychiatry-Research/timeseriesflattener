@@ -23,12 +23,12 @@ from timeseriesflattener.testing.utils_for_testing import (
 # Predictors
 def test_predictor_after_prediction_time():
     prediction_times_df = str_to_df(
-        """dw_ek_borger,timestamp,
+        """id,timestamp,
     1,2021-12-31 00:00:00
     """,
     )
     predictor_df = str_to_df(
-        """dw_ek_borger,timestamp,value,
+        """id,timestamp,value,
     1,2022-01-01 00:00:01, 1.0
     """,
     )
@@ -47,10 +47,10 @@ def test_predictor_after_prediction_time():
 
 
 def test_predictor_before_prediction():
-    prediction_times_df = """dw_ek_borger,timestamp,
+    prediction_times_df = """id,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    predictor_df_str = """dw_ek_borger,timestamp,value,
+    predictor_df_str = """id,timestamp,value,
                         1,2021-12-30 22:59:59, 1
                         """
 
@@ -68,14 +68,14 @@ def test_predictor_before_prediction():
 
 
 def test_multiple_citizens_predictor():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df_str = """id,timestamp,
                             1,2021-12-31 00:00:00
                             1,2022-01-02 00:00:00
                             5,2022-01-02 00:00:00
                             5,2022-01-05 00:00:00
                             6,2022-01-05 00:00:00
                             """
-    predictor_df_str = """dw_ek_borger,timestamp,value,
+    predictor_df_str = """id,timestamp,value,
                         1,2021-12-30 00:00:01, 0
                         1,2022-01-01 00:00:00, 1
                         5,2022-01-01 00:00:00, 0
@@ -98,10 +98,10 @@ def test_multiple_citizens_predictor():
 
 # Outcomes
 def test_event_after_prediction_time():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df_str = """id,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,value,
+    outcome_df_str = """id,timestamp,value,
                         1,2022-01-01 00:00:01, 1
                         """
 
@@ -120,10 +120,10 @@ def test_event_after_prediction_time():
 
 
 def test_event_before_prediction():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df_str = """id,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,value,
+    outcome_df_str = """id,timestamp,value,
                         1,2021-12-30 23:59:59, 1.0
                         """
 
@@ -142,13 +142,13 @@ def test_event_before_prediction():
 
 
 def test_multiple_citizens_outcome():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df_str = """id,timestamp,
                             1,2021-12-31 00:00:00
                             1,2022-01-02 00:00:00
                             5,2025-01-02 00:00:00
                             5,2025-08-05 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,value
+    outcome_df_str = """id,timestamp,value
                         1,2021-12-31 00:00:01, 1.0
                         1,2023-01-02 00:00:00, 1.0
                         5,2025-01-03 00:00:00, 1.0
@@ -170,10 +170,10 @@ def test_multiple_citizens_outcome():
 
 
 def test_citizen_without_outcome():
-    prediction_times_df_str = """dw_ek_borger,timestamp,
+    prediction_times_df_str = """id,timestamp,
                             1,2021-12-31 00:00:00
                             """
-    outcome_df_str = """dw_ek_borger,timestamp,value,
+    outcome_df_str = """id,timestamp,value,
                         0,2021-12-31 00:00:01, 1.0
                         """
 
@@ -196,12 +196,12 @@ def test_static_predictor():
     feature_name = "date_of_birth"
     output_col_name = f"{prefix}_{feature_name}"
 
-    prediction_times_df = """dw_ek_borger,timestamp,
+    prediction_times_df = """id,timestamp,
                             1,2021-12-31 00:00:00
                             1,2021-12-31 00:00:01
                             1,2021-12-31 00:00:02
                             """
-    static_predictor = f"""dw_ek_borger,{feature_name}
+    static_predictor = f"""id,{feature_name}
                         1,1994-12-31 00:00:01
                         """
 
@@ -237,12 +237,12 @@ def test_static_predictor():
 
 
 def test_add_age():
-    prediction_times_df = """dw_ek_borger,timestamp,
+    prediction_times_df = """id,timestamp,
                             1,1994-12-31 00:00:00
                             1,2021-12-30 00:00:00
                             1,2021-12-31 00:00:00
                             """
-    static_predictor = """dw_ek_borger,date_of_birth
+    static_predictor = """id,date_of_birth
                         1,1994-12-31 00:00:00
                         """
 
@@ -277,12 +277,12 @@ def test_add_age():
 
 
 def test_add_age_error():
-    prediction_times_df = """dw_ek_borger,timestamp,
+    prediction_times_df = """id,timestamp,
                             1,1994-12-31 00:00:00
                             1,2021-11-28 00:00:00
                             1,2021-12-31 00:00:00
                             """
-    static_predictor = """dw_ek_borger,date_of_birth
+    static_predictor = """id,date_of_birth
                         1,94-12-31 00:00:00
                         """
 
@@ -299,7 +299,7 @@ def test_add_age_error():
 
 
 def test_incident_outcome_removing_prediction_times():
-    prediction_times_str = """dw_ek_borger,timestamp,
+    prediction_times_str = """id,timestamp,
                             1,2021-12-31 00:00:00
                             1,2023-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -307,12 +307,12 @@ def test_incident_outcome_removing_prediction_times():
                             3,2023-12-31 00:00:00
                             """
 
-    event_times_str = """dw_ek_borger,timestamp,value,
+    event_times_str = """id,timestamp,value,
                         1,2021-12-31 00:00:01, 1
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """id,timestamp,outc_value_within_2_days_max_fallback_nan_dichotomous,
                         1,2021-12-31 00:00:00, 1.0
                         2,2021-12-31 00:00:00, 1.0
                         3,2023-12-31 00:00:00, 0.0
@@ -325,7 +325,7 @@ def test_incident_outcome_removing_prediction_times():
     flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
-        id_col_name="dw_ek_borger",
+        id_col_name="id",
         n_workers=4,
         drop_pred_times_with_insufficient_look_distance=False,
     )
@@ -352,7 +352,7 @@ def test_incident_outcome_removing_prediction_times():
 
 
 def test_add_multiple_static_predictors():
-    prediction_times_str = """dw_ek_borger,timestamp,
+    prediction_times_str = """id,timestamp,
                             1,2021-12-31 00:00:00
                             1,2023-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -360,23 +360,23 @@ def test_add_multiple_static_predictors():
                             3,2023-12-31 00:00:00
                             """
 
-    event_times_str = """dw_ek_borger,timestamp,value,
+    event_times_str = """id,timestamp,value,
                         1,2021-12-31 00:00:01, 1
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """dw_ek_borger,timestamp,outc_value_within_2_days_max_fallback_0_dichotomous,pred_age_in_years,pred_male
+    expected_df_str = """id,timestamp,outc_value_within_2_days_max_fallback_0_dichotomous,pred_age_in_years,pred_male
                         1,2021-12-31 00:00:00, 1.0,22.00,1
                         2,2021-12-31 00:00:00, 1.0,22.00,0
                         3,2023-12-31 00:00:00, 0.0,23.99,1
                         """
 
-    birthdates_df_str = """dw_ek_borger,date_of_birth,
+    birthdates_df_str = """id,date_of_birth,
     1,2000-01-01,
     2,2000-01-02,
     3,2000-01-03"""
 
-    male_df_str = """dw_ek_borger,male,
+    male_df_str = """id,male,
     1,1
     2,0
     3,1"""
@@ -390,7 +390,7 @@ def test_add_multiple_static_predictors():
     flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
-        id_col_name="dw_ek_borger",
+        id_col_name="id",
         n_workers=4,
         drop_pred_times_with_insufficient_look_distance=False,
     )
@@ -424,7 +424,7 @@ def test_add_multiple_static_predictors():
     outcome_df = flattened_dataset.get_df()
 
     for col in (
-        "dw_ek_borger",
+        "id",
         "timestamp",
         "outc_value_within_2_days_max_fallback_0_dichotomous",
         "pred_age_in_years",
@@ -438,23 +438,23 @@ def test_add_multiple_static_predictors():
 
 
 def test_add_temporal_predictors_then_temporal_outcome():
-    prediction_times_str = """dw_ek_borger,timestamp,
+    prediction_times_str = """id,timestamp,
                             1,2021-11-05 00:00:00
                             2,2021-11-05 00:00:00
                             """
 
-    predictors_df_str = """dw_ek_borger,timestamp,value,
+    predictors_df_str = """id,timestamp,value,
                         1,2020-11-05 00:00:01, 1
                         2,2020-11-05 00:00:01, 1
                         2,2021-01-15 00:00:01, 3
                         """
 
-    event_times_str = """dw_ek_borger,timestamp,value,
+    event_times_str = """id,timestamp,value,
                         1,2021-11-05 00:00:01, 1
                         2,2021-11-05 00:00:01, 1
                         """
 
-    expected_df_str = """dw_ek_borger,timestamp,prediction_time_uuid
+    expected_df_str = """id,timestamp,prediction_time_uuid
                             2,2021-11-05,2-2021-11-05-00-00-00
                             1,2021-11-05,1-2021-11-05-00-00-00
                         """
@@ -467,7 +467,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
     flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
-        id_col_name="dw_ek_borger",
+        id_col_name="id",
         n_workers=4,
         drop_pred_times_with_insufficient_look_distance=False,
     )
@@ -493,8 +493,8 @@ def test_add_temporal_predictors_then_temporal_outcome():
         ],
     )
 
-    outcome_df = flattened_dataset.get_df().set_index("dw_ek_borger").sort_index()
-    expected_df = expected_df.set_index("dw_ek_borger").sort_index()
+    outcome_df = flattened_dataset.get_df().set_index("id").sort_index()
+    expected_df = expected_df.set_index("id").sort_index()
 
     for col in expected_df.columns:
         pd.testing.assert_series_equal(
@@ -506,13 +506,13 @@ def test_add_temporal_predictors_then_temporal_outcome():
 
 
 def test_add_temporal_incident_binary_outcome():
-    prediction_times_str = """dw_ek_borger,timestamp,
+    prediction_times_str = """id,timestamp,
                             1,2021-11-05 00:00:00
                             1,2021-11-01 00:00:00
                             1,2023-11-05 00:00:00
                             """
 
-    event_times_str = """dw_ek_borger,timestamp,value,
+    event_times_str = """id,timestamp,value,
                         1,2021-11-06 00:00:01, 1
                         """
 
@@ -527,7 +527,7 @@ def test_add_temporal_incident_binary_outcome():
     flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
-        id_col_name="dw_ek_borger",
+        id_col_name="id",
         n_workers=4,
         drop_pred_times_with_insufficient_look_distance=False,
     )

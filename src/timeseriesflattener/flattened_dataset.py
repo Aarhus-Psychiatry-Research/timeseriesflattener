@@ -89,7 +89,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         prediction_times_df: DataFrame,
         drop_pred_times_with_insufficient_look_distance: bool,  # noqa
         cache: Optional[FeatureCache] = None,
-        id_col_name: str = "dw_ek_borger",
+        id_col_name: str = "id",
         timestamp_col_name: str = "timestamp",
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
@@ -122,7 +122,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Args:
             prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
             cache (Optional[FeatureCache], optional): Object for feature caching. Should be initialised when passed to init. Defaults to None.
-            id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "dw_ek_borger".
+            id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "id".
             timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
             predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to "pred_".
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
@@ -324,7 +324,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             DataFrame
         """
         # Generate df with one row for each prediction time x event time combination
-        # Drop dw_ek_borger for faster merge
+        # Drop id for faster merge
         df = pd.merge(
             left=prediction_times_with_uuid_df,
             right=output_spec.values_df,
@@ -332,7 +332,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             on=id_col_name,
             suffixes=("_pred", "_val"),
             validate="m:m",
-        ).drop("dw_ek_borger", axis=1)
+        ).drop("id", axis=1)
 
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
