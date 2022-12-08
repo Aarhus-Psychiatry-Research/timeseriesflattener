@@ -22,7 +22,6 @@ from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
 )
-from timeseriesflattener.utils import long_df_registry
 
 # Avoid automatically being removed by ruff
 used_synth_datasets = [
