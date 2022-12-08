@@ -725,7 +725,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 raise ValueError(f"Missing required column: {col}")
 
     def _check_that_spec_df_timestamp_col_is_correctly_formatted(
-        self, spec: TemporalSpec
+        self,
+        spec: TemporalSpec,
     ):
         """Check that timestamp column is correctly formatted. Attempt to coerce if possible."""
         timestamp_col_type = spec.values_df[self.timestamp_col_name].dtype  # type: ignore
@@ -777,7 +778,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
             if isinstance(spec_i, TemporalSpec):
                 self._check_that_spec_df_timestamp_col_is_correctly_formatted(
-                    spec=spec_i
+                    spec=spec_i,
                 )
 
             if isinstance(spec_i, OutcomeSpec):
