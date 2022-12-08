@@ -43,9 +43,7 @@ class DiskCache(FeatureCache):
         self.cache_file_suffix = cache_file_suffix
         self.entity_id_col_name = id_col_name
         self.timestamp_col_name = timestamp_col_name
-
-        if not self.feature_cache_dir.exists():
-            self.feature_cache_dir.mkdir()
+        self.feature_cache_dir.mkdir(exist_ok=True, parents=True)
 
     def _load_most_recent_df_matching_pattern(
         self,
