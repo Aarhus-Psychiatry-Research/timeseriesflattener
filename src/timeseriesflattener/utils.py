@@ -12,7 +12,7 @@ import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-df_dict = {}
+split_df_dict = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -25,8 +25,8 @@ def split_df_and_register_to_dict(
     value_col_name: str = "value",
     value_names_col_name: str = "value_names",
 ):
-    """
-    Split a df with multiple different value types into dataframes only containing values for each specific value type.
+    """Split a df with multiple different value types into dataframes only containing values for each specific value type.
+
     Registers the seperated dfs in the df_dict.
 
     Args:
@@ -59,11 +59,12 @@ def split_df_and_register_to_dict(
             [id_col_name, timestamp_col_name, value_col_name]
         ]
 
-        df_dict[value_name] = value_df
+        split_df_dict[value_name] = value_df
 
 
 def format_dict_for_printing(d: dict) -> str:
     """Format a dictionary for printing. Removes extra apostrophes, formats
+
     colon to dashes, separates items with underscores and removes curly
     brackets.
 
