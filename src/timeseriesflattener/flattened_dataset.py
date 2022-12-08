@@ -447,7 +447,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         This checks that all the dataframes are aligned before
         concatenation.
         """
-        for _ in range(50):
+        for _ in range(5000):
             random_index = random.randint(0, len(dfs[0]) - 1)
             for feature_df in dfs[1:]:
                 if dfs[0].index[random_index] != feature_df.index[random_index]:
