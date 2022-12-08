@@ -104,6 +104,7 @@ if __name__ == "__main__":
         n_workers=1,
         drop_pred_times_with_insufficient_look_distance=True,
     )
+# Add the specifications and compute the predictor and outcome
     ts_flattener.add_spec([predictor_spec, outcome_spec])
     ts_flattener.compute()
     ts_flattener.get_df()
