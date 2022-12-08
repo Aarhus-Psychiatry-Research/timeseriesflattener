@@ -117,6 +117,23 @@ def assert_flattened_data_as_expected(
         raise ValueError("Must provide an expected set of data")
 
 
+def create_long_df():
+    """Create a long df."""
+    df = synth_predictor_binary()
+    df = df.rename(columns={"value": "value_name_1"})
+    df["value_name_2"] = df["value_name_1"]
+
+    long_df = pd.melt(
+        df,
+        id_vars=["dw_ek_borger", "timestamp"],
+        value_vars=["value_name_1", "value_name_2"],
+        var_name="value_names",
+        value_name="value",
+    )
+
+    return long_df
+
+
 @data_loaders.register("load_event_times")
 def load_event_times():
     """Load event times."""
@@ -161,17 +178,4 @@ def synth_outcome():
 
 @pytest.fixture(scope="function")
 def long_df():
-    """Create a long df."""
-    synth_df = synth_predictor_binary()
-    synth_df = synth_df.rename(columns={"value": "value_name_1"})
-    synth_df["value_name_2"] = synth_df["value_name_1"]
-
-    df = pd.melt(
-        synth_df,
-        id_vars=["dw_ek_borger", "timestamp"],
-        value_vars=["value_name_1", "value_name_2"],
-        var_name="value_names",
-        value_name="value",
-    )
-
-    return df
+    return create_long_df()
