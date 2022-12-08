@@ -60,7 +60,7 @@ def test_col_does_not_exist():
 
 
 def test_duplicate_prediction_times():
-    with pytest.raises(ValueError, match=r".*duplicate.*"):
+    with pytest.raises(ValueError, match=r".*Duplicate.*"):
         prediction_times_df_str = """dw_ek_borger,timestamp,
                                 1,2021-12-30 00:00:00
                                 1,2021-12-30 00:00:00
