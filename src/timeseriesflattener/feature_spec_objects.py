@@ -232,9 +232,6 @@ class TemporalSpec(AnySpec):
     id_col_name: str = "id"
     # Col name for ids in the input dataframe.
 
-    timestamp_col_name: str = "timestamp"
-    # Col name for timestamps in the input dataframe.
-
     loader_kwargs: Optional[dict] = None
 
     # Optional keyword arguments for the data loader
@@ -254,25 +251,6 @@ class TemporalSpec(AnySpec):
             ]
 
         super().__init__(**data)
-
-        timestamp_col_type = self.values_df[self.timestamp_col_name].dtype  # type: ignore
-
-        if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
-            # Convert column dtype to datetime64[ns] if it isn't already
-            log.info(
-                f"{self.feature_name}: Converting timestamp column to datetime64[ns]",
-            )
-
-            self.values_df[self.timestamp_col_name] = pd.to_datetime(
-                self.values_df[self.timestamp_col_name],
-            )
-
-            min_timestamp = min(self.values_df[self.timestamp_col_name])
-
-            if min_timestamp < pd.Timestamp("1971-01-01"):
-                log.warning(
-                    f"{self.feature_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?",
-                )
 
         self.resolve_multiple_fn = data["resolve_multiple_fn"]
 
@@ -304,20 +282,6 @@ class PredictorSpec(TemporalSpec):
             raise ValueError("lookbehind_days or interval_days must be specified.")
 
         super().__init__(**data)
-
-    def get_cutoff_date(self) -> pd.Timestamp:
-        """Get the cutoff date from a spec.
-
-        A cutoff date is the earliest date that a prediction time can get data from the values_df.
-        We do not want to include those prediction times, as we might make incorrect inferences.
-        For example, if a spec says to look 5 years into the future, but we only have one year of data,
-        there will necessarily be fewer outcomes - without that reflecting reality. This means our model won't generalise.
-
-        Returns:
-            pd.Timestamp: A cutoff date.
-        """
-        min_val_date = self.values_df[self.timestamp_col_name].min()  # type: ignore
-        return min_val_date + pd.Timedelta(days=self.lookbehind_days)
 
 
 class OutcomeSpec(TemporalSpec):
@@ -359,21 +323,6 @@ class OutcomeSpec(TemporalSpec):
         )
 
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
-
-    def get_cutoff_date(self) -> pd.Timestamp:
-        """Get the cutoff date from a spec.
-
-        A cutoff date is the earliest date that a prediction time can get data from the values_df.
-        We do not want to include those prediction times, as we might make incorrect inferences.
-        For example, if a spec says to look 5 years into the future, but we only have one year of data,
-        there will necessarily be fewer outcomes - without that reflecting reality. This means our model won't generalise.
-
-        Returns:
-            pd.Timestamp: A cutoff date.
-        """
-        max_val_date = self.values_df[self.timestamp_col_name].max()  # type: ignore
-
-        return max_val_date - pd.Timedelta(days=self.lookahead_days)
 
 
 class MinGroupSpec(BaseModel):

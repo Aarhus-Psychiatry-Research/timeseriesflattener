@@ -626,6 +626,26 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         self._df = df
 
+    def _get_cutoff_date_from_spec(self, spec: TemporalSpec) -> pd.Timestamp:
+        """Get the cutoff date from a spec.
+
+        A cutoff date is the earliest date that a prediction time can get data from the values_df.
+        We do not want to include those prediction times, as we might make incorrect inferences.
+        For example, if a spec says to look 5 years into the future, but we only have one year of data,
+        there will necessarily be fewer outcomes - without that reflecting reality. This means our model won't generalise.
+
+        Returns:
+            pd.Timestamp: A cutoff date.
+        """
+
+        if isinstance(spec, PredictorSpec):
+            min_val_date = spec.values_df[self.timestamp_col_name].min()  # type: ignore
+            return min_val_date + pd.Timedelta(days=spec.lookbehind_days)
+
+        if isinstance(spec, OutcomeSpec):
+            max_val_date = spec.values_df[self.timestamp_col_name].max()  # type: ignore
+            return max_val_date - pd.Timedelta(days=spec.lookahead_days)
+
     @print_df_dimensions_diff
     def _drop_pred_time_if_insufficient_look_distance(self, df: pd.DataFrame):
         """Drop prediction times if there is insufficient look distance.
@@ -650,7 +670,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         cutoff_date_ahead = pd.Timestamp("2200-01-01")
 
         for spec in spec_batch:
-            spec_cutoff_date = spec.get_cutoff_date()
+            spec_cutoff_date = self._get_cutoff_date_from_spec(spec=spec)
 
             if isinstance(spec, OutcomeSpec):
                 cutoff_date_ahead = min(cutoff_date_ahead, spec_cutoff_date)

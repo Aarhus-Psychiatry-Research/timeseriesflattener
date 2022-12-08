@@ -123,7 +123,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     pred_val_df = pd.DataFrame(
         {
             "id": [1],
-            "timestamp": ["2022-01-01"],
+            "datetime": ["2022-01-01"],
             "value": [1],
         },
     )
@@ -140,7 +140,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     out_val_df = pd.DataFrame(
         {
             "id": [1],
-            "timestamp": ["2022-01-05"],
+            "datetime": ["2022-01-05"],
             "value": [4],
         },
     )
@@ -159,7 +159,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     out_df = ts_flattener.get_df()
 
     # Assert that the correct rows were dropped from the DataFrame
-    expected_df = pd.DataFrame({"timestamp": ["2022-01-02", "2022-01-03"]})
+    expected_df = pd.DataFrame({"datetime": ["2022-01-02", "2022-01-03"]})
     # Convert to datetime to avoid a warning
-    expected_df = expected_df.astype({"timestamp": "datetime64[ns]"})
-    pd.testing.assert_series_equal(out_df["timestamp"], expected_df["timestamp"])
+    expected_df = expected_df.astype({"datetime": "datetime64[ns]"})
+    pd.testing.assert_series_equal(out_df["datetime"], expected_df["datetime"])
