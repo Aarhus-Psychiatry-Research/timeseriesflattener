@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.19.1 (2022-12-08)
+### Fix
+* Unintended hardcoded id col name ([`dc788df`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/dc788dfdead829d79157b547b87a5acc2d576d78))
+
 ## v0.19.0 (2022-12-08)
 ### Feature
 * More informative errors ([`3141487`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3141487a04cb815ac492e632a601265c5c72d65f))
