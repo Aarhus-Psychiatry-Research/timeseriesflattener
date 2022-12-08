@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.20.0 (2022-12-08)
+### Feature
+* Move values_df validation that depends on flattened_ds to flattened_ds ([`cad634d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cad634d74c937735e98aee82eb883ae5da1c1dec))
+
+### Fix
+* Enforce unified timestamp col naming across values_df and pred_time_df ([`805e8f2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/805e8f2500f799bb2b4793cd1882b6341836daa3))
+* Remove hardcoded timestamp columns ([`66380d2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/66380d2f3666c911e479c17d9b611d3d63618611))
+
 ## v0.19.1 (2022-12-08)
 ### Fix
 * Unintended hardcoded id col name ([`dc788df`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/dc788dfdead829d79157b547b87a5acc2d576d78))
