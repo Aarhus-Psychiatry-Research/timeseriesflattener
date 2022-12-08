@@ -178,4 +178,5 @@ def synth_outcome():
 
 @pytest.fixture(scope="function")
 def long_df():
+    """Load the long df."""
     return create_long_df()
