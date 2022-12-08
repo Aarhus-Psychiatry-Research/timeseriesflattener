@@ -306,7 +306,7 @@
         <span class="n">prediction_times_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">drop_pred_times_with_insufficient_look_distance</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>  <span class="c1"># noqa</span>
         <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FeatureCache</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dw_ek_borger&quot;</span><span class="p">,</span>
+        <span class="n">id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
         <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
         <span class="n">predictor_col_name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span><span class="p">,</span>
         <span class="n">outcome_col_name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;outc&quot;</span><span class="p">,</span>
@@ -339,7 +339,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .</span>
 <span class="sd">            cache (Optional[FeatureCache], optional): Object for feature caching. Should be initialised when passed to init. Defaults to None.</span>
-<span class="sd">            id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to &quot;dw_ek_borger&quot;.</span>
+<span class="sd">            id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to &quot;id&quot;.</span>
 <span class="sd">            timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to &quot;timestamp&quot;.</span>
 <span class="sd">            predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to &quot;pred_&quot;.</span>
 <span class="sd">            outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to &quot;outc_&quot;.</span>
@@ -541,7 +541,7 @@
 <span class="sd">            DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Generate df with one row for each prediction time x event time combination</span>
-        <span class="c1"># Drop dw_ek_borger for faster merge</span>
+        <span class="c1"># Drop id for faster merge</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
             <span class="n">left</span><span class="o">=</span><span class="n">prediction_times_with_uuid_df</span><span class="p">,</span>
             <span class="n">right</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">,</span>
@@ -549,7 +549,7 @@
             <span class="n">on</span><span class="o">=</span><span class="n">id_col_name</span><span class="p">,</span>
             <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;_pred&quot;</span><span class="p">,</span> <span class="s2">&quot;_val&quot;</span><span class="p">),</span>
             <span class="n">validate</span><span class="o">=</span><span class="s2">&quot;m:m&quot;</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;dw_ek_borger&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">id_col_name</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># Drop prediction times without event times within interval days</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
