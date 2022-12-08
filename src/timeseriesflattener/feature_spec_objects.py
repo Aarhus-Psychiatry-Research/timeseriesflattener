@@ -229,7 +229,7 @@ class TemporalSpec(AnySpec):
             ]
 
         if hasattr(self, "key_for_resolve_multiple") is not None and callable(
-            data["resolve_multiple_fn"]
+            data["resolve_multiple_fn"],
         ):
             data["key_for_resolve_multiple"] = data["resolve_multiple_fn"].__name__
 
