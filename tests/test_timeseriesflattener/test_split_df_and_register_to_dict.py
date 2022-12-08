@@ -10,7 +10,7 @@ from timeseriesflattener.feature_spec_objects import (
     create_specs_from_group,
 )
 from timeseriesflattener.testing.load_synth_data import synth_predictor_binary  # noqa
-from timeseriesflattener.utils import split_df_and_register_to_dict, df_dict
+from timeseriesflattener.utils import df_dict, split_df_and_register_to_dict
 
 
 @pytest.fixture(scope="function")
