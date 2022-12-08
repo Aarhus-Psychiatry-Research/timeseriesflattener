@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     column_specs = [
         {
-            "dw_ek_borger": {
+            "id": {
                 "column_type": "uniform_int",
                 "min": 0,
                 "max": 10_000,

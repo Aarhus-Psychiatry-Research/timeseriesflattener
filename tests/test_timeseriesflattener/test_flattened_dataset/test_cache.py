@@ -53,7 +53,7 @@ def test_cache_hitting(
 
     cache = DiskCache(
         feature_cache_dir=tmp_path,
-        id_col_name="dw_ek_borger",
+        id_col_name="id",
     )
 
     # Create the cache

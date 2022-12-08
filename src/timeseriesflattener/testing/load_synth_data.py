@@ -88,7 +88,7 @@ def load_synth_outcome(
     """
     # Get first row for each id
     df = load_raw_test_csv("synth_raw_binary_2.csv", n_rows=n_rows)
-    df = df.groupby("dw_ek_borger").last().reset_index()
+    df = df.groupby("id").last().reset_index()
 
     # Drop all rows with a value equal to 1
     df = df[df["value"] == 1]

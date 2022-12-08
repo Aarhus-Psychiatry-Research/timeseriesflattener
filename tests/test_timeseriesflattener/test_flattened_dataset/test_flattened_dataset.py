@@ -91,7 +91,7 @@ def test_compute_specs(
         fallback=np.nan,
     )
     static_spec = StaticSpec(
-        values_df=synth_outcome[["value", "dw_ek_borger"]],
+        values_df=synth_outcome[["value", "id"]],
         feature_name="static",
         prefix="pred",
     )
@@ -108,7 +108,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     # Create a sample DataFrame with some test data
     pred_time_df = pd.DataFrame(
         {
-            "dw_ek_borger": [1, 1, 1, 1],
+            "id": [1, 1, 1, 1],
             "timestamp": ["2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04"],
         },
     )
@@ -120,7 +120,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
 
     pred_val_df = pd.DataFrame(
         {
-            "dw_ek_borger": [1],
+            "id": [1],
             "timestamp": ["2022-01-01"],
             "value": [1],
         },
@@ -137,7 +137,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
 
     out_val_df = pd.DataFrame(
         {
-            "dw_ek_borger": [1],
+            "id": [1],
             "timestamp": ["2022-01-05"],
             "value": [4],
         },
