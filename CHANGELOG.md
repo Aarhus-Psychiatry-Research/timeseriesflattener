@@ -2,6 +2,29 @@
 
 <!--next-version-placeholder-->
 
+## v0.17.0 (2022-12-08)
+### Feature
+* More appropriate logging level ([`7122e79`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7122e79606ec2d2fd5802361ecda8ebde318de12))
+* Infer resolve_multiple_fn str rep for groups ([`8058d65`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8058d65fdf6e65c534adab87861dcaaeafdd03b8))
+* Infer resolve_multiple_fn str repr from __name__ ([`55be07d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/55be07df7947b5a7baafafcae7955c4b426a45d0))
+* Add lookahead and lookbehind days to feature group specs ([`318591b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/318591b7edda233897e11af0a79fdd97a5f12716))
+
+### Fix
+* Guard against incident attribute not existing ([`3b1329b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3b1329b35c11477d09555287a904a9f895e99964))
+* Re-add resolve_multiple str resolution ([`18983a7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/18983a7988473352f2e994f1ef18ab7e1c8caa80))
+* Only infer resolve_multiple_str if not specified manually ([`f2648f8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f2648f8afc692812f490e019db0bbb44391d96e2))
+* Create dir for diskcache if it doesn't exist ([`0e32436`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0e32436a0c9ee2d59b916158e7f46f0081661fa2))
+* Create dir if it doesn't exist ([`c32f3c7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c32f3c702c0d473b59c506cd2e855def65764b24))
+
+### Documentation
+* Update output ([`a4fa6f7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a4fa6f7bf5d9f05d3b6c423f596a5bf102f06e49))
+* Update tutorial based on feedback ([`92c3d3b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/92c3d3bf5db019a2a3e5bd4ae3182f22cc4bcd38))
+* Add figures to basic tutorial ([`5eb069f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5eb069f28bde3a4bb951b6d81f86ae80ed9b455f))
+* Misc. updates to advanced notebook ([`a4a9380`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a4a9380abffc76e55688744571049ff6b1588779))
+* Groupspec add output type ([`0b3df30`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0b3df30d9bc1287a596f746c5a7fcef58ab21b05))
+* Update formatting in 02_advanced ([`47065e9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/47065e90e2179fa464bf055a1c87ae8bfc8f3134))
+* Initial stab at advanced tutorial ([`e8128bd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e8128bdfc3fd544b2d12a1bdf71b7de204187152))
+
 ## v0.16.0 (2022-12-07)
 ### Feature
 * Add diff when dropping rows ([`0421ed8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0421ed800abf9c50fcd98dc3a6f50f72a740a7b2))
