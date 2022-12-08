@@ -106,22 +106,24 @@ def test_compute_specs(
 
 def test_drop_pred_time_if_insufficient_look_distance():
     # Create a sample DataFrame with some test data
+    # Uses datetime to also test that using another column name works
     pred_time_df = pd.DataFrame(
         {
             "id": [1, 1, 1, 1],
-            "timestamp": ["2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04"],
+            "datetime": ["2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04"],
         },
     )
 
     ts_flattener = TimeseriesFlattener(
         prediction_times_df=pred_time_df,
         drop_pred_times_with_insufficient_look_distance=True,
+        timestamp_col_name="datetime",
     )
 
     pred_val_df = pd.DataFrame(
         {
             "id": [1],
-            "timestamp": ["2022-01-01"],
+            "datetime": ["2022-01-01"],
             "value": [1],
         },
     )
@@ -138,7 +140,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     out_val_df = pd.DataFrame(
         {
             "id": [1],
-            "timestamp": ["2022-01-05"],
+            "datetime": ["2022-01-05"],
             "value": [4],
         },
     )
