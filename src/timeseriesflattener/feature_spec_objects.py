@@ -67,14 +67,7 @@ def resolve_values_df(data: dict[str, Any]):
             "Either values_loader or a dictionary containing dataframes or a single dataframe must be specified.",
         )
 
-    if (
-        in_dict_and_not_none(d=data, key="values_loader")
-        and in_dict_and_not_none(d=data, key="values_df_dict")
-        and in_dict_and_not_none(
-            key="values_df",
-            d=data,
-        )
-    ):
+    if sum(in_dict_and_not_none(data, key) for key in ["values_loader", "values_df_dict", "values_df"]) > 1:
         raise ValueError(
             "Only one of values_loader or values_df_dcict or df can be specified.",
         )
