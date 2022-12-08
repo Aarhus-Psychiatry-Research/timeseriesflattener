@@ -288,7 +288,7 @@
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span> <span class="o">=</span> <span class="n">prediction_times_df</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">prediction_times_df</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;Overriding prediction_times_df in cache with prediction_times_df passed to init&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span> <span class="o">=</span> <span class="n">prediction_times_df</span>
@@ -296,7 +296,7 @@
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;pred_time_uuid_col_name&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp_col_name&quot;</span><span class="p">,</span> <span class="s2">&quot;id_col_name&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Overriding </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> in cache with </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> passed to init of flattened dataset&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
@@ -664,7 +664,7 @@
 <span class="sd">        This checks that all the dataframes are aligned before</span>
 <span class="sd">        concatenation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5000</span><span class="p">):</span>
             <span class="n">random_index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">feature_df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                 <span class="k">if</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">random_index</span><span class="p">]</span> <span class="o">!=</span> <span class="n">feature_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">random_index</span><span class="p">]:</span>
@@ -719,8 +719,6 @@
                     <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">),</span>
                 <span class="p">),</span>
             <span class="p">)</span>
-
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing complete, concatenating&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_concatenate_flattened_timeseries</span><span class="p">(</span>
             <span class="n">flattened_predictor_dfs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">,</span>
@@ -883,7 +881,7 @@
         <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span><span class="p">:</span>
             <span class="c1"># Handle incident specs separately, since their operations can be vectorised,</span>
             <span class="c1"># making them much faster</span>
-            <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">incident</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="s2">&quot;incident&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">spec</span><span class="o">.</span><span class="n">incident</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_incident_outcome</span><span class="p">(</span>
                     <span class="n">outcome_spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span>
                 <span class="p">)</span>
