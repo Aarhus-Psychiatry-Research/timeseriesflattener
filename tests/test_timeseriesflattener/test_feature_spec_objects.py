@@ -1,4 +1,5 @@
 """Test that feature spec objects work as intended."""
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -7,11 +8,15 @@ from timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
     check_that_col_names_in_kwargs_exist_in_df,
 )
-from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
+from timeseriesflattener.resolve_multiple_functions import maximum
+from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import; noqa
     load_synth_predictor_float,
 )
 from timeseriesflattener.testing.utils_for_testing import long_df
-from timeseriesflattener.utils import split_df_and_register_to_dict
+from timeseriesflattener.utils import (  # noqa
+    data_loaders,
+    split_df_and_register_to_dict,
+)
 
 
 def test_anyspec_init():
@@ -86,3 +91,46 @@ def test_create_combinations_while_resolving_from_registry(long_df: pd.DataFrame
     ).create_combinations()
 
     assert len(group_spec) == 2
+
+
+def test_skip_all_if_no_need_to_process():
+    """Test that no combinations are created if no need to process."""
+    assert (
+        len(
+            PredictorGroupSpec(
+                values_loader=["synth_predictor_float"],
+                input_col_name_override="value",
+                lookbehind_days=[1],
+                resolve_multiple_fn=["max"],
+                fallback=[0],
+                allowed_nan_value_prop=[0.5],
+            ).create_combinations(),
+        )
+        == 1
+    )
+
+
+def test_skip_one_if_no_need_to_process():
+    """Test that one combination is skipped if no need to process."""
+    created_combinations = PredictorGroupSpec(
+        values_loader=["synth_predictor_float"],
+        input_col_name_override="value",
+        lookbehind_days=[1, 2],
+        resolve_multiple_fn=["max", "min"],
+        fallback=[0],
+        allowed_nan_value_prop=[0],
+    ).create_combinations()
+
+    assert len(created_combinations) == 4
+
+
+def test_resolve_multiple_fn_to_str():
+    """Test that resolve_multiple_fn is converted to str correctly."""
+    pred_spec_batch = PredictorGroupSpec(
+        values_loader=["synth_predictor_float"],
+        lookbehind_days=[365, 730],
+        fallback=[np.nan],
+        resolve_multiple_fn=[maximum],
+    ).create_combinations()
+
+    assert "maximum" in pred_spec_batch[0].get_col_str()
