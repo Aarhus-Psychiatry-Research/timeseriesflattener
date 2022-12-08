@@ -2,6 +2,22 @@
 
 <!--next-version-placeholder-->
 
+## v0.18.0 (2022-12-08)
+### Feature
+* Take multiple features as long format ([`7f771e4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7f771e4ece71bff5bbf24a2718121709ead1792b))
+* Add resolve from hydrated dict ([`2263c60`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2263c607b7520f8c257d4a348d569d5e9a999516))
+* Add function for hydrating long df into cat ([`84515e9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/84515e9bb78a38c6fdb40887eb63771bc5ba2b5f))
+
+### Fix
+* Only test if loader str can be resolved if it's specified ([`5730592`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/57305925d80ab9de0486bf68423dc15f064b7af5))
+* Check if more than one df attribute is passed ([`f0f8623`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f0f86233f22fe5a8d2f78063e8c27d0bf99a3e05))
+* Add extra description to error ([`85684cf`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/85684cfdbd443bfcc982b0514ce4eda2f7cf6af9))
+* Change from catalogue to dict ([`4506c3a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4506c3ade6c842627af4332d453539f7f66b3651))
+
+### Documentation
+* Doc change to run hooks ([`3e4ee58`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3e4ee58a84af4ae1e74c94878c323bdcfdc0fa51))
+* Adding description ([`dde5111`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/dde5111de21928161af37d5cbd16cd7f7983837a))
+
 ## v0.17.0 (2022-12-08)
 ### Feature
 * More appropriate logging level ([`7122e79`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7122e79606ec2d2fd5802361ecda8ebde318de12))
