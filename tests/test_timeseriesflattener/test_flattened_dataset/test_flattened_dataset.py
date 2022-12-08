@@ -123,7 +123,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     pred_val_df = pd.DataFrame(
         {
             "id": [1],
-            "datetime": ["2022-01-01"],
+            "timestamp": ["2022-01-01"],
             "value": [1],
         },
     )
@@ -140,7 +140,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     out_val_df = pd.DataFrame(
         {
             "id": [1],
-            "datetime": ["2022-01-05"],
+            "timestamp": ["2022-01-05"],
             "value": [4],
         },
     )

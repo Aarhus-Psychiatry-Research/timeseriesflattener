@@ -704,6 +704,29 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             if col not in spec.values_df.columns:  # type: ignore
                 raise ValueError(f"Missing required column: {col}")
 
+    def _check_that_spec_df_timestamp_col_is_correctly_formatted(
+        self, spec: TemporalSpec
+    ):
+        """Check that timestamp column is correctly formatted. Attempt to coerce if possible."""
+        timestamp_col_type = spec.values_df[self.timestamp_col_name].dtype  # type: ignore
+
+        if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
+            # Convert column dtype to datetime64[ns] if it isn't already
+            log.info(
+                f"{spec.feature_name}: Converting timestamp column to datetime64[ns]",
+            )
+
+            spec.values_df[self.timestamp_col_name] = pd.to_datetime(  # type: ignore
+                spec.values_df[self.timestamp_col_name],  # type: ignore
+            )
+
+            min_timestamp = min(spec.values_df[self.timestamp_col_name])  # type: ignore
+
+            if min_timestamp < pd.Timestamp("1971-01-01"):
+                log.warning(
+                    f"{spec.feature_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?",
+                )
+
     def add_spec(
         self,
         spec: Union[list[AnySpec], AnySpec],
@@ -731,6 +754,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 )
 
             self._check_that_spec_df_has_required_columns(spec=spec_i)
+
+            if isinstance(spec_i, TemporalSpec):
+                self._check_that_spec_df_timestamp_col_is_correctly_formatted(
+                    spec=spec_i
+                )
 
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
