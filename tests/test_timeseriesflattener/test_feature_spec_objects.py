@@ -4,11 +4,13 @@ import pytest
 
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
+    PredictorGroupSpec,
     check_that_col_names_in_kwargs_exist_in_df,
 )
 from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
     load_synth_predictor_float,
 )
+from timeseriesflattener.utils import split_df_and_register_to_dict
 
 # Avoid ruff removing as unused
 used_loaders = [load_synth_predictor_float]
@@ -68,3 +70,21 @@ def test_that_col_names_in_kwargs_exist_in_df():
     data = {"col_name_1": "A", "col_name_2": "D", "values_df": df}
     with pytest.raises(ValueError, match="D is not in df"):
         check_that_col_names_in_kwargs_exist_in_df(data=data, df=df)
+
+
+def test_create_combinations_while_resolving_from_registry(df):
+    """Test that split_df_and_register_to_dict resolves correctly when multiple dataframes are fetched."""
+
+    split_df_and_register_to_dict(df=df)
+
+    group_spec = PredictorGroupSpec(
+        values_name=[
+            "value_name_1",
+            "value_name_2",
+        ],
+        resolve_multiple_fn=["mean"],
+        interval_days=[30],
+        fallback=[0],
+    ).create_combinations()
+
+    assert len(group_spec) == 2

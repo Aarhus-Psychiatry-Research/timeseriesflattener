@@ -2,15 +2,9 @@
 import pandas as pd
 import pytest
 
-from timeseriesflattener.feature_spec_objects import (
-    AnySpec,
-    MinGroupSpec,
-    PredictorGroupSpec,
-    PredictorSpec,
-    create_specs_from_group,
-)
+from timeseriesflattener.feature_spec_objects import AnySpec
 from timeseriesflattener.testing.load_synth_data import synth_predictor_binary  # noqa
-from timeseriesflattener.utils import df_dict, split_df_and_register_to_dict
+from timeseriesflattener.utils import split_df_and_register_to_dict, split_df_dict
 
 
 @pytest.fixture(scope="function")
@@ -38,13 +32,13 @@ def test_split_df_and_register_in_dict(df):
 
     split_df_and_register_to_dict(df=df)
 
-    assert len(df_dict) == 2
-    assert df_dict["value_name_1"].shape == (10000, 3)
-    assert df_dict["value_name_2"].shape == (10000, 3)
+    assert len(split_df_dict) == 2
+    assert split_df_dict["value_name_1"].shape == (10000, 3)
+    assert split_df_dict["value_name_2"].shape == (10000, 3)
 
 
 def test_resolve_from_df_dict(df):
-    """Test that a split_df_and_register_to_dict resolves correctly."""
+    """Test that a split_df_and_register_to_dict resolves from the  correctly."""
 
     split_df_and_register_to_dict(df=df)
 
@@ -55,21 +49,3 @@ def test_resolve_from_df_dict(df):
     )
 
     assert len(spec.values_df) == 10000
-
-
-def test_resolve_from_df_dict_group_spec(df):
-    """Test that split_df_and_register_to_dict resolves correctly when multiple dataframes are fetched."""
-
-    split_df_and_register_to_dict(df=df)
-
-    group_spec = PredictorGroupSpec(
-        values_name=[
-            "value_name_1",
-            "value_name_2",
-        ],
-        resolve_multiple_fn=["mean"],
-        interval_days=[30],
-        fallback=[0],
-    ).create_combinations()
-
-    assert 2 + 2 == 4
