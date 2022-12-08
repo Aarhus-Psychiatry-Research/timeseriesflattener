@@ -347,26 +347,6 @@ class MinGroupSpec(BaseModel):
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
     prefix: Optional[str] = None
-    # Prefix for the column name. Overrides the default prefix for the feature type.
-
-    def __init__(self, **data):
-        super().__init__(**data)
-
-        # Check that all passed loaders are valid
-        if self.values_loader is not None:
-            self._check_loaders_are_valid()
-
-        if self.output_col_name_override:
-            input_col_name = (
-                "value"
-                if not self.input_col_name_override
-                else self.input_col_name_override
-            )
-
-            self.values_df.rename(
-                columns={input_col_name: self.output_col_name_override},
-                inplace=True,
-            )
 
     def _check_loaders_are_valid(self):
         """Check that all loaders can be resolved from the data_loaders catalogue."""
@@ -390,6 +370,27 @@ class MinGroupSpec(BaseModel):
                 {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
                 f"""Available loaders:{nl}{avail_loaders_str}""",
+            )
+
+    # Prefix for the column name. Overrides the default prefix for the feature type.
+
+    def __init__(self, **data):
+        super().__init__(**data)
+
+        # Check that all passed loaders are valid
+        if self.values_loader is not None:
+            self._check_loaders_are_valid()
+
+        if self.output_col_name_override:
+            input_col_name = (
+                "value"
+                if not self.input_col_name_override
+                else self.input_col_name_override
+            )
+
+            self.values_df.rename(
+                columns={input_col_name: self.output_col_name_override},
+                inplace=True,
             )
 
 
