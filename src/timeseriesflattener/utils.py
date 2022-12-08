@@ -12,43 +12,35 @@ import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-long_df_registry = {}
+df_dict = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
-def hydrate_dict_from_long_df(
+def split_df_and_register_to_dict(
     df: pd.DataFrame,
     id_col_name: str = "dw_ek_borger",
     timestamp_col_name: str = "timestamp",
     value_col_name: str = "value",
-    value_keys_col_name: str = "value_keys",
+    value_names_col_name: str = "value_names",
 ):
     """
-    Hydrate a Catalogue with dataframes containing values for different value types from a long format df.
-
-    The input dataframe should be in long format and should contain at least the following columns:
-      - patient_id: A column with the patient id for each value.
-      - timestamp: A column with the timestamp for each value.
-      - value: A column with the value for each value.
-      - value_keys: A column with the names of the different types of values for each value.
-
-    The function will create a separate dataframe for each unique value type, and will add these dataframes
-    to a dict, with the value type names as keys.
+    Split a df with multiple different value types into dataframes only containing values for each specific value type.
+    Registers the seperated dfs in the df_dict.
 
     Args:
         df (pd.DataFrame): A dataframe in long format containing the values to be grouped into a catalogue.
         id_col_name (str): Name of the column containing the patient id for each value. Defaults to "dw_ek_borger".
         timestamp_col_name (str): Name of the column containing the timestamp for each value. Defaults to "timestamp".
         value_col_name (str): Name of the column containing the value for each value. Defaults to "values".
-        value_keys_col_name (str): Name of the column containing the names of the different types of values for each value. Defaults to "value_keys".
+        value_names_col_name (str): Name of the column containing the names of the different types of values for each value. Defaults to "value_names".
     """
     passed_columns = [
         id_col_name,
         timestamp_col_name,
         value_col_name,
-        value_keys_col_name,
+        value_names_col_name,
     ]
     missing_columns = [col for col in passed_columns if col not in list(df.columns)]
 
@@ -59,15 +51,15 @@ def hydrate_dict_from_long_df(
         )
 
     # Get the unique value names from the dataframe
-    value_names = df[value_keys_col_name].unique()
+    value_names = df[value_names_col_name].unique()
 
     for value_name in value_names:
 
-        value_df = df[df[value_keys_col_name] == value_name][
+        value_df = df[df[value_names_col_name] == value_name][
             [id_col_name, timestamp_col_name, value_col_name]
         ]
 
-        long_df_registry[value_name] = value_df
+        df_dict[value_name] = value_df
 
 
 def format_dict_for_printing(d: dict) -> str:
