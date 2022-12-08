@@ -2,7 +2,10 @@
 
 # pylint: disable=missing-function-docstring
 
+import numpy as np
+
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec
+from timeseriesflattener.resolve_multiple_functions import maximum
 from timeseriesflattener.testing.load_synth_data import (  # noqa
     load_synth_predictor_float,
 )
@@ -41,3 +44,14 @@ def test_skip_one_if_no_need_to_process():
     ).create_combinations()
 
     assert len(created_combinations) == 4
+
+
+def test_resolve_multiple_fn_to_str():
+    pred_spec_batch = PredictorGroupSpec(
+        values_loader=["synth_predictor_float"],
+        lookbehind_days=[365, 730],
+        fallback=[np.nan],
+        resolve_multiple_fn=[maximum],
+    ).create_combinations()
+
+    assert "maximum" in pred_spec_batch[0].get_col_str()
