@@ -220,6 +220,11 @@ class TemporalSpec(AnySpec):
     # Optional keyword arguments for the data loader
 
     def __init__(self, **data):
+        if hasattr(self, "key_for_resolve_multiple") and callable(
+            data["resolve_multiple_fn"],
+        ):
+            data["key_for_resolve_multiple"] = data["resolve_multiple_fn"].__name__
+
         # Convert resolve_multiple_str to fn and add appropriate name
         if isinstance(data["resolve_multiple_fn"], str):
             data["key_for_resolve_multiple"] = data["resolve_multiple_fn"]
@@ -227,11 +232,6 @@ class TemporalSpec(AnySpec):
             data["resolve_multiple_fn"] = resolve_multiple_fns.get_all()[
                 data["resolve_multiple_fn"]
             ]
-
-        if hasattr(self, "key_for_resolve_multiple") is not None and callable(
-            data["resolve_multiple_fn"],
-        ):
-            data["key_for_resolve_multiple"] = data["resolve_multiple_fn"].__name__
 
         super().__init__(**data)
 
