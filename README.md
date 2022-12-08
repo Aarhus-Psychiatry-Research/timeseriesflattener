@@ -94,7 +94,7 @@ if __name__ == "__main__":
         incident=False,
     )
 
-    # Instantiate TimeseriesFlattener and add the specifications
+    # Instantiate TimeseriesFlattener with the prediction _times_df
     from timeseriesflattener import TimeseriesFlattener
 
     ts_flattener = TimeseriesFlattener(
