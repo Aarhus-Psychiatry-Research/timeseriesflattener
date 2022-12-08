@@ -81,7 +81,7 @@ def test_create_combinations_while_resolving_from_registry(long_df: pd.DataFrame
             "value_name_2",
         ],
         resolve_multiple_fn=["mean"],
-        interval_days=[30],
+        lookbehind_days=[30],
         fallback=[0],
     ).create_combinations()
 
