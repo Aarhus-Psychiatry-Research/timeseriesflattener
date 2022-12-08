@@ -220,7 +220,7 @@ class TemporalSpec(AnySpec):
     # Optional keyword arguments for the data loader
 
     def __init__(self, **data):
-        if hasattr(self, "key_for_resolve_multiple") and callable(
+        if not hasattr(self, "key_for_resolve_multiple") and callable(
             data["resolve_multiple_fn"],
         ):
             data["key_for_resolve_multiple"] = data["resolve_multiple_fn"].__name__
