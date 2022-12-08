@@ -332,7 +332,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             on=id_col_name,
             suffixes=("_pred", "_val"),
             validate="m:m",
-        ).drop("id", axis=1)
+        ).drop(id_col_name, axis=1)
 
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
