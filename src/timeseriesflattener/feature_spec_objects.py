@@ -12,7 +12,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
-from timeseriesflattener.utils import data_loaders, df_dict
+from timeseriesflattener.utils import data_loaders, split_df_dict
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 def resolve_from_dict_or_registry(data: dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
     if "values_name" in data and data["values_name"] is not None:
-        data["values_df"] = df_dict.get(data["values_name"])
+        data["values_df"] = split_df_dict.get(data["values_name"])
         data["feature_name"] = data["values_name"]
     else:
         if isinstance(data["values_loader"], str):
@@ -353,6 +353,23 @@ class MinGroupSpec(BaseModel):
         super().__init__(**data)
 
         # Check that all passed loaders are valid
+        if self.values_loader is not None:
+            self._check_loaders_are_valid()
+
+        if self.output_col_name_override:
+            input_col_name = (
+                "value"
+                if not self.input_col_name_override
+                else self.input_col_name_override
+            )
+
+            self.values_df.rename(
+                columns={input_col_name: self.output_col_name_override},
+                inplace=True,
+            )
+
+    def _check_loaders_are_valid(self):
+        """Check that all loaders can be resolved from the data_loaders catalogue."""
         invalid_loaders = list(
             set(self.values_loader) - set(data_loaders.get_all().keys()),
         )
@@ -373,18 +390,6 @@ class MinGroupSpec(BaseModel):
                 {nl*2}Loaders that could not be resolved:"""
                 f"""{nl}{nl.join(str(loader) for loader in invalid_loaders)}{nl}{nl}"""
                 f"""Available loaders:{nl}{avail_loaders_str}""",
-            )
-
-        if self.output_col_name_override:
-            input_col_name = (
-                "value"
-                if not self.input_col_name_override
-                else self.input_col_name_override
-            )
-
-            self.values_df.rename(
-                columns={input_col_name: self.output_col_name_override},
-                inplace=True,
             )
 
 
