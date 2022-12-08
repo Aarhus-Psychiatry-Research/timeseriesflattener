@@ -221,9 +221,10 @@ class TemporalSpec(AnySpec):
 
     def __init__(self, **data):
         if isinstance(data["resolve_multiple_fn"], str):
-            # convert resolve_multiple_str to fn
+
             data["key_for_resolve_multiple"] = data["resolve_multiple_fn"]
 
+            # Convert resolve_multiple_str to fn
             data["resolve_multiple_fn"] = resolve_multiple_fns.get_all()[
                 data["resolve_multiple_fn"]
             ]
@@ -372,9 +373,6 @@ class MinGroupSpec(BaseModel):
     output_col_name_override: Optional[str] = None
     # Override for the column name to use as values in the output df.
 
-    interval_days: list[Union[int, float]]
-    # How far to look in the given direction (ahead for outcomes, behind for predictors)
-
     resolve_multiple_fn: list[str]
     # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
 
@@ -470,6 +468,8 @@ class PredictorGroupSpec(MinGroupSpec):
 
     prefix = "pred"
 
+    lookbehind_days: list[Union[int, float]]
+
     def create_combinations(self):
         """Create all combinations from the group spec."""
         return create_specs_from_group(
@@ -484,6 +484,8 @@ class OutcomeGroupSpec(MinGroupSpec):
     prefix = "outc"
 
     incident: Sequence[bool]
+
+    lookahead_days: list[Union[int, float]]
 
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
     # For example, type 2 diabetes is incident. Incident outcomes can be handled in a vectorised
