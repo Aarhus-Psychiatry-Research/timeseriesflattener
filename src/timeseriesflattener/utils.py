@@ -55,7 +55,7 @@ def hydrate_dict_from_long_df(
     # If any of the required columns is missing, raise an error
     if len(missing_columns) > 0:
         raise ValueError(
-            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}",
+            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}. Available columns are {df.columns}.",
         )
 
     # Get the unique value names from the dataframe
