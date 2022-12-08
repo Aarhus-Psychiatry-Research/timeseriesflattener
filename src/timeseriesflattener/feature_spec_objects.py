@@ -12,7 +12,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
-from timeseriesflattener.utils import data_loaders
+from timeseriesflattener.utils import data_loaders, long_df_registry
 
 log = logging.getLogger(__name__)
 
@@ -42,16 +42,41 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 def resolve_values_df(data: dict[str, Any]):
     """Resolve the values_df attribute to a dataframe."""
-    if "values_loader" not in data and "values_df" not in data:
-        raise ValueError("Either values_loader or a dataframe must be specified.")
-
-    if in_dict_and_not_none(d=data, key="values_loader") and in_dict_and_not_none(
-        key="values_df",
-        d=data,
+    if (
+        "values_loader" not in data
+        and "values_df_dict" not in data
+        and "values_df" not in data
     ):
-        raise ValueError("Only one of values_loader or df can be specified.")
+        raise ValueError(
+            "Either values_loader or a dictionary containing dataframes or a single dataframe must be specified."
+        )
+
+    if (
+        in_dict_and_not_none(d=data, key="values_loader")
+        and in_dict_and_not_none(d=data, key="values_df_dict")
+        and in_dict_and_not_none(
+            key="values_df",
+            d=data,
+        )
+    ):
+        raise ValueError(
+            "Only one of values_loader or values_df_dcict or df can be specified."
+        )
 
     if "values_df" not in data or data["values_df"] is None:
+        resolve_from_dict_or_registry(data)
+
+    if not isinstance(data["values_df"], pd.DataFrame):
+        raise ValueError("values_df must be or resolve to a pandas DataFrame.")
+
+    return data
+
+
+def resolve_from_dict_or_registry(data: dict[str, Any]):
+    """Resolve values_df from a dictionary or registry."""
+    if "values_df_dict" in data and data["values_df_dict"] is not None:
+        data["values_df"] = long_df_registry.get(data["values_df_dict"])
+    else:
         if isinstance(data["values_loader"], str):
             data["feature_name"] = data["values_loader"]
             data["values_loader"] = data_loaders.get(data["values_loader"])
@@ -65,11 +90,6 @@ def resolve_values_df(data: dict[str, Any]):
                 kwargs=frozendict(data["loader_kwargs"]),
                 feature_name=data["feature_name"],
             )
-
-    if not isinstance(data["values_df"], pd.DataFrame):
-        raise ValueError("values_df must be or resolve to a pandas DataFrame.")
-
-    return data
 
 
 class BaseModel(PydanticBaseModel):
@@ -114,6 +134,10 @@ class AnySpec(BaseModel):
     values_loader: Optional[Callable] = None
     # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
     # then calls the function which should return a dataframe.
+
+    values_df_dict: Optional[str] = None
+    # A string that corresponds to a key in a dictionary of multiple dataframes
+    # generated from a long format df.
 
     loader_kwargs: Optional[dict[str, Any]] = None
     # Optional kwargs for the values_loader
@@ -300,6 +324,10 @@ class MinGroupSpec(BaseModel):
     values_loader: list[str]
     # Loader for the df. Tries to resolve from the data_loaders registry,
     # then calls the function which should return a dataframe.
+
+    values_df_dict: Optional[list[str]] = None
+    # List of strings that correspond to the key of a dataframe in a dictionary
+    # generated from a long format dataframe.
 
     values_df: Optional[pd.DataFrame] = None
     # Dataframe with the values.
