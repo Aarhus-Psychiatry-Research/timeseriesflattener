@@ -38,6 +38,17 @@ def test_loader_kwargs():
     assert len(spec.values_df) == 10
 
 
+def test_invalid_multiple_data_args():
+    """Test that error is raised if multiple data args are passed."""
+
+    with pytest.raises(ValueError, match=r".*nly one of.*"):
+        AnySpec(
+            values_loader="synth_predictor_float",
+            values_name="synth_data",
+            prefix="test",
+        )
+
+
 def test_anyspec_incorrect_values_loader_str():
     """Raise error if values loader is not a key in registry."""
     with pytest.raises(ValueError, match=r".*in registry.*"):
