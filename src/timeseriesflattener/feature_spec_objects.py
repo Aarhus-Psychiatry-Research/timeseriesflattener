@@ -220,8 +220,13 @@ class TemporalSpec(AnySpec):
     # Optional keyword arguments for the data loader
 
     def __init__(self, **data):
+        if not hasattr(self, "key_for_resolve_multiple") and callable(
+            data["resolve_multiple_fn"],
+        ):
+            data["key_for_resolve_multiple"] = data["resolve_multiple_fn"].__name__
+
+        # Convert resolve_multiple_str to fn and add appropriate name
         if isinstance(data["resolve_multiple_fn"], str):
-            # convert resolve_multiple_str to fn
             data["key_for_resolve_multiple"] = data["resolve_multiple_fn"]
 
             data["resolve_multiple_fn"] = resolve_multiple_fns.get_all()[
@@ -372,10 +377,7 @@ class MinGroupSpec(BaseModel):
     output_col_name_override: Optional[str] = None
     # Override for the column name to use as values in the output df.
 
-    interval_days: list[Union[int, float]]
-    # How far to look in the given direction (ahead for outcomes, behind for predictors)
-
-    resolve_multiple_fn: list[str]
+    resolve_multiple_fn: list[Union[str, Callable]]
     # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
 
     fallback: list[Union[Callable, str]]
@@ -470,7 +472,9 @@ class PredictorGroupSpec(MinGroupSpec):
 
     prefix = "pred"
 
-    def create_combinations(self):
+    lookbehind_days: list[Union[int, float]]
+
+    def create_combinations(self) -> list[PredictorSpec]:
         """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
@@ -485,11 +489,13 @@ class OutcomeGroupSpec(MinGroupSpec):
 
     incident: Sequence[bool]
 
+    lookahead_days: list[Union[int, float]]
+
     # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
     # For example, type 2 diabetes is incident. Incident outcomes can be handled in a vectorised
     # way during resolution, which is faster than non-incident outcomes.
 
-    def create_combinations(self):
+    def create_combinations(self) -> list[OutcomeSpec]:
         """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
