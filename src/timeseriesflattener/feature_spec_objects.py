@@ -474,7 +474,7 @@ class PredictorGroupSpec(MinGroupSpec):
 
     lookbehind_days: list[Union[int, float]]
 
-    def create_combinations(self):
+    def create_combinations(self) -> list[PredictorSpec]:
         """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
@@ -495,7 +495,7 @@ class OutcomeGroupSpec(MinGroupSpec):
     # For example, type 2 diabetes is incident. Incident outcomes can be handled in a vectorised
     # way during resolution, which is faster than non-incident outcomes.
 
-    def create_combinations(self):
+    def create_combinations(self) -> list[OutcomeSpec]:
         """Create all combinations from the group spec."""
         return create_specs_from_group(
             feature_group_spec=self,
