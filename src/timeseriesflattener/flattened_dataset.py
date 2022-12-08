@@ -664,7 +664,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         for spec in self.unprocessed_specs.outcome_specs:
             # Handle incident specs separately, since their operations can be vectorised,
             # making them much faster
-            if spec.incident:
+            if hasattr(spec, "incident") and spec.incident:
                 self._add_incident_outcome(
                     outcome_spec=spec,
                 )
