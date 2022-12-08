@@ -33,16 +33,18 @@ class ValidateInitFlattenedDataset:
             col_subset=[self.id_col_name, self.timestamp_col_name],
         ):
             raise ValueError(
-                "Duplicate patient/timestamp combinations in prediction_times_df, aborting",
+                "Duplicate id/timestamp combinations in prediction_times_df, aborting",
             )
 
     def _check_that_timestamp_and_id_columns_exist(self):
         """Check that the required columns are present in the initial
-        dataframe."""
+
+        dataframe.
+        """
 
         for col_name in (self.timestamp_col_name, self.id_col_name):
             if col_name not in self.df.columns:
-                raise ValueError(
+                raise KeyError(
                     f"{col_name} does not exist in prediction_times_df, change the df or set another argument",
                 )
 
