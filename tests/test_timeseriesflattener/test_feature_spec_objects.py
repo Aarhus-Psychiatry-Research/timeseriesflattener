@@ -94,6 +94,7 @@ def test_create_combinations_while_resolving_from_registry(long_df: pd.DataFrame
 
 
 def test_skip_all_if_no_need_to_process():
+    """Test that no combinations are created if no need to process."""
     assert (
         len(
             PredictorGroupSpec(
@@ -110,6 +111,7 @@ def test_skip_all_if_no_need_to_process():
 
 
 def test_skip_one_if_no_need_to_process():
+    """Test that one combination is skipped if no need to process."""
     created_combinations = PredictorGroupSpec(
         values_loader=["synth_predictor_float"],
         input_col_name_override="value",
@@ -123,6 +125,7 @@ def test_skip_one_if_no_need_to_process():
 
 
 def test_resolve_multiple_fn_to_str():
+    """Test that resolve_multiple_fn is converted to str correctly."""
     pred_spec_batch = PredictorGroupSpec(
         values_loader=["synth_predictor_float"],
         lookbehind_days=[365, 730],
