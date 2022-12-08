@@ -62,11 +62,7 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
 
 def resolve_values_df(data: dict[str, Any]):
     """Resolve the values_df attribute to a dataframe."""
-    if (
-        "values_loader" not in data
-        and "values_df_dict" not in data
-        and "values_df" not in data
-    ):
+        if not any(key in data for key in ["values_loader", "values_df_dict", "values_df"]):
         raise ValueError(
             "Either values_loader or a dictionary containing dataframes or a single dataframe must be specified.",
         )
