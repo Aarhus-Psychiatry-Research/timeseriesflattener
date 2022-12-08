@@ -71,7 +71,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         ):
             self.cache.prediction_times_df = prediction_times_df
         elif not self.cache.prediction_times_df.equals(prediction_times_df):
-            log.warning(
+            log.info(
                 "Overriding prediction_times_df in cache with prediction_times_df passed to init",
             )
             self.cache.prediction_times_df = prediction_times_df
@@ -79,7 +79,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         for attr in ("pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"):
             if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
                 if getattr(self.cache, attr) != getattr(self, attr):
-                    log.warning(
+                    log.info(
                         f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
                     )
                     setattr(self.cache, attr, getattr(self, attr))
@@ -502,8 +502,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                     total=len(temporal_batch),
                 ),
             )
-
-        log.info("Processing complete, concatenating")
 
         self._concatenate_flattened_timeseries(
             flattened_predictor_dfs=flattened_predictor_dfs,
