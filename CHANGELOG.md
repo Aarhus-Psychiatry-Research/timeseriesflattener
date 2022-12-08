@@ -2,6 +2,60 @@
 
 <!--next-version-placeholder-->
 
+## v0.17.0 (2022-12-08)
+### Feature
+* More appropriate logging level ([`7122e79`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7122e79606ec2d2fd5802361ecda8ebde318de12))
+* Infer resolve_multiple_fn str rep for groups ([`8058d65`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8058d65fdf6e65c534adab87861dcaaeafdd03b8))
+* Infer resolve_multiple_fn str repr from __name__ ([`55be07d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/55be07df7947b5a7baafafcae7955c4b426a45d0))
+* Add lookahead and lookbehind days to feature group specs ([`318591b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/318591b7edda233897e11af0a79fdd97a5f12716))
+
+### Fix
+* Guard against incident attribute not existing ([`3b1329b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3b1329b35c11477d09555287a904a9f895e99964))
+* Re-add resolve_multiple str resolution ([`18983a7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/18983a7988473352f2e994f1ef18ab7e1c8caa80))
+* Only infer resolve_multiple_str if not specified manually ([`f2648f8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f2648f8afc692812f490e019db0bbb44391d96e2))
+* Create dir for diskcache if it doesn't exist ([`0e32436`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0e32436a0c9ee2d59b916158e7f46f0081661fa2))
+* Create dir if it doesn't exist ([`c32f3c7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c32f3c702c0d473b59c506cd2e855def65764b24))
+
+### Documentation
+* Update output ([`a4fa6f7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a4fa6f7bf5d9f05d3b6c423f596a5bf102f06e49))
+* Update tutorial based on feedback ([`92c3d3b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/92c3d3bf5db019a2a3e5bd4ae3182f22cc4bcd38))
+* Add figures to basic tutorial ([`5eb069f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5eb069f28bde3a4bb951b6d81f86ae80ed9b455f))
+* Misc. updates to advanced notebook ([`a4a9380`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a4a9380abffc76e55688744571049ff6b1588779))
+* Groupspec add output type ([`0b3df30`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0b3df30d9bc1287a596f746c5a7fcef58ab21b05))
+* Update formatting in 02_advanced ([`47065e9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/47065e90e2179fa464bf055a1c87ae8bfc8f3134))
+* Initial stab at advanced tutorial ([`e8128bd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e8128bdfc3fd544b2d12a1bdf71b7de204187152))
+
+## v0.16.0 (2022-12-07)
+### Feature
+* Add diff when dropping rows ([`0421ed8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0421ed800abf9c50fcd98dc3a6f50f72a740a7b2))
+* No def arg for drop_if_insufficient_look_direction ([`d290153`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d29015348bb90e5e063bf7ff1fcd5e15d75d2823))
+* Drop pred times with insufficient look distance ([`8ec6e2c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8ec6e2c4e0fb5b97cad6bfac61164a4ca5fd54c6))
+* First stab at dropping unused pred times ([`66bb7d4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/66bb7d482fb484d7affa7401b537b246980700d5))
+* Check that all specs have required columns in values_df ([`9da16f0`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9da16f00cdd869dadca3b89fdab6c9694905450f))
+* Better logging ([`44eb010`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/44eb0108daf00e400032ca47a0c635c310757e3c))
+* Process all temporal specs in one batch ([`01b3957`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/01b3957aabc9b6fa99c9f306c5f5cefa76795cc2))
+* When init spec, coerce timestamp if possible ([`4a6f817`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4a6f81770ba897ed31ad1956d05422d5073ac9d2))
+* Process specs all at once ([`4bcdb82`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4bcdb82e46f39ccdf5d4a9503420f43cb5ebc79c))
+* Collect specs with one interface ([`7135c4d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7135c4da1061af77ab595420b7d4935d71fc6582))
+
+### Fix
+* Incorrect dim comparison in diff decorator ([`c161f9a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c161f9ad06cde09d495065b8db8d8795554aa92b))
+* Revert TemporalSpec renaming ([`3140cd5`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3140cd52196f84553566ee0247ff8f8c0af5caf1))
+* Missing column should be a keyerror ([`452e903`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/452e903ef389ff25b4cddbb1cfeafffbbfbe9cec))
+* Undo renaming of PredictorSpec -> TemporalSpec ([`150035c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/150035c01313a3bae8b21cd18dfc6e8ccd2ad12c))
+* Don't process as batch if no specs to process ([`aba0b67`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/aba0b67928ffc0fcc64538cb2af7980b77d52b44))
+* Only batch process predictors if any are added ([`c21737c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c21737cb1beff190946c5a3614c6ebeb225c059b))
+* __eq__ in AnySpec ([`4c650d1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4c650d134c60c9cf13fe5bab1799b46f36823776))
+
+### Documentation
+* Improve from review suggestions ([`57804df`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/57804dfd9ba39a19351ed4efdbca2011cb37d24e))
+* Improve from review suggestions ([`0316dbe`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0316dbe67f02ed0faad0051818c2f08aadda7047))
+* Elaborate on drop_pred_time ([`254fb3d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/254fb3d438a4acacbc0176e0c5c15e6885bbffed))
+* Update tutorial to new interface ([`bc0405e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bc0405e07b46c72e4691e144b741b39a3a7615fd))
+* Raise valueerror if no prediction times remain ([`18c7f82`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/18c7f82095aed1acc37578541efa2b0a1e91ba88))
+* Improve drop_records docs. ([`871ec18`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/871ec18e869c87bd78de5bc7b871111943c232a4))
+* Minor docstring edit ([`1a7267a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1a7267a0d6c542943d03e955f47a6b67a1ea0106))
+
 ## v0.15.0 (2022-12-06)
 ### Feature
 * Allow either interval_days or lookahead/lookbehind days ([`a270801`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a2708014eaad78622a5447cf6958f544ad095945))

@@ -7,7 +7,11 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_spec_objects import AnySpec, OutcomeSpec, PredictorSpec
+from timeseriesflattener.feature_spec_objects import (
+    OutcomeSpec,
+    PredictorSpec,
+    StaticSpec,
+)
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
@@ -129,7 +133,7 @@ def test_event_before_prediction():
             values_df=str_to_df(outcome_df_str),
             lookahead_days=2,
             resolve_multiple_fn="max",
-            incident=True,
+            incident=False,
             fallback=np.NaN,
             feature_name="value",
         ),
@@ -157,7 +161,7 @@ def test_multiple_citizens_outcome():
             values_df=str_to_df(outcome_df_str),
             lookahead_days=2,
             resolve_multiple_fn="max",
-            incident=True,
+            incident=False,
             fallback=np.NaN,
             feature_name="value",
         ),
@@ -179,7 +183,7 @@ def test_citizen_without_outcome():
             values_df=str_to_df(outcome_df_str),
             lookahead_days=2,
             resolve_multiple_fn="max",
-            incident=True,
+            incident=False,
             fallback=np.NaN,
             feature_name="value",
         ),
@@ -201,9 +205,13 @@ def test_static_predictor():
                         1,1994-12-31 00:00:01
                         """
 
-    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
-    dataset.add_static_info(
-        static_spec=AnySpec(
+    dataset = TimeseriesFlattener(
+        prediction_times_df=str_to_df(prediction_times_df),
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
+
+    dataset.add_spec(
+        StaticSpec(
             values_df=str_to_df(static_predictor),
             feature_name=feature_name,
             prefix=prefix,
@@ -238,15 +246,17 @@ def test_add_age():
                         1,1994-12-31 00:00:00
                         """
 
-    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(
+        prediction_times_df=str_to_df(prediction_times_df),
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
 
     output_prefix = "eval"
 
-    dataset.add_age_and_birth_year(
-        id2date_of_birth=str_to_df(static_predictor),
-        input_date_of_birth_col_name="date_of_birth",
+    dataset.add_age(
+        date_of_birth_df=str_to_df(static_predictor),
+        date_of_birth_col_name="date_of_birth",
         output_prefix=output_prefix,
-        birth_year_as_predictor=True,
     )
 
     expected_values = pd.DataFrame(
@@ -276,12 +286,15 @@ def test_add_age_error():
                         1,94-12-31 00:00:00
                         """
 
-    dataset = TimeseriesFlattener(prediction_times_df=str_to_df(prediction_times_df))
+    dataset = TimeseriesFlattener(
+        prediction_times_df=str_to_df(prediction_times_df),
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
 
     with pytest.raises(ValueError):
-        dataset.add_age_and_birth_year(
-            id2date_of_birth=str_to_df(static_predictor),
-            input_date_of_birth_col_name="date_of_birth",
+        dataset.add_age(
+            date_of_birth_df=str_to_df(static_predictor),
+            date_of_birth_col_name="date_of_birth",
         )
 
 
@@ -314,10 +327,11 @@ def test_incident_outcome_removing_prediction_times():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flattened_dataset.add_temporal_outcome(
-        output_spec=OutcomeSpec(
+    flattened_dataset.add_spec(
+        spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
             incident=True,
@@ -378,6 +392,7 @@ def test_add_multiple_static_predictors():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
     output_spec = OutcomeSpec(
@@ -389,16 +404,21 @@ def test_add_multiple_static_predictors():
         feature_name="value",
     )
 
-    flattened_dataset.add_temporal_outcome(
-        output_spec=output_spec,
+    flattened_dataset.add_spec(
+        spec=[
+            output_spec,
+            StaticSpec(
+                values_df=male_df,
+                feature_name="male",
+                prefix="pred",
+                input_col_name_override="male",
+            ),
+        ],
     )
 
-    flattened_dataset.add_age_and_birth_year(
-        input_date_of_birth_col_name="date_of_birth",
-        id2date_of_birth=birthdates_df,
-    )
-    flattened_dataset.add_static_info(
-        static_spec=AnySpec(values_df=male_df, feature_name="male", prefix="pred"),
+    flattened_dataset.add_age(
+        date_of_birth_col_name="date_of_birth",
+        date_of_birth_df=birthdates_df,
     )
 
     outcome_df = flattened_dataset.get_df()
@@ -449,30 +469,28 @@ def test_add_temporal_predictors_then_temporal_outcome():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    predictor_spec_list = PredictorSpec(
-        values_df=predictors_df,
-        interval_days=365,
-        resolve_multiple_fn="min",
-        fallback=np.nan,
-        allowed_nan_value_prop=0,
-        feature_name="value",
-    )
-
-    flattened_dataset.add_temporal_predictor_batch(
-        predictor_batch=[predictor_spec_list],
-    )
-
-    flattened_dataset.add_temporal_outcome(
-        output_spec=OutcomeSpec(
-            values_df=event_times_df,
-            interval_days=2,
-            resolve_multiple_fn="max",
-            fallback=0,
-            incident=True,
-            feature_name="value",
-        ),
+    flattened_dataset.add_spec(
+        spec=[
+            PredictorSpec(
+                values_df=predictors_df,
+                interval_days=365,
+                resolve_multiple_fn="min",
+                fallback=np.nan,
+                allowed_nan_value_prop=0,
+                feature_name="value",
+            ),
+            OutcomeSpec(
+                values_df=event_times_df,
+                interval_days=2,
+                resolve_multiple_fn="max",
+                fallback=0,
+                incident=True,
+                feature_name="value",
+            ),
+        ],
     )
 
     outcome_df = flattened_dataset.get_df().set_index("dw_ek_borger").sort_index()
@@ -511,10 +529,11 @@ def test_add_temporal_incident_binary_outcome():
         timestamp_col_name="timestamp",
         id_col_name="dw_ek_borger",
         n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flattened_dataset.add_temporal_outcome(
-        output_spec=OutcomeSpec(
+    flattened_dataset.add_spec(
+        spec=OutcomeSpec(
             values_df=event_times_df,
             interval_days=2,
             incident=True,
@@ -532,4 +551,5 @@ def test_add_temporal_incident_binary_outcome():
             # which is not a meaningful error here. So we force the dtype.
             if df[col].dtype == "int64":
                 df[col] = df[col].astype("int32")
+
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])

@@ -35,7 +35,7 @@ used_synth_datasets = [
 
 base_float_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_float"],
-    interval_days=[365, 730],
+    lookbehind_days=[365, 730],
     resolve_multiple_fn=["mean"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
@@ -43,7 +43,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 
 base_binary_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_binary"],
-    interval_days=[365, 730],
+    lookbehind_days=[365, 730],
     resolve_multiple_fn=["max"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
@@ -105,10 +105,11 @@ def create_flattened_df(
         prediction_times_df=prediction_times_df,
         n_workers=1,
         cache=cache,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flat_ds.add_temporal_predictor_batch(
-        predictor_batch=predictor_specs,
+    flat_ds.add_spec(
+        spec=predictor_specs,
     )
 
     return flat_ds.get_df()
@@ -119,9 +120,9 @@ def create_flattened_df(
     [base_float_predictor_combinations, base_binary_predictor_combinations],
 )
 def test_cache_hitting(
-    tmp_path,
-    predictor_specs,
-    synth_prediction_times,
+    tmp_path: Path,
+    predictor_specs: list[PredictorSpec],
+    synth_prediction_times: pd.DataFrame,
 ):
     """Test that cache hits."""
 
