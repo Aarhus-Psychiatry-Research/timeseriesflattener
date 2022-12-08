@@ -35,7 +35,7 @@ used_synth_datasets = [
 
 base_float_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_float"],
-    interval_days=[365, 730],
+    lookbehind_days=[365, 730],
     resolve_multiple_fn=["mean"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
@@ -43,7 +43,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 
 base_binary_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_binary"],
-    interval_days=[365, 730],
+    lookbehind_days=[365, 730],
     resolve_multiple_fn=["max"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
