@@ -294,7 +294,11 @@
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span> <span class="o">=</span> <span class="n">prediction_times_df</span>
 
-        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;pred_time_uuid_col_name&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp_col_name&quot;</span><span class="p">,</span> <span class="s2">&quot;id_col_name&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">&quot;pred_time_uuid_col_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;timestamp_col_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;entity_id_col_name&quot;</span><span class="p">,</span>
+        <span class="p">):</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -307,7 +311,7 @@
         <span class="n">prediction_times_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">drop_pred_times_with_insufficient_look_distance</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>  <span class="c1"># noqa</span>
         <span class="n">cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FeatureCache</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
         <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
         <span class="n">predictor_col_name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span><span class="p">,</span>
         <span class="n">outcome_col_name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;outc&quot;</span><span class="p">,</span>
@@ -321,18 +325,18 @@
 
 <span class="sd">        E.g if you have a prediction_times_df:</span>
 
-<span class="sd">        id_col_name | timestamp_col_name</span>
+<span class="sd">        entity_id_col_name | timestamp_col_name</span>
 <span class="sd">        1           | 2022-01-10</span>
 <span class="sd">        1           | 2022-01-12</span>
 <span class="sd">        1           | 2022-01-15</span>
 
 <span class="sd">        And a time-series of blood-pressure values as an outcome:</span>
-<span class="sd">        id_col_name | timestamp_col_name | blood_pressure_value</span>
+<span class="sd">        entity_id_col_name | timestamp_col_name | blood_pressure_value</span>
 <span class="sd">        1           | 2022-01-09         | 120</span>
 <span class="sd">        1           | 2022-01-14         | 140</span>
 
 <span class="sd">        Then you can &quot;flatten&quot; the outcome into a new df, with a row for each of your prediction times:</span>
-<span class="sd">        id_col_name | timestamp_col_name | latest_blood_pressure_within_24h</span>
+<span class="sd">        entity_id_col_name | timestamp_col_name | latest_blood_pressure_within_24h</span>
 <span class="sd">        1           | 2022-01-10         | 120</span>
 <span class="sd">        1           | 2022-01-12         | NA</span>
 <span class="sd">        1           | 2022-01-15         | 140</span>
@@ -340,7 +344,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .</span>
 <span class="sd">            cache (Optional[FeatureCache], optional): Object for feature caching. Should be initialised when passed to init. Defaults to None.</span>
-<span class="sd">            id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to &quot;id&quot;.</span>
+<span class="sd">            entity_id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to &quot;entity_id&quot;.</span>
 <span class="sd">            timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to &quot;timestamp&quot;.</span>
 <span class="sd">            predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to &quot;pred_&quot;.</span>
 <span class="sd">            outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to &quot;outc_&quot;.</span>
@@ -352,13 +356,13 @@
 <span class="sd">                Otherwise, your feature will imply that you&#39;ve looked two years into the past, even though you have less than two years of data to look at.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df</span>
+<span class="sd">            ValueError: If timestamp_col_name or entity_id_col_name is not in prediction_times_df</span>
 <span class="sd">            ValueError: If timestamp_col_name is not and could not be converted to datetime</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_workers</span> <span class="o">=</span> <span class="n">n_workers</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span> <span class="o">=</span> <span class="n">timestamp_col_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span> <span class="o">=</span> <span class="n">id_col_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span> <span class="o">=</span> <span class="n">entity_id_col_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predictor_col_name_prefix</span> <span class="o">=</span> <span class="n">predictor_col_name_prefix</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outcome_col_name_prefix</span> <span class="o">=</span> <span class="n">outcome_col_name_prefix</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span> <span class="o">=</span> <span class="s2">&quot;prediction_time_uuid&quot;</span>
@@ -383,13 +387,15 @@
         <span class="n">ValidateInitFlattenedDataset</span><span class="p">(</span>
             <span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">,</span>
             <span class="n">timestamp_col_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">,</span>
-            <span class="n">id_col_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">,</span>
+            <span class="n">entity_id_col_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">,</span>
         <span class="p">)</span><span class="o">.</span><span class="n">validate_dataset</span><span class="p">()</span>
 
         <span class="c1"># Create pred_time_uuid_columne</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-            <span class="nb">str</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;-%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+            <span class="s2">&quot;-%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">log_to_stdout</span><span class="p">:</span>
             <span class="c1"># Setup logging to stdout by default</span>
@@ -519,7 +525,7 @@
     <span class="k">def</span> <span class="nf">_flatten_temporal_values_to_df</span><span class="p">(</span>  <span class="c1"># noqa pylint: disable=too-many-locals</span>
         <span class="n">prediction_times_with_uuid_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">output_spec</span><span class="p">:</span> <span class="n">AnySpec</span><span class="p">,</span>
-        <span class="n">id_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">pred_time_uuid_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># noqa</span>
@@ -532,7 +538,7 @@
 <span class="sd">            prediction_times_with_uuid_df (DataFrame): Dataframe with id_col and</span>
 <span class="sd">                timestamps for each prediction time.</span>
 <span class="sd">            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.</span>
-<span class="sd">            id_col_name (str): Name of id_column in prediction_times_with_uuid_df and</span>
+<span class="sd">            entity_id_col_name (str): Name of id_column in prediction_times_with_uuid_df and</span>
 <span class="sd">                df. Required because this is a static method.</span>
 <span class="sd">            timestamp_col_name (str): Name of timestamp column in</span>
 <span class="sd">                prediction_times_with_uuid_df and df. Required because this is a</span>
@@ -552,10 +558,10 @@
             <span class="n">left</span><span class="o">=</span><span class="n">prediction_times_with_uuid_df</span><span class="p">,</span>
             <span class="n">right</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">,</span>
             <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
-            <span class="n">on</span><span class="o">=</span><span class="n">id_col_name</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="n">entity_id_col_name</span><span class="p">,</span>
             <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;_pred&quot;</span><span class="p">,</span> <span class="s2">&quot;_val&quot;</span><span class="p">),</span>
             <span class="n">validate</span><span class="o">=</span><span class="s2">&quot;m:m&quot;</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">id_col_name</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">entity_id_col_name</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">timestamp_val_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp_col_name</span><span class="si">}</span><span class="s2">_val&quot;</span>
         <span class="n">timestamp_pred_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp_col_name</span><span class="si">}</span><span class="s2">_pred&quot;</span>
@@ -636,11 +642,11 @@
             <span class="n">prediction_times_with_uuid_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span>
                 <span class="p">[</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">,</span>
                 <span class="p">]</span>
             <span class="p">],</span>
-            <span class="n">id_col_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">,</span>
+            <span class="n">entity_id_col_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">,</span>
             <span class="n">pred_time_uuid_col_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span>
             <span class="n">output_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">,</span>
             <span class="n">timestamp_col_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">,</span>
@@ -753,7 +759,7 @@
             <span class="n">possible_value_cols</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">col</span>
                 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">values_df</span><span class="o">.</span><span class="n">columns</span>  <span class="c1"># type: ignore</span>
-                <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span>
             <span class="p">]</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_value_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -776,7 +782,7 @@
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
                 <span class="n">output_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="n">value_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
             <span class="p">},</span>
         <span class="p">)</span>
@@ -785,7 +791,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">,</span>
             <span class="n">df</span><span class="p">,</span>
             <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
-            <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">,</span>
             <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="n">validate</span><span class="o">=</span><span class="s2">&quot;m:1&quot;</span><span class="p">,</span>
         <span class="p">)</span>
@@ -814,7 +820,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">,</span>
             <span class="n">outcome_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">,</span>
             <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
-            <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">,</span>
             <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;_prediction&quot;</span><span class="p">,</span> <span class="s2">&quot;_outcome&quot;</span><span class="p">),</span>
             <span class="n">validate</span><span class="o">=</span><span class="s2">&quot;m:1&quot;</span><span class="p">,</span>
         <span class="p">)</span>
@@ -936,7 +942,7 @@
     <span class="k">def</span> <span class="nf">_check_that_spec_df_has_required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">AnySpec</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check that df has required columns.&quot;&quot;&quot;</span>
         <span class="c1"># Find all attributes in self that contain col_name</span>
-        <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_col_name</span><span class="p">]</span>
+        <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">StaticSpec</span><span class="p">):</span>
             <span class="n">required_columns</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span>
@@ -1020,7 +1026,7 @@
 <span class="sd">        Has its own function because of its very frequent use.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            date_of_birth_df (DataFrame): Two columns, one matching self.id_col_name and one containing date_of_birth.</span>
+<span class="sd">            date_of_birth_df (DataFrame): Two columns, one matching self.entity_id_col_name and one containing date_of_birth.</span>
 <span class="sd">            date_of_birth_col_name (str, optional): Name of the date_of_birth column in date_of_birth_df.</span>
 <span class="sd">                Defaults to &quot;date_of_birth&quot;.</span>
 <span class="sd">            output_prefix (str, optional): Prefix for the output column. Defaults to &quot;pred&quot;.</span>
