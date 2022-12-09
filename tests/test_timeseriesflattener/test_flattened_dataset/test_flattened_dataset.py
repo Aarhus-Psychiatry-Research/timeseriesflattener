@@ -171,7 +171,7 @@ def test_double_compute_doesn_not_duplicate_columns():
         {
             "id": [1, 1, 2, 2],
             "date": ["2020-01-01", "2020-02-01", "2020-02-01", "2020-03-01"],
-        }
+        },
     )
     # Load a dataframe with raw values you wish to aggregate as predictors
     predictor_df = pd.DataFrame(
@@ -187,7 +187,7 @@ def test_double_compute_doesn_not_duplicate_columns():
                 "2020-03-16",
             ],
             "value": [1, 2, 3, 4, 4, 5, 6],
-        }
+        },
     )
 
     predictor_spec = PredictorSpec(
