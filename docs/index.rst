@@ -50,10 +50,12 @@ Otherwise, please use the discussion forums.
 
 
 .. toctree::
+   :maxdepth: 3
    :caption: API
    :hidden:
 
-   data_classes
+   feature_specifications
+   timeseriesflattener
 
 
 .. toctree::
