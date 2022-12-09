@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v0.20.2 (2022-12-09)
+### Fix
+* Incorrect version ([`baad0e8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/baad0e8cb7582f726888ca86ac83da612a3eca10))
+
+### Documentation
+* Replace psycop-feature-generation with timeseriesflattener ([`7e35574`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7e3557405b13f0f91e33d6f9a8afeda1024f81a0))
+* Updates for prettier html rendering ([`1614dab`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1614dab9a44922f66c8bd5a2a654d07dfb6cc038))
+* Add tutorials to sphinx ([`9dc410e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9dc410e548dc33a7263e4215a2e8ba60ae760b2b))
+* Rerun tutorial ([`b7b6d83`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b7b6d833f02a4bb79d2fba0f416a841ee26706ea))
+
 ## v0.20.1 (2022-12-09)
 ### Fix
 * Only remove outcome spec if added ([`bfa7eed`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bfa7eed046c9bb7310664304cb2f3208408d5eca))
