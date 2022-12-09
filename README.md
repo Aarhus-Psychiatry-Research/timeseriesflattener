@@ -23,7 +23,7 @@ When constructing feature sets from time series in general, or medical time seri
 
 ![Terminology: A: *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/tree/main/docs/_static/terminology_figure.png)
 
-The above figure shows graphically represents the terminology used in the package. **A:** *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  **B:** Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. **C)** Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. **D)** Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional
+The above figure graphically represents the terminology used in the package. **A:** *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  **B:** Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. **C)** Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. **D)** Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional.
 
 Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the [tutorials](placeholder) for example use cases.
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         incident=False,
     )
 
-    # Instantiate TimeseriesFlattener and add the specifications
+    # Instantiate TimeseriesFlattener with the prediction _times_df
     from timeseriesflattener import TimeseriesFlattener
 
     ts_flattener = TimeseriesFlattener(
@@ -104,6 +104,7 @@ if __name__ == "__main__":
         n_workers=1,
         drop_pred_times_with_insufficient_look_distance=True,
     )
+# Add the specifications and compute the predictor and outcome
     ts_flattener.add_spec([predictor_spec, outcome_spec])
     ts_flattener.compute()
     ts_flattener.get_df()
