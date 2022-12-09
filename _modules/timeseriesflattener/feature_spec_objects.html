@@ -170,6 +170,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/01_basic.html">Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/01_basic.html#handling-data-frames-shaped-as-long-with-multiple-value-types">Handling data frames shaped as long with multiple value types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/02_advanced.html">Advanced tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently asked questions</a></li>
 </ul>
@@ -233,7 +234,7 @@
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Extra</span>
 
 <span class="kn">from</span> <span class="nn">timeseriesflattener.resolve_multiple_functions</span> <span class="kn">import</span> <span class="n">resolve_multiple_fns</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.utils</span> <span class="kn">import</span> <span class="n">data_loaders</span><span class="p">,</span> <span class="n">split_df_dict</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.utils</span> <span class="kn">import</span> <span class="n">data_loaders</span><span class="p">,</span> <span class="n">split_dfs</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -264,7 +265,7 @@
 <div class="viewcode-block" id="resolve_from_dict_or_registry"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.resolve_from_dict_or_registry">[docs]</a><span class="k">def</span> <span class="nf">resolve_from_dict_or_registry</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;Resolve values_df from a dictionary or registry.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;values_name&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_df&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">split_df_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_df&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">split_dfs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">])</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feature_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_loader&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
