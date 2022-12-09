@@ -700,7 +700,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 self._add_incident_outcome(
                     outcome_spec=spec,
                 )
-
+                # Remove the processed spec
                 self.unprocessed_specs.outcome_specs.remove(spec)
 
         temporal_batch = self.unprocessed_specs.outcome_specs
@@ -711,6 +711,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         if len(temporal_batch) > 0:
             self._add_temporal_batch(temporal_batch=temporal_batch)
+
+        # Remove the processed specs
+        self.unprocessed_specs.outcome_specs = []
+        self.unprocessed_specs.predictor_specs = []
 
     def _check_that_spec_df_has_required_columns(self, spec: AnySpec):
         """Check that df has required columns."""
