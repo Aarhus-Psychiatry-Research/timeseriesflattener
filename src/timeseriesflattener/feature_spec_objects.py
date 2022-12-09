@@ -12,7 +12,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
-from timeseriesflattener.utils import data_loaders, split_df_dict
+from timeseriesflattener.utils import data_loaders, split_dfs
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 def resolve_from_dict_or_registry(data: dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
     if "values_name" in data and data["values_name"] is not None:
-        data["values_df"] = split_df_dict.get(data["values_name"])
+        data["values_df"] = split_dfs.get(data["values_name"])
         data["feature_name"] = data["values_name"]
     else:
         if isinstance(data["values_loader"], str):

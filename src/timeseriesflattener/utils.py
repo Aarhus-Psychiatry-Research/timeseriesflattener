@@ -14,7 +14,7 @@ import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_df_dict = {}
+split_dfs: dict[str, pd.DataFrame] = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -61,7 +61,7 @@ def split_df_and_register_to_dict(
             [entity_id_col_name, timestamp_col_name, value_col_name]
         ]
 
-        split_df_dict[value_name] = value_df
+        split_dfs[value_name] = value_df
 
 
 def format_dict_for_printing(d: dict) -> str:
