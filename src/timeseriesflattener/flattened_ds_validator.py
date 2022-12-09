@@ -7,10 +7,15 @@ from timeseriesflattener.utils import df_contains_duplicates
 class ValidateInitFlattenedDataset:
     """Validator for a flattened dataset."""
 
-    def __init__(self, df: pd.DataFrame, timestamp_col_name: str, id_col_name: str):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        timestamp_col_name: str,
+        entity_id_col_name: str,
+    ):
         self.df = df
         self.timestamp_col_name = timestamp_col_name
-        self.id_col_name = id_col_name
+        self.entity_id_col_name = entity_id_col_name
 
     def _check_timestamp_col_type(self):
         """Check that the timestamp column is of type datetime."""
@@ -30,19 +35,21 @@ class ValidateInitFlattenedDataset:
         """Check that there are no duplicate rows in the initial dataframe."""
         if df_contains_duplicates(
             df=self.df,
-            col_subset=[self.id_col_name, self.timestamp_col_name],
+            col_subset=[self.entity_id_col_name, self.timestamp_col_name],
         ):
             raise ValueError(
-                "Duplicate patient/timestamp combinations in prediction_times_df, aborting",
+                "Duplicate id/timestamp combinations in prediction_times_df, aborting",
             )
 
     def _check_that_timestamp_and_id_columns_exist(self):
         """Check that the required columns are present in the initial
-        dataframe."""
 
-        for col_name in (self.timestamp_col_name, self.id_col_name):
+        dataframe.
+        """
+
+        for col_name in (self.timestamp_col_name, self.entity_id_col_name):
             if col_name not in self.df.columns:
-                raise ValueError(
+                raise KeyError(
                     f"{col_name} does not exist in prediction_times_df, change the df or set another argument",
                 )
 

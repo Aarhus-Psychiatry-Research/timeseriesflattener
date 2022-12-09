@@ -44,15 +44,18 @@ Otherwise, please use the discussion forums.
    :hidden:
 
    installation
-   tutorial
+   tutorials/01_basic.ipynb
+   tutorials/02_advanced.ipynb
    faq
 
 
 .. toctree::
+   :maxdepth: 3
    :caption: API
    :hidden:
 
-   data_classes
+   feature_specifications
+   timeseriesflattener
 
 
 .. toctree::

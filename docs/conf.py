@@ -37,10 +37,12 @@ extensions = [
     "sphinxext.opengraph",
     "sphinx_copybutton",
     "sphinx.ext.githubpages",
-    "myst_parser",
+    "myst_nb",
     "sphinx_design",  # for design feature such as tabs
-    # "nbsphinx" # for integrating notebooks
+    "sphinxcontrib.autodoc_pydantic",
 ]
+
+add_module_names = False
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -57,7 +59,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "furo"  # "press", "sphinx_rtd_theme", "furo"
+html_theme = "furo"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

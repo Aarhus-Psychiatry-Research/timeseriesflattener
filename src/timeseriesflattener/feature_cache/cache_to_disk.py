@@ -19,7 +19,7 @@ class DiskCache(FeatureCache):
         feature_cache_dir: Path,
         prediction_times_df: Optional[pd.DataFrame] = None,
         pred_time_uuid_col_name: str = "pred_time_uuid",
-        id_col_name: str = "entity_id",
+        entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
         cache_file_suffix: str = "parquet",
     ):
@@ -43,7 +43,7 @@ class DiskCache(FeatureCache):
         self.feature_cache_dir.mkdir(exist_ok=True, parents=True)
 
         self.cache_file_suffix = cache_file_suffix
-        self.entity_id_col_name = id_col_name
+        self.entity_entity_id_col_name = entity_id_col_name
         self.timestamp_col_name = timestamp_col_name
 
     def _load_most_recent_df_matching_pattern(
@@ -146,7 +146,7 @@ class DiskCache(FeatureCache):
         df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()
 
         # Drop entity and timestamp columns if they exists
-        for col in [self.entity_id_col_name, self.timestamp_col_name]:
+        for col in [self.entity_entity_id_col_name, self.timestamp_col_name]:
             if col in df.columns:
                 df = df.drop(columns=col)
 

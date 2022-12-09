@@ -137,7 +137,7 @@ def load_long_df_with_multiple_values():
 @data_loaders.register("load_event_times")
 def load_event_times():
     """Load event times."""
-    event_times_str = """dw_ek_borger,timestamp,value,
+    event_times_str = """entity_id,timestamp,value,
                     1,2021-12-30 00:00:01, 1
                     1,2021-12-29 00:00:02, 2
                     """
