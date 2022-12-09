@@ -39,7 +39,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "myst_parser",
     "sphinx_design",  # for design feature such as tabs
-    # "nbsphinx" # for integrating notebooks
+    "nbsphinx",  # for integrating notebooks
 ]
 
 

@@ -44,7 +44,8 @@ Otherwise, please use the discussion forums.
    :hidden:
 
    installation
-   tutorial
+   tutorials/01_basic
+   tutorials/02_advanced
    faq
 
 
@@ -52,7 +53,7 @@ Otherwise, please use the discussion forums.
    :caption: API
    :hidden:
 
-   data_classes
+   Main API
 
 
 .. toctree::
