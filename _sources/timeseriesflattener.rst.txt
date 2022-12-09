@@ -1,4 +1,4 @@
-Data Classes
+Timeseriesflattener
 --------------------------------------------------
 
 .. FlattenedDataset

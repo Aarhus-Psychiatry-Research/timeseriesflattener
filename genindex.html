@@ -8,6 +8,8 @@
 <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -166,12 +168,14 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/01_basic.html">Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/02_advanced.html">Advanced tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="data_classes.html">Data Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_specifications.html">Feature specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseriesflattener.html">Timeseriesflattener</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
@@ -216,18 +220,24 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a></div>
 </section>
 <section id="A" class="genindex-section">
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_age">add_age() (timeseriesflattener.flattened_dataset.TimeseriesFlattener method)</a>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_age">add_age() (TimeseriesFlattener method)</a>
+</li>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec">add_spec() (TimeseriesFlattener method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec">add_spec() (timeseriesflattener.flattened_dataset.TimeseriesFlattener method)</a>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.allowed_nan_value_prop">allowed_nan_value_prop (MinGroupSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.allowed_nan_value_prop">(TemporalSpec attribute)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -236,8 +246,54 @@
   <h2>C</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.compute">compute() (timeseriesflattener.flattened_dataset.TimeseriesFlattener method)</a>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.check_that_col_names_in_kwargs_exist_in_df">check_that_col_names_in_kwargs_exist_in_df() (in module timeseriesflattener.feature_spec_objects)</a>
 </li>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.compute">compute() (TimeseriesFlattener method)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec.create_combinations">create_combinations() (OutcomeGroupSpec method)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorGroupSpec.create_combinations">(PredictorGroupSpec method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.create_feature_combinations_from_dict">create_feature_combinations_from_dict() (in module timeseriesflattener.feature_spec_objects)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.create_specs_from_group">create_specs_from_group() (in module timeseriesflattener.feature_spec_objects)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.entity_id_col_name">entity_id_col_name (TemporalSpec attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.fallback">fallback (MinGroupSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.fallback">(TemporalSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.feature_name">feature_name (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.feature_name">(StaticSpec attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -246,8 +302,90 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.get_df">get_df() (timeseriesflattener.flattened_dataset.TimeseriesFlattener method)</a>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.get_col_str">get_col_str() (AnySpec method)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.get_col_str">(OutcomeSpec method)</a>
 </li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.get_col_str">(TemporalSpec method)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.get_df">get_df() (TimeseriesFlattener method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.in_dict_and_not_none">in_dict_and_not_none() (in module timeseriesflattener.feature_spec_objects)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec.incident">incident (OutcomeGroupSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.incident">(OutcomeSpec attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.input_col_name_override">input_col_name_override (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.input_col_name_override">(MinGroupSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.input_col_name_override">(StaticSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.interval_days">interval_days (TemporalSpec attribute)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.is_dichotomous">is_dichotomous() (OutcomeSpec method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="K" class="genindex-section">
+  <h2>K</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.key_for_resolve_multiple">key_for_resolve_multiple (TemporalSpec attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.load_df_with_cache">load_df_with_cache() (in module timeseriesflattener.feature_spec_objects)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.loader_kwargs">loader_kwargs (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.loader_kwargs">(StaticSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.loader_kwargs">(TemporalSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec.lookahead_days">lookahead_days (OutcomeGroupSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.lookahead_days">(OutcomeSpec attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorGroupSpec.lookbehind_days">lookbehind_days (PredictorGroupSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorSpec.lookbehind_days">(PredictorSpec attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -260,7 +398,9 @@
     module
 
         <ul>
-          <li><a href="data_classes.html#module-timeseriesflattener.flattened_dataset">timeseriesflattener.flattened_dataset</a>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_spec_objects">timeseriesflattener.feature_spec_objects</a>
+</li>
+          <li><a href="timeseriesflattener.html#module-timeseriesflattener.flattened_dataset">timeseriesflattener.flattened_dataset</a>
 </li>
         </ul></li>
     </ul></td>
@@ -271,8 +411,16 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs">outcome_specs (timeseriesflattener.flattened_dataset.SpecCollection attribute)</a>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs">outcome_specs (SpecCollection attribute)</a>
 </li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.output_col_name_override">output_col_name_override (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.output_col_name_override">(MinGroupSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.output_col_name_override">(StaticSpec attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -281,7 +429,39 @@
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.SpecCollection.predictor_specs">predictor_specs (timeseriesflattener.flattened_dataset.SpecCollection attribute)</a>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.SpecCollection.predictor_specs">predictor_specs (SpecCollection attribute)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.prefix">prefix (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.prefix">(MinGroupSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.prefix">(OutcomeSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorSpec.prefix">(PredictorSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.prefix">(StaticSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.resolve_from_dict_or_registry">resolve_from_dict_or_registry() (in module timeseriesflattener.feature_spec_objects)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.resolve_multiple_fn">resolve_multiple_fn (MinGroupSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.resolve_multiple_fn">(TemporalSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.resolve_values_df">resolve_values_df() (in module timeseriesflattener.feature_spec_objects)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -291,11 +471,7 @@
   <h2>S</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.SpecCollection">SpecCollection (class in timeseriesflattener.flattened_dataset)</a>
-</li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.SpecCollection.static_specs">static_specs (timeseriesflattener.flattened_dataset.SpecCollection attribute)</a>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.SpecCollection.static_specs">static_specs (SpecCollection attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -305,15 +481,56 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">TimeseriesFlattener (class in timeseriesflattener.flattened_dataset)</a>
+        <li><a href="timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">TimeseriesFlattener (class in timeseriesflattener.flattened_dataset)</a>
 </li>
+        <li>
+    timeseriesflattener.feature_spec_objects
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_spec_objects">module</a>
+</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     timeseriesflattener.flattened_dataset
 
         <ul>
-          <li><a href="data_classes.html#module-timeseriesflattener.flattened_dataset">module</a>
+          <li><a href="timeseriesflattener.html#module-timeseriesflattener.flattened_dataset">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.values_df">values_df (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.values_df">(MinGroupSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.values_df">(StaticSpec attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.values_loader">values_loader (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.values_loader">(MinGroupSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.values_loader">(StaticSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec.values_name">values_name (AnySpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.MinGroupSpec.values_name">(MinGroupSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_spec_objects.StaticSpec.values_name">(StaticSpec attribute)</a>
 </li>
         </ul></li>
     </ul></td>

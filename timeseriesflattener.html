@@ -3,19 +3,21 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<meta property="og:title" content="Data Classes" />
+<meta property="og:title" content="Timeseriesflattener" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="data_classes.html" />
+<meta property="og:url" content="timeseriesflattener.html" />
 <meta property="og:site_name" content="timeseriesflattener" />
 <meta property="og:description" content="timeseriesflattener.flattened_dataset: Flattens timeseries. Takes a time-series and flattens it into a set of prediction times with describing values. Takes a time-series and flattens it into a set..." />
 <meta name="description" content="timeseriesflattener.flattened_dataset: Flattens timeseries. Takes a time-series and flattens it into a set of prediction times with describing values. Takes a time-series and flattens it into a set..." />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Frequently asked questions" href="faq.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Feature specifications" href="feature_specifications.html" />
 
     <link rel="shortcut icon" href="_static/favicon.ico"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>Data Classes - timeseriesflattener 0.0.0 documentation</title>
+        <title>Timeseriesflattener - timeseriesflattener 0.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -174,12 +176,14 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/01_basic.html">Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/02_advanced.html">Advanced tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feature_specifications.html">Feature specifications</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Timeseriesflattener</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
@@ -208,7 +212,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/edit/main/docs/data_classes.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/edit/main/docs/timeseriesflattener.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -230,38 +234,66 @@
           </label>
         </div>
         <article role="main">
-          <section id="data-classes">
-<h1>Data Classes<a class="headerlink" href="#data-classes" title="Permalink to this heading">#</a></h1>
+          <section id="timeseriesflattener">
+<h1>Timeseriesflattener<a class="headerlink" href="#timeseriesflattener" title="Permalink to this heading">#</a></h1>
 <section id="module-timeseriesflattener.flattened_dataset">
 <span id="timeseriesflattener-flattened-dataset"></span><h2>timeseriesflattener.flattened_dataset<a class="headerlink" href="#module-timeseriesflattener.flattened_dataset" title="Permalink to this heading">#</a></h2>
 <p>Flattens timeseries.</p>
 <p>Takes a time-series and flattens it into a set of prediction times with describing values.
 Takes a time-series and flattens it into a set of prediction times describing values.</p>
-<dl class="py class">
+<dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.SpecCollection">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">timeseriesflattener.flattened_dataset.</span></span><span class="sig-name descname"><span class="pre">SpecCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outcome_specs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.OutcomeSpec</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_specs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.PredictorSpec</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static_specs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.AnySpec</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#SpecCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpecCollection</span></span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#SpecCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>A collection of specs.</p>
-<dl class="py attribute">
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SpecCollection&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A collection of specs.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;outcome_specs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Outcome Specs&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;predictor_specs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Predictor Specs&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">},</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;static_specs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Static Specs&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">   </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</details></p><dl class="field-list simple">
+<dt class="field-odd">Fields<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs" title="timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outcome_specs</span> <span class="pre">(list[timeseriesflattener.feature_spec_objects.OutcomeSpec])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#timeseriesflattener.flattened_dataset.SpecCollection.predictor_specs" title="timeseriesflattener.flattened_dataset.SpecCollection.predictor_specs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predictor_specs</span> <span class="pre">(list[timeseriesflattener.feature_spec_objects.PredictorSpec])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#timeseriesflattener.flattened_dataset.SpecCollection.static_specs" title="timeseriesflattener.flattened_dataset.SpecCollection.static_specs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">static_specs</span> <span class="pre">(list[timeseriesflattener.feature_spec_objects.AnySpec])</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs">
-<span class="sig-name descname"><span class="pre">outcome_specs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.OutcomeSpec</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">outcome_specs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec" title="timeseriesflattener.feature_spec_objects.OutcomeSpec"><span class="pre">timeseriesflattener.feature_spec_objects.OutcomeSpec</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.SpecCollection.predictor_specs">
-<span class="sig-name descname"><span class="pre">predictor_specs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.PredictorSpec</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection.predictor_specs" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predictor_specs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorSpec" title="timeseriesflattener.feature_spec_objects.PredictorSpec"><span class="pre">timeseriesflattener.feature_spec_objects.PredictorSpec</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection.predictor_specs" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
+<dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.SpecCollection.static_specs">
-<span class="sig-name descname"><span class="pre">static_specs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.AnySpec</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection.static_specs" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">static_specs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec" title="timeseriesflattener.feature_spec_objects.AnySpec"><span class="pre">timeseriesflattener.feature_spec_objects.AnySpec</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#timeseriesflattener.flattened_dataset.SpecCollection.static_specs" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.TimeseriesFlattener">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">timeseriesflattener.flattened_dataset.</span></span><span class="sig-name descname"><span class="pre">TimeseriesFlattener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_times_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_pred_times_with_insufficient_look_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">FeatureCache</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'entity_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'timestamp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_col_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outcome_col_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'outc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_stdout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#TimeseriesFlattener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.TimeseriesFlattener" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TimeseriesFlattener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_times_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_pred_times_with_insufficient_look_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">FeatureCache</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'entity_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'timestamp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_col_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outcome_col_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'outc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_to_stdout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#TimeseriesFlattener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.TimeseriesFlattener" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Turn a set of time-series into tabular prediction-time data.</p>
 <dl class="py method">
@@ -283,7 +315,7 @@ Defaults to “date_of_birth”.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec">
-<span class="sig-name descname"><span class="pre">add_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">timeseriesflattener.feature_spec_objects.AnySpec</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AnySpec</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#TimeseriesFlattener.add_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">add_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec" title="timeseriesflattener.feature_spec_objects.AnySpec"><span class="pre">timeseriesflattener.feature_spec_objects.AnySpec</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="feature_specifications.html#timeseriesflattener.feature_spec_objects.AnySpec" title="timeseriesflattener.feature_spec_objects.AnySpec"><span class="pre">AnySpec</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattened_dataset.html#TimeseriesFlattener.add_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec" title="Permalink to this definition">#</a></dt>
 <dd><p>Add a specification to the flattened dataset.</p>
 <p>This adds it to a queue of unprocessed specs, which are not processed
 until you call the .compute() or .get_df() methods. This allows us to
@@ -323,14 +355,14 @@ For further documentation, see those objects and the tutorial.</p>
         
         <div class="related-pages">
           
-          <a class="prev-page" href="faq.html">
+          <a class="prev-page" href="feature_specifications.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Frequently asked questions</div>
+                <div class="title">Feature specifications</div>
                 
               </div>
             </a>
@@ -371,7 +403,7 @@ For further documentation, see those objects and the tutorial.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Data Classes</a><ul>
+<li><a class="reference internal" href="#">Timeseriesflattener</a><ul>
 <li><a class="reference internal" href="#module-timeseriesflattener.flattened_dataset">timeseriesflattener.flattened_dataset</a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.SpecCollection"><code class="docutils literal notranslate"><span class="pre">SpecCollection</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.flattened_dataset.SpecCollection.outcome_specs"><code class="docutils literal notranslate"><span class="pre">SpecCollection.outcome_specs</span></code></a></li>

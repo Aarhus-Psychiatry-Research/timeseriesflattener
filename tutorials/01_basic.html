@@ -1,0 +1,1279 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<meta property="og:title" content="Introductory tutorial" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="tutorials/01_basic.html" />
+<meta property="og:site_name" content="timeseriesflattener" />
+<meta property="og:description" content="TimeseriesFlattener flattens timeseries. This is especially helpful if you have complicated timeseries but want to train simple models. Applying it consists of 3 steps: Loading data (prediction tim..." />
+<meta name="description" content="TimeseriesFlattener flattens timeseries. This is especially helpful if you have complicated timeseries but want to train simple models. Applying it consists of 3 steps: Loading data (prediction tim..." />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Advanced tutorial" href="02_advanced.html" /><link rel="prev" title="Installation" href="../installation.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+        <title>Introductory tutorial - timeseriesflattener 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/autodoc_pydantic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-brand-primary: #ff5454;
+  --color-brand-content: #ff7575;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #ff8f8f;
+  --color-brand-content: #ff8f8f;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #ff8f8f;
+  --color-brand-content: #ff8f8f;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">timeseriesflattener 0.0.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/icon_dark.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_advanced.html">Advanced tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently asked questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../feature_specifications.html">Feature specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../timeseriesflattener.html">Timeseriesflattener</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/CHANGELOG.md">Changelog</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">GitHub</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener">GitHub Repository</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/edit/main/docs/tutorials/01_basic.ipynb" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="introductory-tutorial">
+<h1>Introductory tutorial<a class="headerlink" href="#introductory-tutorial" title="Permalink to this heading">#</a></h1>
+<p>TimeseriesFlattener flattens timeseries. This is especially helpful if you have complicated timeseries but want to train simple models.</p>
+<p>Applying it consists of 3 steps:</p>
+<ol class="arabic simple">
+<li><p>Loading data (prediction times, predictor(s), and outcome(s))</p></li>
+<li><p>Specifying how to flatten the data and</p></li>
+<li><p>Flattening</p></li>
+</ol>
+<p>The simplest case is adding one predictor and one outcome.</p>
+<p>First, we’ll load the timestamps for every time we want to issue a prediction:</p>
+<section id="loading-data">
+<h2>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this heading">#</a></h2>
+<section id="prediction-times">
+<h3>Prediction times<a class="headerlink" href="#prediction-times" title="Permalink to this heading">#</a></h3>
+<p>Predictin times consist of two elements:</p>
+<ol class="arabic simple">
+<li><p>The entity id. This is the entity about which the prediction is issued. In medical contexts, this is frequently a patient.</p></li>
+<li><p>The timestamp at which the prediction is to be issued.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimpy</span> <span class="kn">import</span> <span class="n">skim</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_prediction_times</span>
+
+<span class="n">df_prediction_times</span> <span class="o">=</span> <span class="n">load_synth_prediction_times</span><span class="p">()</span>
+
+<span class="n">skim</span><span class="p">(</span><span class="n">df_prediction_times</span><span class="p">)</span>
+<span class="n">df_prediction_times</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮
+│ <span style="font-style: italic">         Data Summary         </span> <span style="font-style: italic">      Data Types       </span>                                                          │
+│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │
+│ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> dataframe         </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Values </span>┃ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Column Type </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Count </span>┃                                                          │
+│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │
+│ │ Number of rows    │ 10000  │ │ int64       │ 1     │                                                          │
+│ │ Number of columns │ 2      │ │ datetime64  │ 1     │                                                          │
+│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │
+│ <span style="font-style: italic">                                                    number                                                    </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name        </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> mean    </span>┃<span style="font-weight: bold"> sd      </span>┃<span style="font-weight: bold"> p0   </span>┃<span style="font-weight: bold"> p25     </span>┃<span style="font-weight: bold"> p75     </span>┃<span style="font-weight: bold"> p100      </span>┃<span style="font-weight: bold"> hist      </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id         </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">   5000</span> │ <span style="color: #008080; text-decoration-color: #008080">   2900</span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">   2500</span> │ <span style="color: #008080; text-decoration-color: #008080">   7400</span> │ <span style="color: #008080; text-decoration-color: #008080">    10000</span> │ <span style="color: #008000; text-decoration-color: #008000"> █████▇  </span> │  │
+│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │
+│ <span style="font-style: italic">                                                   datetime                                                   </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name      </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> first                      </span>┃<span style="font-weight: bold"> last                       </span>┃<span style="font-weight: bold"> frequency    </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">timestamp       </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #800000; text-decoration-color: #800000">   1965-01-02 09:35:00    </span> │ <span style="color: #800000; text-decoration-color: #800000">   1969-12-31 21:42:00    </span> │ <span style="color: #af87ff; text-decoration-color: #af87ff">None        </span> │  │
+│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │
+╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯
+</pre>
+</div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>entity_id</th>
+      <th>timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>9903</td>
+      <td>1968-05-09 21:24:00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7465</td>
+      <td>1966-05-24 01:23:00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6447</td>
+      <td>1967-09-25 18:08:00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2121</td>
+      <td>1966-05-05 20:52:00</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4927</td>
+      <td>1968-06-30 12:13:00</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>9995</th>
+      <td>7159</td>
+      <td>1966-12-12 16:32:00</td>
+    </tr>
+    <tr>
+      <th>9996</th>
+      <td>147</td>
+      <td>1965-03-12 05:32:00</td>
+    </tr>
+    <tr>
+      <th>9997</th>
+      <td>1421</td>
+      <td>1968-04-15 15:53:00</td>
+    </tr>
+    <tr>
+      <th>9998</th>
+      <td>3353</td>
+      <td>1966-01-15 10:04:00</td>
+    </tr>
+    <tr>
+      <th>9999</th>
+      <td>1940</td>
+      <td>1968-05-17 10:49:00</td>
+    </tr>
+  </tbody>
+</table>
+<p>10000 rows × 2 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="temporal-outcome">
+<h3>Temporal outcome<a class="headerlink" href="#temporal-outcome" title="Permalink to this heading">#</a></h3>
+<p>And, our outcome values. We’ve chosen a binary outcome and only stored values for the timestamps that experience the outcomes. From these, we can infer those that do not experience the outcome, since they do not have a timestamp. We handle this by setting a fallback of 0, see below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_outcome</span>
+
+<span class="n">df_synth_outcome</span> <span class="o">=</span> <span class="n">load_synth_outcome</span><span class="p">()</span>
+
+<span class="n">skim</span><span class="p">(</span><span class="n">df_synth_outcome</span><span class="p">)</span>
+<span class="n">df_synth_outcome</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮
+│ <span style="font-style: italic">         Data Summary         </span> <span style="font-style: italic">      Data Types       </span>                                                          │
+│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │
+│ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> dataframe         </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Values </span>┃ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Column Type </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Count </span>┃                                                          │
+│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │
+│ │ Number of rows    │ 3103   │ │ int64       │ 2     │                                                          │
+│ │ Number of columns │ 3      │ │ datetime64  │ 1     │                                                          │
+│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │
+│ <span style="font-style: italic">                                                    number                                                    </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name        </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> mean    </span>┃<span style="font-weight: bold"> sd      </span>┃<span style="font-weight: bold"> p0   </span>┃<span style="font-weight: bold"> p25     </span>┃<span style="font-weight: bold"> p75     </span>┃<span style="font-weight: bold"> p100      </span>┃<span style="font-weight: bold"> hist      </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id         </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">   5000</span> │ <span style="color: #008080; text-decoration-color: #008080">   2900</span> │ <span style="color: #008080; text-decoration-color: #008080">   4</span> │ <span style="color: #008080; text-decoration-color: #008080">   2500</span> │ <span style="color: #008080; text-decoration-color: #008080">   7600</span> │ <span style="color: #008080; text-decoration-color: #008080">    10000</span> │ <span style="color: #008000; text-decoration-color: #008000"> ██▇███  </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">value             </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">      1</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">   1</span> │ <span style="color: #008080; text-decoration-color: #008080">      1</span> │ <span style="color: #008080; text-decoration-color: #008080">      1</span> │ <span style="color: #008080; text-decoration-color: #008080">        1</span> │ <span style="color: #008000; text-decoration-color: #008000">     █   </span> │  │
+│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │
+│ <span style="font-style: italic">                                                   datetime                                                   </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name      </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> first                      </span>┃<span style="font-weight: bold"> last                       </span>┃<span style="font-weight: bold"> frequency    </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">timestamp       </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #800000; text-decoration-color: #800000">   1965-01-04 07:50:00    </span> │ <span style="color: #800000; text-decoration-color: #800000">   1969-12-31 10:15:00    </span> │ <span style="color: #af87ff; text-decoration-color: #af87ff">None        </span> │  │
+│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │
+╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯
+</pre>
+</div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>entity_id</th>
+      <th>timestamp</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+      <td>1965-06-20 16:29:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7</td>
+      <td>1968-10-16 01:46:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>12</td>
+      <td>1965-04-17 07:17:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>13</td>
+      <td>1969-08-10 20:10:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>18</td>
+      <td>1969-02-02 09:16:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>6253</th>
+      <td>9964</td>
+      <td>1966-04-14 09:44:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6255</th>
+      <td>9966</td>
+      <td>1969-06-05 13:00:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6256</th>
+      <td>9968</td>
+      <td>1968-09-06 13:15:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6257</th>
+      <td>9970</td>
+      <td>1967-01-24 08:52:00</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6269</th>
+      <td>9992</td>
+      <td>1966-12-10 14:53:00</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>3103 rows × 3 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="temporal-predictor">
+<h3>Temporal predictor<a class="headerlink" href="#temporal-predictor" title="Permalink to this heading">#</a></h3>
+<p>Then we’ll load the values for our predictor:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_predictor_float</span>
+
+<span class="n">df_synth_predictors</span> <span class="o">=</span> <span class="n">load_synth_predictor_float</span><span class="p">()</span>
+
+<span class="n">skim</span><span class="p">(</span><span class="n">df_synth_predictors</span><span class="p">)</span>
+<span class="n">df_synth_predictors</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮
+│ <span style="font-style: italic">         Data Summary         </span> <span style="font-style: italic">      Data Types       </span>                                                          │
+│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │
+│ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> dataframe         </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Values </span>┃ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Column Type </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Count </span>┃                                                          │
+│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │
+│ │ Number of rows    │ 100000 │ │ int64       │ 1     │                                                          │
+│ │ Number of columns │ 3      │ │ datetime64  │ 1     │                                                          │
+│ └───────────────────┴────────┘ │ float64     │ 1     │                                                          │
+│                                └─────────────┴───────┘                                                          │
+│ <span style="font-style: italic">                                                    number                                                    </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name       </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> mean    </span>┃<span style="font-weight: bold"> sd     </span>┃<span style="font-weight: bold"> p0         </span>┃<span style="font-weight: bold"> p25    </span>┃<span style="font-weight: bold"> p75    </span>┃<span style="font-weight: bold"> p100     </span>┃<span style="font-weight: bold"> hist     </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id        </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">   5000</span> │ <span style="color: #008080; text-decoration-color: #008080">  2900</span> │ <span style="color: #008080; text-decoration-color: #008080">         0</span> │ <span style="color: #008080; text-decoration-color: #008080">  2500</span> │ <span style="color: #008080; text-decoration-color: #008080">  7500</span> │ <span style="color: #008080; text-decoration-color: #008080">   10000</span> │ <span style="color: #008000; text-decoration-color: #008000"> ██████ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">value            </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">      5</span> │ <span style="color: #008080; text-decoration-color: #008080">   2.9</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.00015</span> │ <span style="color: #008080; text-decoration-color: #008080">   2.5</span> │ <span style="color: #008080; text-decoration-color: #008080">   7.5</span> │ <span style="color: #008080; text-decoration-color: #008080">      10</span> │ <span style="color: #008000; text-decoration-color: #008000"> ██████ </span> │  │
+│ └───────────────────┴──────┴─────────┴─────────┴────────┴────────────┴────────┴────────┴──────────┴──────────┘  │
+│ <span style="font-style: italic">                                                   datetime                                                   </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name      </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> first                      </span>┃<span style="font-weight: bold"> last                       </span>┃<span style="font-weight: bold"> frequency    </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">timestamp       </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #800000; text-decoration-color: #800000">   1965-01-02 00:01:00    </span> │ <span style="color: #800000; text-decoration-color: #800000">   1969-12-31 23:37:00    </span> │ <span style="color: #af87ff; text-decoration-color: #af87ff">None        </span> │  │
+│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │
+╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯
+</pre>
+</div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>entity_id</th>
+      <th>timestamp</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>9476</td>
+      <td>1969-03-05 08:08:00</td>
+      <td>0.816995</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4631</td>
+      <td>1967-04-10 22:48:00</td>
+      <td>4.818074</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3890</td>
+      <td>1969-12-15 14:07:00</td>
+      <td>2.503789</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1098</td>
+      <td>1965-11-19 03:53:00</td>
+      <td>3.515041</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1626</td>
+      <td>1966-05-03 14:07:00</td>
+      <td>4.353115</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>99995</th>
+      <td>4542</td>
+      <td>1968-06-01 17:09:00</td>
+      <td>9.616722</td>
+    </tr>
+    <tr>
+      <th>99996</th>
+      <td>4839</td>
+      <td>1966-11-24 01:13:00</td>
+      <td>0.235124</td>
+    </tr>
+    <tr>
+      <th>99997</th>
+      <td>8168</td>
+      <td>1969-07-30 01:45:00</td>
+      <td>0.929738</td>
+    </tr>
+    <tr>
+      <th>99998</th>
+      <td>9328</td>
+      <td>1965-12-22 10:53:00</td>
+      <td>5.124424</td>
+    </tr>
+    <tr>
+      <th>99999</th>
+      <td>6582</td>
+      <td>1965-02-10 09:52:00</td>
+      <td>7.414466</td>
+    </tr>
+  </tbody>
+</table>
+<p>100000 rows × 3 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="static-predictor">
+<h3>Static predictor<a class="headerlink" href="#static-predictor" title="Permalink to this heading">#</a></h3>
+<p>Frequently, you’ll have a static predictor describing each entity. In this case, an entity is a patient, and an example of a static outcome could be their sex. It doesn’t change over time (it’s static), but can be used as a predictor for each prediction time. Let’s load it!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_sex</span>
+
+<span class="n">df_synth_sex</span> <span class="o">=</span> <span class="n">load_synth_sex</span><span class="p">()</span>
+
+<span class="n">skim</span><span class="p">(</span><span class="n">df_synth_sex</span><span class="p">)</span>
+<span class="n">df_synth_sex</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮
+│ <span style="font-style: italic">         Data Summary         </span> <span style="font-style: italic">      Data Types       </span>                                                          │
+│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │
+│ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> dataframe         </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Values </span>┃ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Column Type </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Count </span>┃                                                          │
+│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │
+│ │ Number of rows    │ 9999   │ │ int64       │ 2     │                                                          │
+│ │ Number of columns │ 2      │ └─────────────┴───────┘                                                          │
+│ └───────────────────┴────────┘                                                                                  │
+│ <span style="font-style: italic">                                                    number                                                    </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name        </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> mean    </span>┃<span style="font-weight: bold"> sd      </span>┃<span style="font-weight: bold"> p0   </span>┃<span style="font-weight: bold"> p25     </span>┃<span style="font-weight: bold"> p75     </span>┃<span style="font-weight: bold"> p100      </span>┃<span style="font-weight: bold"> hist      </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id         </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">   5000</span> │ <span style="color: #008080; text-decoration-color: #008080">   2900</span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">   2500</span> │ <span style="color: #008080; text-decoration-color: #008080">   7500</span> │ <span style="color: #008080; text-decoration-color: #008080">    10000</span> │ <span style="color: #008000; text-decoration-color: #008000"> ██████  </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">female            </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.5</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.5</span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">      1</span> │ <span style="color: #008080; text-decoration-color: #008080">        1</span> │ <span style="color: #008000; text-decoration-color: #008000"> █    █  </span> │  │
+│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │
+╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯
+</pre>
+</div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>entity_id</th>
+      <th>female</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>9994</th>
+      <td>9995</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9995</th>
+      <td>9996</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9996</th>
+      <td>9997</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>9997</th>
+      <td>9998</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>9998</th>
+      <td>9999</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>9999 rows × 2 columns</p>
+</div></div></div>
+</div>
+</section>
+</section>
+<section id="specifying-how-to-flatten-the-data">
+<h2>Specifying how to flatten the data<a class="headerlink" href="#specifying-how-to-flatten-the-data" title="Permalink to this heading">#</a></h2>
+<p>We’ll have to specify how to flatten predictors and outcomes. To do this, we use the feature specification objects as “recipes” for each column in our finished dataframe. Firstly, we’ll specify the outcome specification.</p>
+<section id="id1">
+<h3>Temporal outcome<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<p><img alt="" src="../_images/term_a.png" /></p>
+<p>The main decision to make for outcomes is the size of the <strong>lookahead</strong> window. It determines how far into the future from a given prediction time to look for outcome values.
+A <strong>prediction time</strong> indicates at which point the model issues a prediction, and is used as a reference for the <em>lookahead</em>.</p>
+<p><img alt="" src="../_images/term_b.png" /></p>
+<p>We want labels for prediction times to be 0 if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels should only be 1 if the outcome occurs inside the lookahead window. Let’s specify this in code.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.feature_spec_objects</span> <span class="kn">import</span> <span class="n">OutcomeSpec</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.resolve_multiple_functions</span> <span class="kn">import</span> <span class="n">maximum</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+<span class="n">outcome_spec</span> <span class="o">=</span> <span class="n">OutcomeSpec</span><span class="p">(</span>
+    <span class="n">values_df</span><span class="o">=</span><span class="n">df_synth_outcome</span><span class="p">,</span>
+    <span class="n">lookahead_days</span><span class="o">=</span><span class="mi">365</span><span class="p">,</span>
+    <span class="n">fallback</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">resolve_multiple_fn</span><span class="o">=</span><span class="n">maximum</span><span class="p">,</span>
+    <span class="n">incident</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">feature_name</span><span class="o">=</span><span class="s2">&quot;outcome_name&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since our outcome is binary, we want each prediction time to be labelled with 0 for the outcome if none is present within interval days. Therefore, we set fallback to 0.</p>
+<p>How to handle multiple outcome values within interval days depends on your use case. In this case, we choose that any prediction time with at least one outcome (a timestamp labelled 1) within interval days is “positive”. I.e., if there is both a 0 and a 1 within interval days, the prediction time should be labelled with a 1. We set resolve_multiple_fn = maximum to accomplish this.</p>
+<p>We also specify that the outcome is not incident. This means that each entity id (id) can experience the outcome more than once.</p>
+<p>If the outcome was marked as incident, all prediction times after the entity experiences the outcome are dropped.</p>
+<p>Lastly, we specify a name of the outcome which’ll be used when generating its column.</p>
+</section>
+<section id="id2">
+<h3>Temporal predictor<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<p>Specifying a predictor is almost entirely identical, except it looks into the past from each prediction time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.feature_spec_objects</span> <span class="kn">import</span> <span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">StaticSpec</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.resolve_multiple_functions</span> <span class="kn">import</span> <span class="n">mean</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">temporal_predictor_spec</span> <span class="o">=</span> <span class="n">PredictorSpec</span><span class="p">(</span>
+    <span class="n">values_df</span><span class="o">=</span><span class="n">df_synth_predictors</span><span class="p">,</span>
+    <span class="n">lookbehind_days</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span>
+    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="n">resolve_multiple_fn</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+    <span class="n">feature_name</span><span class="o">=</span><span class="s2">&quot;predictor_name&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><img alt="" src="../_images/term_c.png" /></p>
+<p>Values within the <em>lookbehind</em> window are aggregated using <code class="docutils literal notranslate"><span class="pre">resolve_multiple_fn</span></code>, for example the mean as shown in this example, or max/min etc.</p>
+</section>
+<section id="id3">
+<h3>Static predictor<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sex_predictor_spec</span> <span class="o">=</span> <span class="n">StaticSpec</span><span class="p">(</span>
+    <span class="n">values_df</span><span class="o">=</span><span class="n">df_synth_sex</span><span class="p">,</span>
+    <span class="n">feature_name</span><span class="o">=</span><span class="s2">&quot;female&quot;</span><span class="p">,</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;pred&quot;</span><span class="p">,</span>
+    <span class="n">input_col_name_override</span><span class="o">=</span><span class="s2">&quot;female&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">df_synth_sex</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>entity_id</th>
+      <th>female</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>9994</th>
+      <td>9995</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9995</th>
+      <td>9996</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9996</th>
+      <td>9997</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>9997</th>
+      <td>9998</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>9998</th>
+      <td>9999</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>9999 rows × 2 columns</p>
+</div></div></div>
+</div>
+<p>Note that we also specify the “input_col_name_override”, because the df_synth_sex df has its values in the “female” column. By default, tsflattener looks for a column names “value”.</p>
+<p>Now we’re ready to flatten our dataset!</p>
+</section>
+</section>
+<section id="flattening">
+<h2>Flattening<a class="headerlink" href="#flattening" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener</span> <span class="kn">import</span> <span class="n">TimeseriesFlattener</span>
+
+<span class="n">ts_flattener</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="p">(</span>
+    <span class="n">prediction_times_df</span><span class="o">=</span><span class="n">df_prediction_times</span><span class="p">,</span>
+    <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
+    <span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+    <span class="n">n_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">drop_pred_times_with_insufficient_look_distance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We set <code class="docutils literal notranslate"><span class="pre">drop_pred_times_with_insufficient_look_distance</span></code> to true. This means prediction times are dropped if the <em>lookbehind</em> extends further back in time than the start of the dataset or if the <em>lookahead</em> extends further than the end of the dataset.</p>
+<p><img alt="" src="../_images/term_d.png" /></p>
+<p>For most applications, this should be true - you do not want features to say they’re looking a year into the future, if you only have a month of data. This would compromise generalisability. However, there are some edge cases where you might want this to be false - see the advanced tutorial for a brief discussion on this.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ts_flattener</span><span class="o">.</span><span class="n">add_spec</span><span class="p">([</span><span class="n">sex_predictor_spec</span><span class="p">,</span> <span class="n">temporal_predictor_spec</span><span class="p">,</span> <span class="n">outcome_spec</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">ts_flattener</span><span class="o">.</span><span class="n">get_df</span><span class="p">()</span>
+
+<span class="n">skim</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:07 [INFO] There were unprocessed specs, computing...
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:07 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 5999 (59.99%) rows
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/2 [00:00&lt;?, ?it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:08 [INFO] No cache specified, not attempting load
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:08 [INFO] No cache specified, not attempting load
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 2/2 [00:00&lt;00:00, 18.75it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 2/2 [00:00&lt;00:00, 18.54it/s]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:08 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:08 [INFO] Concatenation took 0.021 seconds
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:08 [INFO] Merging with original df
+</pre></div>
+</div>
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮
+│ <span style="font-style: italic">         Data Summary         </span> <span style="font-style: italic">      Data Types       </span>                                                          │
+│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │
+│ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> dataframe         </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Values </span>┃ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Column Type </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Count </span>┃                                                          │
+│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │
+│ │ Number of rows    │ 4001   │ │ int64       │ 2     │                                                          │
+│ │ Number of columns │ 6      │ │ float64     │ 2     │                                                          │
+│ └───────────────────┴────────┘ │ datetime64  │ 1     │                                                          │
+│                                │ string      │ 1     │                                                          │
+│                                └─────────────┴───────┘                                                          │
+│ <span style="font-style: italic">                                                    number                                                    </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name                </span>┃<span style="font-weight: bold"> NA  </span>┃<span style="font-weight: bold"> NA %   </span>┃<span style="font-weight: bold"> mean    </span>┃<span style="font-weight: bold"> sd     </span>┃<span style="font-weight: bold"> p0      </span>┃<span style="font-weight: bold"> p25    </span>┃<span style="font-weight: bold"> p75   </span>┃<span style="font-weight: bold"> p100   </span>┃<span style="font-weight: bold"> hist    </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id                 </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">   5000</span> │ <span style="color: #008080; text-decoration-color: #008080">  2900</span> │ <span style="color: #008080; text-decoration-color: #008080">      3</span> │ <span style="color: #008080; text-decoration-color: #008080">  2600</span> │ <span style="color: #008080; text-decoration-color: #008080"> 7500</span> │ <span style="color: #008080; text-decoration-color: #008080"> 10000</span> │ <span style="color: #008000; text-decoration-color: #008000">█████▇ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">outc_outcome_name_wi      </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.064</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.25</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     1</span> │ <span style="color: #008000; text-decoration-color: #008000">█    ▁ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_predictor_name_      </span> │ <span style="color: #008080; text-decoration-color: #008080"> 72</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">      5</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.097</span> │ <span style="color: #008080; text-decoration-color: #008080">   3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">    6</span> │ <span style="color: #008080; text-decoration-color: #008080">   9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃██▃▁ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_female               </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.49</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.5</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    1</span> │ <span style="color: #008080; text-decoration-color: #008080">     1</span> │ <span style="color: #008000; text-decoration-color: #008000">█    █ </span> │  │
+│ └────────────────────────────┴─────┴────────┴─────────┴────────┴─────────┴────────┴───────┴────────┴─────────┘  │
+│ <span style="font-style: italic">                                                   datetime                                                   </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name      </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> first                      </span>┃<span style="font-weight: bold"> last                       </span>┃<span style="font-weight: bold"> frequency    </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">timestamp       </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #800000; text-decoration-color: #800000">   1967-01-02 01:16:00    </span> │ <span style="color: #800000; text-decoration-color: #800000">   1968-12-31 04:39:00    </span> │ <span style="color: #af87ff; text-decoration-color: #af87ff">None        </span> │  │
+│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │
+│ <span style="font-style: italic">                                                    string                                                    </span>  │
+│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name                           </span>┃<span style="font-weight: bold"> NA    </span>┃<span style="font-weight: bold"> NA %      </span>┃<span style="font-weight: bold"> words per row            </span>┃<span style="font-weight: bold"> total words         </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">prediction_time_uuid                 </span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">        0</span> │ <span style="color: #008080; text-decoration-color: #008080">                       1</span> │ <span style="color: #008080; text-decoration-color: #008080">               4000</span> │  │
+│ └───────────────────────────────────────┴───────┴───────────┴──────────────────────────┴─────────────────────┘  │
+╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯
+</pre>
+</div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;entity_id&#39;,
+ &#39;timestamp&#39;,
+ &#39;prediction_time_uuid&#39;,
+ &#39;outc_outcome_name_within_365_days_maximum_fallback_0_dichotomous&#39;,
+ &#39;pred_predictor_name_within_730_days_mean_fallback_nan&#39;,
+ &#39;pred_female&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># For displayability, shorten col names</span>
+<span class="n">shortened_pred</span> <span class="o">=</span> <span class="s2">&quot;pred_X&quot;</span>
+<span class="n">shortened_outcome</span> <span class="o">=</span> <span class="s2">&quot;outc_Y&quot;</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;pred_predictor_name_within_730_days_mean_fallback_nan&quot;</span><span class="p">:</span> <span class="n">shortened_pred</span><span class="p">,</span>
+        <span class="s2">&quot;outc_outcome_name_within_365_days_maximum_fallback_0_dichotomous&quot;</span><span class="p">:</span> <span class="n">shortened_outcome</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">set_table_attributes</span><span class="p">(</span><span class="s1">&#39;style=&quot;font-size: 14px&quot;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:08 [INFO] Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: In FT2Font: Can not load face (unknown file format; error code 0x2)
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:48:09 [INFO] generated new fontManager
+</pre></div>
+</div>
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_9f2a4" style="font-size: 14px">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_9f2a4_level0_col0" class="col_heading level0 col0" >entity_id</th>
+      <th id="T_9f2a4_level0_col1" class="col_heading level0 col1" >timestamp</th>
+      <th id="T_9f2a4_level0_col2" class="col_heading level0 col2" >prediction_time_uuid</th>
+      <th id="T_9f2a4_level0_col3" class="col_heading level0 col3" >outc_Y</th>
+      <th id="T_9f2a4_level0_col4" class="col_heading level0 col4" >pred_X</th>
+      <th id="T_9f2a4_level0_col5" class="col_heading level0 col5" >pred_female</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_9f2a4_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_9f2a4_row0_col0" class="data row0 col0" >9903</td>
+      <td id="T_9f2a4_row0_col1" class="data row0 col1" >1968-05-09 21:24:00</td>
+      <td id="T_9f2a4_row0_col2" class="data row0 col2" >9903-1968-05-09-21-24-00</td>
+      <td id="T_9f2a4_row0_col3" class="data row0 col3" >0.000000</td>
+      <td id="T_9f2a4_row0_col4" class="data row0 col4" >0.990763</td>
+      <td id="T_9f2a4_row0_col5" class="data row0 col5" >0</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_9f2a4_row1_col0" class="data row1 col0" >6447</td>
+      <td id="T_9f2a4_row1_col1" class="data row1 col1" >1967-09-25 18:08:00</td>
+      <td id="T_9f2a4_row1_col2" class="data row1 col2" >6447-1967-09-25-18-08-00</td>
+      <td id="T_9f2a4_row1_col3" class="data row1 col3" >0.000000</td>
+      <td id="T_9f2a4_row1_col4" class="data row1 col4" >5.582745</td>
+      <td id="T_9f2a4_row1_col5" class="data row1 col5" >1</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_9f2a4_row2_col0" class="data row2 col0" >4927</td>
+      <td id="T_9f2a4_row2_col1" class="data row2 col1" >1968-06-30 12:13:00</td>
+      <td id="T_9f2a4_row2_col2" class="data row2 col2" >4927-1968-06-30-12-13-00</td>
+      <td id="T_9f2a4_row2_col3" class="data row2 col3" >0.000000</td>
+      <td id="T_9f2a4_row2_col4" class="data row2 col4" >4.957251</td>
+      <td id="T_9f2a4_row2_col5" class="data row2 col5" >0</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_9f2a4_row3_col0" class="data row3 col0" >5475</td>
+      <td id="T_9f2a4_row3_col1" class="data row3 col1" >1967-01-09 03:09:00</td>
+      <td id="T_9f2a4_row3_col2" class="data row3 col2" >5475-1967-01-09-03-09-00</td>
+      <td id="T_9f2a4_row3_col3" class="data row3 col3" >0.000000</td>
+      <td id="T_9f2a4_row3_col4" class="data row3 col4" >5.999336</td>
+      <td id="T_9f2a4_row3_col5" class="data row3 col5" >0</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_9f2a4_row4_col0" class="data row4 col0" >9793</td>
+      <td id="T_9f2a4_row4_col1" class="data row4 col1" >1968-12-15 12:59:00</td>
+      <td id="T_9f2a4_row4_col2" class="data row4 col2" >9793-1968-12-15-12-59-00</td>
+      <td id="T_9f2a4_row4_col3" class="data row4 col3" >0.000000</td>
+      <td id="T_9f2a4_row4_col4" class="data row4 col4" >7.294038</td>
+      <td id="T_9f2a4_row4_col5" class="data row4 col5" >0</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_9f2a4_row5_col0" class="data row5 col0" >9768</td>
+      <td id="T_9f2a4_row5_col1" class="data row5 col1" >1967-07-04 23:09:00</td>
+      <td id="T_9f2a4_row5_col2" class="data row5 col2" >9768-1967-07-04-23-09-00</td>
+      <td id="T_9f2a4_row5_col3" class="data row5 col3" >0.000000</td>
+      <td id="T_9f2a4_row5_col4" class="data row5 col4" >4.326286</td>
+      <td id="T_9f2a4_row5_col5" class="data row5 col5" >1</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row6" class="row_heading level0 row6" >6</th>
+      <td id="T_9f2a4_row6_col0" class="data row6 col0" >7916</td>
+      <td id="T_9f2a4_row6_col1" class="data row6 col1" >1968-12-20 03:38:00</td>
+      <td id="T_9f2a4_row6_col2" class="data row6 col2" >7916-1968-12-20-03-38-00</td>
+      <td id="T_9f2a4_row6_col3" class="data row6 col3" >0.000000</td>
+      <td id="T_9f2a4_row6_col4" class="data row6 col4" >4.629502</td>
+      <td id="T_9f2a4_row6_col5" class="data row6 col5" >0</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row7" class="row_heading level0 row7" >7</th>
+      <td id="T_9f2a4_row7_col0" class="data row7 col0" >33</td>
+      <td id="T_9f2a4_row7_col1" class="data row7 col1" >1967-07-28 03:16:00</td>
+      <td id="T_9f2a4_row7_col2" class="data row7 col2" >33-1967-07-28-03-16-00</td>
+      <td id="T_9f2a4_row7_col3" class="data row7 col3" >0.000000</td>
+      <td id="T_9f2a4_row7_col4" class="data row7 col4" >4.628500</td>
+      <td id="T_9f2a4_row7_col5" class="data row7 col5" >0</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row8" class="row_heading level0 row8" >8</th>
+      <td id="T_9f2a4_row8_col0" class="data row8 col0" >2883</td>
+      <td id="T_9f2a4_row8_col1" class="data row8 col1" >1968-01-28 21:50:00</td>
+      <td id="T_9f2a4_row8_col2" class="data row8 col2" >2883-1968-01-28-21-50-00</td>
+      <td id="T_9f2a4_row8_col3" class="data row8 col3" >0.000000</td>
+      <td id="T_9f2a4_row8_col4" class="data row8 col4" >8.257742</td>
+      <td id="T_9f2a4_row8_col5" class="data row8 col5" >1</td>
+    </tr>
+    <tr>
+      <th id="T_9f2a4_level0_row9" class="row_heading level0 row9" >9</th>
+      <td id="T_9f2a4_row9_col0" class="data row9 col0" >1515</td>
+      <td id="T_9f2a4_row9_col1" class="data row9 col1" >1968-07-18 08:28:00</td>
+      <td id="T_9f2a4_row9_col2" class="data row9 col2" >1515-1968-07-18-08-28-00</td>
+      <td id="T_9f2a4_row9_col3" class="data row9 col3" >0.000000</td>
+      <td id="T_9f2a4_row9_col4" class="data row9 col4" >2.973084</td>
+      <td id="T_9f2a4_row9_col5" class="data row9 col5" >0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>And there we go! A dataframe ready for classification, containing:</p>
+<ol class="arabic simple">
+<li><p>The citizen IDs</p></li>
+<li><p>Timestamps for each prediction time</p></li>
+<li><p>A unique identifier for each prediciton-time</p></li>
+<li><p>Our predictor columns, prefixed with <code class="docutils literal notranslate"><span class="pre">pred_</span></code> and</p></li>
+<li><p>Our outcome columns, prefixed with <code class="docutils literal notranslate"><span class="pre">outc_</span></code></p></li>
+</ol>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="02_advanced.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Advanced tutorial</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../installation.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Installation</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Introductory tutorial</a><ul>
+<li><a class="reference internal" href="#loading-data">Loading data</a><ul>
+<li><a class="reference internal" href="#prediction-times">Prediction times</a></li>
+<li><a class="reference internal" href="#temporal-outcome">Temporal outcome</a></li>
+<li><a class="reference internal" href="#temporal-predictor">Temporal predictor</a></li>
+<li><a class="reference internal" href="#static-predictor">Static predictor</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specifying-how-to-flatten-the-data">Specifying how to flatten the data</a><ul>
+<li><a class="reference internal" href="#id1">Temporal outcome</a></li>
+<li><a class="reference internal" href="#id2">Temporal predictor</a></li>
+<li><a class="reference internal" href="#id3">Static predictor</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flattening">Flattening</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/design-tabs.js"></script>
+    </body>
+</html>

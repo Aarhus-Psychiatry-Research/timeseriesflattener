@@ -9,6 +9,8 @@
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -167,12 +169,14 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/01_basic.html">Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/02_advanced.html">Advanced tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently asked questions</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../data_classes.html">Data Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../feature_specifications.html">Feature specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../timeseriesflattener.html">Timeseriesflattener</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
@@ -255,7 +259,7 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="SpecCollection"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.SpecCollection">[docs]</a><span class="k">class</span> <span class="nc">SpecCollection</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="SpecCollection"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.SpecCollection">[docs]</a><span class="k">class</span> <span class="nc">SpecCollection</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A collection of specs.&quot;&quot;&quot;</span>
 
     <span class="n">outcome_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutcomeSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -269,7 +273,7 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TimeseriesFlattener"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">[docs]</a><span class="k">class</span> <span class="nc">TimeseriesFlattener</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
+<div class="viewcode-block" id="TimeseriesFlattener"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">[docs]</a><span class="k">class</span> <span class="nc">TimeseriesFlattener</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
     <span class="sd">&quot;&quot;&quot;Turn a set of time-series into tabular prediction-time data.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_override_cache_attributes_with_self_attributes</span><span class="p">(</span>
@@ -975,7 +979,7 @@
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Minimum timestamp is </span><span class="si">{</span><span class="n">min_timestamp</span><span class="si">}</span><span class="s2"> - perhaps ints were coerced to timestamps?&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
-<div class="viewcode-block" id="TimeseriesFlattener.add_spec"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec">[docs]</a>    <span class="k">def</span> <span class="nf">add_spec</span><span class="p">(</span>
+<div class="viewcode-block" id="TimeseriesFlattener.add_spec"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec">[docs]</a>    <span class="k">def</span> <span class="nf">add_spec</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AnySpec</span><span class="p">],</span> <span class="n">AnySpec</span><span class="p">],</span>
     <span class="p">):</span>
@@ -1015,7 +1019,7 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">StaticSpec</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">static_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_i</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TimeseriesFlattener.add_age"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_age">[docs]</a>    <span class="k">def</span> <span class="nf">add_age</span><span class="p">(</span>
+<div class="viewcode-block" id="TimeseriesFlattener.add_age"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_age">[docs]</a>    <span class="k">def</span> <span class="nf">add_age</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">date_of_birth_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">date_of_birth_col_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;date_of_birth&quot;</span><span class="p">,</span>
@@ -1067,7 +1071,7 @@
         <span class="c1"># Remove date of birth column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">tmp_date_of_birth_col_name</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TimeseriesFlattener.compute"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeseriesFlattener.compute"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compute the flattened dataset.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No unprocessed specs, skipping&quot;</span><span class="p">)</span>
@@ -1076,7 +1080,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_process_static_specs</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="TimeseriesFlattener.get_df"><a class="viewcode-back" href="../../data_classes.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.get_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="TimeseriesFlattener.get_df"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.get_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get the flattened dataframe. Computes if any unprocessed specs are present.</span>
 
 <span class="sd">        Returns:</span>
