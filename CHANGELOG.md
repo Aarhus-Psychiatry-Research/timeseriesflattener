@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.20.1 (2022-12-09)
+### Fix
+* Only remove outcome spec if added ([`bfa7eed`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bfa7eed046c9bb7310664304cb2f3208408d5eca))
+* Remove unprocessed specs when computing ([`6b61195`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6b611958ce99a0f3bc93080cbd3396aca8433ef7))
+* Remove unprocessed specs when computing ([`38404de`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/38404de3491531d01cf1dbc6032fb50f505cd1de))
+
 ## v0.20.0 (2022-12-08)
 ### Feature
 * Move values_df validation that depends on flattened_ds to flattened_ds ([`cad634d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cad634d74c937735e98aee82eb883ae5da1c1dec))
