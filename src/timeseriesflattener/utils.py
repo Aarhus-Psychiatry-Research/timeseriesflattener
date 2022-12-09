@@ -8,13 +8,13 @@ import logging
 import os
 from collections.abc import Callable, Hashable
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_dfs: Dict[str, pd.DataFrame] = {}
+split_dfs: dict[str, pd.DataFrame] = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
