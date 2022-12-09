@@ -52,7 +52,7 @@ runs:
     - name: Compile notebooks and check for errors
       shell: bash
       run: |
-        poetry run jupyter nbconvert --to notebook --execute tutorials/*.ipynb
+        poetry run jupyter nbconvert --to notebook --execute docs/tutorials/*.ipynb
         for notebook in tutorials/*.ipynb; do
           if grep -q "\"cell_type\": \"error\"" $notebook; then
             echo "Error cell found in $notebook"

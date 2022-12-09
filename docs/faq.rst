@@ -34,7 +34,7 @@ How do I test the code and run the test suite?
 This package comes with an extensive test suite. In order to run the tests,
 you'll usually want to clone the repository and build the package from the
 source. This will also install the required development dependencies
-and test utilities defined in the `pyproject.toml <https://github.com/Aarhus-Psychiatry-Research/psycop-feature-generation/blob/main/pyproject.toml>`__.
+and test utilities defined in the `pyproject.toml <https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/pyproject.toml>`__.
 
 
 .. code-block:: bash
