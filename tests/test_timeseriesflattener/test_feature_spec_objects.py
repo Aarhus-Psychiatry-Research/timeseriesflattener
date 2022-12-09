@@ -10,7 +10,7 @@ from timeseriesflattener.feature_spec_objects import (
 from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import
     load_synth_predictor_float,
 )
-from timeseriesflattener.testing.utils_for_testing import long_df
+from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import split_df_and_register_to_dict
 
 
@@ -70,10 +70,10 @@ def test_that_col_names_in_kwargs_exist_in_df():
         check_that_col_names_in_kwargs_exist_in_df(data=data, df=df)
 
 
-def test_create_combinations_while_resolving_from_registry(long_df: pd.DataFrame):
+def test_create_combinations_while_resolving_from_registry(long_df_with_multiple_values: pd.DataFrame):
     """Test that split_df_and_register_to_dict resolves correctly when multiple dataframes are fetched."""
 
-    split_df_and_register_to_dict(df=long_df)
+    split_df_and_register_to_dict(df=long_df_with_multiple_values)
 
     group_spec = PredictorGroupSpec(
         values_name=[

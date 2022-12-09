@@ -117,7 +117,7 @@ def assert_flattened_data_as_expected(
         raise ValueError("Must provide an expected set of data")
 
 
-def create_long_df():
+def load_long_df_with_multiple_values():
     """Create a long df."""
     df = synth_predictor_binary()
     df = df.rename(columns={"value": "value_name_1"})
@@ -177,6 +177,6 @@ def synth_outcome():
 
 
 @pytest.fixture(scope="function")
-def long_df():
+def long_df_with_multiple_values():
     """Load the long df."""
-    return create_long_df()
+    return load_long_df_with_multiple_values()
