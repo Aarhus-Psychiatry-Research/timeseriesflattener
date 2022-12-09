@@ -917,7 +917,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_incident_outcome</span><span class="p">(</span>
                     <span class="n">outcome_spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span>
                 <span class="p">)</span>
-
+                <span class="c1"># Remove the processed spec</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
 
         <span class="n">temporal_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span>
@@ -928,6 +928,10 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_temporal_batch</span><span class="p">(</span><span class="n">temporal_batch</span><span class="o">=</span><span class="n">temporal_batch</span><span class="p">)</span>
+
+        <span class="c1"># Remove the processed specs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">predictor_specs</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">_check_that_spec_df_has_required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">AnySpec</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check that df has required columns.&quot;&quot;&quot;</span>
