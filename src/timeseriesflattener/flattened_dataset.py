@@ -700,8 +700,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 self._add_incident_outcome(
                     outcome_spec=spec,
                 )
-            # Remove the processed spec
-            self.unprocessed_specs.outcome_specs.remove(spec)
+                # Remove the processed spec
+                self.unprocessed_specs.outcome_specs.remove(spec)
 
         temporal_batch = self.unprocessed_specs.outcome_specs
         temporal_batch += self.unprocessed_specs.predictor_specs
