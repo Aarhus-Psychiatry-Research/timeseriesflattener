@@ -125,7 +125,7 @@ def load_long_df_with_multiple_values():
 
     long_df = pd.melt(
         df,
-        id_vars=["dw_ek_borger", "timestamp"],
+        id_vars=["entity_id", "timestamp"],
         value_vars=["value_name_1", "value_name_2"],
         var_name="value_names",
         value_name="value",
