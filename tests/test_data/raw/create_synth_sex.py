@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     column_specs = [
         {
-            "id": {
+            "entity_id": {
                 "column_type": "uniform_int",
                 "min": 0,
                 "max": 10_000,
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         n_samples=100_000,
     )
 
-    df = df.groupby("id").last().reset_index()
+    df = df.groupby("entity_id").last().reset_index()
 
     df.to_csv(
         project_root / "tests" / "test_data" / "raw" / "synth_sex.csv",

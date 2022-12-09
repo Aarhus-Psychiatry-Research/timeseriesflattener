@@ -120,7 +120,7 @@ def assert_flattened_data_as_expected(
 @data_loaders.register("load_event_times")
 def load_event_times():
     """Load event times."""
-    event_times_str = """id,timestamp,value,
+    event_times_str = """entity_id,timestamp,value,
                     1,2021-12-30 00:00:01, 1
                     1,2021-12-29 00:00:02, 2
                     """
@@ -168,7 +168,7 @@ def long_df():
 
     df = pd.melt(
         synth_df,
-        id_vars=["id", "timestamp"],
+        id_vars=["entity_id", "timestamp"],
         value_vars=["value_name_1", "value_name_2"],
         var_name="value_names",
         value_name="value",
