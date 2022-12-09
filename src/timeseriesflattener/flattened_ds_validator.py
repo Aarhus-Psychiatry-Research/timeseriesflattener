@@ -8,7 +8,10 @@ class ValidateInitFlattenedDataset:
     """Validator for a flattened dataset."""
 
     def __init__(
-        self, df: pd.DataFrame, timestamp_col_name: str, entity_id_col_name: str
+        self,
+        df: pd.DataFrame,
+        timestamp_col_name: str,
+        entity_id_col_name: str,
     ):
         self.df = df
         self.timestamp_col_name = timestamp_col_name

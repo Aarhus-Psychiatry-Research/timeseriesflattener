@@ -176,8 +176,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Create pred_time_uuid_columne
         self._df[self.pred_time_uuid_col_name] = self._df[
             self.entity_id_col_name
-        ].astype(str,) + self._df[self.timestamp_col_name].dt.strftime(
-            "-%Y-%m-%d-%H-%M-%S"
+        ].astype(str) + self._df[self.timestamp_col_name].dt.strftime(
+            "-%Y-%m-%d-%H-%M-%S",
         )
 
         if log_to_stdout:
