@@ -37,9 +37,8 @@ extensions = [
     "sphinxext.opengraph",
     "sphinx_copybutton",
     "sphinx.ext.githubpages",
-    "myst_parser",
+    "myst_nb",
     "sphinx_design",  # for design feature such as tabs
-    "nbsphinx",  # for integrating notebooks
 ]
 
 

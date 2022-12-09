@@ -44,8 +44,8 @@ Otherwise, please use the discussion forums.
    :hidden:
 
    installation
-   tutorials/01_basic
-   tutorials/02_advanced
+   tutorials/01_basic.ipynb
+   tutorials/02_advanced.ipynb
    faq
 
 
@@ -53,7 +53,7 @@ Otherwise, please use the discussion forums.
    :caption: API
    :hidden:
 
-   Main API
+   data_classes
 
 
 .. toctree::
