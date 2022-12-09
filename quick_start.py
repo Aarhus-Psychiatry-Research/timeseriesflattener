@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 if __name__ == "__main__":
 
@@ -13,31 +13,31 @@ if __name__ == "__main__":
     # Load a dataframe with raw values you wish to aggregate as predictors
     predictor_df = pd.DataFrame(
         {
-            "id": [1, 1, 1, 2, 2, 2],
+            "id": [1, 1, 1, 1, 2, 2, 2],
             "date": [
                 "2020-01-15",
                 "2019-12-10",
                 "2019-12-15",
+                "2019-10-20",
                 "2020-01-13",
                 "2020-02-02",
-                "2020-02-03",
+                "2020-03-16",
             ],
-            "value": [1, 2, 3, 4, 5, 6],
+            "value": [1, 2, 3, 4, 4, 5, 6],
         }
     )
     # Load a dataframe specifying when the outcome occurs
     outcome_df = pd.DataFrame({"id": [1], "date": ["2020-03-01"], "value": [1]})
 
     # Specify how to aggregate the predictors and define the outcome
-    from timeseriesflattener.feature_spec_objects import PredictorSpec, OutcomeSpec
-    from timeseriesflattener.resolve_multiple_functions import mean, maximum
+    from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec
+    from timeseriesflattener.resolve_multiple_functions import maximum, mean
 
     predictor_spec = PredictorSpec(
         values_df=predictor_df,
         lookbehind_days=15,
         fallback=np.nan,
         id_col_name="id",
-        timestamp_col_name="date",
         resolve_multiple_fn=mean,
         feature_name="test_feature",
     )
@@ -46,7 +46,6 @@ if __name__ == "__main__":
         lookahead_days=31,
         fallback=0,
         id_col_name="id",
-        timestamp_col_name="date",
         resolve_multiple_fn=maximum,
         feature_name="test_outcome",
         incident=False,
@@ -64,6 +63,10 @@ if __name__ == "__main__":
     )
     ts_flattener.add_spec([predictor_spec, outcome_spec])
     ts_flattener.compute()
-    ts_flattener.get_df()
+    df = ts_flattener.get_df()
 
-    ## Add markdown table of output (when bugs are fixed)
+    print(df.to_markdown())
+    # check if get_df recomputes
+
+
+    prediction_times_df
