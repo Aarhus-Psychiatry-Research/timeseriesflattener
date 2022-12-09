@@ -1,6 +1,6 @@
 <a href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"><img src="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/docs/_static/icon.png?raw=true" width="220" align="right"/></a>
 
-# Time-series Flattener
+# Timeseriesflattener
 
 ![python versions](https://img.shields.io/badge/Python-%3E=3.9-blue)
 [![Code style: black](https://img.shields.io/badge/Code%20Style-Black-black)](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html)
