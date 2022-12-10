@@ -9,6 +9,7 @@ import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra, Field
+from pydantic.fields import FieldInfo
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders, split_dfs
@@ -113,7 +114,7 @@ def generate_docstring_from_attributes(cls: BaseModel) -> str:
         # extract the pretty printed type
         type_ = [arg[1] for arg in field.__repr_args__() if arg[0] == "type"][0]
         doc += "        "
-        field_info: pd.fields.FieldInfo = field.field_info
+        field_info: FieldInfo = field.field_info
         doc += f"{name} ({type_}):\n        "
         default_value = field.default
         default_str = (
