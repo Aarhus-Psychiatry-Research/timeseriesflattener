@@ -157,7 +157,7 @@ def pretty_diff(original: str, new: str) -> str:
 
     # Use the difflib library to compute the diff
     return list(
-        difflib.Differ().compare(original.splitlines(True), new.splitlines(True))
+        difflib.Differ().compare(original.splitlines(True), new.splitlines(True)),
     )
 
 
@@ -178,10 +178,12 @@ def test_feature_spec_docstrings(spec: BaseModel):
     generated_docstring = generate_docstring_from_attributes(cls=spec)
     # strip docstrings of newlines and whitespace to allow room for formatting
     current_docstring_no_whitespace = current_docstring.replace(" ", "").replace(
-        "\n", ""
+        "\n",
+        "",
     )
     generated_docstring_no_whitespace = generated_docstring.replace(" ", "").replace(
-        "\n", ""
+        "\n",
+        "",
     )
 
     if current_docstring_no_whitespace != generated_docstring_no_whitespace:
@@ -191,5 +193,5 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Expected: \n\n{generated_docstring}
         \n\nDiff:
         {pretty_diff(current_docstring, generated_docstring)}
-        """
+        """,
         )

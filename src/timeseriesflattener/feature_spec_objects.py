@@ -196,7 +196,8 @@ class AnySpec(BaseModel):
     )
 
     values_df: Optional[pd.DataFrame] = Field(
-        default=None, description="Dataframe with the values."
+        default=None,
+        description="Dataframe with the values.",
     )
 
     feature_name: str = Field(
@@ -206,7 +207,7 @@ class AnySpec(BaseModel):
 
     prefix: str = Field(
         description="""The prefix used for column name generation, e.g.
-            <prefix>_<feature_name>."""
+            <prefix>_<feature_name>.""",
     )
 
     input_col_name_override: Optional[str] = Field(
@@ -336,7 +337,7 @@ class TemporalSpec(AnySpec):
 
     resolve_multiple_fn: Callable = Field(
         description="""A function used for resolving multiple values within the 
-            interval_days."""
+            interval_days.""",
     )
 
     key_for_resolve_multiple: Optional[str] = Field(
@@ -349,7 +350,7 @@ class TemporalSpec(AnySpec):
     )
 
     fallback: Union[Callable, int, float, str] = Field(
-        description="""Which value to use if no values are found within interval_days."""
+        description="""Which value to use if no values are found within interval_days.""",
     )
 
     allowed_nan_value_prop: float = Field(
@@ -359,11 +360,13 @@ class TemporalSpec(AnySpec):
     )
 
     entity_id_col_name: str = Field(
-        default="entity_id", description="""Col name for ids in the input dataframe."""
+        default="entity_id",
+        description="""Col name for ids in the input dataframe.""",
     )
 
     loader_kwargs: Optional[dict] = Field(
-        default=None, description="""Optional kwargs passed onto the data loader."""
+        default=None,
+        description="""Optional kwargs passed onto the data loader.""",
     )
 
     def __init__(self, **data):
@@ -538,11 +541,11 @@ class OutcomeSpec(TemporalSpec):
         description="""Whether the outcome is incident or not, i.e. whether you 
             can experience it more than once. For example, type 2 diabetes is incident. 
             Incident outcomes can be handled in a vectorised way during resolution, 
-            which is faster than non-incident outcomes."""
+            which is faster than non-incident outcomes.""",
     )
 
     lookahead_days: Union[int, float] = Field(
-        description="""How far ahead to look for values"""
+        description="""How far ahead to look for values""",
     )
 
     def __init__(self, **data):
@@ -593,7 +596,8 @@ class MinGroupSpec(BaseModel):
     )
 
     values_df: Optional[pd.DataFrame] = Field(
-        default=None, description="""Dataframe with the values."""
+        default=None,
+        description="""Dataframe with the values.""",
     )
 
     input_col_name_override: Optional[str] = Field(
@@ -609,11 +613,11 @@ class MinGroupSpec(BaseModel):
 
     resolve_multiple_fn: list[Union[str, Callable]] = Field(
         description="""Name of resolve multiple fn, resolved from 
-            resolve_multiple_functions.py"""
+            resolve_multiple_functions.py""",
     )
 
     fallback: list[Union[Callable, str]] = Field(
-        description="""Which value to use if no values are found within interval_days."""
+        description="""Which value to use if no values are found within interval_days.""",
     )
 
     allowed_nan_value_prop: list[float] = Field(
@@ -751,7 +755,7 @@ class PredictorGroupSpec(MinGroupSpec):
     )
 
     lookbehind_days: list[Union[int, float]] = Field(
-        description="""How far behind to look for values"""
+        description="""How far behind to look for values""",
     )
 
     def create_combinations(self) -> list[PredictorSpec]:
@@ -809,11 +813,11 @@ class OutcomeGroupSpec(MinGroupSpec):
         description="""Whether the outcome is incident or not, i.e. whether you 
             can experience it more than once. For example, type 2 diabetes is incident. 
             Incident outcomes can be handled in a vectorised way during resolution, 
-             which is faster than non-incident outcomes."""
+             which is faster than non-incident outcomes.""",
     )
 
     lookahead_days: list[Union[int, float]] = Field(
-        description="""How far ahead to look for values"""
+        description="""How far ahead to look for values""",
     )
 
     def create_combinations(self) -> list[OutcomeSpec]:
