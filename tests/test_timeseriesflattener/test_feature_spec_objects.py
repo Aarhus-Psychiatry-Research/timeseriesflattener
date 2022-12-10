@@ -1,12 +1,20 @@
 """Test that feature spec objects work as intended."""
+import difflib
+
 import numpy as np
 import pandas as pd
 import pytest
 
 from timeseriesflattener.feature_spec_objects import (
     AnySpec,
+    BaseModel,
+    OutcomeGroupSpec,
+    OutcomeSpec,
     PredictorGroupSpec,
+    PredictorSpec,
+    TemporalSpec,
     check_that_col_names_in_kwargs_exist_in_df,
+    generate_docstring_from_attributes,
 )
 from timeseriesflattener.resolve_multiple_functions import maximum
 from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import; noqa
@@ -134,3 +142,55 @@ def test_resolve_multiple_fn_to_str():
     ).create_combinations()
 
     assert "maximum" in pred_spec_batch[0].get_col_str()
+
+
+def pretty_diff(original: str, new: str) -> str:
+    """
+    Computes a pretty diff between the original and new strings.
+
+    Args:
+        original: The original string
+        new: The new string
+
+    Returns:
+        A string containing the pretty diff
+    """
+
+    # Use the difflib library to compute the diff
+    return list(
+        difflib.Differ().compare(original.splitlines(True), new.splitlines(True))
+    )
+
+
+@pytest.mark.parametrize(
+    "spec",
+    [
+        AnySpec,
+        TemporalSpec,
+        PredictorSpec,
+        PredictorGroupSpec,
+        OutcomeSpec,
+        OutcomeGroupSpec,
+    ],
+)
+def test_feature_spec_docstrings(spec: BaseModel):
+    """Test that docstring is generated correctly."""
+    current_docstring = spec.__doc__
+    generated_docstring = generate_docstring_from_attributes(cls=spec)
+    # strip docstrings of newlines and whitespace to allow room for formatting
+    current_docstring_no_whitespace = current_docstring.replace(" ", "").replace(
+        "\n", ""
+    )
+    generated_docstring_no_whitespace = generated_docstring.replace(" ", "").replace(
+        "\n", ""
+    )
+
+    if current_docstring_no_whitespace != generated_docstring_no_whitespace:
+        raise AssertionError(
+            f"""{spec} docstring is not updated correctly.
+        Got: \n\n{current_docstring}.
+        Expected: \n\n{generated_docstring}
+        \n\nDiff: 
+        {pretty_diff(current_docstring, generated_docstring)}
+        """
+        )
