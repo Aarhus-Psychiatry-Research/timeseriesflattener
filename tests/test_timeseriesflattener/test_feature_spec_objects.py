@@ -189,7 +189,7 @@ def test_feature_spec_docstrings(spec: BaseModel):
             f"""{spec} docstring is not updated correctly.
         Got: \n\n{current_docstring}.
         Expected: \n\n{generated_docstring}
-        \n\nDiff: 
+        \n\nDiff:
         {pretty_diff(current_docstring, generated_docstring)}
         """
         )
