@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # Get project root directory
 
     column_specs = {
-        "id": {
+        "entity_id": {
             "column_type": "uniform_int",
             "min": 0,
             "max": 10_000,

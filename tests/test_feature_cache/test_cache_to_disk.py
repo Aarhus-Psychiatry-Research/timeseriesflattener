@@ -23,7 +23,7 @@ def test_write_and_check_feature(
     cache = DiskCache(
         feature_cache_dir=tmp_path,
         pred_time_uuid_col_name="pred_time_uuid",
-        id_col_name="id",
+        entity_id_col_name="entity_id",
         cache_file_suffix="csv",
         prediction_times_df=pd.DataFrame(
             {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]},
@@ -32,7 +32,7 @@ def test_write_and_check_feature(
 
     values_df = pd.DataFrame(
         {
-            "id": [1, 2, 3],
+            "entity_id": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             "value": [1, 2, 3],
@@ -50,7 +50,7 @@ def test_write_and_check_feature(
 
     generated_df = pd.DataFrame(
         {
-            "id": [1, 2, 3],
+            "entity_id": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_col_str()}": [1, 2, 3],
@@ -78,17 +78,17 @@ def test_read_feature(tmp_path):
     cache = DiskCache(
         feature_cache_dir=tmp_path,
         pred_time_uuid_col_name="pred_time_uuid",
-        id_col_name="id",
+        entity_id_col_name="entity_id",
         timestamp_col_name="timestamp",
         cache_file_suffix="csv",
         prediction_times_df=pd.DataFrame(
-            {"pred_time_uuid": [1, 2, 3], "id": [1, 2, 3]},
+            {"pred_time_uuid": [1, 2, 3], "entity_id": [1, 2, 3]},
         ),
     )
 
     values_df = pd.DataFrame(
         {
-            "id": [1, 2, 3, 4, 5],
+            "entity_id": [1, 2, 3, 4, 5],
             "timestamp": [1, 2, 3, 4, 5],
             "value": [1, 2, 3, 4, 5],
         },
@@ -105,7 +105,7 @@ def test_read_feature(tmp_path):
 
     generated_df = pd.DataFrame(
         {
-            "id": [
+            "entity_id": [
                 1,
                 2,
                 3,
