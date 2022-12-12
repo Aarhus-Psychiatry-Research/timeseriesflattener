@@ -22,7 +22,7 @@ psutil = ">=5.9.1, <6.0.0"
 pandas = ">=1.4.0,<1.6.0"
 catalogue = ">=2.0.0, <2.1.0"
 numpy = ">=1.23.3,<1.23.6"
-pyarrow = ">=9.0.0,<9.1.0"
+pyarrow = ">=9.0.0,<10.1.0"
 psycopmlutils = ">=0.2.4, <0.3.0"
 protobuf = "<=3.20.3" # Other versions give errors with pytest, super weird!
 frozendict = ">=2.3.4,<2.4.0"
