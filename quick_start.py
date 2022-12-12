@@ -1,3 +1,4 @@
+"""Quick start example"""
 import numpy as np
 import pandas as pd
 
@@ -8,7 +9,7 @@ if __name__ == "__main__":
         {
             "id": [1, 1, 2, 2],
             "date": ["2020-01-01", "2020-02-01", "2020-02-01", "2020-03-01"],
-        }
+        },
     )
     # Load a dataframe with raw values you wish to aggregate as predictors
     predictor_df = pd.DataFrame(
@@ -24,7 +25,7 @@ if __name__ == "__main__":
                 "2020-03-16",
             ],
             "value": [1, 2, 3, 4, 4, 5, 6],
-        }
+        },
     )
     # Load a dataframe specifying when the outcome occurs
     outcome_df = pd.DataFrame({"id": [1], "date": ["2020-03-01"], "value": [1]})
@@ -65,8 +66,5 @@ if __name__ == "__main__":
     ts_flattener.compute()
     df = ts_flattener.get_df()
 
-    print(df.to_markdown())
     # check if get_df recomputes
-
-
-    prediction_times_df
+    prediction_times_df  # pylint: disable=pointless-statement
