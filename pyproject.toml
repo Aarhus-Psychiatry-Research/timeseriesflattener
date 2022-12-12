@@ -43,7 +43,7 @@ pylint = ">=2.15.5,<2.16.0"
 
 # documentation
 sphinx = ">=5.3.0,<5.4.0"
-furo = "2022.9.29"
+furo = "2022.12.7"
 sphinx-copybutton = ">=0.5.1,<0.5.2"
 sphinxext-opengraph = ">=0.7.3,<0.7.4"
 myst-nb = ">=0.6.0,<1.17.0"
