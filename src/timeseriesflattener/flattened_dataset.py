@@ -3,13 +3,14 @@
 Takes a time-series and flattens it into a set of prediction times with describing values.
 Takes a time-series and flattens it into a set of prediction times describing values.
 """
+import copy
 import datetime as dt
 import logging
 import random
 import time
 from collections.abc import Callable
 from datetime import timedelta
-from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
 from typing import Optional, Union
 
 import coloredlogs
@@ -414,7 +415,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Returns:
             pd.DataFrame: Feature
         """
-
+        # Create copies of objects to avoid competing threads being IO bound
+        # whent they try to read/write to the same object
         if self.cache:
             if self.cache.feature_exists(feature_spec=feature_spec):
                 log.info(
@@ -427,14 +429,18 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         elif not self.cache:
             log.info("No cache specified, not attempting load")
 
-        df = self._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self._df[
+        _df = copy.deepcopy(
+            self._df[
                 [
                     self.pred_time_uuid_col_name,
                     self.entity_id_col_name,
                     self.timestamp_col_name,
                 ]
-            ],
+            ]
+        )
+
+        df = self._flatten_temporal_values_to_df(
+            prediction_times_with_uuid_df=_df,
             entity_id_col_name=self.entity_id_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             output_spec=feature_spec,
@@ -523,7 +529,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers"
         )
 
-        with Pool(n_workers) as p:
+        with ThreadPool(n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
                     p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
