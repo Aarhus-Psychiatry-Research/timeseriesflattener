@@ -1,4 +1,9 @@
-on: [push]
+name: automerge-dependabot-prs
+
+on:
+  push:
+    branches:
+      - main 
 
 jobs:
   paper:
