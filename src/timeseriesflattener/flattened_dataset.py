@@ -23,11 +23,11 @@ from pydantic import BaseModel as PydanticBaseModel
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
-    AnySpec,
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
     TemporalSpec,
+    _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
@@ -43,7 +43,7 @@ class SpecCollection(PydanticBaseModel):
 
     outcome_specs: list[OutcomeSpec] = []
     predictor_specs: list[PredictorSpec] = []
-    static_specs: list[AnySpec] = []
+    static_specs: list[_AnySpec] = []
 
     def __len__(self):
         """Return number of specs in collection."""
@@ -307,7 +307,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
-        output_spec: AnySpec,
+        output_spec: _AnySpec,
         entity_id_col_name: str,
         pred_time_uuid_col_name: str,
         timestamp_col_name: str,
@@ -527,7 +527,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _add_static_info(
         self,
-        static_spec: AnySpec,
+        static_spec: _AnySpec,
     ):
         """Add static info to each prediction time, e.g. age, sex etc.
 
@@ -722,7 +722,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         self.unprocessed_specs.outcome_specs = []
         self.unprocessed_specs.predictor_specs = []
 
-    def _check_that_spec_df_has_required_columns(self, spec: AnySpec):
+    def _check_that_spec_df_has_required_columns(self, spec: _AnySpec):
         """Check that df has required columns."""
         # Find all attributes in self that contain col_name
         required_columns = [self.entity_id_col_name]
@@ -760,7 +760,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def add_spec(
         self,
-        spec: Union[list[AnySpec], AnySpec],
+        spec: Union[list[_AnySpec], _AnySpec],
     ):
         """Add a specification to the flattened dataset.
 
@@ -771,8 +771,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Most of the complexity lies in the OutcomeSpec and PredictorSpec objects.
         For further documentation, see those objects and the tutorial.
         """
-        if isinstance(spec, AnySpec):
-            specs_to_process: list[AnySpec] = [spec]
+        if isinstance(spec, _AnySpec):
+            specs_to_process: list[_AnySpec] = [spec]
         else:
             specs_to_process = spec
 
@@ -828,7 +828,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         output_age_col_name = f"{output_prefix}_age_in_years"
 
         self._add_static_info(
-            static_spec=AnySpec(
+            static_spec=_AnySpec(
                 values_df=date_of_birth_df,
                 input_col_name_override=date_of_birth_col_name,
                 prefix="temp",

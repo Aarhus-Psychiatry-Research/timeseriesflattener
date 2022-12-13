@@ -1,5 +1,4 @@
 """Templates for feature specifications."""
-
 import itertools
 import logging
 from collections.abc import Callable, Sequence
@@ -9,12 +8,15 @@ from typing import Any, Optional, Union
 import pandas as pd
 from frozendict import frozendict  # type: ignore
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Extra
+from pydantic import Extra, Field
+from pydantic.fields import FieldInfo
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders, split_dfs
 
 log = logging.getLogger(__name__)
+
+# pylint: disable=consider-alternative-union-syntax, trailing-whitespace, missing-class-docstring, too-few-public-methods
 
 
 @cache
@@ -89,13 +91,58 @@ def resolve_values_df(data: dict[str, Any]):
 
 
 class BaseModel(PydanticBaseModel):
-    """."""
+    """Modified Pydantic BaseModel to allow arbitrary
+    types and disallow attributes not in the class."""
+
+    # The docstring generator uses the `short_description` attribute of the `Doc`
+    # class to generate the top of the docstring.
+    # If you want to modify a docstring, modify the `short_description` attribute.
+    # Then, when you run tests, new docstrings will be generated which you can copy/paste into
+    # the relevant files. This is necessary because
+    # 1) we have inheritance and don't want to have one source of truth for docs
+    # 2) pylance reads the docstring directly from the static file
+    # This means we want to auto-generate docstrings to support the inheritance,
+    # but also need to hard-code the docstring to support pylance.
+    class Doc:
+        short_description: str = """Modified Pydantic BaseModel to allow arbitrary 
+        types and disallow attributes not in the class."""
 
     class Config:
         """Disallow  attributes not in the the class."""
 
         arbitrary_types_allowed = True
         extra = Extra.forbid
+
+
+def generate_docstring_from_attributes(cls: BaseModel) -> str:
+    """Generate a docstring from the attributes of a Pydantic basemodel.
+    The top of the docstring is taken from the `short_description` attribute of the `Doc`
+    class. The rest of the docstring is generated from the attributes of the class."""
+    doc = ""
+    doc += f"{cls.Doc.short_description}\n\n    "
+    doc += "Fields:\n"
+    for field_name, field_obj in cls.__fields__.items():
+        # extract the pretty printed type
+        # __repr_args__ returns a list of tuples with two values,
+        # the name of the argument and the value. We are only interested in the
+        # value of the type argument.
+        type_ = [arg[1] for arg in field_obj.__repr_args__() if arg[0] == "type"]
+        type_ = type_[0]
+
+        field_description = field_obj.field_info.description
+
+        default_value = field_obj.default
+        default_str = (
+            f"Defaults to: {default_value}." if default_value is not None else ""
+        )
+        # Whitespace added for formatting
+        doc += "        "
+        doc += f"{field_name} ({type_}):\n        "
+
+        doc += f"    {field_description} {default_str}\n"
+    # remove the last newline
+    doc = doc[:-1]
+    return doc
 
 
 def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.DataFrame):
@@ -121,36 +168,81 @@ def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.Data
         raise ValueError("\n".join(errors))
 
 
-class AnySpec(BaseModel):
+class _AnySpec(BaseModel):
     """A base class for all feature specifications.
 
-    Allows for easier type hinting.
-    """
+    Fields:
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
+        values_name (Optional[str]):
+            A string that maps to a key in a dictionary instantiated by
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
+            is a subset of the df where the values_name == key.
+        loader_kwargs (Optional[Mapping[str, Any]]):
+            Optional kwargs for the values_loader.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        feature_name (str):
+            The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_name>.
+        prefix (str):
+            The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>.
+        input_col_name_override (Optional[str]):
+            An override for the input column name. If None, will  attempt
+            to infer it by looking for the only column that doesn't match id_col_name
+            or timestamp_col_name.
+        output_col_name_override (Optional[str]):
+            Override the generated column name after flattening the time series"""
 
-    values_loader: Optional[Callable] = None
-    # Loader for the df. Tries to resolve from the resolve_multiple_nfs registry,
-    # then calls the function which should return a dataframe.
+    class Doc:
+        short_description = "A base class for all feature specifications."
 
-    values_name: Optional[str] = None
-    # A string that corresponds to a key in a dictionary of multiple dataframes that
-    # correspods to a name of a type of values.
+    values_loader: Optional[Callable] = Field(
+        None,
+        description="""Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.""",
+    )
 
-    loader_kwargs: Optional[dict[str, Any]] = None
-    # Optional kwargs for the values_loader
+    values_name: Optional[str] = Field(
+        default=None,
+        description="""A string that maps to a key in a dictionary instantiated by 
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which 
+            is a subset of the df where the values_name == key.""",
+    )
 
-    values_df: Optional[pd.DataFrame] = None
-    # Dataframe with the values.
+    loader_kwargs: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="""Optional kwargs for the values_loader.""",
+    )
 
-    feature_name: str
-    prefix: str
-    # Used for column name generation, e.g. <prefix>_<feature_name>.
+    values_df: Optional[pd.DataFrame] = Field(
+        default=None,
+        description="Dataframe with the values.",
+    )
 
-    input_col_name_override: Optional[str] = None
-    # An override for the input column name. If None, will attempt
-    # to infer it by looking for the only column that doesn't match entity_id_col_name or timestamp_col_name.
+    feature_name: str = Field(
+        description="""The name of the feature. Used for column name generation, e.g. 
+            <prefix>_<feature_name>.""",
+    )
 
-    output_col_name_override: Optional[str] = None
-    # Override the generated col name after flattening the time series.
+    prefix: str = Field(
+        description="""The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>.""",
+    )
+
+    input_col_name_override: Optional[str] = Field(
+        default=None,
+        description="""An override for the input column name. If None, will  attempt 
+            to infer it by looking for the only column that doesn't match id_col_name 
+            or timestamp_col_name.""",
+    )
+
+    output_col_name_override: Optional[str] = Field(
+        default=None,
+        description="""Override the generated column name after flattening the time series""",
+    )
 
     def __init__(self, **kwargs: Any):
         kwargs = resolve_values_df(kwargs)
@@ -202,39 +294,101 @@ class AnySpec(BaseModel):
         return other_attributes_equal and dfs_equal
 
 
-class StaticSpec(AnySpec):
-    """Specification for a static feature."""
+class StaticSpec(_AnySpec):
+    class Doc:
+        short_description = """Specification for a static feature."""
 
 
-class TemporalSpec(AnySpec):
-    """The minimum specification required for all collapsed time series.
+class TemporalSpec(_AnySpec):
+    """The minimum specification required for collapsing a temporal
+        feature, whether looking ahead or behind. Mostly used for inheritance below.
 
-    (temporal features), whether looking ahead or behind.
+    Fields:
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
+        values_name (Optional[str]):
+            A string that maps to a key in a dictionary instantiated by
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
+            is a subset of the df where the values_name == key.
+        loader_kwargs (Optional[dict]):
+            Optional kwargs passed onto the data loader.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        feature_name (str):
+            The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_name>.
+        prefix (str):
+            The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>.
+        input_col_name_override (Optional[str]):
+            An override for the input column name. If None, will  attempt
+            to infer it by looking for the only column that doesn't match id_col_name
+            or timestamp_col_name.
+        output_col_name_override (Optional[str]):
+            Override the generated column name after flattening the time series
+        interval_days (Union[int, float]):
+            How far to look in the given direction (ahead for outcomes,
+            behind for predictors)
+        resolve_multiple_fn (Callable):
+            A function used for resolving multiple values within the
+            interval_days.
+        key_for_resolve_multiple (Optional[str]):
+            Key used to lookup the resolve_multiple_fn in the
+            resolve_multiple_fns registry. Used for column name generation. Only
+            required if you don't specify a resolve_multiple_fn. Call
+            timeseriesflattener.resolve_multiple_fns.resolve_multiple_fns.get_all()
+            for a list of options.
+        fallback (Union[Callable, int, float, str]):
+            Which value to use if no values are found within interval_days.
+        allowed_nan_value_prop (float):
+            If NaN is higher than this in the input dataframe during
+            resolution, raise an error. Defaults to: 0.0.
+        entity_id_col_name (str):
+            Col name for ids in the input dataframe. Defaults to: entity_id."""
 
-    Both if looking ahead or behind. Mostly used for inheritance below.
-    """
+    class Doc:
+        short_description = """The minimum specification required for collapsing a temporal 
+        feature, whether looking ahead or behind. Mostly used for inheritance below."""
 
-    interval_days: Union[int, float]
-    # How far to look in the given direction (ahead for outcomes, behind for predictors)
+    interval_days: Union[int, float] = Field(
+        description="""How far to look in the given direction (ahead for outcomes, 
+            behind for predictors)""",
+    )
 
-    resolve_multiple_fn: Callable
+    resolve_multiple_fn: Callable = Field(
+        description="""A function used for resolving multiple values within the 
+            interval_days.""",
+    )
 
-    key_for_resolve_multiple: Optional[str] = None
-    # Key used to lookup the resolve_multiple_fn in the resolve_multiple_fns registry.
-    # Used for column name generation. Only required if you don't specify a resolve_multiple_fn.
+    key_for_resolve_multiple: Optional[str] = Field(
+        default=None,
+        description="""Key used to lookup the resolve_multiple_fn in the 
+            resolve_multiple_fns registry. Used for column name generation. Only 
+            required if you don't specify a resolve_multiple_fn. Call
+            timeseriesflattener.resolve_multiple_fns.resolve_multiple_fns.get_all()
+            for a list of options.""",
+    )
 
-    fallback: Union[Callable, int, float, str]
-    # Which value to use if no values are found within interval_days.
+    fallback: Union[Callable, int, float, str] = Field(
+        description="""Which value to use if no values are found within interval_days.""",
+    )
 
-    allowed_nan_value_prop: float = 0.0
-    # If NaN is higher than this in the input dataframe during resolution, raise an error.
+    allowed_nan_value_prop: float = Field(
+        default=0.0,
+        description="""If NaN is higher than this in the input dataframe during 
+            resolution, raise an error.""",
+    )
 
-    entity_id_col_name: str = "entity_id"
-    # Col name for ids in the input dataframe.
+    entity_id_col_name: str = Field(
+        default="entity_id",
+        description="""Col name for ids in the input dataframe.""",
+    )
 
-    loader_kwargs: Optional[dict] = None
-
-    # Optional keyword arguments for the data loader
+    loader_kwargs: Optional[dict] = Field(
+        default=None,
+        description="""Optional kwargs passed onto the data loader.""",
+    )
 
     def __init__(self, **data):
         if not hasattr(self, "key_for_resolve_multiple") and callable(
@@ -266,11 +420,68 @@ class TemporalSpec(AnySpec):
 
 
 class PredictorSpec(TemporalSpec):
-    """Specification for a single predictor, where the df has been resolved."""
+    """Specification for a single predictor, where the df has been resolved.
 
-    prefix: str = "pred"
+    Fields:
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
+        values_name (Optional[str]):
+            A string that maps to a key in a dictionary instantiated by
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
+            is a subset of the df where the values_name == key.
+        loader_kwargs (Optional[dict]):
+            Optional kwargs passed onto the data loader.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        feature_name (str):
+            The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_name>.
+        prefix (str):
+            The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>. Defaults to: pred.
+        input_col_name_override (Optional[str]):
+            An override for the input column name. If None, will  attempt
+            to infer it by looking for the only column that doesn't match id_col_name
+            or timestamp_col_name.
+        output_col_name_override (Optional[str]):
+            Override the generated column name after flattening the time series
+        interval_days (Union[int, float]):
+            How far to look in the given direction (ahead for outcomes,
+            behind for predictors)
+        resolve_multiple_fn (Callable):
+            A function used for resolving multiple values within the
+            interval_days.
+        key_for_resolve_multiple (Optional[str]):
+            Key used to lookup the resolve_multiple_fn in the
+            resolve_multiple_fns registry. Used for column name generation. Only
+            required if you don't specify a resolve_multiple_fn. Call
+            timeseriesflattener.resolve_multiple_fns.resolve_multiple_fns.get_all()
+            for a list of options.
+        fallback (Union[Callable, int, float, str]):
+            Which value to use if no values are found within interval_days.
+        allowed_nan_value_prop (float):
+            If NaN is higher than this in the input dataframe during
+            resolution, raise an error. Defaults to: 0.0.
+        entity_id_col_name (str):
+            Col name for ids in the input dataframe. Defaults to: entity_id.
+        lookbehind_days (Union[int, float]):
+            How far behind to look for values"""
 
-    lookbehind_days: Union[int, float]
+    class Doc:
+        short_description = (
+            """Specification for a single predictor, where the df has been resolved."""
+        )
+
+    prefix: str = Field(
+        default="pred",
+        description="""The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>.""",
+    )
+
+    lookbehind_days: Union[int, float] = Field(
+        description="""How far behind to look for values""",
+    )
 
     def __init__(self, **data):
         if "lookbehind_days" in data:
@@ -285,13 +496,80 @@ class PredictorSpec(TemporalSpec):
 
 
 class OutcomeSpec(TemporalSpec):
-    """Specification for a single outcome, where the df has been resolved."""
+    """Specification for a single outcome, where the df has been resolved.
 
-    prefix: str = "outc"
+    Fields:
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
+        values_name (Optional[str]):
+            A string that maps to a key in a dictionary instantiated by
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
+            is a subset of the df where the values_name == key.
+        loader_kwargs (Optional[dict]):
+            Optional kwargs passed onto the data loader.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        feature_name (str):
+            The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_name>.
+        prefix (str):
+            The prefix used for column name generation, e.g.
+            <prefix>_<outcome_name>. Defaults to: outc.
+        input_col_name_override (Optional[str]):
+            An override for the input column name. If None, will  attempt
+            to infer it by looking for the only column that doesn't match id_col_name
+            or timestamp_col_name.
+        output_col_name_override (Optional[str]):
+            Override the generated column name after flattening the time series
+        interval_days (Union[int, float]):
+            How far to look in the given direction (ahead for outcomes,
+            behind for predictors)
+        resolve_multiple_fn (Callable):
+            A function used for resolving multiple values within the
+            interval_days.
+        key_for_resolve_multiple (Optional[str]):
+            Key used to lookup the resolve_multiple_fn in the
+            resolve_multiple_fns registry. Used for column name generation. Only
+            required if you don't specify a resolve_multiple_fn. Call
+            timeseriesflattener.resolve_multiple_fns.resolve_multiple_fns.get_all()
+            for a list of options.
+        fallback (Union[Callable, int, float, str]):
+            Which value to use if no values are found within interval_days.
+        allowed_nan_value_prop (float):
+            If NaN is higher than this in the input dataframe during
+            resolution, raise an error. Defaults to: 0.0.
+        entity_id_col_name (str):
+            Col name for ids in the input dataframe. Defaults to: entity_id.
+        incident (bool):
+            Whether the outcome is incident or not.
+            I.e., incident outcomes are outcomes you can only experience once.
+            For example, type 2 diabetes is incident. Incident outcomes can be handled
+            in a vectorised way during resolution, which is faster than non-incident outcomes.
+        lookahead_days (Union[int, float]):
+            How far ahead to look for values"""
 
-    incident: bool
+    class Doc:
+        short_description = (
+            """Specification for a single outcome, where the df has been resolved."""
+        )
 
-    lookahead_days: Union[int, float]
+    prefix: str = Field(
+        default="outc",
+        description="""The prefix used for column name generation, e.g.
+            <prefix>_<outcome_name>.""",
+    )
+
+    incident: bool = Field(
+        description="""Whether the outcome is incident or not. 
+            I.e., incident outcomes are outcomes you can only experience once. 
+            For example, type 2 diabetes is incident. Incident outcomes can be handled 
+            in a vectorised way during resolution, which is faster than non-incident outcomes.""",
+    )
+
+    lookahead_days: Union[int, float] = Field(
+        description="""How far ahead to look for values""",
+    )
 
     def __init__(self, **data):
         if "lookahead_days" in data:
@@ -300,10 +578,6 @@ class OutcomeSpec(TemporalSpec):
         data["lookahead_days"] = data["interval_days"]
 
         super().__init__(**data)
-
-    # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
-    # For example, type 2 diabetes is incident. Incident outcomes cna be handled in a vectorised
-    # way during resolution, which is faster than non-incident outcomes.
 
     def get_col_str(self) -> str:
         """Get the column name for the output column."""
@@ -325,39 +599,60 @@ class OutcomeSpec(TemporalSpec):
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
 
 
-class MinGroupSpec(BaseModel):
-    """Minimum specification for a group of features, whether they're looking ahead or behind.
+class _MinGroupSpec(BaseModel):
+    class Doc:
+        short_description = """Minimum specification for a group of features, 
+        whether they're looking ahead or behind. 
 
-    Used to generate combinations of features.
-    """
+        Used to generate combinations of features."""
 
-    values_loader: Optional[list[str]] = None
-    # Loader for the df. Tries to resolve from the data_loaders registry,
-    # then calls the function which should return a dataframe.
+    values_loader: Optional[list[str]] = Field(
+        default=None,
+        description="""Loader for the df. Tries to resolve from the data_loaders 
+            registry, then calls the function which should return a dataframe.""",
+    )
 
-    values_name: Optional[list[str]] = None
-    # List of strings that corresponds to a key in a dictionary of multiple dataframes
-    # that correspods to a name of a type of values.
+    values_name: Optional[list[str]] = Field(
+        default=None,
+        description="""List of strings that corresponds to a key in a dictionary 
+            of multiple dataframes that correspods to a name of a type of values.""",
+    )
 
-    values_df: Optional[pd.DataFrame] = None
-    # Dataframe with the values.
+    values_df: Optional[pd.DataFrame] = Field(
+        default=None,
+        description="""Dataframe with the values.""",
+    )
 
-    input_col_name_override: Optional[str] = None
-    # Override for the column name to use as values in df.
+    input_col_name_override: Optional[str] = Field(
+        default=None,
+        description="""Override for the column name to use as values in df.""",
+    )
 
-    output_col_name_override: Optional[str] = None
-    # Override for the column name to use as values in the output df.
+    output_col_name_override: Optional[str] = Field(
+        default=None,
+        description="""Override for the column name to use as values in the 
+            output df.""",
+    )
 
-    resolve_multiple_fn: list[Union[str, Callable]]
-    # Name of resolve multiple fn, resolved from resolve_multiple_functions.py
+    resolve_multiple_fn: list[Union[str, Callable]] = Field(
+        description="""Name of resolve multiple fn, resolved from 
+            resolve_multiple_functions.py""",
+    )
 
-    fallback: list[Union[Callable, str]]
-    # Which value to use if no values are found within interval_days.
+    fallback: list[Union[Callable, str]] = Field(
+        description="""Which value to use if no values are found within interval_days.""",
+    )
 
-    allowed_nan_value_prop: list[float] = [0.0]
-    # If NaN is higher than this in the input dataframe during resolution, raise an error.
+    allowed_nan_value_prop: list[float] = Field(
+        default=[0.0],
+        description="""If NaN is higher than this in the input dataframe during 
+            resolution, raise an error.""",
+    )
 
-    prefix: Optional[str] = None
+    prefix: Optional[str] = Field(
+        default=None,
+        description="""Prefix for column name, e.g. <prefix>_<feature_name>.""",
+    )
 
     def _check_loaders_are_valid(self):
         """Check that all loaders can be resolved from the data_loaders catalogue."""
@@ -430,9 +725,9 @@ def create_feature_combinations_from_dict(
 
 
 def create_specs_from_group(
-    feature_group_spec: MinGroupSpec,
-    output_class: AnySpec,
-) -> list[AnySpec]:
+    feature_group_spec: _MinGroupSpec,
+    output_class: _AnySpec,
+) -> list[_AnySpec]:
     """Create a list of specs from a GroupSpec."""
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
@@ -444,12 +739,47 @@ def create_specs_from_group(
     return [output_class(**d) for d in permuted_dicts]  # type: ignore
 
 
-class PredictorGroupSpec(MinGroupSpec):
-    """Specification for a group of predictors."""
+class PredictorGroupSpec(_MinGroupSpec):
+    """Specification for a group of predictors.
 
-    prefix = "pred"
+    Fields:
+        values_loader (Optional[List[str]]):
+            Loader for the df. Tries to resolve from the data_loaders
+            registry, then calls the function which should return a dataframe.
+        values_name (Optional[List[str]]):
+            List of strings that corresponds to a key in a dictionary
+            of multiple dataframes that correspods to a name of a type of values.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        input_col_name_override (Optional[str]):
+            Override for the column name to use as values in df.
+        output_col_name_override (Optional[str]):
+            Override for the column name to use as values in the
+            output df.
+        resolve_multiple_fn (List[Union[str, Callable]]):
+            Name of resolve multiple fn, resolved from
+            resolve_multiple_functions.py
+        fallback (List[Union[Callable, str]]):
+            Which value to use if no values are found within interval_days.
+        allowed_nan_value_prop (List[float]):
+            If NaN is higher than this in the input dataframe during
+            resolution, raise an error. Defaults to: [0.0].
+        prefix (str):
+            Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
+        lookbehind_days (List[Union[int, float]]):
+            How far behind to look for values"""
 
-    lookbehind_days: list[Union[int, float]]
+    class Doc:
+        short_description = """Specification for a group of predictors."""
+
+    prefix: str = Field(
+        default="pred",
+        description="""Prefix for column name, e,g, <prefix>_<feature_name>.""",
+    )
+
+    lookbehind_days: list[Union[int, float]] = Field(
+        description="""How far behind to look for values""",
+    )
 
     def create_combinations(self) -> list[PredictorSpec]:
         """Create all combinations from the group spec."""
@@ -459,18 +789,59 @@ class PredictorGroupSpec(MinGroupSpec):
         )
 
 
-class OutcomeGroupSpec(MinGroupSpec):
-    """Specification for a group of outcomes."""
+class OutcomeGroupSpec(_MinGroupSpec):
+    """Specification for a group of outcomes.
 
-    prefix = "outc"
+    Fields:
+        values_loader (Optional[List[str]]):
+            Loader for the df. Tries to resolve from the data_loaders
+            registry, then calls the function which should return a dataframe.
+        values_name (Optional[List[str]]):
+            List of strings that corresponds to a key in a dictionary
+            of multiple dataframes that correspods to a name of a type of values.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        input_col_name_override (Optional[str]):
+            Override for the column name to use as values in df.
+        output_col_name_override (Optional[str]):
+            Override for the column name to use as values in the
+            output df.
+        resolve_multiple_fn (List[Union[str, Callable]]):
+            Name of resolve multiple fn, resolved from
+            resolve_multiple_functions.py
+        fallback (List[Union[Callable, str]]):
+            Which value to use if no values are found within interval_days.
+        allowed_nan_value_prop (List[float]):
+            If NaN is higher than this in the input dataframe during
+            resolution, raise an error. Defaults to: [0.0].
+        prefix (str):
+            Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
+        incident (Sequence[bool]):
+            Whether the outcome is incident or not, i.e. whether you
+            can experience it more than once. For example, type 2 diabetes is incident.
+            Incident outcomes can be handled in a vectorised way during resolution,
+             which is faster than non-incident outcomes.
+        lookahead_days (List[Union[int, float]]):
+            How far ahead to look for values"""
 
-    incident: Sequence[bool]
+    class Doc:
+        short_description = """Specification for a group of outcomes."""
 
-    lookahead_days: list[Union[int, float]]
+    prefix: str = Field(
+        default="outc",
+        description="""Prefix for column name, e.g. <prefix>_<feature_name>.""",
+    )
 
-    # Whether the outcome is incident or not, i.e. whether you can experience it more than once.
-    # For example, type 2 diabetes is incident. Incident outcomes can be handled in a vectorised
-    # way during resolution, which is faster than non-incident outcomes.
+    incident: Sequence[bool] = Field(
+        description="""Whether the outcome is incident or not, i.e. whether you 
+            can experience it more than once. For example, type 2 diabetes is incident. 
+            Incident outcomes can be handled in a vectorised way during resolution, 
+             which is faster than non-incident outcomes.""",
+    )
+
+    lookahead_days: list[Union[int, float]] = Field(
+        description="""How far ahead to look for values""",
+    )
 
     def create_combinations(self) -> list[OutcomeSpec]:
         """Create all combinations from the group spec."""
