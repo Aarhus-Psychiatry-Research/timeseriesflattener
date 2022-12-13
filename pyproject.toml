@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "timeseriesflattener"
-version = "0.20.0"
+version = "0.20.2"
 description = "A package for converting time series data from e.g. electronic health records into wide format data."
 readme = "README.md"
 authors = ["Martin Bernstorff", "Kenneth Enevoldsen", "Jakob Grøhn Damgaard", "Frida Hæstrup", "Lasse Hansen"]
@@ -22,7 +22,7 @@ psutil = ">=5.9.1, <6.0.0"
 pandas = ">=1.4.0,<1.6.0"
 catalogue = ">=2.0.0, <2.1.0"
 numpy = ">=1.23.3,<1.23.6"
-pyarrow = ">=9.0.0,<9.1.0"
+pyarrow = ">=9.0.0,<10.1.0"
 psycopmlutils = ">=0.2.4, <0.3.0"
 protobuf = "<=3.20.3" # Other versions give errors with pytest, super weird!
 frozendict = ">=2.3.4,<2.4.0"
@@ -43,11 +43,13 @@ pylint = ">=2.15.5,<2.16.0"
 
 # documentation
 sphinx = ">=5.3.0,<5.4.0"
-furo = "2022.9.29"
+furo = "2022.12.7"
 sphinx-copybutton = ">=0.5.1,<0.5.2"
 sphinxext-opengraph = ">=0.7.3,<0.7.4"
-myst-parser = ">=0.18.1,<0.18.2"
+myst-nb = ">=0.6.0,<1.17.0"
 sphinx_design = ">=0.3.0,<0.3.1"
+autodoc_pydantic = ">=1.1.0,<1.9.0"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

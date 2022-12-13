@@ -12,7 +12,7 @@ from timeseriesflattener.testing.utils_for_testing import (
 
 
 def test_col_does_not_exist_in_prediction_times():
-    prediction_times_str = """id,
+    prediction_times_str = """entity_id,
                             1,
                             """
 
@@ -22,17 +22,17 @@ def test_col_does_not_exist_in_prediction_times():
         TimeseriesFlattener(  # noqa
             prediction_times_df=prediction_times_df,
             timestamp_col_name="timestamp",
-            id_col_name="id",
+            entity_id_col_name="entity_id",
             drop_pred_times_with_insufficient_look_distance=False,
         )
 
 
 def test_col_does_not_exist():
-    prediction_times_str = """id,timestamp,
+    prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
 
-    event_times_str = """id,val,
+    event_times_str = """entity_id,val,
                         1, 1
                         1, 2
                         """
@@ -43,7 +43,7 @@ def test_col_does_not_exist():
     flattened_df = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         timestamp_col_name="timestamp",
-        id_col_name="id",
+        entity_id_col_name="entity_id",
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
@@ -61,7 +61,7 @@ def test_col_does_not_exist():
 
 def test_duplicate_prediction_times():
     with pytest.raises(ValueError, match=r".*Duplicate.*"):
-        prediction_times_df_str = """id,timestamp,
+        prediction_times_df_str = """entity_id,timestamp,
                                 1,2021-12-30 00:00:00
                                 1,2021-12-30 00:00:00
                                 """

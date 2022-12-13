@@ -14,7 +14,7 @@ import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_df_dict = {}
+split_dfs: dict[str, pd.DataFrame] = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def split_df_and_register_to_dict(
     df: pd.DataFrame,
-    id_col_name: str = "id",
+    entity_id_col_name: str = "entity_id",
     timestamp_col_name: str = "timestamp",
     value_col_name: str = "value",
     value_names_col_name: str = "value_names",
@@ -33,13 +33,13 @@ def split_df_and_register_to_dict(
 
     Args:
         df (pd.DataFrame): A dataframe in long format containing the values to be grouped into a catalogue.
-        id_col_name (str): Name of the column containing the patient id for each value. Defaults to "id".
+        entity_id_col_name (str): Name of the column containing the patient id for each value. Defaults to "entity_id".
         timestamp_col_name (str): Name of the column containing the timestamp for each value. Defaults to "timestamp".
         value_col_name (str): Name of the column containing the value for each value. Defaults to "values".
         value_names_col_name (str): Name of the column containing the names of the different types of values for each value. Defaults to "value_names".
     """
     passed_columns = [
-        id_col_name,
+        entity_id_col_name,
         timestamp_col_name,
         value_col_name,
         value_names_col_name,
@@ -58,10 +58,10 @@ def split_df_and_register_to_dict(
     for value_name in value_names:
 
         value_df = df[df[value_names_col_name] == value_name][
-            [id_col_name, timestamp_col_name, value_col_name]
+            [entity_id_col_name, timestamp_col_name, value_col_name]
         ]
 
-        split_df_dict[value_name] = value_df
+        split_dfs[value_name] = value_df
 
 
 def format_dict_for_printing(d: dict) -> str:
@@ -246,7 +246,8 @@ def print_df_dimensions_diff(
             if diff != 0:
                 percent_diff = round(
                     (n_in_dim_before_func - result.shape[dim_int])
-                    / n_in_dim_before_func,
+                    / n_in_dim_before_func
+                    * 100,
                     2,
                 )
 

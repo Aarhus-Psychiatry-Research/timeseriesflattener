@@ -12,7 +12,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
-from timeseriesflattener.utils import data_loaders, split_df_dict
+from timeseriesflattener.utils import data_loaders, split_dfs
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 def resolve_from_dict_or_registry(data: dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
     if "values_name" in data and data["values_name"] is not None:
-        data["values_df"] = split_df_dict.get(data["values_name"])
+        data["values_df"] = split_dfs.get(data["values_name"])
         data["feature_name"] = data["values_name"]
     else:
         if isinstance(data["values_loader"], str):
@@ -147,7 +147,7 @@ class AnySpec(BaseModel):
 
     input_col_name_override: Optional[str] = None
     # An override for the input column name. If None, will attempt
-    # to infer it by looking for the only column that doesn't match id_col_name or timestamp_col_name.
+    # to infer it by looking for the only column that doesn't match entity_id_col_name or timestamp_col_name.
 
     output_col_name_override: Optional[str] = None
     # Override the generated col name after flattening the time series.
@@ -229,7 +229,7 @@ class TemporalSpec(AnySpec):
     allowed_nan_value_prop: float = 0.0
     # If NaN is higher than this in the input dataframe during resolution, raise an error.
 
-    id_col_name: str = "id"
+    entity_id_col_name: str = "entity_id"
     # Col name for ids in the input dataframe.
 
     loader_kwargs: Optional[dict] = None

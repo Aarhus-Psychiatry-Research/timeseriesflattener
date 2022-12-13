@@ -91,7 +91,7 @@ def test_compute_specs(
         fallback=np.nan,
     )
     static_spec = StaticSpec(
-        values_df=synth_outcome[["value", "id"]],
+        values_df=synth_outcome[["value", "entity_id"]],
         feature_name="static",
         prefix="pred",
     )
@@ -109,7 +109,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     # Uses datetime to also test that using another column name works
     pred_time_df = pd.DataFrame(
         {
-            "id": [1, 1, 1, 1],
+            "entity_id": [1, 1, 1, 1],
             "datetime": ["2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04"],
         },
     )
@@ -122,7 +122,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
 
     pred_val_df = pd.DataFrame(
         {
-            "id": [1],
+            "entity_id": [1],
             "datetime": ["2022-01-01"],
             "value": [1],
         },
@@ -139,7 +139,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
 
     out_val_df = pd.DataFrame(
         {
-            "id": [1],
+            "entity_id": [1],
             "datetime": ["2022-01-05"],
             "value": [4],
         },
@@ -163,3 +163,51 @@ def test_drop_pred_time_if_insufficient_look_distance():
     # Convert to datetime to avoid a warning
     expected_df = expected_df.astype({"datetime": "datetime64[ns]"})
     pd.testing.assert_series_equal(out_df["datetime"], expected_df["datetime"])
+
+
+def test_double_compute_doesn_not_duplicate_columns():
+    # Load a dataframe with times you wish to make a prediction
+    prediction_times_df = pd.DataFrame(
+        {
+            "entity_id": [1, 1, 2, 2],
+            "date": ["2020-01-01", "2020-02-01", "2020-02-01", "2020-03-01"],
+        },
+    )
+    # Load a dataframe with raw values you wish to aggregate as predictors
+    predictor_df = pd.DataFrame(
+        {
+            "entity_id": [1, 1, 1, 1, 2, 2, 2],
+            "date": [
+                "2020-01-15",
+                "2019-12-10",
+                "2019-12-15",
+                "2019-10-20",
+                "2020-01-13",
+                "2020-02-02",
+                "2020-03-16",
+            ],
+            "value": [1, 2, 3, 4, 4, 5, 6],
+        },
+    )
+
+    predictor_spec = PredictorSpec(
+        values_df=predictor_df,
+        lookbehind_days=15,
+        fallback=np.nan,
+        entity_id_col_name="entity_id",
+        resolve_multiple_fn=mean,
+        feature_name="test_feature",
+    )
+
+    ts_flattener = TimeseriesFlattener(
+        prediction_times_df=prediction_times_df,
+        entity_id_col_name="entity_id",
+        timestamp_col_name="date",
+        n_workers=1,
+        drop_pred_times_with_insufficient_look_distance=True,
+    )
+    ts_flattener.add_spec([predictor_spec])
+    df = ts_flattener.get_df()
+    df = ts_flattener.get_df()
+
+    assert df.shape[0] == 4

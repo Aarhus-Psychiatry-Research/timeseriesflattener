@@ -77,7 +77,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             )
             self.cache.prediction_times_df = prediction_times_df
 
-        for attr in ("pred_time_uuid_col_name", "timestamp_col_name", "id_col_name"):
+        for attr in (
+            "pred_time_uuid_col_name",
+            "timestamp_col_name",
+            "entity_id_col_name",
+        ):
             if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
                 if getattr(self.cache, attr) != getattr(self, attr):
                     log.info(
@@ -90,7 +94,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         prediction_times_df: DataFrame,
         drop_pred_times_with_insufficient_look_distance: bool,  # noqa
         cache: Optional[FeatureCache] = None,
-        id_col_name: str = "id",
+        entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
@@ -104,18 +108,18 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         E.g if you have a prediction_times_df:
 
-        id_col_name | timestamp_col_name
+        entity_id_col_name | timestamp_col_name
         1           | 2022-01-10
         1           | 2022-01-12
         1           | 2022-01-15
 
         And a time-series of blood-pressure values as an outcome:
-        id_col_name | timestamp_col_name | blood_pressure_value
+        entity_id_col_name | timestamp_col_name | blood_pressure_value
         1           | 2022-01-09         | 120
         1           | 2022-01-14         | 140
 
         Then you can "flatten" the outcome into a new df, with a row for each of your prediction times:
-        id_col_name | timestamp_col_name | latest_blood_pressure_within_24h
+        entity_id_col_name | timestamp_col_name | latest_blood_pressure_within_24h
         1           | 2022-01-10         | 120
         1           | 2022-01-12         | NA
         1           | 2022-01-15         | 140
@@ -123,7 +127,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Args:
             prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
             cache (Optional[FeatureCache], optional): Object for feature caching. Should be initialised when passed to init. Defaults to None.
-            id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "id".
+            entity_id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "entity_id".
             timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
             predictor_col_name_prefix (str, optional): Prefix for predictor col names. Defaults to "pred_".
             outcome_col_name_prefix (str, optional): Prefix for outcome col names. Defaults to "outc_".
@@ -135,13 +139,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 Otherwise, your feature will imply that you've looked two years into the past, even though you have less than two years of data to look at.
 
         Raises:
-            ValueError: If timestamp_col_name or id_col_name is not in prediction_times_df
+            ValueError: If timestamp_col_name or entity_id_col_name is not in prediction_times_df
             ValueError: If timestamp_col_name is not and could not be converted to datetime
         """
         self.n_workers = n_workers
 
         self.timestamp_col_name = timestamp_col_name
-        self.id_col_name = id_col_name
+        self.entity_id_col_name = entity_id_col_name
         self.predictor_col_name_prefix = predictor_col_name_prefix
         self.outcome_col_name_prefix = outcome_col_name_prefix
         self.pred_time_uuid_col_name = "prediction_time_uuid"
@@ -166,13 +170,15 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         ValidateInitFlattenedDataset(
             df=self._df,
             timestamp_col_name=self.timestamp_col_name,
-            id_col_name=self.id_col_name,
+            entity_id_col_name=self.entity_id_col_name,
         ).validate_dataset()
 
         # Create pred_time_uuid_columne
-        self._df[self.pred_time_uuid_col_name] = self._df[self.id_col_name].astype(
-            str,
-        ) + self._df[self.timestamp_col_name].dt.strftime("-%Y-%m-%d-%H-%M-%S")
+        self._df[self.pred_time_uuid_col_name] = self._df[
+            self.entity_id_col_name
+        ].astype(str) + self._df[self.timestamp_col_name].dt.strftime(
+            "-%Y-%m-%d-%H-%M-%S",
+        )
 
         if log_to_stdout:
             # Setup logging to stdout by default
@@ -302,7 +308,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
         output_spec: AnySpec,
-        id_col_name: str,
+        entity_id_col_name: str,
         pred_time_uuid_col_name: str,
         timestamp_col_name: str,
         verbose: bool = False,  # noqa
@@ -315,7 +321,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             prediction_times_with_uuid_df (DataFrame): Dataframe with id_col and
                 timestamps for each prediction time.
             output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
-            id_col_name (str): Name of id_column in prediction_times_with_uuid_df and
+            entity_id_col_name (str): Name of id_column in prediction_times_with_uuid_df and
                 df. Required because this is a static method.
             timestamp_col_name (str): Name of timestamp column in
                 prediction_times_with_uuid_df and df. Required because this is a
@@ -335,10 +341,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             left=prediction_times_with_uuid_df,
             right=output_spec.values_df,
             how="left",
-            on=id_col_name,
+            on=entity_id_col_name,
             suffixes=("_pred", "_val"),
             validate="m:m",
-        ).drop(id_col_name, axis=1)
+        ).drop(entity_id_col_name, axis=1)
 
         timestamp_val_col_name = f"{timestamp_col_name}_val"
         timestamp_pred_col_name = f"{timestamp_col_name}_pred"
@@ -419,11 +425,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             prediction_times_with_uuid_df=self._df[
                 [
                     self.pred_time_uuid_col_name,
-                    self.id_col_name,
+                    self.entity_id_col_name,
                     self.timestamp_col_name,
                 ]
             ],
-            id_col_name=self.id_col_name,
+            entity_id_col_name=self.entity_id_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             output_spec=feature_spec,
             timestamp_col_name=self.timestamp_col_name,
@@ -536,7 +542,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             possible_value_cols = [
                 col
                 for col in static_spec.values_df.columns  # type: ignore
-                if col not in self.id_col_name
+                if col not in self.entity_id_col_name
             ]
 
             if len(possible_value_cols) == 1:
@@ -559,7 +565,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         df = pd.DataFrame(
             {
-                self.id_col_name: static_spec.values_df[self.id_col_name],  # type: ignore
+                self.entity_id_col_name: static_spec.values_df[self.entity_id_col_name],  # type: ignore
                 output_col_name: static_spec.values_df[value_col_name],  # type: ignore
             },
         )
@@ -568,7 +574,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             self._df,
             df,
             how="left",
-            on=self.id_col_name,
+            on=self.entity_id_col_name,
             suffixes=("", ""),
             validate="m:1",
         )
@@ -597,7 +603,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             self._df,
             outcome_spec.values_df,
             how="left",
-            on=self.id_col_name,
+            on=self.entity_id_col_name,
             suffixes=("_prediction", "_outcome"),
             validate="m:1",
         )
@@ -700,7 +706,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 self._add_incident_outcome(
                     outcome_spec=spec,
                 )
-
+                # Remove the processed spec
                 self.unprocessed_specs.outcome_specs.remove(spec)
 
         temporal_batch = self.unprocessed_specs.outcome_specs
@@ -712,10 +718,14 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if len(temporal_batch) > 0:
             self._add_temporal_batch(temporal_batch=temporal_batch)
 
+        # Remove the processed specs
+        self.unprocessed_specs.outcome_specs = []
+        self.unprocessed_specs.predictor_specs = []
+
     def _check_that_spec_df_has_required_columns(self, spec: AnySpec):
         """Check that df has required columns."""
         # Find all attributes in self that contain col_name
-        required_columns = [self.id_col_name]
+        required_columns = [self.entity_id_col_name]
 
         if not isinstance(spec, StaticSpec):
             required_columns += [self.timestamp_col_name]
@@ -799,7 +809,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Has its own function because of its very frequent use.
 
         Args:
-            date_of_birth_df (DataFrame): Two columns, one matching self.id_col_name and one containing date_of_birth.
+            date_of_birth_df (DataFrame): Two columns, one matching self.entity_id_col_name and one containing date_of_birth.
             date_of_birth_col_name (str, optional): Name of the date_of_birth column in date_of_birth_df.
                 Defaults to "date_of_birth".
             output_prefix (str, optional): Prefix for the output column. Defaults to "pred".

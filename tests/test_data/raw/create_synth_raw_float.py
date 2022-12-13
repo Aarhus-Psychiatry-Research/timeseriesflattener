@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     column_specs = [
         {
-            "id": {
+            "entity_id": {
                 "column_type": "uniform_int",
                 "min": 0,
                 "max": 10_000,
