@@ -415,9 +415,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             pd.DataFrame: Feature
         """
 
-        if self.cache and self.cache.feature_exists(feature_spec=feature_spec):
-            df = self.cache.read_feature(feature_spec=feature_spec)
-            return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+        if self.cache:
+            if self.cache.feature_exists(feature_spec=feature_spec):
+                log.info(f"Cache hit for {feature_spec.get_col_str()}, loading from cache")
+                df = self.cache.read_feature(feature_spec=feature_spec)
+                return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+            else:
+                log.info(f"Cache miss for {feature_spec.get_col_str()}, generating")
         elif not self.cache:
             log.info("No cache specified, not attempting load")
 
@@ -512,6 +516,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         random.shuffle(temporal_batch)
 
         n_workers = min(self.n_workers, len(temporal_batch))
+        
+        log.info(f"Processing {len(temporal_batch} temporal features in parallel with {n_workers} workers")
 
         with Pool(n_workers) as p:
             flattened_predictor_dfs = list(
