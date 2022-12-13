@@ -1,4 +1,4 @@
-name: automerge-dependabot-prs
+name: Create paper pdf
 
 on:
   push:
