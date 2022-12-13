@@ -97,8 +97,8 @@ class BaseModel(PydanticBaseModel):
     # The docstring generator uses the `short_description` attribute of the `Doc`
     # class to generate the top of the docstring.
     # If you want to modify a docstring, modify the `short_description` attribute.
-    # Then, when you run tests, new docstrings will be generated which you can copy/paste into 
-    # the relevant files. This is necessary because 
+    # Then, when you run tests, new docstrings will be generated which you can copy/paste into
+    # the relevant files. This is necessary because
     # 1) we have inheritance and don't want to have one source of truth for docs
     # 2) pylance reads the docstring directly from the static file
     # This means we want to auto-generate docstrings to support the inheritance,
