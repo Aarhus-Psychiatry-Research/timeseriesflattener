@@ -429,15 +429,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         elif not self.cache:
             log.info("No cache specified, not attempting load")
 
-        _df = copy.deepcopy(
-            self._df[
-                [
-                    self.pred_time_uuid_col_name,
-                    self.entity_id_col_name,
-                    self.timestamp_col_name,
-                ]
+        _df = self._df[
+            [
+                self.pred_time_uuid_col_name,
+                self.entity_id_col_name,
+                self.timestamp_col_name,
             ]
-        )
+        ]
 
         df = self._flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=_df,
