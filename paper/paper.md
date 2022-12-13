@@ -44,7 +44,7 @@ Time series from e.g. electronic health records often have a large number of var
 `timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series. `timeseriesflattener` implements all the functionality required for aggregating features in specific time windows, grouped by e.g. patient IDs, in a computationally efficient manner. The package is currently used for feature extraction from electronic health records in studies based on the Psychiatric Clinical Outcome Prediction Cohort (PSYCOP) projects [@hansen_psychiatric_2021].
 
 # Statement of need
-The recent surge in machine learning capabilities has led to large efforts in using information from electronic health records and other medical time series for prediction modelling [@rajkomar_scalable_2016, @shamout_machine_2021]. These efforts have spawned important developments related to prediction modelling of clinical data such as AutoPrognosis2.0 [@imrie_autoprognosis_2022] and general-purpose autoML frameworks such as `auto-sklearn` [@feurer_efficient_2015]. However, modelling and machine learning tends to take the spotlight, with often insufficient attention being paid to data preparation and problem framing. For example, some earlier papers have generated predictions at a specific time interval before each outcome. However, this makes the problem artificially easy, and the model will not generalise to the real world [@lauritsen_framing_2021]. 
+The recent surge in machine learning capabilities has led to large efforts in using information from electronic health records and other medical time series for prediction modelling [@rajkomar_scalable_2018, @shamout_machine_2020]. These efforts have spawned important developments related to prediction modelling of clinical data such as AutoPrognosis2.0 [@imrie_autoprognosis_2022] and general-purpose autoML frameworks such as `auto-sklearn` [@feurer_efficient_2015]. However, modelling and machine learning tends to take the spotlight, with often insufficient attention being paid to data preparation and problem framing. For example, some earlier papers have generated predictions at a specific time interval before each outcome. However, this makes the problem artificially easy, and the model will not generalise to the real world [@lauritsen_framing_2021]. 
 
 The goal of `timeseriesflattener` is to streamline the process of problem definition and preparing data for modelling while keeping important decisions, such as how far back to aggregate features, which method to use for aggregation, how to handle missing values, etc., highly explicit. Specifically, it allows the transformation of complex datasets so simple models can handle them, which can dramatically decrease the time from an idea to a proof of concept. Further, `timeseriesflattener` enforces best practices for prognostic modelling, such as defining when to generate predictions independently of the timing of outcomes [@lauritsen_framing_2021]. By providing a fast and reliable framework, `timeseriesflattener` aims to accelerate the development of high-quality clinical prediction models in both research and production environments.
 
@@ -60,9 +60,7 @@ Which method to use for aggregation if multiple values exist in the lookbehind.
 Which value to use if there are no data points in the lookbehind.
 
 
-
-
-![`timeseriesflattener` terminology and functionality. A: *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional.\label{fig:terminology}](https://i.imgur.com/hUP4dpn.png)
+![`timeseriesflattener` terminology and functionality. A: *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional.\label{fig:terminology}](https://user-images.githubusercontent.com/23191638/207274283-1207e2ce-86c7-4ee8-82a5-d81617c8bb77.png)
 
 \autoref{fig:terminology} shows an example of the terminology and the calculation of predictor- and outcome-values for two prediction times. Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. 
 
@@ -85,86 +83,10 @@ Besides the core functionality, the package implements custom caching for quick 
 The [documentation](https://aarhus-psychiatry-research.github.io/timeseriesflattener/) and [tutorials](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/tree/main/docs/tutorials) contain thorough usage examples and continuously updated information on the API.
 
 
-# Sample usage
-```py
-import numpy as np
-import pandas as pd
-
-if __name__ == "__main__":
-
-    # Load a dataframe with times you wish to make a prediction
-    prediction_times_df = pd.DataFrame(
-        {
-            "id": [1, 1, 2],
-            "date": ["2020-01-01", "2020-02-01", "2020-02-01"],
-        },
-    )
-    # Load a dataframe with raw values you wish to aggregate as predictors
-    predictor_df = pd.DataFrame(
-        {
-            "id": [1, 1, 1, 2],
-            "date": [
-                "2020-01-15",
-                "2019-12-10",
-                "2019-12-15",
-                "2020-01-02",
-            ],
-            "value": [1, 2, 3, 4],
-        },
-    )
-    # Load a dataframe specifying when the outcome occurs
-    outcome_df = pd.DataFrame({"id": [1], "date": ["2020-03-01"], "value": [1]})
-
-    # Specify how to aggregate the predictors and define the outcome
-    from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec
-    from timeseriesflattener.resolve_multiple_functions import maximum, mean
-
-    predictor_spec = PredictorSpec(
-        values_df=predictor_df,
-        lookbehind_days=30,
-        fallback=np.nan,
-        entity_id_col_name="id",
-        resolve_multiple_fn=mean,
-        feature_name="test_feature",
-    )
-    outcome_spec = OutcomeSpec(
-        values_df=outcome_df,
-        lookahead_days=31,
-        fallback=0,
-        entity_id_col_name="id",
-        resolve_multiple_fn=maximum,
-        feature_name="test_outcome",
-        incident=False,
-    )
-
-    # Instantiate TimeseriesFlattener and add the specifications
-    from timeseriesflattener import TimeseriesFlattener
-
-    ts_flattener = TimeseriesFlattener(
-        prediction_times_df=prediction_times_df,
-        entity_id_col_name="id",
-        timestamp_col_name="date",
-        n_workers=1,
-        drop_pred_times_with_insufficient_look_distance=False,
-    )
-    ts_flattener.add_spec([predictor_spec, outcome_spec])
-    df = ts_flattener.get_df()
-    df
-```
-Output:
-
-|    |   id | date                | prediction_time_uuid   |   pred_test_feature_within_30_days_mean_fallback_nan |   outc_test_outcome_within_31_days_maximum_fallback_0_dichotomous |
-|---:|-----:|:--------------------|:-----------------------|-----------------------------------------------------:|------------------------------------------------------------------:|
-|  0 |    1 | 2020-01-01 00:00:00 | 1-2020-01-01-00-00-00  |                                                  2.5 |                                                                 0 |
-|  1 |    1 | 2020-02-01 00:00:00 | 1-2020-02-01-00-00-00  |                                                  1   |                                                                 1 |
-|  2 |    2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00  |                                                  4   |                                                                 0 |
-
-
-
-# Target audience
+# Target Audience
 The package is aimed at researchers and individuals working with irregular time series such as electronic health records or sensor data from e.g. glucose monitoring or Internet of Things devices.
 
 
-# Ackworknowledgements
+# Acknowledgements
 This work is supported by the Lundbeck Foundation (grant number: R344-2020-1073), the Danish Cancer Society (grant number: R283-A16461), the Central Denmark Region Fund for Strengthening of Health Science (grant number: 1-36-72-4-20) and the Danish Agency for Digitisation Investment Fund for New Technologies (grant number 2020-6720). 
 
