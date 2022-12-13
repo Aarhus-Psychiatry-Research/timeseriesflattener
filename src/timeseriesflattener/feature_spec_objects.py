@@ -1,6 +1,7 @@
 """Templates for feature specifications."""
 import itertools
 import logging
+import time
 from collections.abc import Callable, Sequence
 from functools import cache
 from typing import Any, Optional, Union
@@ -26,12 +27,17 @@ def load_df_with_cache(
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
+    start_time = time.time()
     log.info(
         f"{feature_name}: Loading values",
     )  # pylint: disable=logging-fstring-interpolation
+
     df = loader_fn(**kwargs)
+
+    end_time = time.time()
+
     log.info(
-        f"{feature_name}: Loaded values",
+        f"{feature_name}: Loaded in {end_time - start_time:.2f} seconds",
     )  # pylint: disable=logging-fstring-interpolation
 
     return df
