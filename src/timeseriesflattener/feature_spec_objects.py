@@ -44,7 +44,9 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 def resolve_from_dict_or_registry(data: dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
+
     if "values_name" in data and data["values_name"] is not None:
+        log.info(f"Resolving values_df from {data['values_name']}")
         data["values_df"] = split_dfs.get(data["values_name"])
         data["feature_name"] = data["values_name"]
     else:
@@ -55,6 +57,8 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
         if callable(data["values_loader"]):
             if "loader_kwargs" not in data:
                 data["loader_kwargs"] = {}
+
+            log.info(f"Resolving values_df with loader for {data['feature_name']}")
 
             data["values_df"] = load_df_with_cache(
                 loader_fn=data["values_loader"],
