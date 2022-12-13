@@ -6,13 +6,13 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener.feature_spec_objects import (
-    AnySpec,
     BaseModel,
     OutcomeGroupSpec,
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
     TemporalSpec,
+    _AnySpec,
     check_that_col_names_in_kwargs_exist_in_df,
     generate_docstring_from_attributes,
 )
@@ -28,7 +28,7 @@ def test_anyspec_init():
     """Test that AnySpec initialises correctly."""
     values_loader_name = "synth_predictor_float"
 
-    spec = AnySpec(
+    spec = _AnySpec(
         values_loader=values_loader_name,
         prefix="test",
     )
@@ -39,7 +39,7 @@ def test_anyspec_init():
 
 def test_loader_kwargs():
     """Test that loader kwargs are passed correctly."""
-    spec = AnySpec(
+    spec = _AnySpec(
         values_loader="synth_predictor_float",
         prefix="test",
         loader_kwargs={"n_rows": 10},
@@ -52,7 +52,7 @@ def test_invalid_multiple_data_args():
     """Test that error is raised if multiple data args are passed."""
 
     with pytest.raises(ValueError, match=r".*nly one of.*"):
-        AnySpec(
+        _AnySpec(
             values_loader="synth_predictor_float",
             values_name="synth_data",
             prefix="test",
@@ -62,7 +62,7 @@ def test_invalid_multiple_data_args():
 def test_anyspec_incorrect_values_loader_str():
     """Raise error if values loader is not a key in registry."""
     with pytest.raises(ValueError, match=r".*in registry.*"):
-        AnySpec(values_loader="I don't exist", prefix="test")
+        _AnySpec(values_loader="I don't exist", prefix="test")
 
 
 def test_that_col_names_in_kwargs_exist_in_df():
@@ -143,28 +143,10 @@ def test_resolve_multiple_fn_to_str():
     assert "maximum" in pred_spec_batch[0].get_col_str()
 
 
-def pretty_diff(original: str, new: str) -> str:
-    """
-    Computes a pretty diff between the original and new strings.
-
-    Args:
-        original: The original string
-        new: The new string
-
-    Returns:
-        A string containing the pretty diff
-    """
-
-    # Use the difflib library to compute the diff
-    return list(
-        difflib.Differ().compare(original.splitlines(True), new.splitlines(True)),
-    )
-
-
 @pytest.mark.parametrize(
     "spec",
     [
-        AnySpec,
+        _AnySpec,
         TemporalSpec,
         PredictorSpec,
         PredictorGroupSpec,
@@ -189,9 +171,19 @@ def test_feature_spec_docstrings(spec: BaseModel):
     if current_docstring_no_whitespace != generated_docstring_no_whitespace:
         raise AssertionError(
             f"""{spec} docstring is not updated correctly.
+
+        Docstrings are automatically generated from the attributes of the class using
+        the `timeseriesflattener.feature_spec_objects.generate_docstring_from_attributes` function.
+
+        To modify docstrings or field descriptions, please modify the `short_description`
+        field in the `Doc` class of the relevant spec object or the `description` field of the
+        relevant attribute.
+
+        If you have modified the `Doc` class or the attributes of the spec,
+        copy-paste the generated docstring below into the docstring of the class.
+
         Got: \n\n{current_docstring}.
+
         Expected: \n\n{generated_docstring}
-        \n\nDiff:
-        {pretty_diff(current_docstring, generated_docstring)}
         """,
         )

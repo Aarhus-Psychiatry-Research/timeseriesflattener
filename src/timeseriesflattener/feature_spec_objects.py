@@ -94,6 +94,9 @@ class BaseModel(PydanticBaseModel):
     """Modified Pydantic BaseModel to allow arbitrary
     types and disallow attributes not in the class."""
 
+    # The docstring generator uses the `short_description` attribute of the `Doc`
+    # class to generate the top of the docstring.
+    # If you want to modify a docstring, modify the `short_description` attribute.
     class Doc:
         short_description: str = """Modified Pydantic BaseModel to allow arbitrary 
         types and disallow attributes not in the class."""
@@ -106,21 +109,31 @@ class BaseModel(PydanticBaseModel):
 
 
 def generate_docstring_from_attributes(cls: BaseModel) -> str:
-    """Generate a docstring from the attributes of a Pydantic basemodel."""
+    """Generate a docstring from the attributes of a Pydantic basemodel.
+    The top of the docstring is taken from the `short_description` attribute of the `Doc`
+    class. The rest of the docstring is generated from the attributes of the class."""
     doc = ""
     doc += f"{cls.Doc.short_description}\n\n    "
     doc += "Fields:\n"
-    for name, field in cls.__fields__.items():
+    for field_name, field_obj in cls.__fields__.items():
         # extract the pretty printed type
-        type_ = [arg[1] for arg in field.__repr_args__() if arg[0] == "type"][0]
-        doc += "        "
-        field_info: FieldInfo = field.field_info
-        doc += f"{name} ({type_}):\n        "
-        default_value = field.default
+        # __repr_args__ returns a list of tuples with two values,
+        # the name of the argument and the value. We are only interested in the
+        # value of the type argument.
+        type_ = [arg[1] for arg in field_obj.__repr_args__() if arg[0] == "type"]
+        type_ = type_[1]
+
+        field_description = field_obj.field_info.description
+
+        default_value = field_obj.default
         default_str = (
             f"Defaults to: {default_value}." if default_value is not None else ""
         )
-        doc += f"    {field_info.description} {default_str}\n"
+        # Whitespace added for formatting
+        doc += "        "
+        doc += f"{field_name} ({type_}):\n        "
+
+        doc += f"    {field_description} {default_str}\n"
     # remove the last newline
     doc = doc[:-1]
     return doc
@@ -149,7 +162,7 @@ def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.Data
         raise ValueError("\n".join(errors))
 
 
-class AnySpec(BaseModel):
+class _AnySpec(BaseModel):
     """A base class for all feature specifications.
 
     Fields:
@@ -187,8 +200,9 @@ class AnySpec(BaseModel):
 
     values_name: Optional[str] = Field(
         default=None,
-        description="""A string that corresponds to a key in a dictionary of multiple 
-            dataframes that corresponds to a name of a type of values.""",
+        description="""A string that maps to a key in a dictionary instantiated by 
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which 
+            is a subset of the df where the values_name == key.""",
     )
 
     loader_kwargs: Optional[dict[str, Any]] = Field(
@@ -273,12 +287,12 @@ class AnySpec(BaseModel):
         return other_attributes_equal and dfs_equal
 
 
-class StaticSpec(AnySpec):
+class StaticSpec(_AnySpec):
     class Doc:
         short_description = """Specification for a static feature."""
 
 
-class TemporalSpec(AnySpec):
+class TemporalSpec(_AnySpec):
     """The minimum specification required for all
         collapsed time series. (temporal features), whether looking ahead or behind.
         Mostly used for inheritance below.
@@ -327,9 +341,8 @@ class TemporalSpec(AnySpec):
             Col name for ids in the input dataframe. Defaults to: entity_id."""
 
     class Doc:
-        short_description = """The minimum specification required for all 
-        collapsed time series. (temporal features), whether looking ahead or behind.
-        Mostly used for inheritance below."""
+        short_description = """The minimum specification required for collapsing a temporal 
+        feature, whether looking ahead or behind. Mostly used for inheritance below."""
 
     interval_days: Union[int, float] = Field(
         description="""How far to look in the given direction (ahead for outcomes, 
@@ -539,10 +552,10 @@ class OutcomeSpec(TemporalSpec):
     )
 
     incident: bool = Field(
-        description="""Whether the outcome is incident or not, i.e. whether you 
-            can experience it more than once. For example, type 2 diabetes is incident. 
-            Incident outcomes can be handled in a vectorised way during resolution, 
-            which is faster than non-incident outcomes.""",
+        description="""Whether the outcome is incident or not. 
+            I.e., incident outcomes are outcomes you can only experience once. 
+            For example, type 2 diabetes is incident. Incident outcomes can be handled 
+            in a vectorised way during resolution, which is faster than non-incident outcomes.""",
     )
 
     lookahead_days: Union[int, float] = Field(
@@ -577,7 +590,7 @@ class OutcomeSpec(TemporalSpec):
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
 
 
-class MinGroupSpec(BaseModel):
+class _MinGroupSpec(BaseModel):
     class Doc:
         short_description = """Minimum specification for a group of features, 
         whether they're looking ahead or behind. 
@@ -703,9 +716,9 @@ def create_feature_combinations_from_dict(
 
 
 def create_specs_from_group(
-    feature_group_spec: MinGroupSpec,
-    output_class: AnySpec,
-) -> list[AnySpec]:
+    feature_group_spec: _MinGroupSpec,
+    output_class: _AnySpec,
+) -> list[_AnySpec]:
     """Create a list of specs from a GroupSpec."""
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
@@ -717,7 +730,7 @@ def create_specs_from_group(
     return [output_class(**d) for d in permuted_dicts]  # type: ignore
 
 
-class PredictorGroupSpec(MinGroupSpec):
+class PredictorGroupSpec(_MinGroupSpec):
     """Specification for a group of predictors.
 
     Fields:
@@ -767,7 +780,7 @@ class PredictorGroupSpec(MinGroupSpec):
         )
 
 
-class OutcomeGroupSpec(MinGroupSpec):
+class OutcomeGroupSpec(_MinGroupSpec):
     """Specification for a group of outcomes.
 
     Fields:
