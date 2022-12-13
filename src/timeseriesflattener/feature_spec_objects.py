@@ -58,8 +58,6 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
             if "loader_kwargs" not in data:
                 data["loader_kwargs"] = {}
 
-            log.info(f"Resolving values_df with loader for {data['feature_name']}")
-
             data["values_df"] = load_df_with_cache(
                 loader_fn=data["values_loader"],
                 kwargs=frozendict(data["loader_kwargs"]),
