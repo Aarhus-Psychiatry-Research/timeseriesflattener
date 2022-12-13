@@ -7,24 +7,21 @@ if __name__ == "__main__":
     # Load a dataframe with times you wish to make a prediction
     prediction_times_df = pd.DataFrame(
         {
-            "id": [1, 1, 2, 2],
-            "date": ["2020-01-01", "2020-02-01", "2020-02-01", "2020-03-01"],
+            "id": [1, 1, 2],
+            "date": ["2020-01-01", "2020-02-01", "2020-02-01"],
         },
     )
     # Load a dataframe with raw values you wish to aggregate as predictors
     predictor_df = pd.DataFrame(
         {
-            "id": [1, 1, 1, 1, 2, 2, 2],
+            "id": [1, 1, 1, 2],
             "date": [
                 "2020-01-15",
                 "2019-12-10",
                 "2019-12-15",
-                "2019-10-20",
-                "2020-01-13",
-                "2020-02-02",
-                "2020-03-16",
+                "2020-01-02",
             ],
-            "value": [1, 2, 3, 4, 4, 5, 6],
+            "value": [1, 2, 3, 4],
         },
     )
     # Load a dataframe specifying when the outcome occurs
@@ -60,11 +57,10 @@ if __name__ == "__main__":
         id_col_name="id",
         timestamp_col_name="date",
         n_workers=1,
-        drop_pred_times_with_insufficient_look_distance=True,
+        drop_pred_times_with_insufficient_look_distance=False,
     )
     ts_flattener.add_spec([predictor_spec, outcome_spec])
     ts_flattener.compute()
     df = ts_flattener.get_df()
 
-    # check if get_df recomputes
-    prediction_times_df  # pylint: disable=pointless-statement
+    print(df.to_markdown())
