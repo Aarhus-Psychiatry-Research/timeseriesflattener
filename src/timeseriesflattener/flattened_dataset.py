@@ -73,7 +73,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             self.cache.prediction_times_df = prediction_times_df
         elif not self.cache.prediction_times_df.equals(prediction_times_df):
             log.info(
-                "Overriding prediction_times_df in cache with prediction_times_df passed to init",
+                "Overriding prediction_times_df cache with the one passed to init",
             )
             self.cache.prediction_times_df = prediction_times_df
 
