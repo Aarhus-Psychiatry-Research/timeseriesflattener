@@ -223,9 +223,10 @@
           <h1>Source code for timeseriesflattener.flattened_dataset</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Flattens timeseries.</span>
 
-<span class="sd">Takes a time-series and flattens it into a set of prediction times with describing values.</span>
 <span class="sd">Takes a time-series and flattens it into a set of prediction times describing values.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">chunk</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">random</span>
@@ -296,7 +297,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span> <span class="o">=</span> <span class="n">prediction_times_df</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">prediction_times_df</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Overriding prediction_times_df in cache with prediction_times_df passed to init&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Overriding prediction_times_df cache with the one passed to init&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">prediction_times_df</span> <span class="o">=</span> <span class="n">prediction_times_df</span>
 
@@ -637,12 +638,17 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            pd.DataFrame: Feature</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">feature_exists</span><span class="p">(</span><span class="n">feature_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">):</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">read_feature</span><span class="p">(</span><span class="n">feature_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">feature_exists</span><span class="p">(</span><span class="n">feature_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cache hit for </span><span class="si">{</span><span class="n">feature_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span><span class="si">}</span><span class="s2">, loading from cache&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">read_feature</span><span class="p">(</span><span class="n">feature_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cache miss for </span><span class="si">{</span><span class="n">feature_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span><span class="si">}</span><span class="s2">, generating&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No cache specified, not attempting load&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No cache specified, not attempting load&quot;</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_temporal_values_to_df</span><span class="p">(</span>
             <span class="n">prediction_times_with_uuid_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span>
@@ -736,10 +742,22 @@
 
         <span class="n">n_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_workers</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">))</span>
 
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> temporal features in parallel with </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Chunksize is the number of predictors to process in each worker.</span>
+        <span class="c1"># If we don&#39;t set chunksize, imap uses the default of 1, which means a bunch of IO overhead.</span>
+        <span class="n">chunksize</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_workers</span><span class="p">)))</span>
+
         <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
             <span class="n">flattened_predictor_dfs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
                 <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_temporal_feature</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="n">temporal_batch</span><span class="p">),</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span>
+                        <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_temporal_feature</span><span class="p">,</span>
+                        <span class="n">iterable</span><span class="o">=</span><span class="n">temporal_batch</span><span class="p">,</span>
+                        <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span>
+                    <span class="p">),</span>
                     <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">),</span>
                 <span class="p">),</span>
             <span class="p">)</span>

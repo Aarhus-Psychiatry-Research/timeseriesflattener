@@ -224,6 +224,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Templates for feature specifications.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cache</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
@@ -249,12 +250,17 @@
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Wrapper function to cache dataframe loading.&quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Loading values&quot;</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># pylint: disable=logging-fstring-interpolation</span>
+
     <span class="n">df</span> <span class="o">=</span> <span class="n">loader_fn</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Loaded values&quot;</span><span class="p">,</span>
+
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Loaded in </span><span class="si">{</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># pylint: disable=logging-fstring-interpolation</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
@@ -267,7 +273,9 @@
 
 <div class="viewcode-block" id="resolve_from_dict_or_registry"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.resolve_from_dict_or_registry">[docs]</a><span class="k">def</span> <span class="nf">resolve_from_dict_or_registry</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;Resolve values_df from a dictionary or registry.&quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="s2">&quot;values_name&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resolving values_df from </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;values_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_df&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">split_dfs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">])</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feature_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -315,7 +323,9 @@
 
 <div class="viewcode-block" id="BaseModel"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.BaseModel">[docs]</a><span class="k">class</span> <span class="nc">BaseModel</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Modified Pydantic BaseModel to allow arbitrary</span>
-<span class="sd">    types and disallow attributes not in the class.&quot;&quot;&quot;</span>
+
+<span class="sd">    types and disallow attributes not in the class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># The docstring generator uses the `short_description` attribute of the `Doc`</span>
     <span class="c1"># class to generate the top of the docstring.</span>
@@ -339,8 +349,10 @@
 
 <div class="viewcode-block" id="generate_docstring_from_attributes"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.generate_docstring_from_attributes">[docs]</a><span class="k">def</span> <span class="nf">generate_docstring_from_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Generate a docstring from the attributes of a Pydantic basemodel.</span>
+
 <span class="sd">    The top of the docstring is taken from the `short_description` attribute of the `Doc`</span>
-<span class="sd">    class. The rest of the docstring is generated from the attributes of the class.&quot;&quot;&quot;</span>
+<span class="sd">    class. The rest of the docstring is generated from the attributes of the class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">doc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">Doc</span><span class="o">.</span><span class="n">short_description</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">    &quot;</span>
     <span class="n">doc</span> <span class="o">+=</span> <span class="s2">&quot;Fields:</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -375,13 +387,17 @@
 
 <span class="sd">    The dataframe should be in the values_df key of data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">attributes_with_col_name</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">attributes_with_col_name</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;col_name&quot;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
-    <span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="n">skip_attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;output_col_name_override&quot;</span><span class="p">}</span>
+
+    <span class="n">attributes_to_test</span> <span class="o">=</span> <span class="n">attributes_with_col_name</span> <span class="o">-</span> <span class="n">skip_attributes</span>
 
     <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">for</span> <span class="n">attribute_key</span> <span class="ow">in</span> <span class="n">attributes_with_col_name</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">attribute_key</span> <span class="ow">in</span> <span class="n">attributes_to_test</span><span class="p">:</span>
         <span class="n">col_name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">attribute_key</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">col_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -417,7 +433,8 @@
 <span class="sd">            to infer it by looking for the only column that doesn&#39;t match id_col_name</span>
 <span class="sd">            or timestamp_col_name.</span>
 <span class="sd">        output_col_name_override (Optional[str]):</span>
-<span class="sd">            Override the generated column name after flattening the time series&quot;&quot;&quot;</span>
+<span class="sd">    Override the generated column name after flattening the time series</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="s2">&quot;A base class for all feature specifications.&quot;</span>
@@ -524,6 +541,7 @@
 
 <div class="viewcode-block" id="TemporalSpec"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec">[docs]</a><span class="k">class</span> <span class="nc">TemporalSpec</span><span class="p">(</span><span class="n">_AnySpec</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The minimum specification required for collapsing a temporal</span>
+
 <span class="sd">        feature, whether looking ahead or behind. Mostly used for inheritance below.</span>
 
 <span class="sd">    Fields:</span>
@@ -568,7 +586,8 @@
 <span class="sd">            If NaN is higher than this in the input dataframe during</span>
 <span class="sd">            resolution, raise an error. Defaults to: 0.0.</span>
 <span class="sd">        entity_id_col_name (str):</span>
-<span class="sd">            Col name for ids in the input dataframe. Defaults to: entity_id.&quot;&quot;&quot;</span>
+<span class="sd">    Col name for ids in the input dataframe. Defaults to: entity_id.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TemporalSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The minimum specification required for collapsing a temporal </span>
@@ -689,7 +708,8 @@
 <span class="sd">        entity_id_col_name (str):</span>
 <span class="sd">            Col name for ids in the input dataframe. Defaults to: entity_id.</span>
 <span class="sd">        lookbehind_days (Union[int, float]):</span>
-<span class="sd">            How far behind to look for values&quot;&quot;&quot;</span>
+<span class="sd">    How far behind to look for values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PredictorSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="p">(</span>
@@ -770,7 +790,8 @@
 <span class="sd">            For example, type 2 diabetes is incident. Incident outcomes can be handled</span>
 <span class="sd">            in a vectorised way during resolution, which is faster than non-incident outcomes.</span>
 <span class="sd">        lookahead_days (Union[int, float]):</span>
-<span class="sd">            How far ahead to look for values&quot;&quot;&quot;</span>
+<span class="sd">    How far ahead to look for values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="OutcomeSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="p">(</span>
@@ -990,7 +1011,8 @@
 <span class="sd">        prefix (str):</span>
 <span class="sd">            Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</span>
 <span class="sd">        lookbehind_days (List[Union[int, float]]):</span>
-<span class="sd">            How far behind to look for values&quot;&quot;&quot;</span>
+<span class="sd">    How far behind to look for values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PredictorGroupSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorGroupSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Specification for a group of predictors.&quot;&quot;&quot;</span></div>
@@ -1045,7 +1067,8 @@
 <span class="sd">            Incident outcomes can be handled in a vectorised way during resolution,</span>
 <span class="sd">             which is faster than non-incident outcomes.</span>
 <span class="sd">        lookahead_days (List[Union[int, float]]):</span>
-<span class="sd">            How far ahead to look for values&quot;&quot;&quot;</span>
+<span class="sd">    How far ahead to look for values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="OutcomeGroupSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Specification for a group of outcomes.&quot;&quot;&quot;</span></div>
