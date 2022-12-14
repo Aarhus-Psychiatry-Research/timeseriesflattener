@@ -9,12 +9,11 @@
 
 [![PyPI version](https://badge.fury.io/py/timeseriesflattener.svg)](https://pypi.org/project/timeseriesflattener/)
 
-Time series from e.g. electronic health records often have a large number of variables, are sampled at irregular intervals and tend to have a large number of missing values. Before this type of data can be used for prediction modelling with machine learning methods such as logistic regression or XGBoost, the data needs to be reshaped. In essence, the time series need to be *flattened* so that each prediction time is represented by a set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window. This process lays the foundation for further analyses and requires handling a number of tasks such as 1) how to deal with missing values, 2) which value to use if none fall within the prediction window, and 3) how to handle predictors that attempt to look further back than the start of the dataset.  
+Time series from e.g. electronic health records often have a large number of variables, are sampled at irregular intervals and tend to have a large number of missing values. Before this type of data can be used for prediction modelling with machine learning methods such as logistic regression or XGBoost, the data needs to be reshaped. 
 
-`timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series. `timeseriesflattener` implements all the functionality required for aggregating features in specific time windows, grouped by e.g. patient IDs, in a computationally efficient manner. 
+In essence, the time series need to be *flattened* so that each prediction time is represented by a set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window. 
 
-## 🗺️ Roadmap
-Roadmap is tracked on our [kanban board](https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1).
+`timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series. 
 
 ## 🔧 Installation
 To get started using timeseriesflattener simply install it using pip by running the following line in your terminal:
@@ -22,23 +21,6 @@ To get started using timeseriesflattener simply install it using pip by running 
 ```
 pip install timeseriesflattener
 ```
-
-## 🤖 Functionality
-`timeseriesflattener` includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.
-
-When constructing feature sets from time series in general, or medical time series in particular, there are several choices one needs to make. 
-
-1. When to issue predictions (*prediction time*). E.g. at every physical visit, every morning, or another clinically meaningful time.
-2. How far back/ahead from the prediction times to look for raw values (*lookbehind/lookahead*). 
-3. Which method to use for aggregation if multiple values exist in the lookbehind.
-4. Which value to use if there are no data points in the lookbehind.
-
-![Terminology: A: *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional](https://user-images.githubusercontent.com/23191638/207274283-1207e2ce-86c7-4ee8-82a5-d81617c8bb77.png)
-
-The above figure graphically represents the terminology used in the package. **A:** *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  **B:** Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. **C)** Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. **D)** Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional.
-
-Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the [tutorials](placeholder) for example use cases.
-
 
 ## ⚡ Quick start
 
@@ -115,6 +97,33 @@ Output:
 |  1 |    1 | 2020-02-01 00:00:00 | 1-2020-02-01-00-00-00  |                                                  1   |                                                                 1 |
 |  2 |    2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00  |                                                  4   |                                                                 0 |
 
+
+## 🗺️ Roadmap
+Roadmap is tracked on our [kanban board](https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1).
+
+## 🤖 Functionality
+`timeseriesflattener` includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.
+
+When constructing feature sets from time series in general, or medical time series in particular, there are several choices one needs to make. 
+
+1. When to issue predictions (*prediction time*). E.g. at every physical visit, every morning, or another clinically meaningful time.
+2. How far back/ahead from the prediction times to look for raw values (*lookbehind/lookahead*). 
+3. Which method to use for aggregation if multiple values exist in the lookbehind.
+4. Which value to use if there are no data points in the lookbehind.
+
+![Terminology: A: *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional](https://user-images.githubusercontent.com/23191638/207274283-1207e2ce-86c7-4ee8-82a5-d81617c8bb77.png)
+
+The above figure graphically represents the terminology used in the package. 
+
+**A)** *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  
+
+**B)** Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. 
+
+**C)** Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. 
+
+**D)** Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional.
+
+Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the [tutorials](placeholder) for example use cases.
 
 
 ## 📖 Documentation

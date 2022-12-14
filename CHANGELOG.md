@@ -2,6 +2,25 @@
 
 <!--next-version-placeholder-->
 
+## v0.21.0 (2022-12-14)
+### Feature
+* Decrease log level of debug info ([`9ceece1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9ceece16b8c3f9a669748b061c26216500585d15))
+* Log time to load values ([`162fee9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/162fee97547729b2c9b1f42acf7a3301b5ac8897))
+* Log info about cache hits and misses ([`237d5b6`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/237d5b62e0ab5603f06346cbe42866b19765b783))
+* Improve logs ([`a24b155`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a24b1551dc5fb79a4343d09d18568551ad0296c4))
+* Better logging when resolving ([`9ecc941`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9ecc9410dba6fb744fe642a6d3d65de9b2fac192))
+
+### Fix
+* Typo ([`21ea576`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/21ea57694626cc11deb6229e1156f13f9bb51674))
+* Don't check if output col name override exists in input df ([`4cf755d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4cf755d6c2a60f077705516b259b869494a1a21d))
+* Remove duplicate logging ([`447be4c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/447be4c037fab718378a4cdd428dcd2de3f0cb62))
+
+### Documentation
+* Fix title in docs ([`ee9f9e8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ee9f9e85089b6bb2b087fdd44b638d445f2305ff))
+* Replace favicon ([`29c4421`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/29c442122f3c48cc89b9c4d4c0bf819ed533ebd0))
+* Overwrite icon ([`1d8fc04`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1d8fc04b29373e51e65a93d6fdd4bf2f237fac1a))
+* Added logo ([`ad42b2a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ad42b2a3196d21df57b6e25e6c60ada156501d64))
+
 ## v0.20.3 (2022-12-13)
 ### Fix
 * Minor type hint ([`891f652`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/891f6521ac0e413156596c398442e92aa5e0a365))
