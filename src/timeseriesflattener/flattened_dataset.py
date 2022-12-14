@@ -463,19 +463,57 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         This checks that all the dataframes are aligned before
         concatenation.
         """
+        base_df = dfs[0]
         base_length = len(dfs[0])
         base_unique_ids = set(dfs[0].index)
+        n_indeces_to_check = min(1000, base_length)
+        n_dfs = len(dfs)
 
-        for feature_df in dfs[1:]:
-            debug_info = f"Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?"
+        for i, feature_df in enumerate(dfs[1:]):
+            log.info(f"Checking df {i+1} of {n_dfs}")
+
+            errors = []
+
+            # Check that dataframes are of equal length
+            log.info("Checking that dataframes are of equal length")
             if not len(feature_df) == base_length:
-                raise ValueError(
-                    f"Dataframes are not of equal length. {debug_info}",
+                errors.append(
+                    "Dataframes are not of equal length. ",
                 )
 
+            # Check that indeces are identical
+            log.info("Checking that indeces are identical ")
             if not set(feature_df.index) == base_unique_ids:
+                errors.append(
+                    "Dataframes don't contain the same indeces.",
+                )
+
+            # Check indeces are aligned between dataframes
+
+            log.info(
+                "Checking that indeces are aligned for the first and last 1000 indeces"
+            )
+            if not all(
+                feature_df.index[:n_indeces_to_check]
+                == base_df.index[:n_indeces_to_check]
+            ):
+                errors.append(
+                    "Dataframes are not aligned. ",
+                )
+
+            # Check for last 1000 indeces
+            if not all(
+                feature_df.index[-n_indeces_to_check:]
+                == base_df.index[-n_indeces_to_check:]
+            ):
+                errors.append(
+                    "Dataframes are not aligned. ",
+                )
+
+            if errors:
+                debug_info = f"Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?"
                 raise ValueError(
-                    f"Dataframes don't contain the same indeces. {debug_info}",
+                    f"Dataframes are not ready for concatenation. {errors}, {debug_info}",
                 )
 
     def _concatenate_flattened_timeseries(
@@ -483,18 +521,21 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         flattened_predictor_dfs: list[pd.DataFrame],
     ) -> None:
         """Concatenate flattened predictor dfs."""
-        log.info(
-            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
-        )
 
         start_time = time.time()
 
         # Check that dfs are ready for concatenation. Concatenation doesn't merge on IDs, but is **much** faster.
         # We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row
         # for each id.
+        log.info(
+            "Checking that dfs are ready for concatenation. This will take some time."
+        )
         self._check_dfs_are_ready_for_concat(dfs=flattened_predictor_dfs)
 
         # If so, ready for concatenation. Reset index to be ready for the merge at the end.
+        log.info(
+            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
+        )
         new_features = pd.concat(
             objs=flattened_predictor_dfs,
             axis=1,
