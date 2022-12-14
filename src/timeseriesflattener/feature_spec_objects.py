@@ -160,11 +160,11 @@ def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.Data
 
     The dataframe should be in the values_df key of data.
     """
-    attributes_with_col_name = set(
-        [key for key in data.keys() if "col_name" in key and isinstance(data[key], str)]
-    )
+    attributes_with_col_name = {
+        key for key in data.keys() if "col_name" in key and isinstance(data[key], str)
+    }
 
-    skip_attributes = set(["output_col_name_override"])
+    skip_attributes = {"output_col_name_override"}
 
     attributes_to_test = attributes_with_col_name - skip_attributes
 
