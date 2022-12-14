@@ -479,7 +479,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             for feature_df in dfs[1:]:
                 if dfs[0].index[random_index] != feature_df.index[random_index]:
                     raise ValueError(
-                        "Dataframes are not of identical index. Were they correctly aligned before concatenation?",
+                        f"Dataframes are not of identical index. Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?",
                     )
 
     def _concatenate_flattened_timeseries(
