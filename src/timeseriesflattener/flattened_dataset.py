@@ -485,7 +485,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
                 if not all(
                     feature_df.index[slice_start:slice_end]
-                    == base_df.index[slice_start:slice_end]
+                    == base_df.index[slice_start:slice_end],
                 ):
                     errors.append(
                         f"Dataframes are not aligned between index positions {slice_start} and {slice_end}. ",
@@ -509,7 +509,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row
         # for each id.
         log.info(
-            "Checking that dfs are ready for concatenation. This will take some time."
+            "Checking that dfs are ready for concatenation. This will take some time.",
         )
         self._check_dfs_are_ready_for_concat(dfs=flattened_predictor_dfs)
 
@@ -544,7 +544,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         chunksize = max(1, round(len(temporal_batch) / (n_workers)))
 
         log.info(
-            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers. Chunksize is {chunksize}. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance."
+            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers. Chunksize is {chunksize}. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.",
         )
 
         with Pool(n_workers) as p:
