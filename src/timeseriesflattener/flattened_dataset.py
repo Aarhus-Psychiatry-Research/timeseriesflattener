@@ -465,7 +465,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         """
         base_df = dfs[0]
         base_length = len(dfs[0])
-        n_indeces_to_check = min(5000, base_length)
+        slice_size = min(1000, base_length)
         n_dfs = len(dfs)
 
         for i, feature_df in enumerate(dfs[1:]):
@@ -480,26 +480,19 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                     "Dataframes are not of equal length. ",
                 )
 
-            # Check indeces are aligned between dataframes
-            log.debug(
-                "Checking that indeces are aligned for the first and last {n_indeces_to_check} indeces"
-            )
-            if not all(
-                feature_df.index[:n_indeces_to_check]
-                == base_df.index[:n_indeces_to_check]
-            ):
-                errors.append(
-                    "Dataframes are not aligned. ",
-                )
+            # Check 5 evenly spaced slices of the dataframe
+            log.debug("Checking that indeces are aligned for 5 evenly spaced slices")
+            for slice_i in range(1, 6):
+                slice_end = int(slice_i / 6 * base_length)
+                slice_start = slice_end - slice_size
 
-            # Check for last 1000 indeces
-            if not all(
-                feature_df.index[-n_indeces_to_check:]
-                == base_df.index[-n_indeces_to_check:]
-            ):
-                errors.append(
-                    "Dataframes are not aligned. ",
-                )
+                if not all(
+                    feature_df.index[slice_start:slice_end]
+                    == base_df.index[slice_start:slice_end]
+                ):
+                    errors.append(
+                        f"Dataframes are not aligned between index positions {slice_start} and {slice_end}. ",
+                    )
 
             if errors:
                 debug_info = f"Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?"
