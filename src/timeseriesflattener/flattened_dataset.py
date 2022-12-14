@@ -465,33 +465,24 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         """
         base_df = dfs[0]
         base_length = len(dfs[0])
-        base_unique_ids = set(dfs[0].index)
-        n_indeces_to_check = min(1000, base_length)
+        n_indeces_to_check = min(5000, base_length)
         n_dfs = len(dfs)
 
         for i, feature_df in enumerate(dfs[1:]):
-            log.info(f"Checking df {i+1} of {n_dfs}")
+            log.debug(f"Checking df {i+2} of {n_dfs}")
 
             errors = []
 
             # Check that dataframes are of equal length
-            log.info("Checking that dataframes are of equal length")
+            log.debug("Checking that dataframes are of equal length")
             if not len(feature_df) == base_length:
                 errors.append(
                     "Dataframes are not of equal length. ",
                 )
 
-            # Check that indeces are identical
-            log.info("Checking that indeces are identical ")
-            if not set(feature_df.index) == base_unique_ids:
-                errors.append(
-                    "Dataframes don't contain the same indeces.",
-                )
-
             # Check indeces are aligned between dataframes
-
-            log.info(
-                "Checking that indeces are aligned for the first and last 1000 indeces"
+            log.debug(
+                "Checking that indeces are aligned for the first and last {n_indeces_to_check} indeces"
             )
             if not all(
                 feature_df.index[:n_indeces_to_check]
@@ -558,11 +549,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         n_workers = min(self.n_workers, len(temporal_batch))
 
-        log.info(
-            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers"
-        )
-
         chunksize = max(1, round(len(temporal_batch) / (n_workers)))
+
+        log.info(
+            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers. Chunksize is {chunksize}. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance."
+        )
 
         with Pool(n_workers) as p:
             flattened_predictor_dfs = list(
