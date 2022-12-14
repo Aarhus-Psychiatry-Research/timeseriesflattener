@@ -457,30 +457,26 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             .sort_index()
         )
 
-    def _check_dfs_have_same_lengths(self, dfs: list[pd.DataFrame]):
-        """Check that all dfs have the same length."""
-        df_lengths = 0
-
-        for feature_df in dfs:
-            if df_lengths == 0:
-                df_lengths = len(feature_df)
-            else:
-                if df_lengths != len(feature_df):
-                    raise ValueError("Dataframes are not of equal length")
-
-    def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
+    def _check_dfs_are_ready_for_concat(self, dfs: list[pd.DataFrame]):
         """Sample each df and check for identical indeces.
 
         This checks that all the dataframes are aligned before
         concatenation.
         """
-        for _ in range(5000):
-            random_index = random.randint(0, len(dfs[0]) - 1)
-            for feature_df in dfs[1:]:
-                if dfs[0].index[random_index] != feature_df.index[random_index]:
-                    raise ValueError(
-                        f"Dataframes are not of identical index. Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?",
-                    )
+        base_length = len(dfs[0])
+        base_unique_ids = set(dfs[0].index)
+
+        for feature_df in dfs[1:]:
+            debug_info = f"Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?"
+            if not len(feature_df) == base_length:
+                raise ValueError(
+                    f"Dataframes are not of equal length. {debug_info}",
+                )
+
+            if not set(feature_df.index) == base_unique_ids:
+                raise ValueError(
+                    f"Dataframes don't contain the same indeces. {debug_info}",
+                )
 
     def _concatenate_flattened_timeseries(
         self,
@@ -496,8 +492,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Check that dfs are ready for concatenation. Concatenation doesn't merge on IDs, but is **much** faster.
         # We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row
         # for each id.
-        self._check_dfs_have_identical_indexes(dfs=flattened_predictor_dfs)
-        self._check_dfs_have_same_lengths(dfs=flattened_predictor_dfs)
+        self._check_dfs_are_ready_for_concat(dfs=flattened_predictor_dfs)
 
         # If so, ready for concatenation. Reset index to be ready for the merge at the end.
         new_features = pd.concat(
