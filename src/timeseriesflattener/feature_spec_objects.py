@@ -1,6 +1,7 @@
 """Templates for feature specifications."""
 import itertools
 import logging
+import time
 from collections.abc import Callable, Sequence
 from functools import cache
 from typing import Any, Optional, Union
@@ -26,12 +27,17 @@ def load_df_with_cache(
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
+    start_time = time.time()
     log.info(
         f"{feature_name}: Loading values",
     )  # pylint: disable=logging-fstring-interpolation
+
     df = loader_fn(**kwargs)
-    log.info(
-        f"{feature_name}: Loaded values",
+
+    end_time = time.time()
+
+    log.debug(
+        f"{feature_name}: Loaded in {end_time - start_time:.2f} seconds",
     )  # pylint: disable=logging-fstring-interpolation
 
     return df
@@ -44,7 +50,9 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
 
 def resolve_from_dict_or_registry(data: dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
+
     if "values_name" in data and data["values_name"] is not None:
+        log.info(f"Resolving values_df from {data['values_name']}")
         data["values_df"] = split_dfs.get(data["values_name"])
         data["feature_name"] = data["values_name"]
     else:
@@ -92,7 +100,9 @@ def resolve_values_df(data: dict[str, Any]):
 
 class BaseModel(PydanticBaseModel):
     """Modified Pydantic BaseModel to allow arbitrary
-    types and disallow attributes not in the class."""
+
+    types and disallow attributes not in the class.
+    """
 
     # The docstring generator uses the `short_description` attribute of the `Doc`
     # class to generate the top of the docstring.
@@ -116,8 +126,10 @@ class BaseModel(PydanticBaseModel):
 
 def generate_docstring_from_attributes(cls: BaseModel) -> str:
     """Generate a docstring from the attributes of a Pydantic basemodel.
+
     The top of the docstring is taken from the `short_description` attribute of the `Doc`
-    class. The rest of the docstring is generated from the attributes of the class."""
+    class. The rest of the docstring is generated from the attributes of the class.
+    """
     doc = ""
     doc += f"{cls.Doc.short_description}\n\n    "
     doc += "Fields:\n"
@@ -152,13 +164,17 @@ def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.Data
 
     The dataframe should be in the values_df key of data.
     """
-    attributes_with_col_name = [
+    attributes_with_col_name = {
         key for key in data.keys() if "col_name" in key and isinstance(data[key], str)
-    ]
+    }
+
+    skip_attributes = {"output_col_name_override"}
+
+    attributes_to_test = attributes_with_col_name - skip_attributes
 
     errors = []
 
-    for attribute_key in attributes_with_col_name:
+    for attribute_key in attributes_to_test:
         col_name = data[attribute_key]
 
         if col_name not in df.columns:
@@ -194,7 +210,8 @@ class _AnySpec(BaseModel):
             to infer it by looking for the only column that doesn't match id_col_name
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
-            Override the generated column name after flattening the time series"""
+    Override the generated column name after flattening the time series
+    """
 
     class Doc:
         short_description = "A base class for all feature specifications."
@@ -301,6 +318,7 @@ class StaticSpec(_AnySpec):
 
 class TemporalSpec(_AnySpec):
     """The minimum specification required for collapsing a temporal
+
         feature, whether looking ahead or behind. Mostly used for inheritance below.
 
     Fields:
@@ -345,7 +363,8 @@ class TemporalSpec(_AnySpec):
             If NaN is higher than this in the input dataframe during
             resolution, raise an error. Defaults to: 0.0.
         entity_id_col_name (str):
-            Col name for ids in the input dataframe. Defaults to: entity_id."""
+    Col name for ids in the input dataframe. Defaults to: entity_id.
+    """
 
     class Doc:
         short_description = """The minimum specification required for collapsing a temporal 
@@ -466,7 +485,8 @@ class PredictorSpec(TemporalSpec):
         entity_id_col_name (str):
             Col name for ids in the input dataframe. Defaults to: entity_id.
         lookbehind_days (Union[int, float]):
-            How far behind to look for values"""
+    How far behind to look for values
+    """
 
     class Doc:
         short_description = (
@@ -547,7 +567,8 @@ class OutcomeSpec(TemporalSpec):
             For example, type 2 diabetes is incident. Incident outcomes can be handled
             in a vectorised way during resolution, which is faster than non-incident outcomes.
         lookahead_days (Union[int, float]):
-            How far ahead to look for values"""
+    How far ahead to look for values
+    """
 
     class Doc:
         short_description = (
@@ -767,7 +788,8 @@ class PredictorGroupSpec(_MinGroupSpec):
         prefix (str):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
         lookbehind_days (List[Union[int, float]]):
-            How far behind to look for values"""
+    How far behind to look for values
+    """
 
     class Doc:
         short_description = """Specification for a group of predictors."""
@@ -822,7 +844,8 @@ class OutcomeGroupSpec(_MinGroupSpec):
             Incident outcomes can be handled in a vectorised way during resolution,
              which is faster than non-incident outcomes.
         lookahead_days (List[Union[int, float]]):
-            How far ahead to look for values"""
+    How far ahead to look for values
+    """
 
     class Doc:
         short_description = """Specification for a group of outcomes."""

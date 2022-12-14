@@ -1,8 +1,9 @@
 """Flattens timeseries.
 
-Takes a time-series and flattens it into a set of prediction times with describing values.
 Takes a time-series and flattens it into a set of prediction times describing values.
 """
+import chunk
+import copy
 import datetime as dt
 import logging
 import random
@@ -73,7 +74,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             self.cache.prediction_times_df = prediction_times_df
         elif not self.cache.prediction_times_df.equals(prediction_times_df):
             log.info(
-                "Overriding prediction_times_df in cache with prediction_times_df passed to init",
+                "Overriding prediction_times_df cache with the one passed to init",
             )
             self.cache.prediction_times_df = prediction_times_df
 
@@ -414,12 +415,17 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Returns:
             pd.DataFrame: Feature
         """
-
-        if self.cache and self.cache.feature_exists(feature_spec=feature_spec):
-            df = self.cache.read_feature(feature_spec=feature_spec)
-            return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+        if self.cache:
+            if self.cache.feature_exists(feature_spec=feature_spec):
+                log.debug(
+                    f"Cache hit for {feature_spec.get_col_str()}, loading from cache",
+                )
+                df = self.cache.read_feature(feature_spec=feature_spec)
+                return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+            else:
+                log.debug(f"Cache miss for {feature_spec.get_col_str()}, generating")
         elif not self.cache:
-            log.info("No cache specified, not attempting load")
+            log.debug("No cache specified, not attempting load")
 
         df = self._flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
@@ -513,10 +519,22 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         n_workers = min(self.n_workers, len(temporal_batch))
 
+        log.info(
+            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers",
+        )
+
+        # Chunksize is the number of predictors to process in each worker.
+        # If we don't set chunksize, imap uses the default of 1, which means a bunch of IO overhead.
+        chunksize = max(1, round(len(temporal_batch) / (n_workers)))
+
         with Pool(n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
-                    p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
+                    p.imap(
+                        func=self._get_temporal_feature,
+                        iterable=temporal_batch,
+                        chunksize=chunksize,
+                    ),
                     total=len(temporal_batch),
                 ),
             )
