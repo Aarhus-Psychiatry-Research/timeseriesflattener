@@ -3,6 +3,7 @@
 Takes a time-series and flattens it into a set of prediction times with describing values.
 Takes a time-series and flattens it into a set of prediction times describing values.
 """
+import chunk
 import copy
 import datetime as dt
 import logging
@@ -10,7 +11,7 @@ import random
 import time
 from collections.abc import Callable
 from datetime import timedelta
-from multiprocessing.pool import ThreadPool
+from multiprocessing import Pool
 from typing import Optional, Union
 
 import coloredlogs
@@ -429,16 +430,14 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         elif not self.cache:
             log.info("No cache specified, not attempting load")
 
-        _df = self._df[
-            [
-                self.pred_time_uuid_col_name,
-                self.entity_id_col_name,
-                self.timestamp_col_name,
-            ]
-        ]
-
         df = self._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=_df,
+            prediction_times_with_uuid_df=self._df[
+                [
+                    self.pred_time_uuid_col_name,
+                    self.entity_id_col_name,
+                    self.timestamp_col_name,
+                ]
+            ],
             entity_id_col_name=self.entity_id_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             output_spec=feature_spec,
@@ -527,10 +526,16 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers"
         )
 
-        with ThreadPool(n_workers) as p:
+        chunksize = max(1, round(len(temporal_batch) / (n_workers)))
+
+        with Pool(n_workers) as p:
             flattened_predictor_dfs = list(
                 tqdm.tqdm(
-                    p.imap(func=self._get_temporal_feature, iterable=temporal_batch),
+                    p.imap(
+                        func=self._get_temporal_feature,
+                        iterable=temporal_batch,
+                        chunksize=chunksize,
+                    ),
                     total=len(temporal_batch),
                 ),
             )
