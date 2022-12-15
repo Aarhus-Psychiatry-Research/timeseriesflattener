@@ -454,7 +454,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             .sort_index()
         )
 
-    def _check_dfs_are_ready_for_concat(self, dfs: list[pd.DataFrame]):
+    @staticmethod
+    def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
         """Sample each df and check for identical indeces.
 
         This checks that all the dataframes are aligned before
@@ -462,8 +463,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         """
         base_df = dfs[0]
         base_length = len(dfs[0])
-        slice_size = min(1000, base_length)
         n_dfs = len(dfs)
+
+        log.info(
+            "Checking that dataframes are ready for concatenation - namely that their indeces are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows."
+        )
 
         for i, feature_df in enumerate(dfs[1:]):
             log.debug(f"Checking df {i+2} of {n_dfs}")
@@ -478,18 +482,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 )
 
             # Check 5 evenly spaced slices of the dataframe
-            log.debug("Checking that indeces are aligned for 5 evenly spaced slices")
-            for slice_i in range(1, 6):
-                slice_end = int(slice_i / 6 * base_length)
-                slice_start = slice_end - slice_size
-
-                if not all(
-                    feature_df.index[slice_start:slice_end]
-                    == base_df.index[slice_start:slice_end],
-                ):
-                    errors.append(
-                        f"Dataframes are not aligned between index positions {slice_start} and {slice_end}. ",
-                    )
+            log.debug("Checking that indeces are aligned")
+            if not all(
+                feature_df.index == base_df.index,
+            ):
+                errors.append(
+                    f"Dataframes are not aligned. ",
+                )
 
             if errors:
                 debug_info = f"Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?"
