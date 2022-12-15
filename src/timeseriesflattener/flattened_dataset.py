@@ -466,7 +466,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         n_dfs = len(dfs)
 
         log.info(
-            "Checking that dataframes are ready for concatenation - namely that their indeces are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows."
+            "Checking that dataframes are ready for concatenation - namely that their indeces are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows.",
         )
 
         for i, feature_df in enumerate(dfs[1:]):
@@ -487,7 +487,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 feature_df.index == base_df.index,
             ):
                 errors.append(
-                    f"Dataframes are not aligned. ",
+                    "Dataframes are not aligned. ",
                 )
 
             if errors:

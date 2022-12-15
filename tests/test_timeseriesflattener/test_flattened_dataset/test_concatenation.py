@@ -9,8 +9,11 @@ import pytest
 
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 
+# pylint: disable=protected-access
+
 
 def benchmark(func: Callable, *args, **kwargs):
+    """Benchmark a function."""
     start = time.perf_counter()
     func(*args, **kwargs)
     end = time.perf_counter()
@@ -19,6 +22,7 @@ def benchmark(func: Callable, *args, **kwargs):
 
 
 def generate_test_df(uuids: list[str], col_values: list[int] = None):
+    """Generate a test df with a random integer column and a uuid index."""
     df = pd.DataFrame()
 
     # create a column with random integers between 1 and 1000_000
@@ -47,13 +51,15 @@ def test_benchmark_full_index_comparison_before_concatenate():
     # 0.033 seconds for 9 dfs when sampling 100_000 rows
     # 7.622 seconds for 100 dfs when sampling 2_000_000 rows
     compute_seconds = benchmark(
-        TimeseriesFlattener._check_dfs_are_ready_for_concat, dfs
+        TimeseriesFlattener._check_dfs_are_ready_for_concat,
+        dfs,
     )
 
     assert compute_seconds < 2
 
 
 def test_error_raised_with_unaligend_rows():
+    """Test that an error is raised when the rows are not aligned"""
     n_rows = 2_000_000
     uuids = [uuid.uuid4().hex[:16] for _ in range(n_rows)]
     random_ints = [1 for _ in range(n_rows)]
