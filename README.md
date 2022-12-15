@@ -102,10 +102,12 @@ Output:
 
 | Documentation          |                                                                                        |
 | ---------------------- | -------------------------------------------------------------------------------------- |
+| 🗺️ **[Tutorial]**       | Simple and advanced tutorials to get you started using `timeseriesflattener`           |
 | 🎛 **[API References]** | The detailed reference for timeseriesflattener's API. Including function documentation |
 | 🙋 **[FAQ]**            | Frequently asked question                                                              |
 | 🗺️ **[Roadmap]**        | Kanban board for the roadmap for the project                                           |
 
+[Tutorial]: https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html
 [api references]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
 [FAQ]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/faq.html
 [Roadmap]: https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1
