@@ -2,8 +2,6 @@
 
 Takes a time-series and flattens it into a set of prediction times describing values.
 """
-import chunk
-import copy
 import datetime as dt
 import logging
 import random
@@ -456,7 +454,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
-        """Sample each df and check for identical indeces.
+        """Sample each df and check for identical indices.
 
         This checks that all the dataframes are aligned before
         concatenation.
@@ -466,7 +464,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         n_dfs = len(dfs)
 
         log.info(
-            "Checking that dataframes are ready for concatenation - namely that their indeces are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows.",
+            "Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).",
+        )
+
+        log.debug(
+            "Checking that dataframes are ready for concatenation - namely that their indices are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows.",
         )
 
         for i, feature_df in enumerate(dfs[1:]):
@@ -481,8 +483,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                     "Dataframes are not of equal length. ",
                 )
 
-            # Check 5 evenly spaced slices of the dataframe
-            log.debug("Checking that indeces are aligned")
+            log.debug("Checking that indices are aligned")
             if not all(
                 feature_df.index == base_df.index,
             ):
@@ -507,14 +508,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Check that dfs are ready for concatenation. Concatenation doesn't merge on IDs, but is **much** faster.
         # We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row
         # for each id.
-        log.info(
-            "Checking that dfs are ready for concatenation. This will take some time.",
-        )
         self._check_dfs_are_ready_for_concat(dfs=flattened_predictor_dfs)
 
         # If so, ready for concatenation. Reset index to be ready for the merge at the end.
         log.info(
-            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
+            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.",
         )
         new_features = pd.concat(
             objs=flattened_predictor_dfs,

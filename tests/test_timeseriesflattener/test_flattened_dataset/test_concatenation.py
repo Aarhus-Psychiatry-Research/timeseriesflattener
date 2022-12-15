@@ -42,10 +42,12 @@ def test_benchmark_full_index_comparison_before_concatenate():
     # create an empty dataframe
 
     n_rows = 20_000
-    uuids = [uuid.uuid4().hex[:16] for _ in range(n_rows)]
-    random_ints = [1 for _ in range(n_rows)]
 
-    dfs = [generate_test_df(uuids=uuids, col_values=random_ints) for _ in range(1_000)]
+    # Generate 16 digit alphanumeric uuids
+    uuids = [uuid.uuid4().hex[:16] for _ in range(n_rows)]
+    col_values = [1 for _ in range(n_rows)]
+
+    dfs = [generate_test_df(uuids=uuids, col_values=col_values) for _ in range(1_000)]
 
     # 0.004 seconds for 9 dfs when sampling 5_000 rows
     # 0.033 seconds for 9 dfs when sampling 100_000 rows
