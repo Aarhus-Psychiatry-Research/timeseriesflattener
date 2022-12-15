@@ -225,8 +225,6 @@
 
 <span class="sd">Takes a time-series and flattens it into a set of prediction times describing values.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">chunk</span>
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">random</span>
@@ -677,49 +675,68 @@
             <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_dfs_have_same_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dfs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Check that all dfs have the same length.&quot;&quot;&quot;</span>
-        <span class="n">df_lengths</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">for</span> <span class="n">feature_df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">df_lengths</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">df_lengths</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_df</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">df_lengths</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_df</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dataframes are not of equal length&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_check_dfs_have_identical_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dfs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Sample each df and check for identical indeces.</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_dfs_are_ready_for_concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Sample each df and check for identical indices.</span>
 
 <span class="sd">        This checks that all the dataframes are aligned before</span>
 <span class="sd">        concatenation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5000</span><span class="p">):</span>
-            <span class="n">random_index</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">feature_df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                <span class="k">if</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">random_index</span><span class="p">]</span> <span class="o">!=</span> <span class="n">feature_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">random_index</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s2">&quot;Dataframes are not of identical index. Were they correctly aligned before concatenation?&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
+        <span class="n">base_df</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">base_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">n_dfs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Checking that dataframes are ready for concatenation - namely that their indices are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">feature_df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking df </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">n_dfs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Check that dataframes are of equal length</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking that dataframes are of equal length&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_df</span><span class="p">)</span> <span class="o">==</span> <span class="n">base_length</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;Dataframes are not of equal length. &quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking that indices are aligned&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="n">feature_df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">base_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;Dataframes are not aligned. &quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+                <span class="n">debug_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Columns in dataframes: 0_df: </span><span class="si">{</span><span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">, feature_df: </span><span class="si">{</span><span class="n">feature_df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">. Were they correctly aligned before concatenation?&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Dataframes are not ready for concatenation. </span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">debug_info</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_concatenate_flattened_timeseries</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">flattened_predictor_dfs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Concatenate flattened predictor dfs.&quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
 
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
         <span class="c1"># Check that dfs are ready for concatenation. Concatenation doesn&#39;t merge on IDs, but is **much** faster.</span>
         <span class="c1"># We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row</span>
         <span class="c1"># for each id.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_dfs_have_identical_indexes</span><span class="p">(</span><span class="n">dfs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_dfs_have_same_lengths</span><span class="p">(</span><span class="n">dfs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_dfs_are_ready_for_concat</span><span class="p">(</span><span class="n">dfs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">)</span>
 
         <span class="c1"># If so, ready for concatenation. Reset index to be ready for the merge at the end.</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">new_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
             <span class="n">objs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">,</span>
             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -742,13 +759,13 @@
 
         <span class="n">n_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_workers</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">))</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> temporal features in parallel with </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-
         <span class="c1"># Chunksize is the number of predictors to process in each worker.</span>
         <span class="c1"># If we don&#39;t set chunksize, imap uses the default of 1, which means a bunch of IO overhead.</span>
         <span class="n">chunksize</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_workers</span><span class="p">)))</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> temporal features in parallel with </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers. Chunksize is </span><span class="si">{</span><span class="n">chunksize</span><span class="si">}</span><span class="s2">. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
             <span class="n">flattened_predictor_dfs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
