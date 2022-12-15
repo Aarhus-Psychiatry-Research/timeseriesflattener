@@ -91,50 +91,24 @@ if __name__ == "__main__":
 ```
 Output:
 
-|    |   id | date                | prediction_time_uuid   |   pred_test_feature_within_30_days_mean_fallback_nan |   outc_test_outcome_within_31_days_maximum_fallback_0_dichotomous |
-|---:|-----:|:--------------------|:-----------------------|-----------------------------------------------------:|------------------------------------------------------------------:|
-|  0 |    1 | 2020-01-01 00:00:00 | 1-2020-01-01-00-00-00  |                                                  2.5 |                                                                 0 |
-|  1 |    1 | 2020-02-01 00:00:00 | 1-2020-02-01-00-00-00  |                                                  1   |                                                                 1 |
-|  2 |    2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00  |                                                  4   |                                                                 0 |
-
-
-## 🗺️ Roadmap
-Roadmap is tracked on our [kanban board](https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1).
-
-## 🤖 Functionality
-`timeseriesflattener` includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.
-
-When constructing feature sets from time series in general, or medical time series in particular, there are several choices one needs to make. 
-
-1. When to issue predictions (*prediction time*). E.g. at every physical visit, every morning, or another clinically meaningful time.
-2. How far back/ahead from the prediction times to look for raw values (*lookbehind/lookahead*). 
-3. Which method to use for aggregation if multiple values exist in the lookbehind.
-4. Which value to use if there are no data points in the lookbehind.
-
-![Terminology: A: *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional](https://user-images.githubusercontent.com/23191638/207274283-1207e2ce-86c7-4ee8-82a5-d81617c8bb77.png)
-
-The above figure graphically represents the terminology used in the package. 
-
-**A)** *Lookbehind* determines how far back in time to look for values for predictors, whereas *lookahead* determines how far into the future to look for outcome values. A *prediction time* indicates at which point the model issues a prediction, and is used as a reference for the *lookbehind* and *lookahead*.  
-
-**B)** Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. 
-
-**C)** Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. 
-
-**D)** Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional.
-
-Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the [tutorials](placeholder) for example use cases.
+|      |   id | date                | prediction_time_uuid  | pred_test_feature_within_30_days_mean_fallback_nan | outc_test_outcome_within_31_days_maximum_fallback_0_dichotomous |
+| ---: | ---: | :------------------ | :-------------------- | -------------------------------------------------: | --------------------------------------------------------------: |
+|    0 |    1 | 2020-01-01 00:00:00 | 1-2020-01-01-00-00-00 |                                                2.5 |                                                               0 |
+|    1 |    1 | 2020-02-01 00:00:00 | 1-2020-02-01-00-00-00 |                                                  1 |                                                               1 |
+|    2 |    2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00 |                                                  4 |                                                               0 |
 
 
 ## 📖 Documentation
 
-| Documentation          |                                                                                              |
-| ---------------------- | -------------------------------------------------------------------------------------------- |
+| Documentation          |                                                                                        |
+| ---------------------- | -------------------------------------------------------------------------------------- |
 | 🎛 **[API References]** | The detailed reference for timeseriesflattener's API. Including function documentation |
-| 🙋 **[FAQ]**            | Frequently asked question                                                                    |
+| 🙋 **[FAQ]**            | Frequently asked question                                                              |
+| 🗺️ **[Roadmap]**        | Kanban board for the roadmap for the project                                           |
 
 [api references]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
 [FAQ]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/faq.html
+[Roadmap]: https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1
 
 ## 💬 Where to ask questions
 
