@@ -66,7 +66,9 @@ def test_error_raised_with_unaligend_rows():
 
     df1 = generate_test_df(uuids=uuids, col_values=random_ints)
 
-    random.shuffle(uuids)
+    # Rewrite a uuids at a random index
+    random_index = random.randint(0, n_rows - 1)
+    uuids[random_index] = uuid.uuid4().hex[:16]
 
     df2 = generate_test_df(uuids=uuids, col_values=random_ints)
 
