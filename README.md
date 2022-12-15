@@ -102,7 +102,7 @@ Output:
 
 | Documentation          |                                                                                        |
 | ---------------------- | -------------------------------------------------------------------------------------- |
-| 🗺️ **[Tutorial]**       | Simple and advanced tutorials to get you started using `timeseriesflattener`           |
+| 🎓 **[Tutorial]**       | Simple and advanced tutorials to get you started using `timeseriesflattener`           |
 | 🎛 **[API References]** | The detailed reference for timeseriesflattener's API. Including function documentation |
 | 🙋 **[FAQ]**            | Frequently asked question                                                              |
 | 🗺️ **[Roadmap]**        | Kanban board for the roadmap for the project                                           |
