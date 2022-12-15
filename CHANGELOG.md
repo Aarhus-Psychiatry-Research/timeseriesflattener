@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.22.0 (2022-12-15)
+### Feature
+* Compare all indeces for maximum safety ([`22b7776`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/22b77762a68d46f1586a0032ba25c2691d0eb84c))
+* Sample 5 evenly spaced slices ([`a0aa5ef`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a0aa5ef78c7f92ec0ec667b7dbdc202d48a95793))
+* Log info on chunksize ([`2fa5edc`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2fa5edcac0f60b8e19905e43f947f6ddf02f48c0))
+* Check first and last 1000 indeces ([`df85c66`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/df85c66e870151d26cef35ca18f5b63d7f34614f))
+* Check that ids are similar ([`9d47310`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9d4731012ab897c9441c911b10864524289abc82))
+* Better logging when dfs are not of identical index ([`2cf78d0`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2cf78d03d5d619434bd4fa845971faef03e22cb7))
+
 ## v0.21.0 (2022-12-14)
 ### Feature
 * Decrease log level of debug info ([`9ceece1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9ceece16b8c3f9a669748b061c26216500585d15))
