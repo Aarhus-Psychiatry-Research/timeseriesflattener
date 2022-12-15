@@ -177,10 +177,12 @@
   <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/01_basic.html">Introductory tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/01_basic.html#handling-data-frames-shaped-as-long-with-multiple-value-types">Handling data frames shaped as long with multiple value types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/02_advanced.html">Advanced tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="tutorials.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/01_basic.html">Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/02_advanced.html">Advanced Tutorial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -241,8 +243,25 @@
 <a class="reference external image-reference" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"><img alt="https://img.shields.io/github/stars/Aarhus-Psychiatry-Research/timeseriesflattener.svg?style=social&amp;label=Star&amp;maxAge=2592000" src="https://img.shields.io/github/stars/Aarhus-Psychiatry-Research/timeseriesflattener.svg?style=social&amp;label=Star&amp;maxAge=2592000" /></a>
 <p><cite>timeseriesflattener</cite> is a Python package for generating features time series data
 to be used as predictors in machine learning models. The package implements a number of
-methods for aggregating time series data into features. Furthermore the package integrates
-quality control of the generated features using <a class="reference external" href="https://deepchecks.com">deepchecks</a>.</p>
+methods for aggregating time series data into features.</p>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">#</a></h2>
+<p><cite>timeseriesflattener</cite> includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.</p>
+<p>When constructing feature sets from time series in general, or medical time series in particular, there are several choices one needs to make.</p>
+<ol class="arabic simple">
+<li><p>When to issue predictions (<em>prediction time</em>). E.g. at every physical visit, every morning, or another clinically meaningful time.</p></li>
+<li><p>How far back/ahead from the prediction times to look for raw values (<em>lookbehind/lookahead</em>).</p></li>
+<li><p>Which method to use for aggregation if multiple values exist in the lookbehind.</p></li>
+<li><p>Which value to use if there are no data points in the lookbehind.</p></li>
+</ol>
+<img alt="Terminology: A: Lookbehind determines how far back in time to look for values for predictors, whereas lookahead determines how far into the future to look for outcome values. A prediction time indicates at which point the model issues a prediction, and is used as a reference for the lookbehind and lookahead. B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the lookbehind window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the lookbehind extends further back in time than the start of the dataset or if the lookahead extends further than the end of the dataset. This behaviour is optional" class="align-center" src="https://user-images.githubusercontent.com/23191638/207274283-1207e2ce-86c7-4ee8-82a5-d81617c8bb77.png" />
+<p>The above figure graphically represents the terminology used in the package.</p>
+<p><strong>A)</strong> <em>Lookbehind</em> determines how far back in time to look for values for predictors, whereas <em>lookahead</em> determines how far into the future to look for outcome values. A <em>prediction time</em> indicates at which point the model issues a prediction, and is used as a reference for the <em>lookbehind</em> and <em>lookahead</em>.</p>
+<p><strong>B)</strong> Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window.</p>
+<p><strong>C)</strong> Values within the <em>lookbehind</em> window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc.</p>
+<p><strong>D)</strong> Prediction times are dropped if the <em>lookbehind</em> extends further back in time than the start of the dataset or if the <em>lookahead</em> extends further than the end of the dataset. This behaviour is optional.</p>
+<p>Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the [tutorials](placeholder) for example use cases.</p>
+</section>
 <section id="where-to-ask-questions">
 <h2>Where to ask questions?<a class="headerlink" href="#where-to-ask-questions" title="Permalink to this heading">#</a></h2>
 <p>To ask report issues or request features, please use the
@@ -340,6 +359,7 @@ Otherwise, please use the discussion forums.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">timeseriesflattener</a><ul>
+<li><a class="reference internal" href="#functionality">Functionality</a></li>
 <li><a class="reference internal" href="#where-to-ask-questions">Where to ask questions?</a><ul>
 </ul>
 </li>
