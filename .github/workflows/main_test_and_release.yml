@@ -12,7 +12,7 @@ on:
       - main
 
 env:
-  cache-version: 0.0.4 # Change this number if you want to manually invalidate all caches
+  cache-version: 0.0.8 # Change this number if you want to manually invalidate all caches
   poetry-version: 1.1.15
   python-version: 3.9
 

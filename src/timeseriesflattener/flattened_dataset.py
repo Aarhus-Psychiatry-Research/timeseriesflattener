@@ -2,8 +2,6 @@
 
 Takes a time-series and flattens it into a set of prediction times describing values.
 """
-import chunk
-import copy
 import datetime as dt
 import logging
 import random
@@ -454,49 +452,68 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             .sort_index()
         )
 
-    def _check_dfs_have_same_lengths(self, dfs: list[pd.DataFrame]):
-        """Check that all dfs have the same length."""
-        df_lengths = 0
-
-        for feature_df in dfs:
-            if df_lengths == 0:
-                df_lengths = len(feature_df)
-            else:
-                if df_lengths != len(feature_df):
-                    raise ValueError("Dataframes are not of equal length")
-
-    def _check_dfs_have_identical_indexes(self, dfs: list[pd.DataFrame]):
-        """Sample each df and check for identical indeces.
+    @staticmethod
+    def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
+        """Sample each df and check for identical indices.
 
         This checks that all the dataframes are aligned before
         concatenation.
         """
-        for _ in range(5000):
-            random_index = random.randint(0, len(dfs[0]) - 1)
-            for feature_df in dfs[1:]:
-                if dfs[0].index[random_index] != feature_df.index[random_index]:
-                    raise ValueError(
-                        "Dataframes are not of identical index. Were they correctly aligned before concatenation?",
-                    )
+        base_df = dfs[0]
+        base_length = len(dfs[0])
+        n_dfs = len(dfs)
+
+        log.info(
+            "Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).",
+        )
+
+        log.debug(
+            "Checking that dataframes are ready for concatenation - namely that their indices are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows.",
+        )
+
+        for i, feature_df in enumerate(dfs[1:]):
+            log.debug(f"Checking df {i+2} of {n_dfs}")
+
+            errors = []
+
+            # Check that dataframes are of equal length
+            log.debug("Checking that dataframes are of equal length")
+            if not len(feature_df) == base_length:
+                errors.append(
+                    "Dataframes are not of equal length. ",
+                )
+
+            log.debug("Checking that indices are aligned")
+            if not all(
+                feature_df.index == base_df.index,
+            ):
+                errors.append(
+                    "Dataframes are not aligned. ",
+                )
+
+            if errors:
+                debug_info = f"Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?"
+                raise ValueError(
+                    f"Dataframes are not ready for concatenation. {errors}, {debug_info}",
+                )
 
     def _concatenate_flattened_timeseries(
         self,
         flattened_predictor_dfs: list[pd.DataFrame],
     ) -> None:
         """Concatenate flattened predictor dfs."""
-        log.info(
-            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.",
-        )
 
         start_time = time.time()
 
         # Check that dfs are ready for concatenation. Concatenation doesn't merge on IDs, but is **much** faster.
         # We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row
         # for each id.
-        self._check_dfs_have_identical_indexes(dfs=flattened_predictor_dfs)
-        self._check_dfs_have_same_lengths(dfs=flattened_predictor_dfs)
+        self._check_dfs_are_ready_for_concat(dfs=flattened_predictor_dfs)
 
         # If so, ready for concatenation. Reset index to be ready for the merge at the end.
+        log.info(
+            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.",
+        )
         new_features = pd.concat(
             objs=flattened_predictor_dfs,
             axis=1,
@@ -519,13 +536,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         n_workers = min(self.n_workers, len(temporal_batch))
 
-        log.info(
-            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers",
-        )
-
         # Chunksize is the number of predictors to process in each worker.
         # If we don't set chunksize, imap uses the default of 1, which means a bunch of IO overhead.
         chunksize = max(1, round(len(temporal_batch) / (n_workers)))
+
+        log.info(
+            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers. Chunksize is {chunksize}. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.",
+        )
 
         with Pool(n_workers) as p:
             flattened_predictor_dfs = list(
