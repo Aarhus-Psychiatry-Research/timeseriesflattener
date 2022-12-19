@@ -818,7 +818,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">input_col_name_override</span>
 
-        <span class="k">if</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">feature_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">output_col_name_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">output_col_name_override</span>
+        <span class="k">elif</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">feature_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">output_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">static_spec</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">value_col_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">elif</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">feature_name</span><span class="p">:</span>
             <span class="n">output_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">static_spec</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">static_spec</span><span class="o">.</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1116,8 +1118,8 @@
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No unprocessed specs, skipping&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_static_specs</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_static_specs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TimeseriesFlattener.get_df"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.get_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get the flattened dataframe. Computes if any unprocessed specs are present.</span>
