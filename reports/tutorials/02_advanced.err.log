@@ -1,0 +1,51 @@
+Traceback (most recent call last):
+  File "/home/runner/work/timeseriesflattener/timeseriesflattener/.venv/lib/python3.9/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/runner/work/timeseriesflattener/timeseriesflattener/.venv/lib/python3.9/site-packages/nbclient/client.py", line 1204, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/runner/work/timeseriesflattener/timeseriesflattener/.venv/lib/python3.9/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/home/runner/work/timeseriesflattener/timeseriesflattener/.venv/lib/python3.9/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/asyncio/base_events.py", line 647, in run_until_complete
+    return future.result()
+  File "/home/runner/work/timeseriesflattener/timeseriesflattener/.venv/lib/python3.9/site-packages/nbclient/client.py", line 663, in async_execute
+    await self.async_execute_cell(
+  File "/home/runner/work/timeseriesflattener/timeseriesflattener/.venv/lib/python3.9/site-packages/nbclient/client.py", line 965, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/timeseriesflattener/timeseriesflattener/.venv/lib/python3.9/site-packages/nbclient/client.py", line 862, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+df = ts_flattener.get_df()
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mAttributeError[0m                            Traceback (most recent call last)
+[0;32m/tmp/ipykernel_3808/1582415757.py[0m in [0;36m<cell line: 1>[0;34m()[0m
+[0;32m----> 1[0;31m [0mdf[0m [0;34m=[0m [0mts_flattener[0m[0;34m.[0m[0mget_df[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py[0m in [0;36mget_df[0;34m(self)[0m
+[1;32m    905[0m         [0;32mif[0m [0mlen[0m[0;34m([0m[0mself[0m[0;34m.[0m[0munprocessed_specs[0m[0;34m)[0m [0;34m>[0m [0;36m0[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    906[0m             [0mlog[0m[0;34m.[0m[0minfo[0m[0;34m([0m[0;34m"There were unprocessed specs, computing..."[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 907[0;31m             [0mself[0m[0;34m.[0m[0mcompute[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    908[0m [0;34m[0m[0m
+[1;32m    909[0m         [0;31m# Process[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py[0m in [0;36mcompute[0;34m(self)[0m
+[1;32m    895[0m [0;34m[0m[0m
+[1;32m    896[0m         [0mself[0m[0;34m.[0m[0m_process_static_specs[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 897[0;31m         [0mself[0m[0;34m.[0m[0m_process_temporal_specs[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    898[0m [0;34m[0m[0m
+[1;32m    899[0m     [0;32mdef[0m [0mget_df[0m[0;34m([0m[0mself[0m[0;34m)[0m [0;34m->[0m [0mDataFrame[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py[0m in [0;36m_process_temporal_specs[0;34m(self)[0m
+[1;32m    737[0m         [0;34m"""Process outcome specs."""[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    738[0m [0;34m[0m[0m
+[0;32m--> 739[0;31m         [0;32mfor[0m [0mspec[0m [0;32min[0m [0mself[0m[0;34m.[0m[0munprocessed_specs[0m[0;34m.[0m[0moutcome_specs[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    740[0m             [0;31m# Handle incident specs separately, since their operations can be vectorised,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    741[0m             [0;31m# making them much faster[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mAttributeError[0m: 'list' object has no attribute 'outcome_specs'
+AttributeError: 'list' object has no attribute 'outcome_specs'
+
