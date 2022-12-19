@@ -593,7 +593,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         else:
             value_col_name = static_spec.input_col_name_override
 
-        if static_spec.feature_name is None:
+        if static_spec.output_col_name_override is not None:
+            output_col_name = static_spec.output_col_name_override
+        elif static_spec.feature_name is None:
             output_col_name = f"{static_spec.prefix}_{value_col_name}"
         elif static_spec.feature_name:
             output_col_name = f"{static_spec.prefix}_{static_spec.feature_name}"
@@ -891,8 +893,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             log.warning("No unprocessed specs, skipping")
             return
 
-        self._process_temporal_specs()
         self._process_static_specs()
+        self._process_temporal_specs()
 
     def get_df(self) -> DataFrame:
         """Get the flattened dataframe. Computes if any unprocessed specs are present.

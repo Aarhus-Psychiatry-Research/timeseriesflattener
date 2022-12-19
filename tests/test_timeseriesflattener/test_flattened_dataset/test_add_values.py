@@ -365,7 +365,7 @@ def test_add_multiple_static_predictors():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_max_fallback_0_dichotomous,pred_age_in_years,pred_male
+    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_max_fallback_0_dichotomous,pred_age_in_years,pred_male_overridden
                         1,2021-12-31 00:00:00, 1.0,22.00,1
                         2,2021-12-31 00:00:00, 1.0,22.00,0
                         3,2023-12-31 00:00:00, 0.0,23.99,1
@@ -412,6 +412,7 @@ def test_add_multiple_static_predictors():
                 feature_name="male",
                 prefix="pred",
                 input_col_name_override="male",
+                output_col_name_override="pred_male_overridden",
             ),
         ],
     )
@@ -428,11 +429,11 @@ def test_add_multiple_static_predictors():
         "timestamp",
         "outc_value_within_2_days_max_fallback_0_dichotomous",
         "pred_age_in_years",
-        "pred_male",
+        "pred_male_overridden",
     ):
         pd.testing.assert_series_equal(
-            outcome_df[col],
-            expected_df[col],
+            outcome_df[col].reset_index(drop=True),
+            expected_df[col].reset_index(drop=True),
             check_dtype=False,
         )
 
