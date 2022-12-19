@@ -2,6 +2,19 @@
 
 <!--next-version-placeholder-->
 
+## v0.22.1 (2022-12-19)
+### Fix
+* Don't clear all specs as unprocessed ([`b7d4f88`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b7d4f884d4f57631a267ef5ce4deed74dce2c0e1))
+* Iterating while deleting items in list leads to skipped items ([`5443408`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5443408498c22e62f8196f30cbf3976c20e7eeb3))
+* Static spec ignored outcome col name override ([`5ec6892`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5ec689232c4ff2214cbe760d9222dccf24f41b88))
+
+### Documentation
+* Fixed titles ([`7ebf424`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7ebf424e391708fb4cf8909cfe33eed5130d5575))
+* Added tutorial link to readme ([`50cdb85`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/50cdb8511d49ffdd4b6619969415af08fc059659))
+* Updated relay menu ([`44cf0f5`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/44cf0f55307dcebba2acc35dd076935c4b12a335))
+* Updated menu structure ([`1e5edda`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1e5eddac65e3a83c0f7c74b0d103dbe5cf6e0e5a))
+* Reordered elements form readme to documentation site ([`327fbf9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/327fbf9013c45cc576e9f5f57d02cfde2b5ea381))
+
 ## v0.22.0 (2022-12-15)
 ### Feature
 * Compare all indeces for maximum safety ([`22b7776`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/22b77762a68d46f1586a0032ba25c2691d0eb84c))
