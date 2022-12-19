@@ -623,7 +623,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 static_spec=spec,
             )
 
-            self.unprocessed_specs.static_specs.remove(spec)
+        self.unprocessed_specs = []
 
     def _add_incident_outcome(
         self,
