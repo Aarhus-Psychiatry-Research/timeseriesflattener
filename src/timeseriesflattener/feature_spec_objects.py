@@ -626,11 +626,11 @@ class OutcomeSpec(TemporalSpec):
         if self.incident:
             if self.values_df[
                 "dw_ek_borger"
-            ].nunique() != len( # needs to be changed from dw_ek_borger to something more generalizable
+            ].nunique() != len(  # needs to be changed from dw_ek_borger to something more generalizable
                 self.values_df,
             ):
                 log.warning(
-                    "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]. Otherwise, timeseriesflattener will handle this by keeping only the first row for each ID. "
+                    "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]. Otherwise, timeseriesflattener will handle this by keeping only the first row for each ID. ",
                 )
 
 class _MinGroupSpec(BaseModel):
