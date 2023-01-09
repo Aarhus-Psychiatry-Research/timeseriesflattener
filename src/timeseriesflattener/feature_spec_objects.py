@@ -600,6 +600,8 @@ class OutcomeSpec(TemporalSpec):
 
         super().__init__(**data)
 
+        self.is_incident()
+
     def get_col_str(self) -> str:
         """Get the column name for the output column."""
         col_str = super().get_col_str()
@@ -619,6 +621,13 @@ class OutcomeSpec(TemporalSpec):
 
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
 
+    def is_incident(self):
+        """Check if the outcome is incident, i.e. contains unique IDs."""
+        if self.incident:
+            if self.values_df["dw_ek_borger"].nunique() != len( # needs to be dw_ek_borger instead of entity_id_col_name, but how to make it generalizable?
+                self.values_df
+            ):
+                log.warning("Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]. Otherwise, timeseriesflattener will handle this by keeping only the first row for each ID. ")
 
 class _MinGroupSpec(BaseModel):
     class Doc:

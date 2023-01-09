@@ -636,6 +636,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         prediction_timestamp_col_name = f"{self.timestamp_col_name}_prediction"
         outcome_timestamp_col_name = f"{self.timestamp_col_name}_outcome"
 
+        # Get first outcome for each entity (to ensure incident)
+        outcome_spec.values_df = outcome_spec.values_df.sort_values(self.timestamp_col_name, ascending=True).groupby(self.entity_id_col_name).first().reset_index()
+
         df = pd.merge(
             self._df,
             outcome_spec.values_df,
