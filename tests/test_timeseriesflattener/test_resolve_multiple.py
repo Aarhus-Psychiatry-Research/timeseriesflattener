@@ -401,3 +401,26 @@ def test_resolve_multiple_variance():
         ),
         expected_values=[0.5, np.NaN],
     )
+
+
+def test_resolve_multiple_concatenate():
+    prediction_times_str = """entity_id,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+    event_times_str = """entity_id,timestamp,value,
+                        1,2022-01-01 00:00:00,the patient
+                        1,2022-01-02 00:00:00,is feeling ill
+                        """
+
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            feature_name="value",
+            values_df=str_to_df(event_times_str),
+            resolve_multiple_fn="concatenate",
+            interval_days=4,
+            fallback=np.NaN,
+            incident=False,
+        ),
+        expected_values=["the patient is feeling ill"],
+    )

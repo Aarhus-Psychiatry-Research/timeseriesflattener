@@ -110,7 +110,7 @@ def assert_flattened_data_as_expected(
 
         for i, expected_val in enumerate(expected):
             # NaN != NaN, hence specific handling
-            if np.isnan(expected_val):
+            if not isinstance(expected_val, str) and np.isnan(expected_val):
                 assert np.isnan(output[i])
             else:
                 assert expected_val == output[i]
