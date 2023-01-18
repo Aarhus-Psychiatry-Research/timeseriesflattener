@@ -15,6 +15,7 @@ from timeseriesflattener.feature_spec_objects import _AnySpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
+    load_synth_text,
     synth_predictor_binary,
 )
 from timeseriesflattener.utils import data_loaders
@@ -180,3 +181,9 @@ def synth_outcome():
 def long_df_with_multiple_values():
     """Load the long df."""
     return load_long_df_with_multiple_values()
+
+
+@pytest.fixture(scope="function")
+def synth_text_data():
+    """Load the synth text data."""
+    return load_synth_text()
