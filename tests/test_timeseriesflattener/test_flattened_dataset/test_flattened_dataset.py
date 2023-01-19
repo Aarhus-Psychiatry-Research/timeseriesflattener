@@ -7,9 +7,10 @@ from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
+#    TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
-from timeseriesflattener.resolve_multiple_functions import latest, mean
+from timeseriesflattener.resolve_multiple_functions import latest, mean, concatenate
 from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
@@ -95,9 +96,16 @@ def test_compute_specs(
         feature_name="static",
         prefix="pred",
     )
+    # text_spec = TextPredictorSpec(
+    #     values_df=synth_outcome,
+    #     feature_name="predictor",
+    #     lookbehind_days=1,
+    #     resolve_multiple_fn=concatenate,
+    #     fallback=np.nan,
+    # )
 
     # Test adding a single spec
-    dataset.add_spec([outcome_spec, predictor_spec, static_spec])
+    dataset.add_spec([outcome_spec, predictor_spec, static_spec]) #text_spec, 
 
     df = dataset.get_df()
 

@@ -13,6 +13,7 @@ from timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
     TemporalSpec,
     _AnySpec,
+#    TextPredictorSpec,
     check_that_col_names_in_kwargs_exist_in_df,
     generate_docstring_from_attributes,
 )

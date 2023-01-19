@@ -27,6 +27,7 @@ from timeseriesflattener.feature_spec_objects import (
     StaticSpec,
     TemporalSpec,
     _AnySpec,
+#    TextPredictorSpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
@@ -42,12 +43,13 @@ class SpecCollection(PydanticBaseModel):
 
     outcome_specs: list[OutcomeSpec] = []
     predictor_specs: list[PredictorSpec] = []
+#    text_specs: list[TextPredictorSpec] = []
     static_specs: list[_AnySpec] = []
 
     def __len__(self):
         """Return number of specs in collection."""
         return (
-            len(self.outcome_specs) + len(self.predictor_specs) + len(self.static_specs)
+            len(self.outcome_specs) + len(self.predictor_specs) + len(self.text_specs) + len(self.static_specs)
         )
 
 
@@ -319,7 +321,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Args:
             prediction_times_with_uuid_df (DataFrame): Dataframe with id_col and
                 timestamps for each prediction time.
-            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
+            output_spec (Union[OutcomeSpec, PredictorSpec, TextPredictorSpec]): Specification of the output column.
             entity_id_col_name (str): Name of id_column in prediction_times_with_uuid_df and
                 df. Required because this is a static method.
             timestamp_col_name (str): Name of timestamp column in
@@ -351,7 +353,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
             direction = "ahead"
-        elif isinstance(output_spec, PredictorSpec):
+        elif isinstance(output_spec, PredictorSpec):         #(PredictorSpec, TextPredictorSpec)                        ############################## where to call the embedding_fn (if TextPredictorSpec is in output_specs)??
             direction = "behind"
         else:
             raise ValueError(f"Unknown output_spec type {type(output_spec)}")
@@ -370,7 +372,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             pred_times_with_uuid=prediction_times_with_uuid_df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
             pred_timestamp_col_name=timestamp_pred_col_name,
-        ).fillna(output_spec.fallback)
+        ).fillna(output_spec.fallback)                                                                  ############################## [HERE OR ABOVE????] consider how to handle fallback for text embeddings (needs to be of same dimensionality as embeddings)
 
         df[timestamp_val_col_name].replace({output_spec.fallback: pd.NaT}, inplace=True)
 
@@ -382,14 +384,14 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
         # If resolve_multiple generates empty values,
-        # e.g. when there is only one prediction_time within look_ahead window for slope calculation,
+        # e.g. when there is only one prediction_time within look_ahead window for slope calculation,   ############################## where to call the embedding_fn (if TextPredictorSpec is in output_specs)??
         # replace with NaN
 
         # Rename column
-        df.rename(columns={"value": output_spec.get_col_str()}, inplace=True)
+        df.rename(columns={"value": output_spec.get_col_str()}, inplace=True)                           ############################## consider how to handle renaming of multiple columns (overwrite get_col_str for TextPredictorSpec to handle multiple columns)
 
         # Find value_cols and add fallback to them
-        df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
+        df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(                           ############################## [HERE OR ABOVE????] consider how to handle fallback for text embeddings (needs to be of same dimensionality as embeddings) 
             output_spec.fallback,
             inplace=False,
         )
