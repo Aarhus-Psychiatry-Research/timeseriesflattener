@@ -23,7 +23,7 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
 )
 from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
-
+# from timeseriesflattener.testing.text_embedding_functions import text_embedding_fns
 
 def test_anyspec_init():
     """Test that AnySpec initialises correctly."""
@@ -153,6 +153,7 @@ def test_resolve_multiple_fn_to_str():
         PredictorGroupSpec,
         OutcomeSpec,
         OutcomeGroupSpec,
+        TextPredictorSpec,
     ],
 )
 def test_feature_spec_docstrings(spec: BaseModel):
@@ -188,3 +189,17 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Expected: \n\n{generated_docstring}
         """,
         )
+
+
+# def test_text_feature_spec():
+#     """Test that text feature spec is generated correctly."""
+#     text_spec = TextPredictorSpec(
+#         values_loader="synth_text",
+#         prefix="test",
+#         embedding_fn="test_bow",
+#         lookbehind_days=[1, 2],
+#         resolve_multiple_fn=["concatenate"],
+#         input_col_name_override="text",
+#         fallback=[0],
+#     )
+#     assert isinstance(text_spec.values_df, pd.DataFrame)

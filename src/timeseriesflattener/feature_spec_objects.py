@@ -515,52 +515,52 @@ class PredictorSpec(TemporalSpec):
         super().__init__(**data)
 
 
-# class TextPredictorSpec(PredictorSpec):
-#     """Specification for a text predictor, where the df has been resolved. 
+class TextPredictorSpec(PredictorSpec):
+    """Specification for a text predictor, where the df has been resolved. 
 
-#     Fields:
-#         embedding_fn (Callable):
-#             A function that takes a list of strings and returns a list of
-#             embeddings. Defaults to: None.
-#         dim_reduction_fn (Optional[Callable]):
-#             A function to reduce the dimensionality of the text embeddings (e.g. UMAP). Defaults to: None.    
-#         resolve_multiple_fn (Callable):
-#             A function used for resolving multiple values within the
-#             interval_days (i.e. how to combine texts within the lookbehind window). Defaults to: "concatenate". Options: "concatenate", "keep_first", "keep_last"
-#     """
+    Fields:
+        embedding_fn (Callable):
+            A function that takes a list of strings and returns a list of
+            embeddings. Defaults to: None.
+        dim_reduction_fn (Optional[Callable]):
+            A function to reduce the dimensionality of the text embeddings (e.g. UMAP). Defaults to: None.    
+        resolve_multiple_fn (Callable):
+            A function used for resolving multiple values within the
+            interval_days (i.e. how to combine texts within the lookbehind window). Defaults to: "concatenate". Options: "concatenate", "keep_first", "keep_last"
+    """
 
-#     class Doc:
-#         short_description = (
-#             """Specification for a text predictor, where the df has been resolved."""
-#         )
+    class Doc:
+        short_description = (
+            """Specification for a text predictor, where the df has been resolved."""
+        )
 
-#     embedding_fn: Callable = Field(
-#         description="""A function that takes a list of strings and returns a list of
-#             embeddings. Defaults to: None.""",
-#     )
+    embedding_fn: Callable = Field(
+        description="""A function that takes a list of strings and returns a list of
+            embeddings. Defaults to: None.""",
+    )
 
-#     dim_reduction_fn: Optional[Callable] = Field(
-#         description="""A function that takes a list of embeddings and returns a
-#             single embedding. Defaults to: None.""",
-#     )
+    dim_reduction_fn: Optional[Callable] = Field(
+        description="""A function that takes a list of embeddings and returns a
+            single embedding. Defaults to: None.""",
+    )
 
-#     resolve_multiple_fn: Callable = Field(                                          ############################## how to add the options? ("concatenate", "keep_first", "keep_last")
-#         default="concatenate",
-#         description="""A function used for resolving multiple values within the
-#             interval_days. (i.e. how to combine texts within the lookbehind window). 
-#             Defaults to: 'concatenate' """,
-#     )
+    resolve_multiple_fn: Callable = Field(                                          # options? ("concatenate", "keep_first", "keep_last")
+        default="concatenate",
+        description="""A function used for resolving multiple values within the
+            interval_days. (i.e. how to combine texts within the lookbehind window). 
+            Defaults to: 'concatenate' """,
+    )
 
-#     def __init__(self, **data):
-#         if "lookbehind_days" in data:
-#             data["interval_days"] = data["lookbehind_days"]
+    def __init__(self, **data):
+        if "lookbehind_days" in data:
+            data["interval_days"] = data["lookbehind_days"]
 
-#         data["lookbehind_days"] = data["interval_days"]
+        data["lookbehind_days"] = data["interval_days"]
 
-#         if not data["interval_days"] and not data["lookbehind_days"]:
-#             raise ValueError("lookbehind_days or interval_days must be specified.")
+        if not data["interval_days"] and not data["lookbehind_days"]:
+            raise ValueError("lookbehind_days or interval_days must be specified.")
 
-#         super().__init__(**data)
+        super().__init__(**data)
 
 
 

@@ -10,11 +10,12 @@ from timeseriesflattener.feature_spec_objects import (
 #    TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
-from timeseriesflattener.resolve_multiple_functions import latest, mean, concatenate
+from timeseriesflattener.resolve_multiple_functions import latest, mean
 from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
 )
+# from timeseriesflattener.testing.text_embedding_functions import text_embedding_fns
 
 # To avoid ruff auto-removing unused imports
 used_funcs = [synth_prediction_times, synth_outcome]
@@ -99,13 +100,14 @@ def test_compute_specs(
     # text_spec = TextPredictorSpec(
     #     values_df=synth_outcome,
     #     feature_name="predictor",
+    #     embedding_fn="test_bow",
     #     lookbehind_days=1,
-    #     resolve_multiple_fn=concatenate,
+    #     resolve_multiple_fn=["concatenate"],
     #     fallback=np.nan,
     # )
 
     # Test adding a single spec
-    dataset.add_spec([outcome_spec, predictor_spec, static_spec]) #text_spec, 
+    dataset.add_spec([outcome_spec, predictor_spec, static_spec])
 
     df = dataset.get_df()
 
