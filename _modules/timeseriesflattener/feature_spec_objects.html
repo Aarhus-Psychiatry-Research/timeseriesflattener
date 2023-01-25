@@ -251,7 +251,7 @@
     <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper function to cache dataframe loading.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper function to cache dataframe loading.&quot;&quot;&quot;</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Loading values&quot;</span><span class="p">,</span>
@@ -262,19 +262,19 @@
     <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Loaded in </span><span class="si">{</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Loaded in </span><span class="si">{</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># pylint: disable=logging-fstring-interpolation</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
 
 
 <div class="viewcode-block" id="in_dict_and_not_none"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.in_dict_and_not_none">[docs]</a><span class="k">def</span> <span class="nf">in_dict_and_not_none</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Check if a key is in a dictionary and its value is not None.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a key is in a dictionary and its value is not None.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">d</span> <span class="ow">and</span> <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="resolve_from_dict_or_registry"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.resolve_from_dict_or_registry">[docs]</a><span class="k">def</span> <span class="nf">resolve_from_dict_or_registry</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Resolve values_df from a dictionary or registry.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve values_df from a dictionary or registry.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="s2">&quot;values_name&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resolving values_df from </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;values_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -297,7 +297,7 @@
 
 
 <div class="viewcode-block" id="resolve_values_df"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.resolve_values_df">[docs]</a><span class="k">def</span> <span class="nf">resolve_values_df</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Resolve the values_df attribute to a dataframe.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve the values_df attribute to a dataframe.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;values_loader&quot;</span><span class="p">,</span> <span class="s2">&quot;values_name&quot;</span><span class="p">,</span> <span class="s2">&quot;values_df&quot;</span><span class="p">]):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Either values_loader or a dictionary containing dataframes or a single dataframe must be specified.&quot;</span><span class="p">,</span>
@@ -324,7 +324,7 @@
 
 
 <div class="viewcode-block" id="BaseModel"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.BaseModel">[docs]</a><span class="k">class</span> <span class="nc">BaseModel</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Modified Pydantic BaseModel to allow arbitrary</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modified Pydantic BaseModel to allow arbitrary</span>
 
 <span class="sd">    types and disallow attributes not in the class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -343,14 +343,14 @@
 <span class="s2">        types and disallow attributes not in the class.&quot;&quot;&quot;</span></div>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Disallow  attributes not in the the class.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disallow  attributes not in the the class.&quot;&quot;&quot;</span>
 
         <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span></div>
 
 
 <div class="viewcode-block" id="generate_docstring_from_attributes"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.generate_docstring_from_attributes">[docs]</a><span class="k">def</span> <span class="nf">generate_docstring_from_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Generate a docstring from the attributes of a Pydantic basemodel.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a docstring from the attributes of a Pydantic basemodel.</span>
 
 <span class="sd">    The top of the docstring is taken from the `short_description` attribute of the `Doc`</span>
 <span class="sd">    class. The rest of the docstring is generated from the attributes of the class.</span>
@@ -383,7 +383,7 @@
 
 
 <div class="viewcode-block" id="check_that_col_names_in_kwargs_exist_in_df"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.check_that_col_names_in_kwargs_exist_in_df">[docs]</a><span class="k">def</span> <span class="nf">check_that_col_names_in_kwargs_exist_in_df</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check that all column names in data are in the dataframe.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that all column names in data are in the dataframe.</span>
 
 <span class="sd">    Keys with &quot;col_name&quot; in them specify a column name.</span>
 
@@ -410,7 +410,7 @@
 
 
 <span class="k">class</span> <span class="nc">_AnySpec</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A base class for all feature specifications.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A base class for all feature specifications.</span>
 
 <span class="sd">    Fields:</span>
 <span class="sd">        values_loader (Optional[Callable]):</span>
@@ -511,13 +511,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">values_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_df</span>
 
     <span class="k">def</span> <span class="nf">get_col_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create column name for the output column.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create column name for the output column.&quot;&quot;&quot;</span>
         <span class="n">col_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">col_str</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add equality check for dataframes.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add equality check for dataframes.</span>
 
 <span class="sd">        Trying to run `spec in list_of_specs` works for all attributes except for df, since the truth value of a dataframe is ambiguous.</span>
 <span class="sd">        To remedy this, we use pandas&#39; .equals() method for comparing the dfs, and get the combined truth value.</span>
@@ -542,7 +542,7 @@
 
 
 <div class="viewcode-block" id="TemporalSpec"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec">[docs]</a><span class="k">class</span> <span class="nc">TemporalSpec</span><span class="p">(</span><span class="n">_AnySpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The minimum specification required for collapsing a temporal</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The minimum specification required for collapsing a temporal</span>
 
 <span class="sd">        feature, whether looking ahead or behind. Mostly used for inheritance below.</span>
 
@@ -657,14 +657,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fallback</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TemporalSpec.get_col_str"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.get_col_str">[docs]</a>    <span class="k">def</span> <span class="nf">get_col_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Generate the column name for the output column.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the column name for the output column.&quot;&quot;&quot;</span>
         <span class="n">col_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">_within_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval_days</span><span class="si">}</span><span class="s2">_days_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key_for_resolve_multiple</span><span class="si">}</span><span class="s2">_fallback_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">col_str</span></div></div>
 
 
 <div class="viewcode-block" id="PredictorSpec"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorSpec">[docs]</a><span class="k">class</span> <span class="nc">PredictorSpec</span><span class="p">(</span><span class="n">TemporalSpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Specification for a single predictor, where the df has been resolved.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a single predictor, where the df has been resolved.</span>
 
 <span class="sd">    Fields:</span>
 <span class="sd">        values_loader (Optional[Callable]):</span>
@@ -715,7 +715,7 @@
 
 <div class="viewcode-block" id="PredictorSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sd">&quot;&quot;&quot;Specification for a single predictor, where the df has been resolved.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Specification for a single predictor, where the df has been resolved.&quot;&quot;&quot;</span>
         <span class="p">)</span></div>
 
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -741,7 +741,7 @@
 
 
 <div class="viewcode-block" id="OutcomeSpec"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec">[docs]</a><span class="k">class</span> <span class="nc">OutcomeSpec</span><span class="p">(</span><span class="n">TemporalSpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Specification for a single outcome, where the df has been resolved.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a single outcome, where the df has been resolved.</span>
 
 <span class="sd">    Fields:</span>
 <span class="sd">        values_loader (Optional[Callable]):</span>
@@ -797,7 +797,7 @@
 
 <div class="viewcode-block" id="OutcomeSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
         <span class="n">short_description</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sd">&quot;&quot;&quot;Specification for a single outcome, where the df has been resolved.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Specification for a single outcome, where the df has been resolved.&quot;&quot;&quot;</span>
         <span class="p">)</span></div>
 
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -826,7 +826,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OutcomeSpec.get_col_str"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.get_col_str">[docs]</a>    <span class="k">def</span> <span class="nf">get_col_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the column name for the output column.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the column name for the output column.&quot;&quot;&quot;</span>
         <span class="n">col_str</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_dichotomous</span><span class="p">():</span>
@@ -835,7 +835,7 @@
         <span class="k">return</span> <span class="n">col_str</span></div>
 
 <div class="viewcode-block" id="OutcomeSpec.is_dichotomous"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeSpec.is_dichotomous">[docs]</a>    <span class="k">def</span> <span class="nf">is_dichotomous</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check if the outcome is dichotomous.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the outcome is dichotomous.&quot;&quot;&quot;</span>
         <span class="n">col_name</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;value&quot;</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_col_name_override</span>
@@ -901,7 +901,7 @@
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_check_loaders_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check that all loaders can be resolved from the data_loaders catalogue.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all loaders can be resolved from the data_loaders catalogue.&quot;&quot;&quot;</span>
         <span class="n">invalid_loaders</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values_loader</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">data_loaders</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
         <span class="p">)</span>
@@ -920,7 +920,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Some loader strings could not be resolved in the data_loaders catalogue. Did you make a typo? If you want to add your own loaders to the catalogue, see explosion / catalogue on GitHub for info.</span>
 <span class="s2">                </span><span class="si">{</span><span class="n">nl</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">Loaders that could not be resolved:&quot;&quot;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">nl</span><span class="si">}{</span><span class="n">nl</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="k">for</span> <span class="n">loader</span> <span class="ow">in</span> <span class="n">invalid_loaders</span><span class="p">)</span><span class="si">}{</span><span class="n">nl</span><span class="si">}{</span><span class="n">nl</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">nl</span><span class="si">}{</span><span class="n">nl</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">loader</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">invalid_loaders</span><span class="p">)</span><span class="si">}{</span><span class="n">nl</span><span class="si">}{</span><span class="n">nl</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Available loaders:</span><span class="si">{</span><span class="n">nl</span><span class="si">}{</span><span class="n">avail_loaders_str</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -949,7 +949,7 @@
 <div class="viewcode-block" id="create_feature_combinations_from_dict"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.create_feature_combinations_from_dict">[docs]</a><span class="k">def</span> <span class="nf">create_feature_combinations_from_dict</span><span class="p">(</span>
     <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
-    <span class="sd">&quot;&quot;&quot;Create feature combinations from a dictionary of feature specifications.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create feature combinations from a dictionary of feature specifications.</span>
 
 <span class="sd">    Only unpacks the top level of lists.</span>
 
@@ -974,7 +974,7 @@
     <span class="n">feature_group_spec</span><span class="p">:</span> <span class="n">_MinGroupSpec</span><span class="p">,</span>
     <span class="n">output_class</span><span class="p">:</span> <span class="n">_AnySpec</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_AnySpec</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Create a list of specs from a GroupSpec.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a list of specs from a GroupSpec.&quot;&quot;&quot;</span>
     <span class="c1"># Create all combinations of top level elements</span>
     <span class="c1"># For each attribute in the FeatureGroupSpec</span>
 
@@ -986,7 +986,7 @@
 
 
 <div class="viewcode-block" id="PredictorGroupSpec"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorGroupSpec">[docs]</a><span class="k">class</span> <span class="nc">PredictorGroupSpec</span><span class="p">(</span><span class="n">_MinGroupSpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Specification for a group of predictors.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a group of predictors.</span>
 
 <span class="sd">    Fields:</span>
 <span class="sd">        values_loader (Optional[List[str]]):</span>
@@ -1029,7 +1029,7 @@
     <span class="p">)</span>
 
 <div class="viewcode-block" id="PredictorGroupSpec.create_combinations"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.PredictorGroupSpec.create_combinations">[docs]</a>    <span class="k">def</span> <span class="nf">create_combinations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Create all combinations from the group spec.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create all combinations from the group spec.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">create_specs_from_group</span><span class="p">(</span>
             <span class="n">feature_group_spec</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">output_class</span><span class="o">=</span><span class="n">PredictorSpec</span><span class="p">,</span>
@@ -1037,7 +1037,7 @@
 
 
 <div class="viewcode-block" id="OutcomeGroupSpec"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec">[docs]</a><span class="k">class</span> <span class="nc">OutcomeGroupSpec</span><span class="p">(</span><span class="n">_MinGroupSpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Specification for a group of outcomes.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a group of outcomes.</span>
 
 <span class="sd">    Fields:</span>
 <span class="sd">        values_loader (Optional[List[str]]):</span>
@@ -1092,7 +1092,7 @@
     <span class="p">)</span>
 
 <div class="viewcode-block" id="OutcomeGroupSpec.create_combinations"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec.create_combinations">[docs]</a>    <span class="k">def</span> <span class="nf">create_combinations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutcomeSpec</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Create all combinations from the group spec.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create all combinations from the group spec.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">create_specs_from_group</span><span class="p">(</span>
             <span class="n">feature_group_spec</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">output_class</span><span class="o">=</span><span class="n">OutcomeSpec</span><span class="p">,</span>

@@ -263,27 +263,27 @@
 
 
 <div class="viewcode-block" id="SpecCollection"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.SpecCollection">[docs]</a><span class="k">class</span> <span class="nc">SpecCollection</span><span class="p">(</span><span class="n">PydanticBaseModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A collection of specs.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A collection of specs.&quot;&quot;&quot;</span>
 
     <span class="n">outcome_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OutcomeSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">predictor_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">static_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_AnySpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return number of specs in collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of specs in collection.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outcome_specs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predictor_specs</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">static_specs</span><span class="p">)</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TimeseriesFlattener"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">[docs]</a><span class="k">class</span> <span class="nc">TimeseriesFlattener</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
-    <span class="sd">&quot;&quot;&quot;Turn a set of time-series into tabular prediction-time data.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn a set of time-series into tabular prediction-time data.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_override_cache_attributes_with_self_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prediction_times_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Make cache inherit attributes from flattened dataset.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make cache inherit attributes from flattened dataset.</span>
 
 <span class="sd">        Avoids duplicate specification.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -325,7 +325,7 @@
         <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
         <span class="n">log_to_stdout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Class containing a time-series, flattened.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Class containing a time-series, flattened.</span>
 
 <span class="sd">        A &#39;flattened&#39; version is a tabular representation for each prediction time.</span>
 <span class="sd">        A prediction time is every timestamp where you want your model to issue a prediction.</span>
@@ -418,7 +418,7 @@
         <span class="n">pred_time_uuid_colname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">pred_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Ensure all prediction times are represented in the returned</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure all prediction times are represented in the returned</span>
 
 <span class="sd">        dataframe.</span>
 
@@ -446,7 +446,7 @@
         <span class="n">pred_time_uuid_colname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">val_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Apply the resolve_multiple function to prediction_times where there</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the resolve_multiple function to prediction_times where there</span>
 
 <span class="sd">        are multiple values within the interval_days lookahead.</span>
 
@@ -488,7 +488,7 @@
         <span class="n">timestamp_pred_colname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">timestamp_value_colname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Filter by time from from predictions to values.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Filter by time from from predictions to values.</span>
 
 <span class="sd">        Drop if distance from timestamp_pred to timestamp_value is outside interval_days. Looks in `direction`.</span>
 
@@ -537,7 +537,7 @@
         <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># noqa</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a dataframe with flattened values (either predictor or</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a dataframe with flattened values (either predictor or</span>
 
 <span class="sd">        outcome depending on the value of &quot;direction&quot;).</span>
 
@@ -630,7 +630,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">feature_spec</span><span class="p">:</span> <span class="n">TemporalSpec</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get feature. Either load from cache, or generate if necessary.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get feature. Either load from cache, or generate if necessary.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            file_suffix (str, optional): File suffix for the cache lookup. Defaults to &quot;parquet&quot;.</span>
@@ -679,7 +679,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_check_dfs_are_ready_for_concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Sample each df and check for identical indices.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sample each df and check for identical indices.</span>
 
 <span class="sd">        This checks that all the dataframes are aligned before</span>
 <span class="sd">        concatenation.</span>
@@ -726,7 +726,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">flattened_predictor_dfs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Concatenate flattened predictor dfs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Concatenate flattened predictor dfs.&quot;&quot;&quot;</span>
 
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
@@ -746,7 +746,7 @@
 
         <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concatenation took </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Concatenation took </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging with original df&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">new_features</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span>
@@ -755,7 +755,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">temporal_batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TemporalSpec</span><span class="p">],</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add predictors to the flattened dataframe from a list.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add predictors to the flattened dataframe from a list.&quot;&quot;&quot;</span>
         <span class="c1"># Shuffle predictor specs to avoid IO contention</span>
         <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span>
 
@@ -789,7 +789,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">static_spec</span><span class="p">:</span> <span class="n">_AnySpec</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add static info to each prediction time, e.g. age, sex etc.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add static info to each prediction time, e.g. age, sex etc.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            static_spec (StaticSpec): Specification for the static info to add.</span>
@@ -842,7 +842,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_process_static_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Process static specs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process static specs.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">static_specs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_static_info</span><span class="p">(</span>
                 <span class="n">static_spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span>
@@ -854,7 +854,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">outcome_spec</span><span class="p">:</span> <span class="n">OutcomeSpec</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add incident outcomes.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add incident outcomes.</span>
 
 <span class="sd">        Can be done vectorized, hence the separate function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -895,7 +895,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">df</span>
 
     <span class="k">def</span> <span class="nf">_get_cutoff_date_from_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">TemporalSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the cutoff date from a spec.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the cutoff date from a spec.</span>
 
 <span class="sd">        A cutoff date is the earliest date that a prediction time can get data from the values_df.</span>
 <span class="sd">        We do not want to include those prediction times, as we might make incorrect inferences.</span>
@@ -916,7 +916,7 @@
 
     <span class="nd">@print_df_dimensions_diff</span>
     <span class="k">def</span> <span class="nf">_drop_pred_time_if_insufficient_look_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Drop prediction times if there is insufficient look distance.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Drop prediction times if there is insufficient look distance.</span>
 
 <span class="sd">        A prediction time has insufficient look distance if the feature spec</span>
 <span class="sd">            tries to look beyond the boundary of the data.</span>
@@ -959,7 +959,7 @@
         <span class="k">return</span> <span class="n">output_df</span>
 
     <span class="k">def</span> <span class="nf">_process_temporal_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Process outcome specs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process outcome specs.&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span><span class="p">:</span>
             <span class="c1"># Handle incident specs separately, since their operations can be vectorised,</span>
@@ -985,7 +985,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">predictor_specs</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">_check_that_spec_df_has_required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">_AnySpec</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check that df has required columns.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that df has required columns.&quot;&quot;&quot;</span>
         <span class="c1"># Find all attributes in self that contain col_name</span>
         <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">]</span>
 
@@ -1000,7 +1000,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">spec</span><span class="p">:</span> <span class="n">TemporalSpec</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check that timestamp column is correctly formatted. Attempt to coerce if possible.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that timestamp column is correctly formatted. Attempt to coerce if possible.&quot;&quot;&quot;</span>
         <span class="n">timestamp_col_type</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="n">timestamp_col_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;datetime64[ns]&quot;</span><span class="p">):</span>
@@ -1024,7 +1024,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">_AnySpec</span><span class="p">],</span> <span class="n">_AnySpec</span><span class="p">],</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a specification to the flattened dataset.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a specification to the flattened dataset.</span>
 
 <span class="sd">        This adds it to a queue of unprocessed specs, which are not processed</span>
 <span class="sd">        until you call the .compute() or .get_df() methods. This allows us to</span>
@@ -1066,7 +1066,7 @@
         <span class="n">date_of_birth_col_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;date_of_birth&quot;</span><span class="p">,</span>
         <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add age at prediction time as predictor.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add age at prediction time as predictor.</span>
 
 <span class="sd">        Has its own function because of its very frequent use.</span>
 
@@ -1113,7 +1113,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">tmp_date_of_birth_col_name</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TimeseriesFlattener.compute"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compute the flattened dataset.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the flattened dataset.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No unprocessed specs, skipping&quot;</span><span class="p">)</span>
             <span class="k">return</span>
@@ -1122,7 +1122,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TimeseriesFlattener.get_df"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.get_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the flattened dataframe. Computes if any unprocessed specs are present.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the flattened dataframe. Computes if any unprocessed specs are present.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            DataFrame: Flattened dataframe.</span>
