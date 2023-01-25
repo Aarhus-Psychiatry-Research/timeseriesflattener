@@ -108,7 +108,7 @@ Output:
 | 🗺️ **[Roadmap]**        | Kanban board for the roadmap for the project                                           |
 
 [Tutorial]: https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html
-[api references]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
+[General docs]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
 [FAQ]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/faq.html
 [Roadmap]: https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1
 
