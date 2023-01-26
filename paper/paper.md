@@ -46,6 +46,8 @@ Time series from e.g. electronic health records often have a large number of var
 # Statement of need
 The recent surge in machine learning capabilities has led to large efforts in using information from electronic health records and other medical time series for prediction modelling [@rajkomar_scalable_2018; @shamout_machine_2020]. These efforts have spawned important developments related to prediction modelling of clinical data such as AutoPrognosis2.0 [@imrie_autoprognosis_2022] and general-purpose autoML frameworks such as `auto-sklearn` [@feurer_efficient_2015]. However, modelling and machine learning tends to take the spotlight, with often insufficient attention being paid to data preparation and problem framing. For example, some earlier papers have generated predictions at a specific time interval before each outcome. However, this makes the problem artificially easy, and the model will not generalise to the real world [@lauritsen_framing_2021]. 
 
+To the best of our knowledge, FIDDLE [@tang_democratizing_2020] is the only software package that has attempted to solve the problem of flattening irregular time series. However, FIDDLE was developed primarily for use on time series from intensive care units (such as the MIMIC-III dataset [@johnson_mimic-iii_2016]). For instance, FIDDLE requires prediction times to be regularly and evenly spaced for all patients. This constraint means that it is not possible to make predictions at e.g. every physical visit to a clinic, or at another non-regularly-timed clinically relevant point in time.
+
 The goal of `timeseriesflattener` is to streamline the process of problem definition and preparing data for modelling while keeping important decisions, such as how far back to aggregate features, which method to use for aggregation, how to handle missing values, etc., highly explicit. Specifically, it allows the transformation of complex datasets so classical machine learning models can handle them, which can dramatically decrease the time from an idea to a proof of concept. Further, `timeseriesflattener` enforces best practices for prognostic modelling, such as defining when to generate predictions independently of the timing of outcomes [@lauritsen_framing_2021]. By providing a fast and reliable framework, `timeseriesflattener` aims to accelerate the development of high-quality clinical prediction models in both research and production environments.
 
 
@@ -89,4 +91,6 @@ The package is aimed at researchers and individuals working with irregular time 
 
 # Acknowledgements
 This work is supported by the Lundbeck Foundation (grant number: R344-2020-1073), the Danish Cancer Society (grant number: R283-A16461), the Central Denmark Region Fund for Strengthening of Health Science (grant number: 1-36-72-4-20) and the Danish Agency for Digitisation Investment Fund for New Technologies (grant number 2020-6720). 
+
+
 
