@@ -195,14 +195,17 @@ def test_predictorgroupspec_combinations_loader_kwargs(PredictorGroupSpec):
     olanzapine_100_rows = olanzapine(n_rows=100)
     clozapine_100_rows = clozapine(n_rows=100)
 
-    spec = PredictorGroupSpec(values_loader=("olanzapine", "clozapine"),
+    spec = PredictorGroupSpec(
+        values_loader=("olanzapine", "clozapine"),
         loader_kwargs= [{"n_rows": 100}],
         prefix="test_",
         resolve_multiple_fn=["bool"],
         fallback=[0],
-        lookbehind_days=[10])
+        lookbehind_days=[10],
+        )
 
     combinations = spec.create_combinations()
 
     assert olanzapine_100_rows == combinations[0].values_df
     assert clozapine_100_rows == combinations[1].values_df
+    
