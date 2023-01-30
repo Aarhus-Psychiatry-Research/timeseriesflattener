@@ -4,7 +4,7 @@ import difflib
 import numpy as np
 import pandas as pd
 import pytest
-from psycop_feature_generation.loaders.raw.load_medications import olanzapine, clozapine
+from psycop_feature_generation.loaders.raw.load_medications import clozapine, olanzapine
 
 from timeseriesflattener.feature_spec_objects import (
     BaseModel,
@@ -202,7 +202,7 @@ def test_predictorgroupspec_combinations_loader_kwargs(PredictorGroupSpec):
         resolve_multiple_fn=["bool"],
         fallback=[0],
         lookbehind_days=[10],
-        )
+    )
 
     combinations = spec.create_combinations()
 
