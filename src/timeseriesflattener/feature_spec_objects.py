@@ -195,7 +195,7 @@ class _AnySpec(BaseModel):
             A string that maps to a key in a dictionary instantiated by
             `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.
-        loader_kwargs (Optional[Mapping[str, Any]]):
+        loader_kwargs (Optional[dict[str, Any]]):
             Optional kwargs for the values_loader.
         values_df (Optional[DataFrame]):
             Dataframe with the values.
@@ -675,6 +675,11 @@ class _MinGroupSpec(BaseModel):
         description="""Prefix for column name, e.g. <prefix>_<feature_name>.""",
     )
 
+    loader_kwargs: Optional[list[dict[str, Any]]] = Field(
+        default=None,
+        description="""Optional kwargs for the values_loader.""",
+    )
+
     def _check_loaders_are_valid(self):
         """Check that all loaders can be resolved from the data_loaders catalogue."""
         invalid_loaders = list(
@@ -772,6 +777,8 @@ class PredictorGroupSpec(_MinGroupSpec):
             of multiple dataframes that correspods to a name of a type of values.
         values_df (Optional[DataFrame]):
             Dataframe with the values.
+        loader_kwargs (Optional[list[dict]]):
+            Optional kwargs passed onto the data loader.
         input_col_name_override (Optional[str]):
             Override for the column name to use as values in df.
         output_col_name_override (Optional[str]):
@@ -823,6 +830,8 @@ class OutcomeGroupSpec(_MinGroupSpec):
             of multiple dataframes that correspods to a name of a type of values.
         values_df (Optional[DataFrame]):
             Dataframe with the values.
+        loader_kwargs (Optional[list[dict]]):
+            Optional kwargs passed onto the data loader.
         input_col_name_override (Optional[str]):
             Override for the column name to use as values in df.
         output_col_name_override (Optional[str]):

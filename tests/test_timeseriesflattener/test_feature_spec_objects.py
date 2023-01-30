@@ -22,6 +22,7 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
 )
 from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
+from psycop_feature_generation.loaders.raw.load_medications import olanzapine, clozapine
 
 
 def test_anyspec_init():
@@ -187,3 +188,21 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Expected: \n\n{generated_docstring}
         """,
         )
+
+def test_predictorgroupspec_combinations_loader_kwargs(PredictorGroupSpec):
+    """Test that loader kwargs are used correctly in PredictorGroupSpec combinations."""
+
+    olanzapine_100_rows = olanzapine(n_rows=100)
+    clozapine_100_rows = clozapine(n_rows=100)
+
+    spec = PredictorGroupSpec(values_loader=("olanzapine", "clozapine"),
+        loader_kwargs= [{"n_rows": 100}],
+        prefix="test_",
+        resolve_multiple_fn=["bool"],
+        fallback=[0],
+        lookbehind_days=[10])
+
+    combinations = spec.create_combinations()
+
+    assert olanzapine_100_rows == combinations[0].values_df
+    assert clozapine_100_rows == combinations[1].values_df
