@@ -4,6 +4,7 @@ import difflib
 import numpy as np
 import pandas as pd
 import pytest
+from psycop_feature_generation.loaders.raw.load_medications import olanzapine, clozapine
 
 from timeseriesflattener.feature_spec_objects import (
     BaseModel,
@@ -22,7 +23,6 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
 )
 from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
-from psycop_feature_generation.loaders.raw.load_medications import olanzapine, clozapine
 
 
 def test_anyspec_init():
@@ -197,7 +197,7 @@ def test_predictorgroupspec_combinations_loader_kwargs(PredictorGroupSpec):
 
     spec = PredictorGroupSpec(
         values_loader=("olanzapine", "clozapine"),
-        loader_kwargs= [{"n_rows": 100}],
+        loader_kwargs=[{"n_rows": 100}],
         prefix="test_",
         resolve_multiple_fn=["bool"],
         fallback=[0],
