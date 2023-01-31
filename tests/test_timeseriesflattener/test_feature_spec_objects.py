@@ -132,7 +132,6 @@ def test_skip_one_if_no_need_to_process():
     assert len(created_combinations) == 4
 
 
-
 def test_resolve_multiple_fn_to_str():
     """Test that resolve_multiple_fn is converted to str correctly."""
     pred_spec_batch = PredictorGroupSpec(
@@ -189,6 +188,7 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Expected: \n\n{generated_docstring}
         """,
         )
+
 
 def test_predictorgroupspec_combinations_loader_kwargs(PredictorGroupSpec):
     """Test that loader kwargs are used correctly in PredictorGroupSpec combinations."""
