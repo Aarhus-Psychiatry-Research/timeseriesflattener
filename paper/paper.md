@@ -16,7 +16,7 @@ authors:
     affiliation: "2, 3"
   - name: Jakob Damgaard
     orcid: 0000-0001-7092-2391 
-    affiliation: “1, 4”
+    affiliation: "1, 4"
   - name: Andreas Danielsen
     orcid: 0000-0002-6585-3616
     affiliation: "2, 4"
