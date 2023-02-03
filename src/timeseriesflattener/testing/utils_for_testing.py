@@ -77,6 +77,12 @@ def str_to_df(
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
+def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: _AnySpec):
+    """Get value columns based on spec. Checks if multiple value columns are present."""
+    feature_name = spec.feature_name
+    return df.columns[df.columns.str.contains(feature_name)]
+
+
 def assert_flattened_data_as_expected(
     prediction_times_df: Union[pd.DataFrame, str],
     output_spec: _AnySpec,
@@ -105,12 +111,14 @@ def assert_flattened_data_as_expected(
                 check_dtype=False,
             )
     elif expected_values:
-        output = flattened_ds.get_df()[output_spec.get_col_str()].values.tolist()
+        output = flattened_ds.get_df()
+        value_cols = _get_value_cols_based_on_spec(output, output_spec)
+        output = flattened_ds.get_df()[value_cols].values.tolist()
         expected = list(expected_values)
 
         for i, expected_val in enumerate(expected):
             # NaN != NaN, hence specific handling
-            if not isinstance(expected_val, str) and np.isnan(expected_val):
+            if not isinstance(expected_val, (str, list)) and np.isnan(expected_val):
                 assert np.isnan(output[i])
             else:
                 assert expected_val == output[i]

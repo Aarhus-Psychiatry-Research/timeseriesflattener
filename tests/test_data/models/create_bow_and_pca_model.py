@@ -2,7 +2,9 @@ import pickle as pkl
 from pathlib import Path
 from typing import Sequence
 
+import numpy as np
 import pandas as pd
+from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import CountVectorizer
 
 from timeseriesflattener.testing.load_synth_data import load_synth_text
@@ -28,7 +30,19 @@ def load_synth_txt_data():
     return df["text"].dropna().tolist()
 
 
-def save_bow_model(model, filename: str):
+def train_pca_model(embedding: np.ndarray):
+    """
+    Trains a PCA model on the synthetic data
+
+    Args:
+        embedding: The embedding to train on
+    """
+    model = PCA(n_components=2)
+    model.fit(embedding)
+    return model
+
+
+def save_model(model, filename: str):  # pylint: ignore missing-type-doc
     """
     Saves the model to a pickle file
 
@@ -45,5 +59,9 @@ def save_bow_model(model, filename: str):
 
 if __name__ == "__main__":
     corpus = load_synth_txt_data()
-    model = train_bow_model(corpus)
-    save_bow_model(model, "synth_bow_model.pkl")
+    bow_model = train_bow_model(corpus)
+    embedding = bow_model.transform(corpus)
+    pca_model = train_pca_model(embedding.toarray())
+
+    save_model(bow_model, "synth_bow_model.pkl")
+    save_model(pca_model, "synth_pca_model.pkl")
