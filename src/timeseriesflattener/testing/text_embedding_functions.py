@@ -30,7 +30,8 @@ def bow_test_embedding(text_series: Series) -> DataFrame:
     """Embeds the text data using a bag-of-words model"""
     model = _load_bow_model()
     return pd.DataFrame(
-        model.transform(text_series).toarray(), columns=model.get_feature_names()
+        model.transform(text_series).toarray(),
+        columns=model.get_feature_names(),
     )
 
 

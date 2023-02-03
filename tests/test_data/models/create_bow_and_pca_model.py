@@ -1,3 +1,5 @@
+"""Script for creating a bag-of-words model and a PCA model on the synthetic data.
+Used for testing purposes."""
 import pickle as pkl
 from pathlib import Path
 from typing import Sequence
@@ -42,7 +44,7 @@ def train_pca_model(embedding: np.ndarray):
     return model
 
 
-def save_model(model, filename: str):  # pylint: ignore missing-type-doc
+def save_model(model, filename: str):  # pylint: disable=missing-type-doc
     """
     Saves the model to a pickle file
 

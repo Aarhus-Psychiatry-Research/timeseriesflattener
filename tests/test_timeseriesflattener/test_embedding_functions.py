@@ -1,3 +1,4 @@
+"""Tests for the text embedding functions"""
 import pytest
 
 from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding

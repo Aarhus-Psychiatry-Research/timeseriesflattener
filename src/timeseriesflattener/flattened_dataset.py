@@ -417,7 +417,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         # Find value_cols and add fallback to them
         value_col_str_name = TimeseriesFlattener._get_value_col_str_name(
-            df=df, output_spec=output_spec
+            df=df,
+            output_spec=output_spec,
         )
         df = TimeseriesFlattener._add_fallback_to_value_cols(
             df=df,
@@ -434,10 +435,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         return df[value_col_str_name + [pred_time_uuid_col_name]]
 
     @staticmethod
-    def _get_value_col_str_name(df: pd.DataFrame, output_spec=TemporalSpec) -> List[str]:
+    def _get_value_col_str_name(
+        df: pd.DataFrame,
+        output_spec=TemporalSpec,
+    ) -> List[str]:
         """Returns the name of the value column in df. If df has a multiindex,
         returns a list of all column names in the 'value' multiindex.
-        
+
         Args:
             df (pd.DataFrame): Dataframe to get value column name from.
             output_spec (TemporalSpec): Output specification"""
@@ -459,7 +463,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _add_fallback_to_value_cols(
-        df: pd.DataFrame, output_spec: TemporalSpec
+        df: pd.DataFrame,
+        output_spec: TemporalSpec,
     ) -> pd.DataFrame:
         """Adds fallback to value columns in df. If the value column is a multiindex,
         adds fallback to all columns in the multiindex. Otherwise, adds fallback to the
@@ -469,11 +474,11 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             df (pd.DataFrame): Dataframe with value column
             output_spec (TemporalSpec): Output specification
         """
-        if isinstance(df["value"], pd.DataFrame):
+        if "value" in df.columns and isinstance(df["value"], pd.DataFrame):
             df["value"] = df["value"].fillna(output_spec.fallback)
         else:
             df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
-                output_spec.fallback
+                output_spec.fallback,
             )
         return df
 
@@ -497,7 +502,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _rename_multi_index_dataframe(
-        output_spec: TemporalSpec, df: pd.DataFrame
+        output_spec: TemporalSpec,
+        df: pd.DataFrame,
     ) -> pd.DataFrame:
         """Renames a multiindex dataframe to the column names specified in the
         output_spec.
@@ -529,8 +535,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             pd.DataFrame: Feature
         """
         if self.cache:
-            # TODO: idea for cache:
-            # extend feature_exists to expand based on cols matching get_col_str
             if self.cache.feature_exists(feature_spec=feature_spec):
                 log.debug(
                     f"Cache hit for {feature_spec.get_col_str()}, loading from cache",
@@ -563,15 +567,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 df=df,
             )
 
-        # TODO any reason to not just return df here?
+        # @Martin any reason to do the indexing here?
         # return (
         #     df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]]
         #     .set_index(keys=self.pred_time_uuid_col_name)
         #     .sort_index()
         # )
-        return (
-            df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
-        )
+        return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
 
     @staticmethod
     def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
