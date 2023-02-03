@@ -285,10 +285,17 @@ class _AnySpec(BaseModel):
         # type hint so that mypy doesn't complain.
         self.values_df: pd.DataFrame = self.values_df
 
-    def get_col_str(self) -> str:
-        """Create column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_name}"
+    def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
+        """Create column name for the output column.
 
+        Args:
+            additional_feature_name (Optional[str]): An additional feature name
+                to append to the column name.
+        ß"""
+        feature_name = self.feature_name
+        if additional_feature_name:
+            feature_name = f"{feature_name}-{additional_feature_name}"
+        col_str = f"{self.prefix}_{feature_name}"
         return col_str
 
     def __eq__(self, other):
@@ -375,7 +382,7 @@ class TemporalSpec(_AnySpec):
             behind for predictors)""",
     )
 
-    resolve_multiple_fn: Callable = Field(
+    resolve_multiple_fn: Union[Callable, str] = Field(
         description="""A function used for resolving multiple values within the 
             interval_days.""",
     )
@@ -431,10 +438,17 @@ class TemporalSpec(_AnySpec):
         if self.fallback == "nan":
             self.fallback = float("nan")
 
-    def get_col_str(self) -> str:
-        """Generate the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+    def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
+        """Generate the column name for the output column.
 
+        Args:
+            additional_feature_name (Optional[str]): additional feature name to
+                append to the column name.
+        """
+        feature_name = self.feature_name
+        if additional_feature_name:
+            feature_name = feature_name + "-" + additional_feature_name
+        col_str = f"{self.prefix}_{feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
         return col_str
 
 
@@ -513,6 +527,33 @@ class PredictorSpec(TemporalSpec):
             raise ValueError("lookbehind_days or interval_days must be specified.")
 
         super().__init__(**data)
+
+
+class TextPredictorSpec(PredictorSpec):
+    """Specification for a text predictor, where the df has been resolved."""
+
+    class Doc:
+        short_description = (
+            """Specification for a text predictor, where the df has been resolved."""
+        )
+
+    embedding_fn: Callable = Field(
+        description="""A function used for embedding the text. Should take a 
+        pandas series of strings and return a pandas dataframe of embeddings.
+        Defaults to: None.""",
+    )
+    dim_reduction_fn: Optional[Callable] = Field(
+        description="""A function used for dimensionality reduction of the embeddings.
+        Should take a pandas dataframe of embeddings and return a pandas dataframe of
+        reduced dimensionality embeddings. Defaults to: None.""",
+    )
+    resolve_multiple_fn: Union[str, Callable] = Field(
+        default="concatenate",
+        description="""A function used for resolving multiple values within the
+        interval_days, i.e. how to combine texts within the lookbehind window. 
+        Defaults to: 'concatenate'. Other possible options are 'latest' and
+        'earliest'.""",
+    )
 
 
 class OutcomeSpec(TemporalSpec):
@@ -600,9 +641,9 @@ class OutcomeSpec(TemporalSpec):
 
         super().__init__(**data)
 
-    def get_col_str(self) -> str:
+    def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
         """Get the column name for the output column."""
-        col_str = super().get_col_str()
+        col_str = super().get_col_str(additional_feature_name=additional_feature_name)
 
         if self.is_dichotomous():
             col_str += "_dichotomous"
