@@ -80,7 +80,11 @@ def str_to_df(
 def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: _AnySpec):
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_name
-    return df.columns[df.columns.str.contains(feature_name)]
+    value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
+    # to avoid indexing issues
+    if len(value_cols) == 1:
+        return value_cols[0]
+    return value_cols
 
 
 def assert_flattened_data_as_expected(
