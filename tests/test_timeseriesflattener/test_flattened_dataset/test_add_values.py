@@ -13,10 +13,7 @@ from timeseriesflattener.feature_spec_objects import (
     StaticSpec,
     TextPredictorSpec,
 )
-from timeseriesflattener.testing.text_embedding_functions import (
-    bow_test_embedding,
-    pca_test_embedding,
-)
+from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
@@ -85,7 +82,6 @@ def test_text_predictor():
         output_spec=TextPredictorSpec(
             values_df=str_to_df(predictor_df_str),
             embedding_fn=bow_test_embedding,
-            dim_reduction_fn=pca_test_embedding,
             lookbehind_days=1,
             resolve_multiple_fn="concatenate",
             fallback=np.NaN,

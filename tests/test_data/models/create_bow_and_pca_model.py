@@ -44,7 +44,7 @@ def train_pca_model(embedding: np.ndarray):
     return model
 
 
-def save_model(model, filename: str):  # pylint: disable=missing-type-doc
+def save_model_to_test_dir(model, filename: str):  # pylint: disable=missing-type-doc
     """
     Saves the model to a pickle file
 
@@ -65,5 +65,5 @@ if __name__ == "__main__":
     embedding = bow_model.transform(corpus)
     pca_model = train_pca_model(embedding.toarray())
 
-    save_model(bow_model, "synth_bow_model.pkl")
-    save_model(pca_model, "synth_pca_model.pkl")
+    save_model_to_test_dir(bow_model, "synth_bow_model.pkl")
+    save_model_to_test_dir(pca_model, "synth_pca_model.pkl")
