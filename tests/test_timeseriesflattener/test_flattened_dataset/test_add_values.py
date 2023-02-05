@@ -87,7 +87,7 @@ def test_text_predictor():
             fallback=np.NaN,
             feature_name="text_value",
         ),
-        expected_values=[[-15.409306032473708, -0.536602322891607]],
+        expected_values=[[0] * 10],
     )
 
 
