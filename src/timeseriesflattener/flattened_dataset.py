@@ -30,7 +30,9 @@ from timeseriesflattener.feature_spec_objects import (
     _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
+from timeseriesflattener.multi_index_handling import MultiIndexHandler
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
+from timeseriesflattener.text_embedding_functions import embed_text_column
 from timeseriesflattener.utils import print_df_dimensions_diff
 
 ProgressBar().register()
@@ -305,24 +307,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
     @staticmethod
-    def _embed_text_values(
-        df: pd.DataFrame,
-        embedding_fn: Callable,
-        dim_reduction_fn: Optional[Callable],
-    ) -> pd.DataFrame:
-        """Embeds text values using the embedding_fn and optionally reduces the
-        dimensionality using dim_reduction_fn. Assumes that the text is stored
-        in the column "value"."""
-        embedding = embedding_fn(df["value"])
-        if dim_reduction_fn:
-            embedding = dim_reduction_fn(embedding)
-
-        df = df.drop("value", axis=1)
-        # make multiindex with embedding as 'value'
-        df = pd.concat([df, embedding], axis=1, keys=["df", "value"])
-        return df
-
-    @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
         output_spec: _AnySpec,
@@ -402,10 +386,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         # handle embedding and dimensionality reduction if text predictor
         if isinstance(output_spec, TextPredictorSpec):
-            df = TimeseriesFlattener._embed_text_values(
-                df=df,
-                embedding_fn=output_spec.embedding_fn,
-                dim_reduction_fn=output_spec.dim_reduction_fn,
+            df = embed_text_column(
+                df=df, text_col_name="value", embedding_fn=output_spec.embedding_fn
             )
 
         # If resolve_multiple generates empty values,
@@ -413,114 +395,26 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # replace with NaN
 
         # Rename column
-        df = TimeseriesFlattener._rename_value_column(df=df, output_spec=output_spec)
+        df = MultiIndexHandler.rename_value_column(df=df, output_spec=output_spec)
 
         # Find value_cols and add fallback to them
-        value_col_str_name = TimeseriesFlattener._get_value_col_str_name(
+        value_col_str_name = MultiIndexHandler.get_value_col_str_name(
             df=df,
             output_spec=output_spec,
         )
-        df = TimeseriesFlattener._add_fallback_to_value_cols(
+        df = MultiIndexHandler.add_fallback_to_value_cols(
             df=df,
             output_spec=output_spec,
         )
 
         # check if multiindex and flatten
-        df = TimeseriesFlattener._flatten_multiindex(df)
+        df = MultiIndexHandler.flatten_multiindex(df)
         if verbose:
             log.info(
                 f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",
             )
 
         return df[value_col_str_name + [pred_time_uuid_col_name]]
-
-    @staticmethod
-    def _get_value_col_str_name(
-        df: pd.DataFrame,
-        output_spec=TemporalSpec,
-    ) -> List[str]:
-        """Returns the name of the value column in df. If df has a multiindex,
-        returns a list of all column names in the 'value' multiindex.
-
-        Args:
-            df (pd.DataFrame): Dataframe to get value column name from.
-            output_spec (TemporalSpec): Output specification"""
-        if isinstance(df.columns, pd.MultiIndex):
-            return df["value"].columns.tolist()
-        else:
-            return [output_spec.get_col_str()]
-
-    @staticmethod
-    def _flatten_multiindex(df: pd.DataFrame) -> pd.DataFrame:
-        """Checks if dataframe has multiindex columns and flattens them if it does.
-        In this case, flattening means stripping the first level of the multiindex.
-
-        Args:
-            df (pd.DataFrame): Dataframe to (potentially) flatten"""
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = df.columns.get_level_values(1)
-        return df
-
-    @staticmethod
-    def _add_fallback_to_value_cols(
-        df: pd.DataFrame,
-        output_spec: TemporalSpec,
-    ) -> pd.DataFrame:
-        """Adds fallback to value columns in df. If the value column is a multiindex,
-        adds fallback to all columns in the multiindex. Otherwise, adds fallback to the
-        single value column.
-
-        Args:
-            df (pd.DataFrame): Dataframe with value column
-            output_spec (TemporalSpec): Output specification
-        """
-        if "value" in df.columns and isinstance(df["value"], pd.DataFrame):
-            df["value"] = df["value"].fillna(output_spec.fallback)
-        else:
-            df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
-                output_spec.fallback,
-            )
-        return df
-
-    @staticmethod
-    def _rename_value_column(
-        df: pd.DataFrame,
-        output_spec: TemporalSpec,
-    ) -> pd.DataFrame:
-        """Renames the value column to the column name specified in the output_spec.
-        Handles the case where the output_spec has a multiindex.
-
-        Args:
-            output_spec (TemporalSpec): Output specification
-            df (pd.DataFrame): Dataframe with value column
-        """
-        if isinstance(df["value"], pd.DataFrame):
-            df = TimeseriesFlattener._rename_multi_index_dataframe(output_spec, df)
-        else:
-            df = df.rename(columns={"value": output_spec.get_col_str()})
-        return df
-
-    @staticmethod
-    def _rename_multi_index_dataframe(
-        output_spec: TemporalSpec,
-        df: pd.DataFrame,
-    ) -> pd.DataFrame:
-        """Renames a multiindex dataframe to the column names specified in the
-        output_spec.
-
-        Args:
-            output_spec (TemporalSpec): Output specification
-            df (pd.DataFrame): Dataframe with value column as multiindex
-        """
-        feature_names = df["value"].columns
-        col_names = [
-            output_spec.get_col_str(additional_feature_name=feature_name)
-            for feature_name in feature_names
-        ]
-        feature_col_name_mapping = dict(zip(feature_names, col_names))
-        # level=1 means that the column names are in the second level of the multiindex
-        df = df.rename(columns=feature_col_name_mapping, level=1)
-        return df
 
     def _get_temporal_feature(
         self,
