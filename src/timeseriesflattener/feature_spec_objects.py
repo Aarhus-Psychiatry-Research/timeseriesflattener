@@ -542,7 +542,9 @@ class TextPredictorSpec(PredictorSpec):
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.""",
     )
-
+    embedding_fn_kwargs: Optional[dict] = Field(
+        default=None, description="""Optional kwargs passed onto the embedding_fn."""
+    )
     resolve_multiple_fn: Union[str, Callable] = Field(
         default="concatenate",
         description="""A function used for resolving multiple values within the

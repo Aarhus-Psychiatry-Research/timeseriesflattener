@@ -1,3 +1,4 @@
+"""Functions for embedding text data"""
 from collections.abc import Callable
 from typing import Optional
 
@@ -11,6 +12,7 @@ def embed_text_column(
     df: pd.DataFrame,
     text_col_name: str,
     embedding_fn: Callable,
+    embedding_fn_kwargs: Optional[dict] = None,
 ) -> pd.DataFrame:
     """Embeds text values using the embedding_fn and optionally reduces the
     dimensionality using dim_reduction_fn. Stores the embedding as a multi-
@@ -21,11 +23,14 @@ def embed_text_column(
         text_col_name (str): Name of the text column to be embedded.
         embedding_fn (Callable): Function that takes a pd.Series of text and
             returns a pd.DataFrame of embeddings.
-        
+
     Returns:
         pd.DataFrame: Dataframe with the text column replaced by the embedding.
     """
-    embedding = embedding_fn(df[text_col_name])
+    if embedding_fn_kwargs:
+        embedding = embedding_fn(df[text_col_name], **embedding_fn_kwargs)
+    else:
+        embedding = embedding_fn(df[text_col_name])
 
     df = df.drop(text_col_name, axis=1)
     # make multiindex with embedding as 'value'
@@ -43,7 +48,8 @@ def huggingface_embedding(text_series: pd.Series, model_name: str) -> pd.DataFra
 
 
 def sentence_transformers_embedding(
-    text_series: pd.Series, model_name: str
+    text_series: pd.Series,
+    model_name: str,
 ) -> pd.DataFrame:
     """Embeds the text data using a sentence-transformers model. To use this
     in timeseriesflattener, you need to write a wrapper with your desired model name."""
