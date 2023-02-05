@@ -387,7 +387,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # handle embedding and dimensionality reduction if text predictor
         if isinstance(output_spec, TextPredictorSpec):
             df = embed_text_column(
-                df=df, text_col_name="value", embedding_fn=output_spec.embedding_fn
+                df=df,
+                text_col_name="value",
+                embedding_fn=output_spec.embedding_fn,
+                embedding_fn_kwargs=output_spec.embedding_fn_kwargs,
             )
 
         # If resolve_multiple generates empty values,

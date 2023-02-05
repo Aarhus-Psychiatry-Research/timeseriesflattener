@@ -23,6 +23,8 @@ def embed_text_column(
         text_col_name (str): Name of the text column to be embedded.
         embedding_fn (Callable): Function that takes a pd.Series of text and
             returns a pd.DataFrame of embeddings.
+        embedding_fn_kwargs (Optional[dict], optional): Keyword arguments for
+            embedding_fn. Defaults to None.
 
     Returns:
         pd.DataFrame: Dataframe with the text column replaced by the embedding.

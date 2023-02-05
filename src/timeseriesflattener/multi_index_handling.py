@@ -1,3 +1,4 @@
+"""This module contains functions for handling dataframes with multiindex columns."""
 from typing import List
 
 import pandas as pd
@@ -6,9 +7,12 @@ from timeseriesflattener.feature_spec_objects import TemporalSpec
 
 
 class MultiIndexHandler:
+    """Class for handling dataframes with multiindex columns."""
+
     @staticmethod
     def rename_value_column(
-        df: pd.DataFrame, output_spec: TemporalSpec
+        df: pd.DataFrame,
+        output_spec: TemporalSpec,
     ) -> pd.DataFrame:
         """Renames the value column to the column name specified in the output_spec.
         Handles the case where the output_spec has a multiindex.

@@ -543,7 +543,8 @@ class TextPredictorSpec(PredictorSpec):
         Defaults to: None.""",
     )
     embedding_fn_kwargs: Optional[dict] = Field(
-        default=None, description="""Optional kwargs passed onto the embedding_fn."""
+        default=None,
+        description="""Optional kwargs passed onto the embedding_fn.""",
     )
     resolve_multiple_fn: Union[str, Callable] = Field(
         default="concatenate",
