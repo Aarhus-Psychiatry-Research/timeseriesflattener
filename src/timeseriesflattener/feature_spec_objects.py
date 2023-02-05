@@ -542,11 +542,7 @@ class TextPredictorSpec(PredictorSpec):
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.""",
     )
-    dim_reduction_fn: Optional[Callable] = Field(
-        description="""A function used for dimensionality reduction of the embeddings.
-        Should take a pandas dataframe of embeddings and return a pandas dataframe of
-        reduced dimensionality embeddings. Defaults to: None.""",
-    )
+
     resolve_multiple_fn: Union[str, Callable] = Field(
         default="concatenate",
         description="""A function used for resolving multiple values within the
