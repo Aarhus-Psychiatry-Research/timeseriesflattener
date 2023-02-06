@@ -122,4 +122,4 @@ def load_synth_text(
     Returns:
         pd.DataFrame
     """
-    return load_raw_test_csv("synth_txt_data.csv", n_rows=n_rows)
+    return load_raw_test_csv("synth_text_data_matched.csv", n_rows=n_rows)
