@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 @cache
 def load_df_with_cache(
     loader_fn: Callable,
-    kwargs: dict[str, Any],
+    kwargs: Optional[dict[str, Any]],
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
@@ -62,6 +62,8 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
 
         if callable(data["values_loader"]):
             if "loader_kwargs" not in data:
+                data["loader_kwargs"] = {}
+            elif data["loader_kwargs"] is None:
                 data["loader_kwargs"] = {}
 
             data["values_df"] = load_df_with_cache(
@@ -675,6 +677,11 @@ class _MinGroupSpec(BaseModel):
         description="""Prefix for column name, e.g. <prefix>_<feature_name>.""",
     )
 
+    loader_kwargs: Optional[list[dict[str, Any]]] = Field(
+        default=None,
+        description="""Optional kwargs for the values_loader.""",
+    )
+
     def _check_loaders_are_valid(self):
         """Check that all loaders can be resolved from the data_loaders catalogue."""
         invalid_loaders = list(
@@ -787,8 +794,10 @@ class PredictorGroupSpec(_MinGroupSpec):
             resolution, raise an error. Defaults to: [0.0].
         prefix (str):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
+        loader_kwargs (Optional[List[dict[str, Any]]]):
+            Optional kwargs for the values_loader.
         lookbehind_days (List[Union[int, float]]):
-    How far behind to look for values
+            How far behind to look for values
     """
 
     class Doc:
@@ -815,36 +824,38 @@ class OutcomeGroupSpec(_MinGroupSpec):
     """Specification for a group of outcomes.
 
     Fields:
-        values_loader (Optional[List[str]]):
-            Loader for the df. Tries to resolve from the data_loaders
-            registry, then calls the function which should return a dataframe.
-        values_name (Optional[List[str]]):
-            List of strings that corresponds to a key in a dictionary
-            of multiple dataframes that correspods to a name of a type of values.
-        values_df (Optional[DataFrame]):
-            Dataframe with the values.
-        input_col_name_override (Optional[str]):
-            Override for the column name to use as values in df.
-        output_col_name_override (Optional[str]):
-            Override for the column name to use as values in the
-            output df.
-        resolve_multiple_fn (List[Union[str, Callable]]):
-            Name of resolve multiple fn, resolved from
-            resolve_multiple_functions.py
-        fallback (List[Union[Callable, str]]):
-            Which value to use if no values are found within interval_days.
-        allowed_nan_value_prop (List[float]):
-            If NaN is higher than this in the input dataframe during
-            resolution, raise an error. Defaults to: [0.0].
-        prefix (str):
-            Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
-        incident (Sequence[bool]):
-            Whether the outcome is incident or not, i.e. whether you
-            can experience it more than once. For example, type 2 diabetes is incident.
-            Incident outcomes can be handled in a vectorised way during resolution,
-             which is faster than non-incident outcomes.
-        lookahead_days (List[Union[int, float]]):
-    How far ahead to look for values
+    values_loader (Optional[List[str]]):
+        Loader for the df. Tries to resolve from the data_loaders
+        registry, then calls the function which should return a dataframe.
+    values_name (Optional[List[str]]):
+        List of strings that corresponds to a key in a dictionary
+        of multiple dataframes that correspods to a name of a type of values.
+    values_df (Optional[DataFrame]):
+        Dataframe with the values.
+    input_col_name_override (Optional[str]):
+        Override for the column name to use as values in df.
+    output_col_name_override (Optional[str]):
+        Override for the column name to use as values in the
+        output df.
+    resolve_multiple_fn (List[Union[str, Callable]]):
+        Name of resolve multiple fn, resolved from
+        resolve_multiple_functions.py
+    fallback (List[Union[Callable, str]]):
+        Which value to use if no values are found within interval_days.
+    allowed_nan_value_prop (List[float]):
+        If NaN is higher than this in the input dataframe during
+        resolution, raise an error. Defaults to: [0.0].
+    prefix (str):
+        Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
+    loader_kwargs (Optional[List[dict[str, Any]]]):
+        Optional kwargs for the values_loader.
+    incident (Sequence[bool]):
+        Whether the outcome is incident or not, i.e. whether you
+        can experience it more than once. For example, type 2 diabetes is incident.
+        Incident outcomes can be handled in a vectorised way during resolution,
+         which is faster than non-incident outcomes.
+    lookahead_days (List[Union[int, float]]):
+        How far ahead to look for values
     """
 
     class Doc:
