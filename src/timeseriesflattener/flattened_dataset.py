@@ -349,7 +349,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         timestamp_val_col_name = f"{timestamp_col_name}_val"
         timestamp_pred_col_name = f"{timestamp_col_name}_pred"
         df = TimeseriesFlattener.rename_input_col_to_value(
-            df=df, output_spec=output_spec
+            df=df,
+            output_spec=output_spec,
         )
 
         # Drop prediction times without event times within interval days
@@ -421,7 +422,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def rename_input_col_to_value(
-        df: pd.DataFrame, output_spec: TemporalSpec
+        df: pd.DataFrame,
+        output_spec: TemporalSpec,
     ) -> pd.DataFrame:
         """Checks whether 'value' is a column in df, and if not, renames the column"""
         if "value" not in df.columns:
