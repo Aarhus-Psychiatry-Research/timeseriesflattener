@@ -447,7 +447,7 @@ class TemporalSpec(_AnySpec):
         """
         feature_name = self.feature_name
         if additional_feature_name:
-            feature_name = feature_name + "-" + additional_feature_name
+            feature_name = feature_name + "-" + str(additional_feature_name)
         col_str = f"{self.prefix}_{feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
         return col_str
 
