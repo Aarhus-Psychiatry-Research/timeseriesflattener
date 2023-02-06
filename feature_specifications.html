@@ -285,11 +285,13 @@
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OutcomeGroupSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#OutcomeGroupSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_MinGroupSpec</span></code></p>
 <p>Specification for a group of outcomes.</p>
-<dl>
-<dt>Fields:</dt><dd><dl>
-<dt>values_loader (Optional[List[str]]):</dt><dd><p>Loader for the df. Tries to resolve from the data_loaders
+<p>Fields:
+values_loader (Optional[List[str]]):</p>
+<blockquote>
+<div><p>Loader for the df. Tries to resolve from the data_loaders
 registry, then calls the function which should return a dataframe.</p>
-</dd>
+</div></blockquote>
+<dl>
 <dt>values_name (Optional[List[str]]):</dt><dd><p>List of strings that corresponds to a key in a dictionary
 of multiple dataframes that correspods to a name of a type of values.</p>
 </dd>
@@ -310,6 +312,8 @@ resolution, raise an error. Defaults to: [0.0].</p>
 </dd>
 <dt>prefix (str):</dt><dd><p>Prefix for column name, e.g. &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: outc.</p>
 </dd>
+<dt>loader_kwargs (Optional[List[dict[str, Any]]]):</dt><dd><p>Optional kwargs for the values_loader.</p>
+</dd>
 <dt>incident (Sequence[bool]):</dt><dd><p>Whether the outcome is incident or not, i.e. whether you
 can experience it more than once. For example, type 2 diabetes is incident.
 Incident outcomes can be handled in a vectorised way during resolution,</p>
@@ -317,15 +321,13 @@ Incident outcomes can be handled in a vectorised way during resolution,</p>
 <div><p>which is faster than non-incident outcomes.</p>
 </div></blockquote>
 </dd>
-</dl>
-<p>lookahead_days (List[Union[int, float]]):</p>
+<dt>lookahead_days (List[Union[int, float]]):</dt><dd><p>How far ahead to look for values</p>
 </dd>
 </dl>
-<p>How far ahead to look for values</p>
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OutcomeGroupSpec&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for a group of outcomes.\n\nFields:\n    values_loader (Optional[List[str]]):\n        Loader for the df. Tries to resolve from the data_loaders\n        registry, then calls the function which should return a dataframe.\n    values_name (Optional[List[str]]):\n        List of strings that corresponds to a key in a dictionary\n        of multiple dataframes that correspods to a name of a type of values.\n    values_df (Optional[DataFrame]):\n        Dataframe with the values.\n    input_col_name_override (Optional[str]):\n        Override for the column name to use as values in df.\n    output_col_name_override (Optional[str]):\n        Override for the column name to use as values in the\n        output df.\n    resolve_multiple_fn (List[Union[str, Callable]]):\n        Name of resolve multiple fn, resolved from\n        resolve_multiple_functions.py\n    fallback (List[Union[Callable, str]]):\n        Which value to use if no values are found within interval_days.\n    allowed_nan_value_prop (List[float]):\n        If NaN is higher than this in the input dataframe during\n        resolution, raise an error. Defaults to: [0.0].\n    prefix (str):\n        Prefix for column name, e.g. &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: outc.\n    incident (Sequence[bool]):\n        Whether the outcome is incident or not, i.e. whether you\n        can experience it more than once. For example, type 2 diabetes is incident.\n        Incident outcomes can be handled in a vectorised way during resolution,\n         which is faster than non-incident outcomes.\n    lookahead_days (List[Union[int, float]]):\nHow far ahead to look for values&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for a group of outcomes.\n\nFields:\nvalues_loader (Optional[List[str]]):\n    Loader for the df. Tries to resolve from the data_loaders\n    registry, then calls the function which should return a dataframe.\nvalues_name (Optional[List[str]]):\n    List of strings that corresponds to a key in a dictionary\n    of multiple dataframes that correspods to a name of a type of values.\nvalues_df (Optional[DataFrame]):\n    Dataframe with the values.\ninput_col_name_override (Optional[str]):\n    Override for the column name to use as values in df.\noutput_col_name_override (Optional[str]):\n    Override for the column name to use as values in the\n    output df.\nresolve_multiple_fn (List[Union[str, Callable]]):\n    Name of resolve multiple fn, resolved from\n    resolve_multiple_functions.py\nfallback (List[Union[Callable, str]]):\n    Which value to use if no values are found within interval_days.\nallowed_nan_value_prop (List[float]):\n    If NaN is higher than this in the input dataframe during\n    resolution, raise an error. Defaults to: [0.0].\nprefix (str):\n    Prefix for column name, e.g. &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: outc.\nloader_kwargs (Optional[List[dict[str, Any]]]):\n    Optional kwargs for the values_loader.\nincident (Sequence[bool]):\n    Whether the outcome is incident or not, i.e. whether you\n    can experience it more than once. For example, type 2 diabetes is incident.\n    Incident outcomes can be handled in a vectorised way during resolution,\n     which is faster than non-incident outcomes.\nlookahead_days (List[Union[int, float]]):\n    How far ahead to look for values&quot;</span><span class="p">,</span>
 <span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
 <span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;values_loader&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -373,6 +375,14 @@ Incident outcomes can be handled in a vectorised way during resolution,</p>
 <span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix for column name, e.g. &lt;prefix&gt;_&lt;feature_name&gt;.&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;outc&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;loader_kwargs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Loader Kwargs&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Optional kwargs for the values_loader.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">         </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;incident&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Incident&quot;</span><span class="p">,</span>
@@ -686,7 +696,7 @@ in a vectorised way during resolution, which is faster than non-incident outcome
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PredictorGroupSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#PredictorGroupSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.PredictorGroupSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_MinGroupSpec</span></code></p>
 <p>Specification for a group of predictors.</p>
-<dl>
+<dl class="simple">
 <dt>Fields:</dt><dd><dl class="simple">
 <dt>values_loader (Optional[List[str]]):</dt><dd><p>Loader for the df. Tries to resolve from the data_loaders
 registry, then calls the function which should return a dataframe.</p>
@@ -711,15 +721,17 @@ resolution, raise an error. Defaults to: [0.0].</p>
 </dd>
 <dt>prefix (str):</dt><dd><p>Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</p>
 </dd>
-</dl>
-<p>lookbehind_days (List[Union[int, float]]):</p>
+<dt>loader_kwargs (Optional[List[dict[str, Any]]]):</dt><dd><p>Optional kwargs for the values_loader.</p>
+</dd>
+<dt>lookbehind_days (List[Union[int, float]]):</dt><dd><p>How far behind to look for values</p>
 </dd>
 </dl>
-<p>How far behind to look for values</p>
+</dd>
+</dl>
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PredictorGroupSpec&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for a group of predictors.\n\nFields:\n    values_loader (Optional[List[str]]):\n        Loader for the df. Tries to resolve from the data_loaders\n        registry, then calls the function which should return a dataframe.\n    values_name (Optional[List[str]]):\n        List of strings that corresponds to a key in a dictionary\n        of multiple dataframes that correspods to a name of a type of values.\n    values_df (Optional[DataFrame]):\n        Dataframe with the values.\n    input_col_name_override (Optional[str]):\n        Override for the column name to use as values in df.\n    output_col_name_override (Optional[str]):\n        Override for the column name to use as values in the\n        output df.\n    resolve_multiple_fn (List[Union[str, Callable]]):\n        Name of resolve multiple fn, resolved from\n        resolve_multiple_functions.py\n    fallback (List[Union[Callable, str]]):\n        Which value to use if no values are found within interval_days.\n    allowed_nan_value_prop (List[float]):\n        If NaN is higher than this in the input dataframe during\n        resolution, raise an error. Defaults to: [0.0].\n    prefix (str):\n        Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.\n    lookbehind_days (List[Union[int, float]]):\nHow far behind to look for values&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for a group of predictors.\n\nFields:\n    values_loader (Optional[List[str]]):\n        Loader for the df. Tries to resolve from the data_loaders\n        registry, then calls the function which should return a dataframe.\n    values_name (Optional[List[str]]):\n        List of strings that corresponds to a key in a dictionary\n        of multiple dataframes that correspods to a name of a type of values.\n    values_df (Optional[DataFrame]):\n        Dataframe with the values.\n    input_col_name_override (Optional[str]):\n        Override for the column name to use as values in df.\n    output_col_name_override (Optional[str]):\n        Override for the column name to use as values in the\n        output df.\n    resolve_multiple_fn (List[Union[str, Callable]]):\n        Name of resolve multiple fn, resolved from\n        resolve_multiple_functions.py\n    fallback (List[Union[Callable, str]]):\n        Which value to use if no values are found within interval_days.\n    allowed_nan_value_prop (List[float]):\n        If NaN is higher than this in the input dataframe during\n        resolution, raise an error. Defaults to: [0.0].\n    prefix (str):\n        Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.\n    loader_kwargs (Optional[List[dict[str, Any]]]):\n        Optional kwargs for the values_loader.\n    lookbehind_days (List[Union[int, float]]):\n        How far behind to look for values&quot;</span><span class="p">,</span>
 <span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
 <span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;values_loader&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -767,6 +779,14 @@ resolution, raise an error. Defaults to: [0.0].</p>
 <span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;.&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pred&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;loader_kwargs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Loader Kwargs&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Optional kwargs for the values_loader.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">         </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;lookbehind_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lookbehind Days&quot;</span><span class="p">,</span>
@@ -1429,7 +1449,7 @@ class. The rest of the docstring is generated from the attributes of the class.<
 
 <dl class="py function">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.load_df_with_cache">
-<span class="sig-name descname"><span class="pre">load_df_with_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loader_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#load_df_with_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.load_df_with_cache" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">load_df_with_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loader_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#load_df_with_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.load_df_with_cache" title="Permalink to this definition">#</a></dt>
 <dd><p>Wrapper function to cache dataframe loading.</p>
 </dd></dl>
 
