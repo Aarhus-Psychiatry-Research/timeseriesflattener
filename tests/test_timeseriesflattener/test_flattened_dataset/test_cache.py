@@ -7,9 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-# from utils import (
 from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
-    # from timeseriesflattener.tests.test_timeseriesflattener.test_flattened_dataset.utils import (
     check_dfs_have_same_contents_by_column,
     create_flattened_df,
 )
