@@ -4,7 +4,6 @@ import difflib
 import numpy as np
 import pandas as pd
 import pytest
-from timeseriesflattener.testing.load_synth_data import load_synth_predictor_float, synth_predictor_binary
 
 from timeseriesflattener.feature_spec_objects import (
     BaseModel,
@@ -20,6 +19,7 @@ from timeseriesflattener.feature_spec_objects import (
 from timeseriesflattener.resolve_multiple_functions import maximum
 from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import; noqa
     load_synth_predictor_float,
+    synth_predictor_binary,
 )
 from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
