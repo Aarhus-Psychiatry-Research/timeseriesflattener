@@ -132,7 +132,6 @@ def test_skip_one_if_no_need_to_process():
     assert len(created_combinations) == 4
 
 
-
 def test_resolve_multiple_fn_to_str():
     """Test that resolve_multiple_fn is converted to str correctly."""
     pred_spec_batch = PredictorGroupSpec(
@@ -190,7 +189,8 @@ def test_feature_spec_docstrings(spec: BaseModel):
         """,
         )
 
-def test_predictorgroupspec_combinations_loader_kwargs(PredictorGroupSpec):
+
+def test_predictorgroupspec_combinations_loader_kwargs():
     """Test that loader kwargs are used correctly in PredictorGroupSpec combinations."""
 
     olanzapine_100_rows = olanzapine(n_rows=100)
@@ -207,5 +207,5 @@ def test_predictorgroupspec_combinations_loader_kwargs(PredictorGroupSpec):
 
     combinations = spec.create_combinations()
 
-    assert olanzapine_100_rows == combinations[0].values_df
-    assert clozapine_100_rows == combinations[1].values_df
+    pd.testing.assert_frame_equal(olanzapine_100_rows, combinations[0].values_df)
+    pd.testing.assert_frame_equal(clozapine_100_rows, combinations[1].values_df)
