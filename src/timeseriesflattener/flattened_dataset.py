@@ -194,7 +194,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         df: DataFrame,
         pred_times_with_uuid: DataFrame,
         pred_time_uuid_colname: str,
-        pred_timestamp_col_name: str,
     ) -> DataFrame:
         """Ensure all prediction times are represented in the returned
 
@@ -204,7 +203,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             df (DataFrame): Dataframe with prediction times but without uuid.
             pred_times_with_uuid (DataFrame): Dataframe with prediction times and uuid.
             pred_time_uuid_colname (str): Name of uuid column in both df and pred_times_with_uuid.
-            pred_itmestamp_col_name (str): Name of timestamp column in df.
 
         Returns:
             DataFrame: A merged dataframe with all prediction times.
@@ -215,7 +213,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             how="left",
             on=pred_time_uuid_colname,
             suffixes=("", "_temp"),
-        ).drop([pred_timestamp_col_name], axis=1)
+        )
 
     @staticmethod
     def _resolve_multiple_values_within_interval_days(
@@ -309,7 +307,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
-        output_spec: _AnySpec,
+        output_spec: TemporalSpec,
         entity_id_col_name: str,
         pred_time_uuid_col_name: str,
         timestamp_col_name: str,
@@ -322,7 +320,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Args:
             prediction_times_with_uuid_df (DataFrame): Dataframe with id_col and
                 timestamps for each prediction time.
-            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
+            output_spec (TemporalSpec): Specification of the output column.
             entity_id_col_name (str): Name of id_column in prediction_times_with_uuid_df and
                 df. Required because this is a static method.
             timestamp_col_name (str): Name of timestamp column in
@@ -350,6 +348,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         timestamp_val_col_name = f"{timestamp_col_name}_val"
         timestamp_pred_col_name = f"{timestamp_col_name}_pred"
+        df = TimeseriesFlattener.rename_input_col_to_value(
+            df=df, output_spec=output_spec
+        )
 
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
@@ -366,14 +367,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             timestamp_pred_colname=timestamp_pred_col_name,
             timestamp_value_colname=timestamp_val_col_name,
         )
-
-        # Add back prediction times that don't have a value, and fill them with fallback
-        df = TimeseriesFlattener._add_back_prediction_times_without_value(
-            df=df,
-            pred_times_with_uuid=prediction_times_with_uuid_df,
-            pred_time_uuid_colname=pred_time_uuid_col_name,
-            pred_timestamp_col_name=timestamp_pred_col_name,
-        ).fillna(output_spec.fallback)
 
         df[timestamp_val_col_name].replace({output_spec.fallback: pd.NaT}, inplace=True)
 
@@ -417,7 +410,23 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",
             )
 
+        # Add back prediction times that don't have a value, and fill them with fallback
+        df = TimeseriesFlattener._add_back_prediction_times_without_value(
+            df=df,
+            pred_times_with_uuid=prediction_times_with_uuid_df,
+            pred_time_uuid_colname=pred_time_uuid_col_name,
+        ).fillna(output_spec.fallback)
+
         return df[value_col_str_name + [pred_time_uuid_col_name]]
+
+    @staticmethod
+    def rename_input_col_to_value(
+        df: pd.DataFrame, output_spec: TemporalSpec
+    ) -> pd.DataFrame:
+        """Checks whether 'value' is a column in df, and if not, renames the column"""
+        if "value" not in df.columns:
+            df = df.rename(columns={output_spec.input_col_name_override: "value"})
+        return df
 
     def _get_temporal_feature(
         self,
