@@ -4,7 +4,7 @@ import difflib
 import numpy as np
 import pandas as pd
 import pytest
-from psycop_feature_generation.loaders.raw.load_medications import clozapine, olanzapine
+from timeseriesflattener.testing.load_synth_data import load_synth_predictor_float, synth_predictor_binary
 
 from timeseriesflattener.feature_spec_objects import (
     BaseModel,
@@ -193,11 +193,11 @@ def test_feature_spec_docstrings(spec: BaseModel):
 def test_predictorgroupspec_combinations_loader_kwargs():
     """Test that loader kwargs are used correctly in PredictorGroupSpec combinations."""
 
-    olanzapine_100_rows = olanzapine(n_rows=100)
-    clozapine_100_rows = clozapine(n_rows=100)
+    binary_100_rows = synth_predictor_binary(n_rows=100)
+    float_100_rows = load_synth_predictor_float(n_rows=100)
 
     spec = PredictorGroupSpec(
-        values_loader=("olanzapine", "clozapine"),
+        values_loader=("synth_predictor_binary", "synth_predictor_float"),
         loader_kwargs=[{"n_rows": 100}],
         prefix="test_",
         resolve_multiple_fn=["bool"],
@@ -207,5 +207,5 @@ def test_predictorgroupspec_combinations_loader_kwargs():
 
     combinations = spec.create_combinations()
 
-    pd.testing.assert_frame_equal(olanzapine_100_rows, combinations[0].values_df)
-    pd.testing.assert_frame_equal(clozapine_100_rows, combinations[1].values_df)
+    pd.testing.assert_frame_equal(binary_100_rows, combinations[0].values_df)
+    pd.testing.assert_frame_equal(float_100_rows, combinations[1].values_df)
