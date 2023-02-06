@@ -63,7 +63,7 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
         if callable(data["values_loader"]):
             if "loader_kwargs" not in data:
                 data["loader_kwargs"] = {}
-            elif data["loader_kwargs"] == None:
+            elif data["loader_kwargs"] is None:
                 data["loader_kwargs"] = {}
 
             data["values_df"] = load_df_with_cache(
