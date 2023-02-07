@@ -293,7 +293,7 @@ class _AnySpec(BaseModel):
         Args:
             additional_feature_name (Optional[str]): An additional feature name
                 to append to the column name.
-        ß"""
+        """
         feature_name = self.feature_name
         if additional_feature_name:
             feature_name = f"{feature_name}-{additional_feature_name}"
