@@ -1,4 +1,4 @@
-[project
+[project]
 name = "timeseriesflattener"
 version = "0.22.1"
 description = "A package for converting time series data from e.g. electronic health records into wide format data."
