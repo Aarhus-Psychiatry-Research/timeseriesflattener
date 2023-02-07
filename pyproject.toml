@@ -5,7 +5,7 @@ description = "A package for converting time series data from e.g. electronic he
 readme = "README.md"
 authors = [{name = "Martin Bernstorff", email = "martinbernstorff@gmail.com"},
     {name = "Lasse Hansen", email = "lasseh0310@gmail.com"},
-    {name = "Jakob Grøhn Damgaard", email = ""},
+    {name = "Jakob Grøhn Damgaard", email = "bokajgd@gmail.com"},
     {name = "Kenneth Enevoldsen"}]
 
 requires-python = ">=3.8.0"
