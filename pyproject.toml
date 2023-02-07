@@ -5,7 +5,7 @@ description = "A package for converting time series data from e.g. electronic he
 readme = "README.md"
 authors = ["Martin Bernstorff", "Kenneth Enevoldsen", "Jakob Grøhn Damgaard", "Frida Hæstrup", "Lasse Hansen"]
 
-requires-python = ">=3.8.0
+requires-python = ">=3.8.0"
 
 dependencies = [
     "python>=3.9, <3.11",
