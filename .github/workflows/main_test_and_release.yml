@@ -17,6 +17,8 @@ env:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    env:
+      python-version: 3.9
 
     strategy:
       matrix:
