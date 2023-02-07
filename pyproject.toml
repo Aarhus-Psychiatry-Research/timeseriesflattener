@@ -11,7 +11,6 @@ authors = [{name = "Martin Bernstorff", email = "martinbernstorff@gmail.com"},
 requires-python = ">=3.8.0"
 
 dependencies = [
-    "python>=3.9, <3.11",
     "scipy>=1.8.0,<1.9.4",
     "wasabi>=0.9.1,<1.1.2",
     "scikit-learn>=1.1.2,<1.2.2",
