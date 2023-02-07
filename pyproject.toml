@@ -86,4 +86,4 @@ n = 0
 [tool.mypy]
 ignore_missing_imports = true
 
-[tool.pyright] # Added because of weird pylance error, issue here: https://github.com/microsoft/pylance-release/issues/3366
+[tool.pyright]
