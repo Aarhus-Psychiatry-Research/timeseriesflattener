@@ -41,20 +41,20 @@ dev = [
     "pytest>=7.1.3, <7.1.5",
     "black>=22.8.0,<22.12.1",
     "pre-commit>=2.20.0,<2.21.1",
-    "pytestv = >=3.0.0,<4.0.1",
+    "pytest-cov>=3.0.0,<4.0.1",
     "flake8>=5.0.0, <5.0.6",
     "docformatter>=1.5.0, <1.5.2",
     "mypy>=0.971,<0.992",
-    "pytestist = >=2.4.0,<3.1.1",
+    "pytest-xdist>=2.4.0,<3.1.1",
     "pylint>=2.15.5,<2.16.0",
 ]
 
 docs = [
     "sphinx>=5.3.0,<5.4.0",
     "furo2022.12.7",
-    "sphinxpybutton = >=0.5.1,<0.5.2",
-    "sphinxextengraph = >=0.7.3,<0.7.5",
-    "myst = >=0.6.0,<1.17.0",
+    "sphinx-copybutton>=0.5.1,<0.5.2",
+    "sphinxext-opengraph>=0.7.3,<0.7.5",
+    "myst-nb>=0.6.0,<1.17.0",
     "sphinx_design>=0.3.0,<0.3.1",
     "autodoc_pydantic>=1.1.0,<1.9.0",
 ]
