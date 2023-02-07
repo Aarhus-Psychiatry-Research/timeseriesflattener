@@ -40,6 +40,8 @@ jobs:
 
   jupyter-tutorials:
     runs-on: ${{ matrix.os }}
+    env:
+      python-version: 3.9
 
     strategy:
       matrix:
