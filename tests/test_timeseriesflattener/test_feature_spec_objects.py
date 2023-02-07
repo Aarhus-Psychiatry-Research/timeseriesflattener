@@ -20,6 +20,7 @@ from timeseriesflattener.feature_spec_objects import (
 from timeseriesflattener.resolve_multiple_functions import maximum
 from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import; noqa
     load_synth_predictor_float,
+    synth_predictor_binary,
 )
 from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
@@ -189,3 +190,24 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Expected: \n\n{generated_docstring}
         """,
         )
+
+
+def test_predictorgroupspec_combinations_loader_kwargs():
+    """Test that loader kwargs are used correctly in PredictorGroupSpec combinations."""
+
+    binary_100_rows = synth_predictor_binary(n_rows=100)
+    float_100_rows = load_synth_predictor_float(n_rows=100)
+
+    spec = PredictorGroupSpec(
+        values_loader=("synth_predictor_binary", "synth_predictor_float"),
+        loader_kwargs=[{"n_rows": 100}],
+        prefix="test_",
+        resolve_multiple_fn=["bool"],
+        fallback=[0],
+        lookbehind_days=[10],
+    )
+
+    combinations = spec.create_combinations()
+
+    pd.testing.assert_frame_equal(binary_100_rows, combinations[0].values_df)
+    pd.testing.assert_frame_equal(float_100_rows, combinations[1].values_df)

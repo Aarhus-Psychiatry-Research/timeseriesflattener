@@ -5,13 +5,6 @@ inputs:
     description: "Which Python version to run on"
     required: true
     default: 3.9
-  poetry-version:
-    description: "Which version of Poetry to install"
-    default: 1.1.15
-  cache-version:
-    description: "Cache version for invalidation"
-    default: 0.0.0
-
 runs:
   using: "composite"
   steps:
@@ -21,28 +14,12 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
-    ### Caching
-    - name: Cache poetry and venv
-      id: cache-poetry-and-venv
-      uses: MartinBernstorff/cache-poetry-and-venv@latest
-      with:
-        poetry-version: ${{ inputs.poetry-version }}
-        cache-version: ${{ inputs.cache-version }}
-        python-version: ${{ inputs.python-version }}
-
     # Installing
-    - name: Install Poetry
-      if: steps.cache-poetry-and-venv.outputs.poetry-cache-hit != 'true'
-      uses: snok/install-poetry@v1
-      with:
-        version: ${{ inputs.poetry-version }}
-        virtualenvs-create: true
-        virtualenvs-in-project: true
-
-    - name: Install Project
-      if: steps.cache-poetry-and-venv.outputs.venv-cache-hit != 'true'
+    - name: Install dependencies
       shell: bash
-      run: poetry install -vvv
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
 
     ### Run tests
     - name: Install jupyter
@@ -52,7 +29,7 @@ runs:
     - name: Compile notebooks and check for errors
       shell: bash
       run: |
-        poetry run jupyter nbconvert --to notebook --execute docs/tutorials/*.ipynb
+        jupyter nbconvert --to notebook --execute docs/tutorials/*.ipynb
         for notebook in tutorials/*.ipynb; do
           if grep -q "\"cell_type\": \"error\"" $notebook; then
             echo "Error cell found in $notebook"

@@ -13,12 +13,12 @@ on:
 
 env:
   cache-version: 0.0.8 # Change this number if you want to manually invalidate all caches
-  poetry-version: 1.1.15
-  python-version: 3.9
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    env:
+      python-version: 3.9
 
     strategy:
       matrix:
@@ -37,11 +37,11 @@ jobs:
         uses: ./.github/actions/test
         with:
           python-version: ${{ env.python-version }}
-          poetry-version: ${{ env.poetry-version }}
-          cache-version: ${{ env.cache-version }}
 
   jupyter-tutorials:
     runs-on: ${{ matrix.os }}
+    env:
+      python-version: 3.9
 
     strategy:
       matrix:
@@ -60,8 +60,6 @@ jobs:
         uses: ./.github/actions/test_tutorials
         with:
           python-version: ${{ env.python-version }}
-          poetry-version: ${{ env.poetry-version }}
-          cache-version: ${{ env.cache-version }}
 
   release:
     runs-on: ubuntu-latest
