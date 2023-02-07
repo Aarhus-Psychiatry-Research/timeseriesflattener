@@ -78,7 +78,7 @@ version_variable = [
 ]
 upload_to_pypi = true
 upload_to_release = true
-build_command = "pip install poetry && poetry build"
+build_command = "python -m pip install build; python -m build"
 
 [tool.pytest]
 n = 0
