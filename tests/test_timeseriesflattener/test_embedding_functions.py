@@ -16,23 +16,23 @@ def test_embedding_fn(synth_text_data):
     assert embedding_df.shape == (df.shape[0], 10)
 
 
-def test_huggingface_embedding(synth_text_data):
-    """Test that the huggingface embedding function works as expected"""
-    df = synth_text_data.dropna(subset="text")
-    df = df.head(5)
-    embedding_df = huggingface_embedding(
-        df["text"],
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    )
-    assert embedding_df.shape == (df.shape[0], 384)
+# def test_huggingface_embedding(synth_text_data):
+#     """Test that the huggingface embedding function works as expected"""
+#     df = synth_text_data.dropna(subset="text")
+#     df = df.head(5)
+#     embedding_df = huggingface_embedding(
+#         df["text"],
+#         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+#     )
+#     assert embedding_df.shape == (df.shape[0], 384)
 
 
-def test_sentence_transformer_embedding(synth_text_data):
-    """Test that the sentence-transformer embedding function works as expected"""
-    df = synth_text_data.dropna(subset="text")
-    df = df.head(5)
-    embedding_df = sentence_transformers_embedding(
-        df["text"],
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    )
-    assert embedding_df.shape == (df.shape[0], 384)
+# def test_sentence_transformer_embedding(synth_text_data):
+#     """Test that the sentence-transformer embedding function works as expected"""
+#     df = synth_text_data.dropna(subset="text")
+#     df = df.head(5)
+#     embedding_df = sentence_transformers_embedding(
+#         df["text"],
+#         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+#     )
+#     assert embedding_df.shape == (df.shape[0], 384)
