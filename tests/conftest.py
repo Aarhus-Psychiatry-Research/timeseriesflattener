@@ -14,7 +14,8 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     config.addinivalue_line(
-        "markers", "huggingface: mark test as using huggingface models"
+        "markers",
+        "huggingface: mark test as using huggingface models",
     )
 
 
