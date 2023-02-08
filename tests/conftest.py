@@ -5,22 +5,24 @@ import pytest
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--runslow",
+        "--skiphuggingface",
         action="store_true",
         default=False,
-        help="run slow tests",
+        help="run tests that use huggingface models",
     )
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "slow: mark test as slow to run")
+    config.addinivalue_line(
+        "markers", "huggingface: mark test as using huggingface models"
+    )
 
 
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--runslow"):
-        # --runslow given in cli: do not skip slow tests
+    if config.getoption("--skiphuggingface"):
+        # --skiphuggingface given in cli: skip huggingface tests
+        skip_hf = pytest.mark.skip(reason="remove --skiphuggingface option to run")
+        for item in items:
+            if "huggingface" in item.keywords:
+                item.add_marker(skip_hf)
         return
-    skip_slow = pytest.mark.skip(reason="need --runslow option to run")
-    for item in items:
-        if "slow" in item.keywords:
-            item.add_marker(skip_slow)
