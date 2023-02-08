@@ -399,7 +399,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             df=df,
             output_spec=output_spec,
         )
-        df = MultiIndexHandler.add_fallback_to_value_cols(
+        df = MultiIndexHandler.replace_na_in_spec_col_with_fallback(
             df=df,
             output_spec=output_spec,
         )
@@ -425,7 +425,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         df: pd.DataFrame,
         output_spec: TemporalSpec,
     ) -> pd.DataFrame:
-        """Checks whether 'value' is a column in df, and if not, renames the column"""
+        """Checks whether 'value' is a column in df, and if not, renames the
+        input column"""
         if "value" not in df.columns:
             df = df.rename(columns={output_spec.input_col_name_override: "value"})
         return df

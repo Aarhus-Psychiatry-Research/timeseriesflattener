@@ -50,7 +50,7 @@ class MultiIndexHandler:
         return df
 
     @staticmethod
-    def add_fallback_to_value_cols(
+    def replace_na_in_spec_col_with_fallback(
         df: pd.DataFrame,
         output_spec: TemporalSpec,
     ) -> pd.DataFrame:
