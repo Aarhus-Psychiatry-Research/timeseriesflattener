@@ -1,6 +1,6 @@
 [project]
 name = "timeseriesflattener"
-version = "0.22.1"
+version = "0.23.0"
 description = "A package for converting time series data from e.g. electronic health records into wide format data."
 readme = "README.md"
 authors = [{name = "Martin Bernstorff", email = "martinbernstorff@gmail.com"},

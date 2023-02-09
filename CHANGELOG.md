@@ -2,6 +2,30 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.0 (2023-02-09)
+### Feature
+* Add sklearn embedding function ([`6c10d3f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6c10d3f62ae3d57c7302f74dfcbc740aace15131))
+* Add optional loader_kwargs to group specs ([`14b872c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/14b872cfebd0d5c7917310706f56af0e40ff34f3))
+* Add loader_kwargs to group specs ([`a1e5a14`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a1e5a14e8a618fece255eb1b5544c1ac1634faf4))
+* Add `embedding_fn_kwargs` to `TextPredictorSpec` ([`7aa48a5`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7aa48a5285c4ffbb00c36b312f4affa338c11566))
+* Example text embedding functions ([`f4ce9a2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f4ce9a2e08dfaf93b5cf1fa30e28cdffb2dc1867))
+* Handle text features and features with multiple columns ([`a3cafe9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a3cafe9ce1a9aae3db1ae6f7f2b9c394323409d5))
+* TextSpec and option for additional feature name .get_col_str ([`2986203`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2986203e3d595c5bb387db8feee34bb1fa6a5ddf))
+* Added "concatenate" resolve_multiple_fn ([`5dc8c9f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5dc8c9f7025099bf0186881af5ecc158af0aadda))
+
+### Fix
+* Fix semantic release ([`7e993e3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7e993e34c2b670a3239a452703213cd368261d18))
+* Move `embed_text_values` to use timeseriesflattener without text dependencies installed ([`487daec`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/487daec180e1d2d94ba2dcc06b31f35b16ed7e12))
+* Proper guard against neither `df` nor `output_spec` specified in `get_value_col_str_name` ([`aeef039`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/aeef039796bb28eaf6fc35958c12f60f224e82e4))
+* Correct col str name generation for text specs when column names are ints (e.g. HF embeddings) ([`c10565d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c10565d1c3589f9b59da270fdd1272661852123a))
+
+### Documentation
+* Add text tutorial to docs ([`5bb6a02`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5bb6a02e6436ae46599c0de5aef533f9bd0f0dc6))
+* Add textpredictorspec docstring ([`d492a40`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d492a4018906805dc518c908d7ff780276dfc947))
+* Update advanced tutorial ([`3c3db93`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3c3db93e6edf4e4809bbb827a3b19fe97b2cca0b))
+* Minor changes ([`aacd222`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/aacd2227e6835bba873bd245ee8e193bd95fac06))
+* Update basic tutorial ([`df8d2d6`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/df8d2d6dbedda5d2dd9520dd1686f665e47cd007))
+
 ## v0.22.1 (2022-12-19)
 ### Fix
 * Don't clear all specs as unprocessed ([`b7d4f88`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b7d4f884d4f57631a267ef5ce4deed74dce2c0e1))
