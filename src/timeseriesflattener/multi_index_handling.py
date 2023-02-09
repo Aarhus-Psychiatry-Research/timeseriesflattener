@@ -92,7 +92,7 @@ class ColumnHandler:
         Args:
             df (pd.DataFrame): Dataframe to get value column name from.
             output_spec (TemporalSpec): Output specification"""
-        if df or output_spec:
+        if df is not None or output_spec is not None:
             return (
                 df["value"].columns.tolist()  # type: ignore
                 if isinstance(df.columns, pd.MultiIndex)  # type: ignore
