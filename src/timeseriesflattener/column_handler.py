@@ -1,5 +1,5 @@
 """This module contains functions for handling dataframes with multiindex columns."""
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 import pandas as pd
 
@@ -8,6 +8,37 @@ from timeseriesflattener.feature_spec_objects import TemporalSpec
 
 class ColumnHandler:
     """Class for handling dataframes with multiindex columns."""
+
+    @staticmethod
+    def embed_text_column(
+        df: pd.DataFrame,
+        text_col_name: str,
+        embedding_fn: Callable,
+        embedding_fn_kwargs: Optional[dict] = None,
+    ) -> pd.DataFrame:
+        """Embeds text values using the embedding_fn. Stores the embedding as a multi-
+        index column called 'value'.
+
+        Args:
+            df (pd.DataFrame): Dataframe with text column to be embedded.
+            text_col_name (str): Name of the text column to be embedded.
+            embedding_fn (Callable): Function that takes a pd.Series of text and
+                returns a pd.DataFrame of embeddings.
+            embedding_fn_kwargs (Optional[dict], optional): Keyword arguments for
+                embedding_fn. Defaults to None.
+
+        Returns:
+            pd.DataFrame: Dataframe with the text column replaced by the embedding.
+        """
+        if embedding_fn_kwargs:
+            embedding = embedding_fn(df[text_col_name], **embedding_fn_kwargs)
+        else:
+            embedding = embedding_fn(df[text_col_name])
+
+        df = df.drop(text_col_name, axis=1)
+        # make multiindex with embedding as 'value'
+        df = pd.concat([df, embedding], axis=1, keys=["df", "value"])
+        return df
 
     @staticmethod
     def rename_value_column(
