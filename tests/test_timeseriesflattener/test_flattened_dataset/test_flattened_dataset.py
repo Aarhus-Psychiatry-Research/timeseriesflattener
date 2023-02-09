@@ -7,13 +7,16 @@ from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
+    TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.resolve_multiple_functions import latest, mean
 from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
+    synth_text_data,
 )
+from timeseriesflattener.text_embedding_functions import sentence_transformers_embedding
 
 # To avoid ruff auto-removing unused imports
 used_funcs = [synth_prediction_times, synth_outcome]
@@ -67,6 +70,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
 def test_compute_specs(
     synth_prediction_times: pd.DataFrame,
     synth_outcome: pd.DataFrame,
+    synth_text_data: pd.DataFrame,
 ):
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
@@ -95,9 +99,21 @@ def test_compute_specs(
         feature_name="static",
         prefix="pred",
     )
+    text_spec = TextPredictorSpec(
+        values_df=synth_text_data,
+        feature_name="text",
+        lookbehind_days=750,
+        input_col_name_override="text",
+        resolve_multiple_fn="concatenate",
+        fallback=np.nan,
+        embedding_fn=sentence_transformers_embedding,
+        embedding_fn_kwargs={
+            "model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        },
+    )
 
     # Test adding a single spec
-    dataset.add_spec([outcome_spec, predictor_spec, static_spec])
+    dataset.add_spec([outcome_spec, predictor_spec, static_spec, text_spec])
 
     df = dataset.get_df()
 

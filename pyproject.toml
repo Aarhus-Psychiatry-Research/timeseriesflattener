@@ -58,6 +58,13 @@ docs = [
     "autodoc_pydantic>=1.1.0,<1.9.0",
 ]
 
+text = [
+    "transformers>=4.26.0,<4.27.0",
+    "torch>=1.12.1,<1.14.0",
+    "sentence-transformers>=2.2.0,<2.3.0",
+    "scikit-learn>=1.1.2,<1.4.0",
+]
+
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"

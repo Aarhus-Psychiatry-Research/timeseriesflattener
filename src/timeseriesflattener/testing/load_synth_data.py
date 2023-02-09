@@ -108,3 +108,18 @@ def load_synth_prediction_times(
         pd.DataFrame
     """
     return load_raw_test_csv("synth_prediction_times.csv", n_rows=n_rows)
+
+
+@data_loaders.register("synth_text")
+def load_synth_text(
+    n_rows: Optional[int] = None,
+) -> pd.DataFrame:
+    """Load synth text data.".
+
+    Args:
+        n_rows: Number of rows to return. Defaults to None which returns entire coercion data view.
+
+    Returns:
+        pd.DataFrame
+    """
+    return load_raw_test_csv("synth_text_data.csv", n_rows=n_rows)

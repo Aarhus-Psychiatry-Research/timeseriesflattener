@@ -15,6 +15,7 @@ from timeseriesflattener.feature_spec_objects import _AnySpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
+    load_synth_text,
     synth_predictor_binary,
 )
 from timeseriesflattener.utils import data_loaders
@@ -76,6 +77,16 @@ def str_to_df(
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
+def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: _AnySpec):
+    """Get value columns based on spec. Checks if multiple value columns are present."""
+    feature_name = spec.feature_name
+    value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
+    # to avoid indexing issues
+    if len(value_cols) == 1:
+        return value_cols[0]
+    return value_cols
+
+
 def assert_flattened_data_as_expected(
     prediction_times_df: Union[pd.DataFrame, str],
     output_spec: _AnySpec,
@@ -104,12 +115,14 @@ def assert_flattened_data_as_expected(
                 check_dtype=False,
             )
     elif expected_values:
-        output = flattened_ds.get_df()[output_spec.get_col_str()].values.tolist()
+        output = flattened_ds.get_df()
+        value_cols = _get_value_cols_based_on_spec(output, output_spec)
+        output = flattened_ds.get_df()[value_cols].values.tolist()
         expected = list(expected_values)
 
         for i, expected_val in enumerate(expected):
             # NaN != NaN, hence specific handling
-            if np.isnan(expected_val):
+            if not isinstance(expected_val, (str, list)) and np.isnan(expected_val):
                 assert np.isnan(output[i])
             else:
                 assert expected_val == output[i]
@@ -180,3 +193,9 @@ def synth_outcome():
 def long_df_with_multiple_values():
     """Load the long df."""
     return load_long_df_with_multiple_values()
+
+
+@pytest.fixture(scope="function")
+def synth_text_data():
+    """Load the synth text data."""
+    return load_synth_text()

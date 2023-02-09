@@ -114,3 +114,20 @@ def change_per_day(grouped_df: DataFrame) -> DataFrame:
             {"value": stats.linregress(x.timestamp_val, x.value)[0]},
         ),
     )
+
+
+@resolve_multiple_fns.register("concatenate")
+def concatenate(grouped_df: DataFrame) -> DataFrame:
+    """Returns the concatenated values. This is useful for text data.
+
+    Args:
+        grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
+
+    Returns:
+        DataFrame: Dataframe with value column containing the concatenated values.
+    """
+    return grouped_df.apply(
+        lambda x: Series(
+            {"value": " ".join(x.value)},
+        ),
+    )
