@@ -57,7 +57,7 @@ Specific tests can be run using:
 How is the documentation generated?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-SpaCy-wrap uses `sphinx <https://www.sphinx-doc.org/en/master/index.html>`__ to generate
+timeseriesflattener uses `sphinx <https://www.sphinx-doc.org/en/master/index.html>`__ to generate
 documentation. It uses the `Furo <https://github.com/pradyunsg/furo>`__ theme
 with custom styling.
 
@@ -66,7 +66,7 @@ To make the documentation you can run:
 .. code-block:: bash
 
    # install sphinx, themes and extensions
-   poetry install
+   pip install ."[docs,text]"
 
    # generate html from documentations
    make -C docs html
