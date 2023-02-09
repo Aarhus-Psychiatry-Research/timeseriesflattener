@@ -30,7 +30,7 @@ from timeseriesflattener.feature_spec_objects import (
     _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
-from timeseriesflattener.multi_index_handling import MultiIndexHandler
+from timeseriesflattener.multi_index_handling import ColumnHandler
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.text_embedding_functions import embed_text_column
 from timeseriesflattener.utils import print_df_dimensions_diff
@@ -392,20 +392,20 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # replace with NaN
 
         # Rename column
-        df = MultiIndexHandler.rename_value_column(df=df, output_spec=output_spec)
+        df = ColumnHandler.rename_value_column(df=df, output_spec=output_spec)
 
         # Find value_cols and add fallback to them
-        value_col_str_name = MultiIndexHandler.get_value_col_str_name(
+        value_col_str_name = ColumnHandler.get_value_col_str_name(
             df=df,
             output_spec=output_spec,
         )
-        df = MultiIndexHandler.replace_na_in_spec_col_with_fallback(
+        df = ColumnHandler.replace_na_in_spec_col_with_fallback(
             df=df,
             output_spec=output_spec,
         )
 
         # check if multiindex and flatten
-        df = MultiIndexHandler.flatten_multiindex(df)
+        df = ColumnHandler.flatten_multiindex(df)
         if verbose:
             log.info(
                 f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",

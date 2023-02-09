@@ -1,12 +1,12 @@
 """This module contains functions for handling dataframes with multiindex columns."""
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
 
 from timeseriesflattener.feature_spec_objects import TemporalSpec
 
 
-class MultiIndexHandler:
+class ColumnHandler:
     """Class for handling dataframes with multiindex columns."""
 
     @staticmethod
@@ -22,7 +22,7 @@ class MultiIndexHandler:
             df (pd.DataFrame): Dataframe with value column
         """
         if isinstance(df["value"], pd.DataFrame):
-            df = MultiIndexHandler._rename_multi_index_dataframe(output_spec, df)
+            df = ColumnHandler._rename_multi_index_dataframe(output_spec, df)
         else:
             df = df.rename(columns={"value": output_spec.get_col_str()})
         return df
@@ -83,8 +83,8 @@ class MultiIndexHandler:
 
     @staticmethod
     def get_value_col_str_name(
-        df: pd.DataFrame,
-        output_spec=TemporalSpec,
+        df: Optional[pd.DataFrame] = None,
+        output_spec: Optional[TemporalSpec] = None,
     ) -> List[str]:
         """Returns the name of the value column in df. If df has a multiindex,
         returns a list of all column names in the 'value' multiindex.
@@ -92,7 +92,11 @@ class MultiIndexHandler:
         Args:
             df (pd.DataFrame): Dataframe to get value column name from.
             output_spec (TemporalSpec): Output specification"""
-        if isinstance(df.columns, pd.MultiIndex):
-            return df["value"].columns.tolist()
+        if df or output_spec:
+            return (
+                df["value"].columns.tolist()  # type: ignore
+                if isinstance(df.columns, pd.MultiIndex)  # type: ignore
+                else [output_spec.get_col_str()]  # type: ignore
+            )
         else:
-            return [output_spec.get_col_str()]
+            raise ValueError("Either df or output_spec must be provided.")
