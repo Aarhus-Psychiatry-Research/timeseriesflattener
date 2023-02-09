@@ -20,6 +20,7 @@ from dask.diagnostics import ProgressBar
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
 
+from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
@@ -30,9 +31,7 @@ from timeseriesflattener.feature_spec_objects import (
     _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
-from timeseriesflattener.multi_index_handling import ColumnHandler
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
-from timeseriesflattener.text_embedding_functions import embed_text_column
 from timeseriesflattener.utils import print_df_dimensions_diff
 
 ProgressBar().register()
@@ -380,7 +379,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         # handle embedding and dimensionality reduction if text predictor
         if isinstance(output_spec, TextPredictorSpec):
-            df = embed_text_column(
+            df = ColumnHandler.embed_text_column(
                 df=df,
                 text_col_name="value",
                 embedding_fn=output_spec.embedding_fn,
