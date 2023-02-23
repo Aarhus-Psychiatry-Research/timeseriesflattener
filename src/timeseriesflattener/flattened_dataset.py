@@ -776,15 +776,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 self._add_incident_outcome(
                     outcome_spec=spec,
                 )
-                # Remove the processed spec
-                self.unprocessed_specs.outcome_specs.remove(spec)
 
-        # # Remove processed specs
-        # self.unprocessed_specs.outcome_specs = [
-        #     s
-        #     for s in self.unprocessed_specs.outcome_specs
-        #     if hasattr(s, "incident") and not s.incident
-        # ]
+        # Remove processed specs. Beware of using .remove on a list of specs, as it causes errors.
+        self.unprocessed_specs.outcome_specs = [
+            s
+            for s in self.unprocessed_specs.outcome_specs
+            if hasattr(s, "incident") and not s.incident
+        ]
 
         temporal_batch = self.unprocessed_specs.outcome_specs
         temporal_batch += self.unprocessed_specs.predictor_specs
