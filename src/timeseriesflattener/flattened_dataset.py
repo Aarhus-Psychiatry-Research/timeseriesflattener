@@ -683,11 +683,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
         if outcome_spec.is_dichotomous():
-            df[outcome_spec.get_col_str()] = (
+            outcome_is_within_lookahead = (
                 df[prediction_timestamp_col_name]
                 + timedelta(days=outcome_spec.interval_days)
                 > df[outcome_timestamp_col_name]
-            ).astype(int)
+            )
+
+            df[outcome_spec.get_col_str()] = outcome_is_within_lookahead.astype(int)
 
         df.rename(
             {prediction_timestamp_col_name: "timestamp"},
@@ -776,6 +778,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 )
                 # Remove the processed spec
                 self.unprocessed_specs.outcome_specs.remove(spec)
+
+        # # Remove processed specs
+        # self.unprocessed_specs.outcome_specs = [
+        #     s
+        #     for s in self.unprocessed_specs.outcome_specs
+        #     if hasattr(s, "incident") and not s.incident
+        # ]
 
         temporal_batch = self.unprocessed_specs.outcome_specs
         temporal_batch += self.unprocessed_specs.predictor_specs
@@ -924,8 +933,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             log.warning("No unprocessed specs, skipping")
             return
 
-        self._process_static_specs()
         self._process_temporal_specs()
+        self._process_static_specs()
 
     def get_df(self) -> DataFrame:
         """Get the flattened dataframe. Computes if any unprocessed specs are present.
