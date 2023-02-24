@@ -909,11 +909,13 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">outcome_spec</span><span class="o">.</span><span class="n">is_dichotomous</span><span class="p">():</span>
-            <span class="n">df</span><span class="p">[</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">outcome_is_within_lookahead</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">df</span><span class="p">[</span><span class="n">prediction_timestamp_col_name</span><span class="p">]</span>
                 <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">interval_days</span><span class="p">)</span>
                 <span class="o">&gt;</span> <span class="n">df</span><span class="p">[</span><span class="n">outcome_timestamp_col_name</span><span class="p">]</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">df</span><span class="p">[</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()]</span> <span class="o">=</span> <span class="n">outcome_is_within_lookahead</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
             <span class="p">{</span><span class="n">prediction_timestamp_col_name</span><span class="p">:</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">},</span>
@@ -1000,8 +1002,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_incident_outcome</span><span class="p">(</span>
                     <span class="n">outcome_spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="c1"># Remove the processed spec</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+        <span class="c1"># Remove processed specs. Beware of using .remove on a list of specs, as it causes errors.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">s</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;incident&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">incident</span>
+        <span class="p">]</span>
 
         <span class="n">temporal_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span>
         <span class="n">temporal_batch</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">predictor_specs</span>
@@ -1150,8 +1157,8 @@
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No unprocessed specs, skipping&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_static_specs</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_static_specs</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TimeseriesFlattener.get_df"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.get_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the flattened dataframe. Computes if any unprocessed specs are present.</span>
