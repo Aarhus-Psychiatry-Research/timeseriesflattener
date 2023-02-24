@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.1 (2023-02-24)
+### Fix
+* Proposed fix ([`7042f5e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7042f5e208040fb279ff6f595af2e2f2fb76dad0))
+* Init ([`76f75d4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/76f75d47648be899aff3f0b05037b22aae1c62f3))
+
 ## v0.23.0 (2023-02-09)
 ### Feature
 * Add sklearn embedding function ([`6c10d3f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6c10d3f62ae3d57c7302f74dfcbc740aace15131))
