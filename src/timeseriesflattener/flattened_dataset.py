@@ -275,7 +275,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             timestamp_value_colname (str): Name of timestamp column for values in df.
 
         Raises:
-            ValueError: If direction is niether ahead nor behind.
+            ValueError: If direction is neither ahead nor behind.
 
         Returns:
             DataFrame

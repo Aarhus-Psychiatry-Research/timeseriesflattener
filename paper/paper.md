@@ -9,7 +9,7 @@ tags:
 authors:
   - name: Martin Bernstorff
     orcid: 0000-0002-0234-5390
-    corrresponding: true
+    corresponding: true
     affiliation: "1, 2" # (Multiple affiliations must be quoted)
   - name: Kenneth Enevoldsen
     orcid: 0000-0001-8733-0966

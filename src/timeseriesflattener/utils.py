@@ -29,7 +29,7 @@ def split_df_and_register_to_dict(
 ):
     """Split a df with multiple different value types into dataframes only containing values for each specific value type.
 
-    Registers the seperated dfs in the df_dict.
+    Registers the separated dfs in the df_dict.
 
     Args:
         df (pd.DataFrame): A dataframe in long format containing the values to be grouped into a catalogue.
