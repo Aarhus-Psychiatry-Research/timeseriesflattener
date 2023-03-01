@@ -65,4 +65,4 @@ Once you submit your PR, a team member will review your proposal. We may ask que
 
 Congratulations :tada::tada: The team thanks you :sparkles:.
 
-Once your PR is merged, your contributions will be publicly visible on the repostory.
+Once your PR is merged, your contributions will be publicly visible on the repository.
