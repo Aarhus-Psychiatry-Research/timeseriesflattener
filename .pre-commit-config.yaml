@@ -38,4 +38,9 @@ repos:
             "-sn", # Don't display the score
             "--disable=R,import-error", # Refactors are not important enough to block a commit.
           ]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.2
+    hooks:
+      - id: codespell
 # Unused-imports aren't testable by the github action, so don't test that here.
