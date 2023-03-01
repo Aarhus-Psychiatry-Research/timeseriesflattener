@@ -17,7 +17,7 @@
                 "In this tutorial, we'll expand on that, covering how to effectively add many features by:\n",
                 "1. Utilising data loaders in a data_loaders registry,\n",
                 "2. Populating a dictionary from a long format dataframe,\n",
-                "3. Creating feature combinations from specifcations,\n",
+                "3. Creating feature combinations from specifications,\n",
                 "4. Using caching, so you can iterate on your datasets without having to complete full computations every time\n"
             ]
         },
