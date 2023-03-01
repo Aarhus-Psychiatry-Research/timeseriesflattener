@@ -1,6 +1,14 @@
 default_stages: [push]
 
 repos:
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.2
+    hooks:
+      - id: codespell
+        args: [
+            "-w", # Write changes to files
+          ]
+
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
