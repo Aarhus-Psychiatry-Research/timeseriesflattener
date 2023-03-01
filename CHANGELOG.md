@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.2 (2023-03-01)
+### Fix
+* Spelling error ([`747e1f3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/747e1f37551e6c1ca7fe986ad2e928a302a3bb24))
+
 ## v0.23.1 (2023-02-24)
 ### Fix
 * Proposed fix ([`7042f5e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7042f5e208040fb279ff6f595af2e2f2fb76dad0))
