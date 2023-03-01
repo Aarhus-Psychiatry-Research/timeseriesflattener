@@ -68,7 +68,7 @@ def variance(grouped_df: DataFrame) -> DataFrame:
 
 @resolve_multiple_fns.register("bool")
 def boolean(grouped_df: DataFrame) -> DataFrame:
-    """Returns a boolean value indicating whether or not event has occured in
+    """Returns a boolean value indicating whether or not event has occurred in
     look ahead/behind window.
 
     Args:
@@ -99,7 +99,7 @@ def change_per_day(grouped_df: DataFrame) -> DataFrame:
         DataFrame: Dataframe with value column containing the change in value per day.
     """
 
-    # Check if some patients have mulitple values but only one timestamp
+    # Check if some patients have multiple values but only one timestamp
     if any(
         grouped_df.timestamp_val.apply(
             lambda x: len(set(x)) == 1 and len(x) > 1,

@@ -46,10 +46,10 @@
 
 ## v0.22.0 (2022-12-15)
 ### Feature
-* Compare all indeces for maximum safety ([`22b7776`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/22b77762a68d46f1586a0032ba25c2691d0eb84c))
+* Compare all indices for maximum safety ([`22b7776`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/22b77762a68d46f1586a0032ba25c2691d0eb84c))
 * Sample 5 evenly spaced slices ([`a0aa5ef`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a0aa5ef78c7f92ec0ec667b7dbdc202d48a95793))
 * Log info on chunksize ([`2fa5edc`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2fa5edcac0f60b8e19905e43f947f6ddf02f48c0))
-* Check first and last 1000 indeces ([`df85c66`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/df85c66e870151d26cef35ca18f5b63d7f34614f))
+* Check first and last 1000 indices ([`df85c66`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/df85c66e870151d26cef35ca18f5b63d7f34614f))
 * Check that ids are similar ([`9d47310`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9d4731012ab897c9441c911b10864524289abc82))
 * Better logging when dfs are not of identical index ([`2cf78d0`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2cf78d03d5d619434bd4fa845971faef03e22cb7))
 
@@ -439,7 +439,7 @@
 * Handle dicts for duplicate checking ([`34524c0`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/34524c055f1335ae703fbfce11f234c065c4ccb9))
 * Check for duplicates in feature combinations ([`63ad162`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/63ad1628f750abdd58c24d9b6ea53a9be8ef6032))
 * Remove duplicate alat key which prevented file saving ([`f0c3e00`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f0c3e006c84cd41054fdbca4cf1266d9f393a059))
-* Incorrect argumetn ([`b97d54b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b97d54b097986f452ae2f00f5bba2a6f051c1132))
+* Incorrect argument ([`b97d54b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b97d54b097986f452ae2f00f5bba2a6f051c1132))
 * Linting ([`7406288`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7406288d50ecfe9436f95726a6fd72c886478923))
 * Use suffix instead of string parsing ([`cfa96f0`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cfa96f0d768c1fbbeca372f93ab970535479f003))
 * Refactor dataset loading into a separate function ([`bca8cbf`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bca8cbfb861aecc995e657285a0ad4011b47e407))

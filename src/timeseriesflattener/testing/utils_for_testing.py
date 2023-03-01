@@ -1,4 +1,4 @@
-"""Utilites for testing."""
+"""Utilities for testing."""
 
 from collections.abc import Sequence
 from io import StringIO
