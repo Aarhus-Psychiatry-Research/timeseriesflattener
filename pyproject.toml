@@ -1,59 +1,73 @@
-[tool.poetry]
+[project]
 name = "timeseriesflattener"
-version = "0.22.1"
+version = "0.23.2"
 description = "A package for converting time series data from e.g. electronic health records into wide format data."
 readme = "README.md"
-authors = ["Martin Bernstorff", "Kenneth Enevoldsen", "Jakob Grøhn Damgaard", "Frida Hæstrup", "Lasse Hansen"]
+authors = [{name = "Martin Bernstorff", email = "martinbernstorff@gmail.com"},
+    {name = "Lasse Hansen", email = "lasseh0310@gmail.com"},
+    {name = "Jakob Grøhn Damgaard", email = "bokajgd@gmail.com"},
+    {name = "Kenneth Enevoldsen"}]
 
-[tool.poetry.dependencies]
-python = ">=3.9, <3.11"
-scipy = ">=1.8.0,<1.9.4"
-wasabi = ">=0.9.1,<1.1.1"
-scikit-learn = ">=1.1.2, <1.1.3"
-wandb = ">=0.12.0,<0.13.8"
-deepchecks = ">=0.8.0,<0.11.0"
-dill = ">=0.3.0,<0.3.7"
-srsly = ">=2.4.4,<2.4.6"
-SQLAlchemy = ">=1.4.41, <1.5.42"
-pyodbc = ">=4.0.34, <4.0.36"
-dask = ">=2022.9.0,<2022.13.0"
-pydantic = ">=1.9.0, <1.10.0"
-psutil = ">=5.9.1, <6.0.0"
-pandas = ">=1.4.0,<1.6.0"
-catalogue = ">=2.0.0, <2.1.0"
-numpy = ">=1.23.3,<1.24.2"
-pyarrow = ">=9.0.0,<10.1.0"
-psycopmlutils = ">=0.2.4,<0.4.0"
-protobuf = "<=3.20.3" # Other versions give errors with pytest, super weird!
-frozendict = ">=2.3.4,<2.4.0"
-skimpy = ">=0.0.7,<0.1.0"
-jupyter = ">=1.0.0,<1.1.0"
-coloredlogs = ">14.0.0,<15.1.0"
+requires-python = ">=3.8.0"
 
-[tool.poetry.dev-dependencies]
-pytest = ">=7.1.3, <7.1.5"
-black = ">=22.8.0,<22.12.1"
-pre-commit = ">=2.20.0,<2.21.1"
-pytest-cov = ">=3.0.0,<4.0.1"
-flake8 = ">=5.0.0, <5.0.6"
-docformatter = ">=1.5.0, <1.5.2"
-mypy = ">=0.971,<0.992"
-pytest-xdist = ">=2.4.0,<3.1.1"
-pylint = ">=2.15.5,<2.16.0"
+dependencies = [
+    "scipy>=1.8.0,<1.9.4",
+    "wasabi>=0.9.1,<1.1.2",
+    "scikit-learn>=1.1.2,<1.2.2",
+    "wandb>=0.12.0,<0.13.11",
+    "deepchecks>=0.8.0,<0.12.0",
+    "dill>=0.3.0,<0.3.7",
+    "srsly>=2.4.4,<2.4.7",
+    "SQLAlchemy>=1.4.41, <1.5.42",
+    "pyodbc>=4.0.34, <4.0.36",
+    "dask>=2022.9.0,<2023.2.0",
+    "pydantic>=1.9.0, <1.10.0",
+    "psutil>=5.9.1, <6.0.0",
+    "pandas>=1.4.0,<1.6.0",
+    "catalogue>=2.0.0, <2.1.0",
+    "numpy>=1.23.3,<1.24.2",
+    "pyarrow>=9.0.0,<11.1.0",
+    "psycopmlutils>=0.2.4,<0.4.0",
+    "protobuf<=3.20.3", # Other versions give errors with pytest, super weird!
+    "frozendict>=2.3.4,<2.4.0",
+    "skimpy>=0.0.7,<0.1.0",
+    "jupyter>=1.0.0,<1.1.0",
+    "coloredlogs>14.0.0,<15.1.0",
+]
 
-# documentation
-sphinx = ">=5.3.0,<5.4.0"
-furo = "2022.12.7"
-sphinx-copybutton = ">=0.5.1,<0.5.2"
-sphinxext-opengraph = ">=0.7.3,<0.7.5"
-myst-nb = ">=0.6.0,<1.17.0"
-sphinx_design = ">=0.3.0,<0.3.1"
-autodoc_pydantic = ">=1.1.0,<1.9.0"
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.1.3, <7.2.3",
+    "black>=22.8.0,<23.1.1",
+    "pre-commit>=2.20.0,<3.1.1",
+    "pytest-cov>=3.0.0,<4.0.1",
+    "flake8>=5.0.0, <5.0.6",
+    "docformatter>=1.5.0, <1.5.2",
+    "mypy>=0.971,<0.992",
+    "pytest-xdist>=2.4.0,<3.1.1",
+    "pylint>=2.15.5,<2.17.0",
+]
 
+docs = [
+    "sphinx>=5.3.0,<5.4.0",
+    "furo==2022.12.7",
+    "sphinx-copybutton>=0.5.1,<0.5.2",
+    "sphinxext-opengraph>=0.7.3,<0.7.5",
+    "myst-nb>=0.6.0,<1.17.0",
+    "sphinx_design>=0.3.0,<0.3.1",
+    "autodoc_pydantic>=1.1.0,<1.9.0",
+]
+
+text = [
+    "transformers>=4.26.0,<4.27.0",
+    "torch>=1.12.1,<1.14.0",
+    "sentence-transformers>=2.2.0,<2.3.0",
+    "scikit-learn>=1.1.2,<1.4.0",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
 
 [tool.isort]
 known_third_party = ["wandb"]
@@ -71,7 +85,7 @@ version_variable = [
 ]
 upload_to_pypi = true
 upload_to_release = true
-build_command = "pip install poetry && poetry build"
+build_command = "python -m pip install build; python -m build"
 
 [tool.pytest]
 n = 0
@@ -79,4 +93,4 @@ n = 0
 [tool.mypy]
 ignore_missing_imports = true
 
-[tool.pyright] # Added because of weird pylance error, issue here: https://github.com/microsoft/pylance-release/issues/3366
+[tool.pyright]

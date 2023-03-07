@@ -31,7 +31,7 @@ def generate_test_df(uuids: list[str], col_values: list[int] = None):
     # Set index to uuids
     df.index = uuids
 
-    # Sort df by indeces
+    # Sort df by indices
     print("Generated df")
 
     return df

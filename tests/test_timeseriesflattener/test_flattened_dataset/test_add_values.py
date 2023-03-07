@@ -11,7 +11,9 @@ from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
+    TextPredictorSpec,
 )
+from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
@@ -64,6 +66,28 @@ def test_predictor_before_prediction():
             feature_name="value",
         ),
         expected_values=[1],
+    )
+
+
+def test_text_predictor():
+    prediction_times_df = """entity_id,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+    predictor_df_str = """entity_id,timestamp,value,
+                        1,2021-12-30 22:59:59, "hello world"
+                        """
+
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df,
+        output_spec=TextPredictorSpec(
+            values_df=str_to_df(predictor_df_str),
+            embedding_fn=bow_test_embedding,
+            lookbehind_days=1,
+            resolve_multiple_fn="concatenate",
+            fallback=np.NaN,
+            feature_name="text_value",
+        ),
+        expected_values=[[0] * 10],
     )
 
 

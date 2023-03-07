@@ -9,7 +9,7 @@ import time
 from collections.abc import Callable
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import coloredlogs
 import numpy as np
@@ -20,12 +20,14 @@ from dask.diagnostics import ProgressBar
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
 
+from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
     TemporalSpec,
+    TextPredictorSpec,
     _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
@@ -191,7 +193,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         df: DataFrame,
         pred_times_with_uuid: DataFrame,
         pred_time_uuid_colname: str,
-        pred_timestamp_col_name: str,
     ) -> DataFrame:
         """Ensure all prediction times are represented in the returned
 
@@ -201,7 +202,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             df (DataFrame): Dataframe with prediction times but without uuid.
             pred_times_with_uuid (DataFrame): Dataframe with prediction times and uuid.
             pred_time_uuid_colname (str): Name of uuid column in both df and pred_times_with_uuid.
-            pred_itmestamp_col_name (str): Name of timestamp column in df.
 
         Returns:
             DataFrame: A merged dataframe with all prediction times.
@@ -212,7 +212,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             how="left",
             on=pred_time_uuid_colname,
             suffixes=("", "_temp"),
-        ).drop([pred_timestamp_col_name], axis=1)
+        )
 
     @staticmethod
     def _resolve_multiple_values_within_interval_days(
@@ -275,7 +275,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             timestamp_value_colname (str): Name of timestamp column for values in df.
 
         Raises:
-            ValueError: If direction is niether ahead nor behind.
+            ValueError: If direction is neither ahead nor behind.
 
         Returns:
             DataFrame
@@ -306,7 +306,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
         prediction_times_with_uuid_df: DataFrame,
-        output_spec: _AnySpec,
+        output_spec: TemporalSpec,
         entity_id_col_name: str,
         pred_time_uuid_col_name: str,
         timestamp_col_name: str,
@@ -319,7 +319,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         Args:
             prediction_times_with_uuid_df (DataFrame): Dataframe with id_col and
                 timestamps for each prediction time.
-            output_spec (Union[OutcomeSpec, PredictorSpec]): Specification of the output column.
+            output_spec (TemporalSpec): Specification of the output column.
             entity_id_col_name (str): Name of id_column in prediction_times_with_uuid_df and
                 df. Required because this is a static method.
             timestamp_col_name (str): Name of timestamp column in
@@ -347,6 +347,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         timestamp_val_col_name = f"{timestamp_col_name}_val"
         timestamp_pred_col_name = f"{timestamp_col_name}_pred"
+        df = TimeseriesFlattener.rename_input_col_to_value(
+            df=df,
+            output_spec=output_spec,
+        )
 
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
@@ -364,14 +368,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             timestamp_value_colname=timestamp_val_col_name,
         )
 
-        # Add back prediction times that don't have a value, and fill them with fallback
-        df = TimeseriesFlattener._add_back_prediction_times_without_value(
-            df=df,
-            pred_times_with_uuid=prediction_times_with_uuid_df,
-            pred_time_uuid_colname=pred_time_uuid_col_name,
-            pred_timestamp_col_name=timestamp_pred_col_name,
-        ).fillna(output_spec.fallback)
-
         df[timestamp_val_col_name].replace({output_spec.fallback: pd.NaT}, inplace=True)
 
         df = TimeseriesFlattener._resolve_multiple_values_within_interval_days(
@@ -381,25 +377,58 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             val_timestamp_col_name=timestamp_val_col_name,
         )
 
+        # handle embedding and dimensionality reduction if text predictor
+        if isinstance(output_spec, TextPredictorSpec):
+            df = ColumnHandler.embed_text_column(
+                df=df,
+                text_col_name="value",
+                embedding_fn=output_spec.embedding_fn,
+                embedding_fn_kwargs=output_spec.embedding_fn_kwargs,
+            )
+
         # If resolve_multiple generates empty values,
         # e.g. when there is only one prediction_time within look_ahead window for slope calculation,
         # replace with NaN
 
         # Rename column
-        df.rename(columns={"value": output_spec.get_col_str()}, inplace=True)
+        df = ColumnHandler.rename_value_column(df=df, output_spec=output_spec)
 
         # Find value_cols and add fallback to them
-        df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
-            output_spec.fallback,
-            inplace=False,
+        value_col_str_name = ColumnHandler.get_value_col_str_name(
+            df=df,
+            output_spec=output_spec,
+        )
+        df = ColumnHandler.replace_na_in_spec_col_with_fallback(
+            df=df,
+            output_spec=output_spec,
         )
 
+        # check if multiindex and flatten
+        df = ColumnHandler.flatten_multiindex(df)
         if verbose:
             log.info(
                 f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",
             )
 
-        return df[[pred_time_uuid_col_name, output_spec.get_col_str()]]
+        # Add back prediction times that don't have a value, and fill them with fallback
+        df = TimeseriesFlattener._add_back_prediction_times_without_value(
+            df=df,
+            pred_times_with_uuid=prediction_times_with_uuid_df,
+            pred_time_uuid_colname=pred_time_uuid_col_name,
+        ).fillna(output_spec.fallback)
+
+        return df[value_col_str_name + [pred_time_uuid_col_name]]
+
+    @staticmethod
+    def rename_input_col_to_value(
+        df: pd.DataFrame,
+        output_spec: TemporalSpec,
+    ) -> pd.DataFrame:
+        """Checks whether 'value' is a column in df, and if not, renames the
+        input column"""
+        if "value" not in df.columns:
+            df = df.rename(columns={output_spec.input_col_name_override: "value"})
+        return df
 
     def _get_temporal_feature(
         self,
@@ -446,11 +475,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 df=df,
             )
 
-        return (
-            df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]]
-            .set_index(keys=self.pred_time_uuid_col_name)
-            .sort_index()
-        )
+        # @Martin any reason to do the indexing here?
+        # return (
+        #     df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]]
+        #     .set_index(keys=self.pred_time_uuid_col_name)
+        #     .sort_index()
+        # )
+        return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
 
     @staticmethod
     def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
@@ -660,11 +691,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
         if outcome_spec.is_dichotomous():
-            df[outcome_spec.get_col_str()] = (
+            outcome_is_within_lookahead = (
                 df[prediction_timestamp_col_name]
                 + timedelta(days=outcome_spec.interval_days)
                 > df[outcome_timestamp_col_name]
-            ).astype(int)
+            )
+
+            df[outcome_spec.get_col_str()] = outcome_is_within_lookahead.astype(int)
 
         df.rename(
             {prediction_timestamp_col_name: "timestamp"},
@@ -751,8 +784,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 self._add_incident_outcome(
                     outcome_spec=spec,
                 )
-                # Remove the processed spec
-                self.unprocessed_specs.outcome_specs.remove(spec)
+
+        # Remove processed specs. Beware of using .remove on a list of specs, as it causes errors.
+        self.unprocessed_specs.outcome_specs = [
+            s
+            for s in self.unprocessed_specs.outcome_specs
+            if hasattr(s, "incident") and not s.incident
+        ]
 
         temporal_batch = self.unprocessed_specs.outcome_specs
         temporal_batch += self.unprocessed_specs.predictor_specs
@@ -901,8 +939,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             log.warning("No unprocessed specs, skipping")
             return
 
-        self._process_static_specs()
         self._process_temporal_specs()
+        self._process_static_specs()
 
     def get_df(self) -> DataFrame:
         """Get the flattened dataframe. Computes if any unprocessed specs are present.

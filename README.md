@@ -103,12 +103,12 @@ Output:
 | Documentation          |                                                                                        |
 | ---------------------- | -------------------------------------------------------------------------------------- |
 | 🎓 **[Tutorial]**       | Simple and advanced tutorials to get you started using `timeseriesflattener`           |
-| 🎛 **[API References]** | The detailed reference for timeseriesflattener's API. Including function documentation |
+| 🎛 **[General docs]** | The detailed reference for timeseriesflattener's API. |
 | 🙋 **[FAQ]**            | Frequently asked question                                                              |
 | 🗺️ **[Roadmap]**        | Kanban board for the roadmap for the project                                           |
 
 [Tutorial]: https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html
-[api references]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
+[General docs]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
 [FAQ]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/faq.html
 [Roadmap]: https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1
 
@@ -133,7 +133,7 @@ PSYCOP projects which use `timeseriesflattener`. Note that some of these project
 | **[Type 2 Diabetes]**   |              | Prediction of type 2 diabetes among patients with visits to psychiatric hospital departments                                                                                                                                          |
 | **[Cancer]**            |              | Prediction of Cancer among patients with visits to psychiatric hospital departments                                                                                                                                                   |
 | **[COPD]**              |              | Prediction of Chronic obstructive pulmonary disease (COPD) among patients with visits to psychiatric hospital departments                                                                                                             |
-| **[Forced admissions]** |              | Prediction of forced admissions of patients to the psychiatric hospital departments. Encompasses two seperate projects: 1. Prediciting at time of discharge for inpatient admissions. 2. Predicting day before outpatient admissions. |
+| **[Forced admissions]** |              | Prediction of forced admissions of patients to the psychiatric hospital departments. Encompasses two separate projects: 1. Prediciting at time of discharge for inpatient admissions. 2. Predicting day before outpatient admissions. |
 | **[Coercion]**          |              | Prediction of coercion among patients admittied to the hospital psychiatric department. Encompasses predicting mechanical restraint, sedative medication and manual restraint 48 hours before coercion occurs.                        |
 
 

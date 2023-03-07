@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 @cache
 def load_df_with_cache(
     loader_fn: Callable,
-    kwargs: dict[str, Any],
+    kwargs: Optional[dict[str, Any]],
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
@@ -62,6 +62,8 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
 
         if callable(data["values_loader"]):
             if "loader_kwargs" not in data:
+                data["loader_kwargs"] = {}
+            elif data["loader_kwargs"] is None:
                 data["loader_kwargs"] = {}
 
             data["values_df"] = load_df_with_cache(
@@ -285,10 +287,17 @@ class _AnySpec(BaseModel):
         # type hint so that mypy doesn't complain.
         self.values_df: pd.DataFrame = self.values_df
 
-    def get_col_str(self) -> str:
-        """Create column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_name}"
+    def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
+        """Create column name for the output column.
 
+        Args:
+            additional_feature_name (Optional[str]): An additional feature name
+                to append to the column name.
+        """
+        feature_name = self.feature_name
+        if additional_feature_name:
+            feature_name = f"{feature_name}-{additional_feature_name}"
+        col_str = f"{self.prefix}_{feature_name}"
         return col_str
 
     def __eq__(self, other):
@@ -318,7 +327,6 @@ class StaticSpec(_AnySpec):
 
 class TemporalSpec(_AnySpec):
     """The minimum specification required for collapsing a temporal
-
         feature, whether looking ahead or behind. Mostly used for inheritance below.
 
     Fields:
@@ -348,7 +356,7 @@ class TemporalSpec(_AnySpec):
         interval_days (Union[int, float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
-        resolve_multiple_fn (Callable):
+        resolve_multiple_fn (Union[Callable, str]):
             A function used for resolving multiple values within the
             interval_days.
         key_for_resolve_multiple (Optional[str]):
@@ -363,7 +371,7 @@ class TemporalSpec(_AnySpec):
             If NaN is higher than this in the input dataframe during
             resolution, raise an error. Defaults to: 0.0.
         entity_id_col_name (str):
-    Col name for ids in the input dataframe. Defaults to: entity_id.
+            Col name for ids in the input dataframe. Defaults to: entity_id.
     """
 
     class Doc:
@@ -375,7 +383,7 @@ class TemporalSpec(_AnySpec):
             behind for predictors)""",
     )
 
-    resolve_multiple_fn: Callable = Field(
+    resolve_multiple_fn: Union[Callable, str] = Field(
         description="""A function used for resolving multiple values within the 
             interval_days.""",
     )
@@ -431,10 +439,17 @@ class TemporalSpec(_AnySpec):
         if self.fallback == "nan":
             self.fallback = float("nan")
 
-    def get_col_str(self) -> str:
-        """Generate the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+    def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
+        """Generate the column name for the output column.
 
+        Args:
+            additional_feature_name (Optional[str]): additional feature name to
+                append to the column name.
+        """
+        feature_name = self.feature_name
+        if additional_feature_name:
+            feature_name = feature_name + "-" + str(additional_feature_name)
+        col_str = f"{self.prefix}_{feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
         return col_str
 
 
@@ -468,7 +483,7 @@ class PredictorSpec(TemporalSpec):
         interval_days (Union[int, float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
-        resolve_multiple_fn (Callable):
+        resolve_multiple_fn (Union[Callable, str]):
             A function used for resolving multiple values within the
             interval_days.
         key_for_resolve_multiple (Optional[str]):
@@ -485,7 +500,7 @@ class PredictorSpec(TemporalSpec):
         entity_id_col_name (str):
             Col name for ids in the input dataframe. Defaults to: entity_id.
         lookbehind_days (Union[int, float]):
-    How far behind to look for values
+            How far behind to look for values
     """
 
     class Doc:
@@ -513,6 +528,86 @@ class PredictorSpec(TemporalSpec):
             raise ValueError("lookbehind_days or interval_days must be specified.")
 
         super().__init__(**data)
+
+
+class TextPredictorSpec(PredictorSpec):
+    """Specification for a text predictor, where the df has been resolved.
+
+    Fields:
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
+        values_name (Optional[str]):
+            A string that maps to a key in a dictionary instantiated by
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
+            is a subset of the df where the values_name == key.
+        loader_kwargs (Optional[dict]):
+            Optional kwargs passed onto the data loader.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        feature_name (str):
+            The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_name>.
+        prefix (str):
+            The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>. Defaults to: pred.
+        input_col_name_override (Optional[str]):
+            An override for the input column name. If None, will  attempt
+            to infer it by looking for the only column that doesn't match id_col_name
+            or timestamp_col_name.
+        output_col_name_override (Optional[str]):
+            Override the generated column name after flattening the time series
+        interval_days (Union[int, float]):
+            How far to look in the given direction (ahead for outcomes,
+            behind for predictors)
+        resolve_multiple_fn (Union[str, Callable]):
+            A function used for resolving multiple values within the
+        interval_days, i.e. how to combine texts within the lookbehind window.
+        Defaults to: 'concatenate'. Other possible options are 'latest' and
+        'earliest'. Defaults to: concatenate.
+        key_for_resolve_multiple (Optional[str]):
+            Key used to lookup the resolve_multiple_fn in the
+            resolve_multiple_fns registry. Used for column name generation. Only
+            required if you don't specify a resolve_multiple_fn. Call
+            timeseriesflattener.resolve_multiple_fns.resolve_multiple_fns.get_all()
+            for a list of options.
+        fallback (Union[Callable, int, float, str]):
+            Which value to use if no values are found within interval_days.
+        allowed_nan_value_prop (float):
+            If NaN is higher than this in the input dataframe during
+            resolution, raise an error. Defaults to: 0.0.
+        entity_id_col_name (str):
+            Col name for ids in the input dataframe. Defaults to: entity_id.
+        lookbehind_days (Union[int, float]):
+            How far behind to look for values
+        embedding_fn (Callable):
+            A function used for embedding the text. Should take a
+        pandas series of strings and return a pandas dataframe of embeddings.
+        Defaults to: None.
+        embedding_fn_kwargs (Optional[dict]):
+            Optional kwargs passed onto the embedding_fn."""
+
+    class Doc:
+        short_description = (
+            """Specification for a text predictor, where the df has been resolved."""
+        )
+
+    embedding_fn: Callable = Field(
+        description="""A function used for embedding the text. Should take a 
+        pandas series of strings and return a pandas dataframe of embeddings.
+        Defaults to: None.""",
+    )
+    embedding_fn_kwargs: Optional[dict] = Field(
+        default=None,
+        description="""Optional kwargs passed onto the embedding_fn.""",
+    )
+    resolve_multiple_fn: Union[str, Callable] = Field(
+        default="concatenate",
+        description="""A function used for resolving multiple values within the
+        interval_days, i.e. how to combine texts within the lookbehind window. 
+        Defaults to: 'concatenate'. Other possible options are 'latest' and
+        'earliest'.""",
+    )
 
 
 class OutcomeSpec(TemporalSpec):
@@ -545,7 +640,7 @@ class OutcomeSpec(TemporalSpec):
         interval_days (Union[int, float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
-        resolve_multiple_fn (Callable):
+        resolve_multiple_fn (Union[Callable, str]):
             A function used for resolving multiple values within the
             interval_days.
         key_for_resolve_multiple (Optional[str]):
@@ -567,7 +662,7 @@ class OutcomeSpec(TemporalSpec):
             For example, type 2 diabetes is incident. Incident outcomes can be handled
             in a vectorised way during resolution, which is faster than non-incident outcomes.
         lookahead_days (Union[int, float]):
-    How far ahead to look for values
+            How far ahead to look for values
     """
 
     class Doc:
@@ -602,9 +697,9 @@ class OutcomeSpec(TemporalSpec):
 
         self.is_incident()
 
-    def get_col_str(self) -> str:
+    def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
         """Get the column name for the output column."""
-        col_str = super().get_col_str()
+        col_str = super().get_col_str(additional_feature_name=additional_feature_name)
 
         if self.is_dichotomous():
             col_str += "_dichotomous"
@@ -686,6 +781,11 @@ class _MinGroupSpec(BaseModel):
     prefix: Optional[str] = Field(
         default=None,
         description="""Prefix for column name, e.g. <prefix>_<feature_name>.""",
+    )
+
+    loader_kwargs: Optional[list[dict[str, Any]]] = Field(
+        default=None,
+        description="""Optional kwargs for the values_loader.""",
     )
 
     def _check_loaders_are_valid(self):
@@ -800,8 +900,10 @@ class PredictorGroupSpec(_MinGroupSpec):
             resolution, raise an error. Defaults to: [0.0].
         prefix (str):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
+        loader_kwargs (Optional[List[dict[str, Any]]]):
+            Optional kwargs for the values_loader.
         lookbehind_days (List[Union[int, float]]):
-    How far behind to look for values
+            How far behind to look for values
     """
 
     class Doc:
@@ -828,36 +930,38 @@ class OutcomeGroupSpec(_MinGroupSpec):
     """Specification for a group of outcomes.
 
     Fields:
-        values_loader (Optional[List[str]]):
-            Loader for the df. Tries to resolve from the data_loaders
-            registry, then calls the function which should return a dataframe.
-        values_name (Optional[List[str]]):
-            List of strings that corresponds to a key in a dictionary
-            of multiple dataframes that correspods to a name of a type of values.
-        values_df (Optional[DataFrame]):
-            Dataframe with the values.
-        input_col_name_override (Optional[str]):
-            Override for the column name to use as values in df.
-        output_col_name_override (Optional[str]):
-            Override for the column name to use as values in the
-            output df.
-        resolve_multiple_fn (List[Union[str, Callable]]):
-            Name of resolve multiple fn, resolved from
-            resolve_multiple_functions.py
-        fallback (List[Union[Callable, str]]):
-            Which value to use if no values are found within interval_days.
-        allowed_nan_value_prop (List[float]):
-            If NaN is higher than this in the input dataframe during
-            resolution, raise an error. Defaults to: [0.0].
-        prefix (str):
-            Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
-        incident (Sequence[bool]):
-            Whether the outcome is incident or not, i.e. whether you
-            can experience it more than once. For example, type 2 diabetes is incident.
-            Incident outcomes can be handled in a vectorised way during resolution,
-             which is faster than non-incident outcomes.
-        lookahead_days (List[Union[int, float]]):
-    How far ahead to look for values
+    values_loader (Optional[List[str]]):
+        Loader for the df. Tries to resolve from the data_loaders
+        registry, then calls the function which should return a dataframe.
+    values_name (Optional[List[str]]):
+        List of strings that corresponds to a key in a dictionary
+        of multiple dataframes that correspods to a name of a type of values.
+    values_df (Optional[DataFrame]):
+        Dataframe with the values.
+    input_col_name_override (Optional[str]):
+        Override for the column name to use as values in df.
+    output_col_name_override (Optional[str]):
+        Override for the column name to use as values in the
+        output df.
+    resolve_multiple_fn (List[Union[str, Callable]]):
+        Name of resolve multiple fn, resolved from
+        resolve_multiple_functions.py
+    fallback (List[Union[Callable, str]]):
+        Which value to use if no values are found within interval_days.
+    allowed_nan_value_prop (List[float]):
+        If NaN is higher than this in the input dataframe during
+        resolution, raise an error. Defaults to: [0.0].
+    prefix (str):
+        Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
+    loader_kwargs (Optional[List[dict[str, Any]]]):
+        Optional kwargs for the values_loader.
+    incident (Sequence[bool]):
+        Whether the outcome is incident or not, i.e. whether you
+        can experience it more than once. For example, type 2 diabetes is incident.
+        Incident outcomes can be handled in a vectorised way during resolution,
+         which is faster than non-incident outcomes.
+    lookahead_days (List[Union[int, float]]):
+        How far ahead to look for values
     """
 
     class Doc:

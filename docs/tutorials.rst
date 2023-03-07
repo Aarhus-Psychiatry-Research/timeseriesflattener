@@ -11,3 +11,4 @@ locally.
 
    tutorials/01_basic.ipynb
    tutorials/02_advanced.ipynb
+   tutorials/03_text.ipynb

@@ -1,0 +1,4 @@
+[codespell]
+skip = .git,*.pdf,*.svg
+# EHR -- Electronic Health Records, frequently used in .bib and might elsewhere
+ignore-words-list = ehr
