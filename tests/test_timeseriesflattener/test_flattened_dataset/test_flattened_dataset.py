@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import pytest
+
 from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
@@ -63,6 +64,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     # Test adding an invalid spec type
     with pytest.raises(ValueError):
         dataset.add_spec("invalid spec")
+
 
 @pytest.mark.huggingface
 def test_compute_specs(
