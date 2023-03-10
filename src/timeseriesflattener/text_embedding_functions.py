@@ -59,5 +59,5 @@ def sklearn_embedding(
     """
     return pd.DataFrame(
         model.transform(text_series).toarray(),
-        columns=model.get_feature_names(),
+        columns=model.get_feature_names_out(),
     )

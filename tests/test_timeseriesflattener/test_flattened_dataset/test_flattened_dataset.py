@@ -14,7 +14,6 @@ from timeseriesflattener.resolve_multiple_functions import latest, mean
 from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
-    synth_text_data,
 )
 from timeseriesflattener.text_embedding_functions import sentence_transformers_embedding
 
@@ -67,6 +66,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         dataset.add_spec("invalid spec")
 
 
+@pytest.mark.huggingface
 def test_compute_specs(
     synth_prediction_times: pd.DataFrame,
     synth_outcome: pd.DataFrame,
