@@ -31,7 +31,7 @@ def bow_test_embedding(text_series: Series) -> DataFrame:
     model = _load_bow_model()
     return pd.DataFrame(
         model.transform(text_series).toarray(),
-        columns=model.get_feature_names(),
+        columns=model.get_feature_names_out(),
     )
 
 
