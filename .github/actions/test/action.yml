@@ -4,14 +4,23 @@ inputs:
   python-version:
     description: "Which Python version to run on"
     required: true
-    default: 3.9
+    default: "3.9"
 
 runs:
   using: "composite"
   steps:
     ### Setup prerequisites
+    - name: Cache venv
+      uses: actions/cache@v3.2.6
+      id: cache_venv
+      with:
+        path: |
+          .venv
+        key: ${{ runner.os }}-venv-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
+
     - name: Set up Python
       uses: actions/setup-python@v4
+      if: steps.cache_venv.outputs.cache-hit != 'true'
       with:
         python-version: ${{ inputs.python-version }}
         cache: "pip"
