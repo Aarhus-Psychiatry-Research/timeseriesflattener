@@ -221,7 +221,10 @@ def test_predictorgroupspec_combinations_loader_kwargs():
 
 def test_outcome_spec_incident_true():
     """Test that warning is raised if entity ids are not unique for incident=[TRUE]"""
-    with pytest.raises(ValueError, match=r"Incident outcomes must have unique IDs") as excinfo:
+    with pytest.raises(
+        ValueError,
+        match=r"Incident outcomes must have unique IDs",
+    ) as excinfo:
         outcome_df_str = """entity_id,timestamp,value
                             1,2021-12-31 00:00:01, 1.0
                             5,2025-01-03 00:00:00, 1.0
@@ -238,4 +241,7 @@ def test_outcome_spec_incident_true():
             feature_name="value",
         )
 
-        assert "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]." in str(excinfo.value)
+        assert (
+            "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]."
+            in str(excinfo.value)
+        )
