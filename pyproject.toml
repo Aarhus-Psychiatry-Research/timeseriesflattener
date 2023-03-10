@@ -8,7 +8,7 @@ authors = [{name = "Martin Bernstorff", email = "martinbernstorff@gmail.com"},
     {name = "Jakob Grøhn Damgaard", email = "bokajgd@gmail.com"},
     {name = "Kenneth Enevoldsen"}]
 
-requires-python = ">=3.8.0"
+requires-python = ">=3.8.0,<3.11.0"
 
 dependencies = [
     "scipy>=1.8.0,<1.9.4",
@@ -61,8 +61,7 @@ docs = [
 text = [
     "transformers>=4.26.0,<4.27.0",
     "torch>=1.0.0,<1.14.0",
-    "sentence-transformers>=2.0.0,<2.5.0",
-    "scikit-learn>=1.1.2,<1.4.0",
+    "sentence-transformers>=1.0.0,<2.5.0",
 ]
 
 [build-system]
