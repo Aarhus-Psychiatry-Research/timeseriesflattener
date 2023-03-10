@@ -216,8 +216,8 @@ def test_predictorgroupspec_combinations_loader_kwargs():
     pd.testing.assert_frame_equal(float_100_rows, combinations[1].values_df)
 
 
-def test_outcome_spec_incident(caplog):
-    """Test that incident outcome spec is created correctly."""
+def test_outcome_spec_incident_true(caplog):
+    """Test that warning is raised if entity ids are not unique for incident=[TRUE]"""
     outcome_df_str = """entity_id,timestamp,value
                         1,2021-12-31 00:00:01, 1.0
                         5,2025-01-03 00:00:00, 1.0
