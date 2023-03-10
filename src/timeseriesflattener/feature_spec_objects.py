@@ -719,7 +719,7 @@ class OutcomeSpec(TemporalSpec):
     def is_incident(self):
         """Check if the outcome is incident, i.e. contains unique IDs."""
         if self.incident:
-            if self.values_df[self.entity_id_col_name].nunique() != len(  
+            if self.values_df[self.entity_id_col_name].nunique() != len(
                 self.values_df,
             ):
                 log.warning(
