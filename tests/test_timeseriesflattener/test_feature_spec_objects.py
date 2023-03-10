@@ -31,6 +31,7 @@ from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dic
 
 log = logging.getLogger(__name__)
 
+
 def test_anyspec_init():
     """Test that AnySpec initialises correctly."""
     values_loader_name = "synth_predictor_float"
