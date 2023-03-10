@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import pandas as pd
 import pytest
+
 from timeseriesflattener.feature_spec_objects import (
     BaseModel,
     OutcomeGroupSpec,
@@ -21,9 +22,7 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
     load_synth_predictor_float,
     synth_predictor_binary,
 )
-from timeseriesflattener.testing.utils_for_testing import (
-    str_to_df,
-)
+from timeseriesflattener.testing.utils_for_testing import str_to_df
 from timeseriesflattener.utils import split_df_and_register_to_dict
 
 log = logging.getLogger(__name__)
