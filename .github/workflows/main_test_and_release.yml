@@ -42,7 +42,7 @@ jobs:
   jupyter-tutorials:
     runs-on: ${{ matrix.os }}
     env:
-      python-version: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}
 
     strategy:
       matrix:
