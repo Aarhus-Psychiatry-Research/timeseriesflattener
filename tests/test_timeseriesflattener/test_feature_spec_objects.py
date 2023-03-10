@@ -239,6 +239,6 @@ def test_outcome_spec_incident_true(caplog):
     )
 
     assert (
-        "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]." 
+        "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]."
         in caplog.text
     )
