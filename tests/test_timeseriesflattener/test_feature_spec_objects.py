@@ -219,50 +219,23 @@ def test_predictorgroupspec_combinations_loader_kwargs():
     pd.testing.assert_frame_equal(float_100_rows, combinations[1].values_df)
 
 
-def test_outcome_spec_incident_true(caplog):
+def test_outcome_spec_incident_true():
     """Test that warning is raised if entity ids are not unique for incident=[TRUE]"""
-    outcome_df_str = """entity_id,timestamp,value
-                        1,2021-12-31 00:00:01, 1.0
-                        5,2025-01-03 00:00:00, 1.0
-                        5,2022-01-05 00:00:01, 1.0
-                        """
+    with pytest.raises(ValueError, match=r"Incident outcomes must have unique IDs") as excinfo:
+        outcome_df_str = """entity_id,timestamp,value
+                            1,2021-12-31 00:00:01, 1.0
+                            5,2025-01-03 00:00:00, 1.0
+                            5,2022-01-05 00:00:01, 1.0
+                            """
 
-    caplog.set_level(logging.WARNING)
+        OutcomeSpec(
+            values_df=str_to_df(outcome_df_str),
+            prefix="test",
+            lookahead_days=2,
+            resolve_multiple_fn="max",
+            incident=True,
+            fallback=np.NaN,
+            feature_name="value",
+        )
 
-    OutcomeSpec(
-        values_df=str_to_df(outcome_df_str),
-        prefix="test",
-        lookahead_days=2,
-        resolve_multiple_fn="max",
-        incident=True,
-        fallback=np.NaN,
-        feature_name="value",
-    )
-
-    assert (
-        "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]."
-        in caplog.text
-    )
-def test_outcome_spec_incident_false(caplog):
-    """Test that warning is not raised if entity ids are unique for incident=[TRUE]"""
-    outcome_df_str = """entity_id,timestamp,value
-                        1,2021-12-31 00:00:01, 1.0
-                        5,2025-01-03 00:00:00, 1.0
-                        """
-
-    caplog.set_level(logging.WARNING)
-
-    OutcomeSpec(
-        values_df=str_to_df(outcome_df_str),
-        prefix="test",
-        lookahead_days=2,
-        resolve_multiple_fn="max",
-        incident=True,
-        fallback=np.NaN,
-        feature_name="value",
-    )
-
-    assert (
-        "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]."
-        not in caplog.text
-    )
+        assert "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]." in str(excinfo.value)

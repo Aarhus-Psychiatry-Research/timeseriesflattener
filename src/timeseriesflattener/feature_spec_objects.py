@@ -722,7 +722,7 @@ class OutcomeSpec(TemporalSpec):
             if self.values_df[self.entity_id_col_name].nunique() != len(
                 self.values_df,
             ):
-                log.warning(
+                raise ValueError(
                     "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False].",
                 )
 
