@@ -695,7 +695,7 @@ class OutcomeSpec(TemporalSpec):
 
         super().__init__(**data)
 
-        self.is_incident()
+        self.check_ids_are_unique_if_incident()
 
     def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
         """Get the column name for the output column."""
@@ -716,7 +716,7 @@ class OutcomeSpec(TemporalSpec):
 
         return len(self.values_df[col_name].unique()) <= 2  # type: ignore
 
-    def is_incident(self):
+    def check_ids_are_unique_if_incident(self):
         """Check if the outcome is incident, i.e. contains unique IDs."""
         if self.incident:
             if self.values_df[self.entity_id_col_name].nunique() != len(
