@@ -1,5 +1,6 @@
 """Test that feature spec objects work as intended."""
 import difflib
+import logging
 
 import numpy as np
 import pandas as pd
@@ -24,10 +25,9 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
 )
 from timeseriesflattener.testing.utils_for_testing import (
     long_df_with_multiple_values,
-    str_to_df)
+    str_to_df,
+)
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
-
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -239,5 +239,6 @@ def test_outcome_spec_incident_true(caplog):
     )
 
     assert (
-        "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]." in caplog.text
+        "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]." 
+        in caplog.text
         )
