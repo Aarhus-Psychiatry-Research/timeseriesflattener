@@ -17,12 +17,13 @@ env:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    env:
-      python-version: 3.9
-
     strategy:
       matrix:
         os: [ubuntu-latest]
+        python-version: [3.9, 3.10, 3.11]
+
+    env:
+      python-version: ${{ matrix.python-version }}
 
     # This allows a subsequently queued workflow run to interrupt previous runs
     concurrency:
@@ -41,7 +42,7 @@ jobs:
   jupyter-tutorials:
     runs-on: ${{ matrix.os }}
     env:
-      python-version: 3.9
+      python-version: ${{ matrix.os }}
 
     strategy:
       matrix:
