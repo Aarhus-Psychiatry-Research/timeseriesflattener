@@ -25,6 +25,9 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
 from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
 
+import logging
+
+log = logging.getLogger(__name__)
 
 def test_anyspec_init():
     """Test that AnySpec initialises correctly."""
@@ -211,3 +214,26 @@ def test_predictorgroupspec_combinations_loader_kwargs():
 
     pd.testing.assert_frame_equal(binary_100_rows, combinations[0].values_df)
     pd.testing.assert_frame_equal(float_100_rows, combinations[1].values_df)
+
+
+def test_outcome_spec_incident(caplog):
+    """Test that incident outcome spec is created correctly."""
+    outcome_df_str = """entity_id,timestamp,value
+                        1,2021-12-31 00:00:01, 1.0
+                        5,2025-01-03 00:00:00, 1.0
+                        5,2022-01-05 00:00:01, 1.0
+                        """
+
+    caplog.set_level(logging.WARNING)
+
+    OutcomeSpec(
+        values_df=str_to_df(outcome_df_str),
+        prefix="test",
+        lookahead_days=2,
+        resolve_multiple_fn="max",
+        incident=True,
+        fallback=np.NaN,
+        feature_name="value",
+    )
+
+    assert "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]." in caplog.text
