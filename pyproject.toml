@@ -27,12 +27,12 @@ dependencies = [
     "catalogue>=2.0.0, <2.1.0",
     "numpy>=1.23.3,<1.24.2",
     "pyarrow>=9.0.0,<11.1.0",
-    "psycopmlutils>=0.2.4,<0.4.0",
     "protobuf<=3.20.3", # Other versions give errors with pytest, super weird!
     "frozendict>=2.3.4,<2.4.0",
     "skimpy>=0.0.7,<0.1.0",
     "jupyter>=1.0.0,<1.1.0",
     "coloredlogs>14.0.0,<15.1.0",
+    "psycopmlutils>=0.5.0, <0.12.0",
 ]
 
 [project.optional-dependencies]
