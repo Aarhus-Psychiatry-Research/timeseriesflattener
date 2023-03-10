@@ -1,11 +1,9 @@
 """Test that feature spec objects work as intended."""
-import difflib
 import logging
 
 import numpy as np
 import pandas as pd
 import pytest
-
 from timeseriesflattener.feature_spec_objects import (
     BaseModel,
     OutcomeGroupSpec,
@@ -24,10 +22,9 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
     synth_predictor_binary,
 )
 from timeseriesflattener.testing.utils_for_testing import (
-    long_df_with_multiple_values,
     str_to_df,
 )
-from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
+from timeseriesflattener.utils import split_df_and_register_to_dict
 
 log = logging.getLogger(__name__)
 
@@ -221,18 +218,18 @@ def test_predictorgroupspec_combinations_loader_kwargs():
 
 def test_outcome_spec_incident_true():
     """Test that warning is raised if entity ids are not unique for incident=[TRUE]"""
-    with pytest.raises(
-        ValueError,
-        match=r"Incident outcomes must have unique IDs",
-    ) as excinfo:
-        outcome_df_str = """entity_id,timestamp,value
+    error_df_str = """entity_id,timestamp,value
                             1,2021-12-31 00:00:01, 1.0
                             5,2025-01-03 00:00:00, 1.0
                             5,2022-01-05 00:00:01, 1.0
                             """
 
+    with pytest.raises(
+        ValueError,
+        match=r"Incident outcomes must have unique IDs",
+    ):
         OutcomeSpec(
-            values_df=str_to_df(outcome_df_str),
+            values_df=str_to_df(error_df_str),
             prefix="test",
             lookahead_days=2,
             resolve_multiple_fn="max",
@@ -241,7 +238,17 @@ def test_outcome_spec_incident_true():
             feature_name="value",
         )
 
-        assert (
-            "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]."
-            in str(excinfo.value)
-        )
+    pass_df_str = """entity_id,timestamp,value
+                            1,2021-12-31 00:00:01, 1.0
+                            5,2025-01-03 00:00:00, 1.0
+                            """
+
+    OutcomeSpec(
+        values_df=str_to_df(pass_df_str),
+        prefix="test",
+        lookahead_days=2,
+        resolve_multiple_fn="max",
+        incident=True,
+        fallback=np.NaN,
+        feature_name="value",
+    )
