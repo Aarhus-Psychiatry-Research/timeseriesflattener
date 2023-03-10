@@ -60,8 +60,8 @@ docs = [
 
 text = [
     "transformers>=4.26.0,<4.27.0",
-    "torch>=1.12.1,<1.14.0",
-    "sentence-transformers>=2.2.0,<2.3.0",
+    "torch>=1.0.0,<1.14.0",
+    "sentence-transformers>=2.0.0,<2.5.0",
     "scikit-learn>=1.1.2,<1.4.0",
 ]
 
