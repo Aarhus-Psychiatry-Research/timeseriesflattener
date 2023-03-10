@@ -726,6 +726,7 @@ class OutcomeSpec(TemporalSpec):
                     "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False].",
                 )
 
+
 class _MinGroupSpec(BaseModel):
     class Doc:
         short_description = """Minimum specification for a group of features, 
