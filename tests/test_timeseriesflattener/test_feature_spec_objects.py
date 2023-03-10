@@ -243,3 +243,26 @@ def test_outcome_spec_incident_true(caplog):
         "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]."
         in caplog.text
     )
+def test_outcome_spec_incident_false(caplog):
+    """Test that warning is not raised if entity ids are unique for incident=[TRUE]"""
+    outcome_df_str = """entity_id,timestamp,value
+                        1,2021-12-31 00:00:01, 1.0
+                        5,2025-01-03 00:00:00, 1.0
+                        """
+
+    caplog.set_level(logging.WARNING)
+
+    OutcomeSpec(
+        values_df=str_to_df(outcome_df_str),
+        prefix="test",
+        lookahead_days=2,
+        resolve_multiple_fn="max",
+        incident=True,
+        fallback=np.NaN,
+        feature_name="value",
+    )
+
+    assert (
+        "Incident outcomes must have unique IDs. You have set incident=[True], however, the keys in your ID column are not unique. Consider setting incident=[False]."
+        not in caplog.text
+    )
