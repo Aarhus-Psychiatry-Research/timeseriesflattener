@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.3 (2023-03-10)
+### Fix
+* Sklearn 1.2 compatibility ([`50c5aca`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/50c5acae3dcc1b8eb821de663132c2f1a377bbf3))
+* Expand psycopmlutils versions to match pypi ([`44eb73d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/44eb73d7d42ed5d8ed227196591b0a4f9d390d45))
+
 ## v0.23.2 (2023-03-01)
 ### Fix
 * Spelling error ([`747e1f3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/747e1f37551e6c1ca7fe986ad2e928a302a3bb24))
