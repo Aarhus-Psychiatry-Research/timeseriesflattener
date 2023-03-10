@@ -22,7 +22,9 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
     load_synth_predictor_float,
     synth_predictor_binary,
 )
-from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
+from timeseriesflattener.testing.utils_for_testing import (
+    long_df_with_multiple_values,
+    str_to_df)
 from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
 
 import logging
