@@ -1,6 +1,5 @@
 """Test that feature spec objects work as intended."""
 
-import difflib
 from typing import List
 
 import numpy as np
@@ -212,7 +211,7 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Got: \n\n{current_docstring}.
 
         Expected: \n\n{generated_docstring}
-        
+
         Differences are in lines: \n\n{lines_with_diff}
         """,
         )

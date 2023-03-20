@@ -8,6 +8,8 @@ from timeseriesflattener.text_embedding_functions import (
     sentence_transformers_embedding,
 )
 
+data = synth_text_data()
+
 
 def test_embedding_fn(synth_text_data: pd.DataFrame):
     """Test that synth embedding function works as expected"""
