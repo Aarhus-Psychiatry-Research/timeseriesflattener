@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.5 (2023-03-20)
+### Fix
+* Incorrect python version ([`b88d7c9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b88d7c9bb2cc86d7fd439ace4409022c6918d536))
+
 ## v0.23.4 (2023-03-20)
 ### Fix
 * Bump version ([`c9c768e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c9c768eacabff7498e3357b79faf43764f2841d8))
