@@ -1,4 +1,4 @@
-default_stages: [push]
+default_stages: [commit]
 
 repos:
   - repo: https://github.com/psf/black
