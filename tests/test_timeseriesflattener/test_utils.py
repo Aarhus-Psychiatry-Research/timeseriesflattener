@@ -1,10 +1,7 @@
 """Test that feature spec objects work as intended."""
 import pandas as pd
-import pytest
-
 from timeseriesflattener.feature_spec_objects import _AnySpec
 from timeseriesflattener.testing.load_synth_data import synth_predictor_binary  # noqa
-from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
 from timeseriesflattener.utils import split_df_and_register_to_dict, split_dfs
 
 

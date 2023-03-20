@@ -5,7 +5,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,

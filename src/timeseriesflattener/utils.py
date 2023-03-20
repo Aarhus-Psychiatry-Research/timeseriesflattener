@@ -6,9 +6,8 @@ utilities. If this file grows, consider splitting it up.
 import functools
 import logging
 import os
-typing import Callable, Hashable
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, Hashable, List, Optional
 
 import catalogue
 import pandas as pd

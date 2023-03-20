@@ -11,12 +11,6 @@ from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, PredictorSpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
-    load_synth_predictor_float,
-    synth_predictor_binary,
-)
-from timeseriesflattener.testing.utils_for_testing import (
-    synth_outcome,
-    synth_prediction_times,
 )
 
 from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
@@ -48,7 +42,7 @@ base_binary_predictor_combinations = PredictorGroupSpec(
 def test_cache_hitting(
     tmp_path: Path,
     predictor_specs: List[PredictorSpec],
-    synth_prediction_times: pd.DataFrame,  # noqa: F811
+    synth_prediction_times: pd.DataFrame,
 ):
     """Test that cache hits."""
 

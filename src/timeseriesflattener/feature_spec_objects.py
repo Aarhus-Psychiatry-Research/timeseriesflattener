@@ -2,9 +2,8 @@
 import itertools
 import logging
 import time
-typing import Callable, Sequence
 from functools import lru_cache
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
 import pandas as pd
 from frozendict import frozendict
@@ -114,7 +113,7 @@ class BaseModel(PydanticBaseModel):
     # This means we want to auto-generate docstrings to support the inheritance,
     # but also need to hard-code the docstring to support pylance.
     class Doc:
-        short_description: str = """Modified Pydantic BaseModel to allow arbitrary 
+        short_description: str = """Modified Pydantic BaseModel to allow arbitrary
         types and disallow attributes not in the class."""
 
     class Config:
@@ -224,8 +223,8 @@ class _AnySpec(BaseModel):
 
     values_name: Optional[str] = Field(
         default=None,
-        description="""A string that maps to a key in a dictionary instantiated by 
-            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which 
+        description="""A string that maps to a key in a dictionary instantiated by
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.""",
     )
 
@@ -240,7 +239,7 @@ class _AnySpec(BaseModel):
     )
 
     feature_name: str = Field(
-        description="""The name of the feature. Used for column name generation, e.g. 
+        description="""The name of the feature. Used for column name generation, e.g.
             <prefix>_<feature_name>.""",
     )
 
@@ -251,8 +250,8 @@ class _AnySpec(BaseModel):
 
     input_col_name_override: Optional[str] = Field(
         default=None,
-        description="""An override for the input column name. If None, will  attempt 
-            to infer it by looking for the only column that doesn't match id_col_name 
+        description="""An override for the input column name. If None, will  attempt
+            to infer it by looking for the only column that doesn't match id_col_name
             or timestamp_col_name.""",
     )
 
@@ -373,23 +372,23 @@ class TemporalSpec(_AnySpec):
     """
 
     class Doc:
-        short_description = """The minimum specification required for collapsing a temporal 
+        short_description = """The minimum specification required for collapsing a temporal
         feature, whether looking ahead or behind. Mostly used for inheritance below."""
 
     interval_days: Union[int, float] = Field(
-        description="""How far to look in the given direction (ahead for outcomes, 
+        description="""How far to look in the given direction (ahead for outcomes,
             behind for predictors)""",
     )
 
     resolve_multiple_fn: Union[Callable, str] = Field(
-        description="""A function used for resolving multiple values within the 
+        description="""A function used for resolving multiple values within the
             interval_days.""",
     )
 
     key_for_resolve_multiple: Optional[str] = Field(
         default=None,
-        description="""Key used to lookup the resolve_multiple_fn in the 
-            resolve_multiple_fns registry. Used for column name generation. Only 
+        description="""Key used to lookup the resolve_multiple_fn in the
+            resolve_multiple_fns registry. Used for column name generation. Only
             required if you don't specify a resolve_multiple_fn. Call
             timeseriesflattener.resolve_multiple_fns.resolve_multiple_fns.get_all()
             for a list of options.""",
@@ -401,7 +400,7 @@ class TemporalSpec(_AnySpec):
 
     allowed_nan_value_prop: float = Field(
         default=0.0,
-        description="""If NaN is higher than this in the input dataframe during 
+        description="""If NaN is higher than this in the input dataframe during
             resolution, raise an error.""",
     )
 
@@ -591,7 +590,7 @@ class TextPredictorSpec(PredictorSpec):
         )
 
     embedding_fn: Callable = Field(
-        description="""A function used for embedding the text. Should take a 
+        description="""A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.""",
     )
@@ -602,7 +601,7 @@ class TextPredictorSpec(PredictorSpec):
     resolve_multiple_fn: Union[str, Callable] = Field(
         default="concatenate",
         description="""A function used for resolving multiple values within the
-        interval_days, i.e. how to combine texts within the lookbehind window. 
+        interval_days, i.e. how to combine texts within the lookbehind window.
         Defaults to: 'concatenate'. Other possible options are 'latest' and
         'earliest'.""",
     )
@@ -675,9 +674,9 @@ class OutcomeSpec(TemporalSpec):
     )
 
     incident: bool = Field(
-        description="""Whether the outcome is incident or not. 
-            I.e., incident outcomes are outcomes you can only experience once. 
-            For example, type 2 diabetes is incident. Incident outcomes can be handled 
+        description="""Whether the outcome is incident or not.
+            I.e., incident outcomes are outcomes you can only experience once.
+            For example, type 2 diabetes is incident. Incident outcomes can be handled
             in a vectorised way during resolution, which is faster than non-incident outcomes.""",
     )
 
@@ -715,20 +714,20 @@ class OutcomeSpec(TemporalSpec):
 
 class _MinGroupSpec(BaseModel):
     class Doc:
-        short_description = """Minimum specification for a group of features, 
-        whether they're looking ahead or behind. 
+        short_description = """Minimum specification for a group of features,
+        whether they're looking ahead or behind.
 
         Used to generate combinations of features."""
 
     values_loader: Optional[List[str]] = Field(
         default=None,
-        description="""Loader for the df. Tries to resolve from the data_loaders 
+        description="""Loader for the df. Tries to resolve from the data_loaders
             registry, then calls the function which should return a dataframe.""",
     )
 
     values_name: Optional[List[str]] = Field(
         default=None,
-        description="""List of strings that corresponds to a key in a dictionary 
+        description="""List of strings that corresponds to a key in a dictionary
             of multiple dataframes that correspods to a name of a type of values.""",
     )
 
@@ -744,12 +743,12 @@ class _MinGroupSpec(BaseModel):
 
     output_col_name_override: Optional[str] = Field(
         default=None,
-        description="""Override for the column name to use as values in the 
+        description="""Override for the column name to use as values in the
             output df.""",
     )
 
     resolve_multiple_fn: List[Union[str, Callable]] = Field(
-        description="""Name of resolve multiple fn, resolved from 
+        description="""Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py""",
     )
 
@@ -759,7 +758,7 @@ class _MinGroupSpec(BaseModel):
 
     allowed_nan_value_prop: List[float] = Field(
         default=[0.0],
-        description="""If NaN is higher than this in the input dataframe during 
+        description="""If NaN is higher than this in the input dataframe during
             resolution, raise an error.""",
     )
 
@@ -956,9 +955,9 @@ class OutcomeGroupSpec(_MinGroupSpec):
     )
 
     incident: Sequence[bool] = Field(
-        description="""Whether the outcome is incident or not, i.e. whether you 
-            can experience it more than once. For example, type 2 diabetes is incident. 
-            Incident outcomes can be handled in a vectorised way during resolution, 
+        description="""Whether the outcome is incident or not, i.e. whether you
+            can experience it more than once. For example, type 2 diabetes is incident.
+            Incident outcomes can be handled in a vectorised way during resolution,
              which is faster than non-incident outcomes.""",
     )
 

@@ -7,7 +7,6 @@ from typing import Sequence
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import CountVectorizer
-
 from timeseriesflattener.testing.load_synth_data import load_synth_text
 
 

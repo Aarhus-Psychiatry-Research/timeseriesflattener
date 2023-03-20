@@ -6,10 +6,9 @@ import datetime as dt
 import logging
 import random
 import time
-typing import Callable
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 import coloredlogs
 import numpy as np
