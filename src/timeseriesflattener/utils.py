@@ -6,15 +6,15 @@ utilities. If this file grows, consider splitting it up.
 import functools
 import logging
 import os
-from collections.abc import Callable, Hashable
+typing import Callable, Hashable
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_dfs: dict[str, pd.DataFrame] = {}
+split_dfs: Dict[str, pd.DataFrame] = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -56,7 +56,6 @@ def split_df_and_register_to_dict(
     value_names = df[value_names_col_name].unique()
 
     for value_name in value_names:
-
         value_df = df[df[value_names_col_name] == value_name][
             [entity_id_col_name, timestamp_col_name, value_col_name]
         ]
@@ -110,13 +109,12 @@ def load_dataset_from_file(
     if file_suffix == ".csv":
         return pd.read_csv(file_path, nrows=nrows)
 
-    elif file_suffix == ".parquet":
+    if file_suffix == ".parquet":
         if nrows:
             raise ValueError("nrows not supported for parquet files")
-
         return pd.read_parquet(file_path)
-    else:
-        raise ValueError(f"Invalid file suffix {file_suffix}")
+
+    raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
 def load_most_recent_file_matching_pattern_as_df(
@@ -147,12 +145,12 @@ def load_most_recent_file_matching_pattern_as_df(
     return load_dataset_from_file(file_path=most_recent_file)
 
 
-def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]):
+def df_contains_duplicates(df: pd.DataFrame, col_subset: List[str]):
     """Check if a dataframe contains duplicates.
 
     Args:
         df (pd.DataFrame): Dataframe to check.
-        col_subset (list[str]): Columns to check for duplicates.
+        col_subset (List[str]): Columns to check for duplicates.
 
     Returns:
         bool: True if duplicates are found.
@@ -181,11 +179,11 @@ def write_df_to_file(
         raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[Dict[str, Any]]):
     """Find potential duplicates in list of dicts.
 
     Args:
-        predictor_spec_list (list[dict[str, dict[str, Any]]]): List of predictor combinations.
+        predictor_spec_list (List[Dict[str, Dict[str, Any]]]): List of predictor combinations.
     """
     # Find duplicates in list of dicts
     seen = set()

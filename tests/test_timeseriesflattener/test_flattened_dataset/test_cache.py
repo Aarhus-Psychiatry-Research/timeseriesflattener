@@ -2,15 +2,11 @@
 # pylint: disable=unused-import, redefined-outer-name
 
 from pathlib import Path
+from typing import List
 
 import numpy as np
 import pandas as pd
 import pytest
-
-from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
-    check_dfs_have_same_contents_by_column,
-    create_flattened_df,
-)
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, PredictorSpec
 from timeseriesflattener.testing.load_synth_data import (
@@ -21,6 +17,11 @@ from timeseriesflattener.testing.load_synth_data import (
 from timeseriesflattener.testing.utils_for_testing import (
     synth_outcome,
     synth_prediction_times,
+)
+
+from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
+    check_dfs_have_same_contents_by_column,
+    create_flattened_df,
 )
 
 base_float_predictor_combinations = PredictorGroupSpec(
@@ -46,7 +47,7 @@ base_binary_predictor_combinations = PredictorGroupSpec(
 )
 def test_cache_hitting(
     tmp_path: Path,
-    predictor_specs: list[PredictorSpec],
+    predictor_specs: List[PredictorSpec],
     synth_prediction_times: pd.DataFrame,
 ):
     """Test that cache hits."""

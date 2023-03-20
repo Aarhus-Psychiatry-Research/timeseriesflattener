@@ -6,7 +6,7 @@ import datetime as dt
 import logging
 import random
 import time
-from collections.abc import Callable
+typing import Callable
 from datetime import timedelta
 from multiprocessing import Pool
 from typing import List, Optional, Union
@@ -15,7 +15,7 @@ import coloredlogs
 import numpy as np
 import pandas as pd
 import tqdm
-from catalogue import Registry  # noqa # pylint: disable=unused-import
+from catalogue import Registry
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
@@ -42,9 +42,9 @@ log = logging.getLogger(__name__)
 class SpecCollection(PydanticBaseModel):
     """A collection of specs."""
 
-    outcome_specs: list[OutcomeSpec] = []
-    predictor_specs: list[PredictorSpec] = []
-    static_specs: list[_AnySpec] = []
+    outcome_specs: List[OutcomeSpec] = []
+    predictor_specs: List[PredictorSpec] = []
+    static_specs: List[_AnySpec] = []
 
     def __len__(self):
         """Return number of specs in collection."""
@@ -93,14 +93,14 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-arguments
         self,
         prediction_times_df: DataFrame,
-        drop_pred_times_with_insufficient_look_distance: bool,  # noqa
+        drop_pred_times_with_insufficient_look_distance: bool,
         cache: Optional[FeatureCache] = None,
         entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
         n_workers: int = 60,
-        log_to_stdout: bool = True,  # noqa
+        log_to_stdout: bool = True,
     ):
         """Class containing a time-series, flattened.
 
@@ -245,9 +245,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         # Sort by timestamp_pred in case resolve_multiple needs dates
         df = df.sort_values(by=val_timestamp_col_name).groupby(pred_time_uuid_colname)
 
-        if isinstance(resolve_multiple, str):
-            resolve_multiple = resolve_multiple_fns.get(resolve_multiple)
-
         if callable(resolve_multiple):
             df = resolve_multiple(df).reset_index()
         else:
@@ -304,13 +301,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         )
 
     @staticmethod
-    def _flatten_temporal_values_to_df(  # noqa pylint: disable=too-many-locals
+    def _flatten_temporal_values_to_df(
         prediction_times_with_uuid_df: DataFrame,
         output_spec: TemporalSpec,
         entity_id_col_name: str,
         pred_time_uuid_col_name: str,
         timestamp_col_name: str,
-        verbose: bool = False,  # noqa
+        verbose: bool = False,
     ) -> DataFrame:
         """Create a dataframe with flattened values (either predictor or
 
@@ -417,7 +414,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             pred_time_uuid_colname=pred_time_uuid_col_name,
         ).fillna(output_spec.fallback)
 
-        return df[value_col_str_name + [pred_time_uuid_col_name]]
+        return df[[*value_col_str_name, pred_time_uuid_col_name]]
 
     @staticmethod
     def rename_input_col_to_value(
@@ -475,16 +472,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 df=df,
             )
 
-        # @Martin any reason to do the indexing here?
-        # return (
-        #     df[[self.pred_time_uuid_col_name, feature_spec.get_col_str()]]
-        #     .set_index(keys=self.pred_time_uuid_col_name)
-        #     .sort_index()
-        # )
         return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
 
     @staticmethod
-    def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
+    def _check_dfs_are_ready_for_concat(dfs: List[pd.DataFrame]):
         """Sample each df and check for identical indices.
 
         This checks that all the dataframes are aligned before
@@ -509,7 +500,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
             # Check that dataframes are of equal length
             log.debug("Checking that dataframes are of equal length")
-            if not len(feature_df) == base_length:
+            if len(feature_df) != base_length:
                 errors.append(
                     "Dataframes are not of equal length. ",
                 )
@@ -530,7 +521,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _concatenate_flattened_timeseries(
         self,
-        flattened_predictor_dfs: list[pd.DataFrame],
+        flattened_predictor_dfs: List[pd.DataFrame],
     ) -> None:
         """Concatenate flattened predictor dfs."""
 
@@ -559,7 +550,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _add_temporal_batch(  # pylint: disable=too-many-branches
         self,
-        temporal_batch: list[TemporalSpec],
+        temporal_batch: List[TemporalSpec],
     ):
         """Add predictors to the flattened dataframe from a list."""
         # Shuffle predictor specs to avoid IO contention
@@ -626,8 +617,6 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         if static_spec.output_col_name_override is not None:
             output_col_name = static_spec.output_col_name_override
-        elif static_spec.feature_name is None:
-            output_col_name = f"{static_spec.prefix}_{value_col_name}"
         elif static_spec.feature_name:
             output_col_name = f"{static_spec.prefix}_{static_spec.feature_name}"
 
@@ -691,14 +680,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
             df[outcome_spec.get_col_str()] = outcome_is_within_lookahead.astype(int)
 
-        df.rename(
+        df = df.rename(
             {prediction_timestamp_col_name: "timestamp"},
             axis=1,
-            inplace=True,
         )
-        df.drop([outcome_timestamp_col_name], axis=1, inplace=True)
+        df = df.drop([outcome_timestamp_col_name], axis=1)
 
-        df.drop(["value"], axis=1, inplace=True)
+        df = df.drop(["value"], axis=1)
 
         self._df = df
 
@@ -721,6 +709,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if isinstance(spec, OutcomeSpec):
             max_val_date = spec.values_df[self.timestamp_col_name].max()  # type: ignore
             return max_val_date - pd.Timedelta(days=spec.lookahead_days)
+        return None
 
     @print_df_dimensions_diff
     def _drop_pred_time_if_insufficient_look_distance(self, df: pd.DataFrame):
@@ -835,7 +824,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def add_spec(
         self,
-        spec: Union[list[_AnySpec], _AnySpec],
+        spec: Union[List[_AnySpec], _AnySpec],
     ):
         """Add a specification to the flattened dataset.
 
@@ -847,7 +836,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         For further documentation, see those objects and the tutorial.
         """
         if isinstance(spec, _AnySpec):
-            specs_to_process: list[_AnySpec] = [spec]
+            specs_to_process: List[_AnySpec] = [spec]
         else:
             specs_to_process = spec
 

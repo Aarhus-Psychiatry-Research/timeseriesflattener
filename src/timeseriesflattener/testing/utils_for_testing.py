@@ -1,6 +1,6 @@
 """Utilities for testing."""
 
-from collections.abc import Sequence
+typing import Sequence
 from io import StringIO
 from typing import Any, Optional, Union
 
