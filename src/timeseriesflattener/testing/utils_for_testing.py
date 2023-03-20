@@ -1,15 +1,13 @@
 """Utilities for testing."""
 
-typing import Sequence
 from io import StringIO
-from typing import Any, Optional, Union
+from typing import Any, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
 import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
-
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import _AnySpec
 from timeseriesflattener.testing.load_synth_data import (
@@ -171,31 +169,31 @@ def check_any_item_in_list_has_str(list_of_str: list, str_: str):
     return any(str_ in item for item in list_of_str)
 
 
-@pytest.fixture(scope="function")
-def synth_prediction_times():
+@pytest.fixture()
+def synth_prediction_times() -> DataFrame:
     """Load the prediction times."""
     return load_synth_prediction_times()
 
 
-@pytest.fixture(scope="function")
-def synth_predictor():
+@pytest.fixture()
+def synth_predictor() -> DataFrame:
     """Load the synth outcome times."""
     return load_synth_outcome(n_rows=1_000)
 
 
-@pytest.fixture(scope="function")
-def synth_outcome():
+@pytest.fixture()
+def synth_outcome() -> DataFrame:
     """Load the synth outcome times."""
     return load_synth_outcome()
 
 
-@pytest.fixture(scope="function")
-def long_df_with_multiple_values():
+@pytest.fixture()
+def long_df_with_multiple_values() -> DataFrame:
     """Load the long df."""
     return load_long_df_with_multiple_values()
 
 
-@pytest.fixture(scope="function")
-def synth_text_data():
+@pytest.fixture()
+def synth_text_data() -> DataFrame:
     """Load the synth text data."""
     return load_synth_text()
