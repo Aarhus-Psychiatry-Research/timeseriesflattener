@@ -8,10 +8,6 @@ from pandas.testing import assert_frame_equal
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import PredictorSpec
 from timeseriesflattener.resolve_multiple_functions import latest
-from timeseriesflattener.testing.utils_for_testing import synth_outcome, synth_predictor
-
-# Avoid ruff auto-removing unused imports
-fixtures = [synth_predictor, synth_outcome]
 
 
 def test_write_and_check_feature(

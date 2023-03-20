@@ -2,13 +2,10 @@
 import pandas as pd
 import pytest
 from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
-from timeseriesflattener.testing.utils_for_testing import synth_text_data
 from timeseriesflattener.text_embedding_functions import (
     huggingface_embedding,
     sentence_transformers_embedding,
 )
-
-data = synth_text_data()
 
 
 def test_embedding_fn(synth_text_data: pd.DataFrame):
