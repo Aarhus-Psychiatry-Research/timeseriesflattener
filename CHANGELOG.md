@@ -2,6 +2,19 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.4 (2023-03-20)
+### Fix
+* Bump version ([`c9c768e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c9c768eacabff7498e3357b79faf43764f2841d8))
+* Allow newest 3.10 version ([`b465d2f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b465d2f15e590c35e666295d8afa8519bbd751ee))
+* Incorrect imports ([`d23da12`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d23da12bfabffaed9fed186fbe441e826d113722))
+* Docstrings after ruff formatting ([`1563e57`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1563e57cb20f9e4f3e56f7c6f4934ae819e51dd0))
+* Incorrect error ([`46eebf1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/46eebf17228c667bbe7b650bca44ba3847a34698))
+* Incorrect import ([`550ed52`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/550ed528e2e92ab8c54071d9a5dcee3a6ce01504))
+
+### Documentation
+* Add link to pypi ([`9ed0800`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9ed0800271b2f4d60518a15385439ee071f10e22))
+* Match python supported versions ([`ce020c2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ce020c2d3b546218103e0a37debe830b57218de6))
+
 ## v0.23.3 (2023-03-10)
 ### Fix
 * Sklearn 1.2 compatibility ([`50c5aca`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/50c5acae3dcc1b8eb821de663132c2f1a377bbf3))
