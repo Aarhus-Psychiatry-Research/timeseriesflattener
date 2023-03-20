@@ -556,7 +556,7 @@ class TextPredictorSpec(PredictorSpec):
         interval_days (Union[int, float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
-        resolve_multiple_fn (Union[str, Callable]):
+        resolve_multiple_fn (Union[Callable, str]):
             A function used for resolving multiple values within the
         interval_days, i.e. how to combine texts within the lookbehind window.
         Defaults to: 'concatenate'. Other possible options are 'latest' and
@@ -597,7 +597,7 @@ class TextPredictorSpec(PredictorSpec):
         default=None,
         description="""Optional kwargs passed onto the embedding_fn.""",
     )
-    resolve_multiple_fn: Union[str, Callable] = Field(
+    resolve_multiple_fn: Union[Callable, str] = Field(
         default="concatenate",
         description="""A function used for resolving multiple values within the
         interval_days, i.e. how to combine texts within the lookbehind window.
@@ -746,7 +746,7 @@ class _MinGroupSpec(BaseModel):
             output df.""",
     )
 
-    resolve_multiple_fn: List[Union[str, Callable]] = Field(
+    resolve_multiple_fn: List[Union[Callable, str]] = Field(
         description="""Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py""",
     )
@@ -871,7 +871,7 @@ class PredictorGroupSpec(_MinGroupSpec):
         output_col_name_override (Optional[str]):
             Override for the column name to use as values in the
             output df.
-        resolve_multiple_fn (List[Union[str, Callable]]):
+        resolve_multiple_fn (List[Union[Callable, str]]):
             Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py
         fallback (List[Union[Callable, str]]):
@@ -924,7 +924,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
     output_col_name_override (Optional[str]):
         Override for the column name to use as values in the
         output df.
-    resolve_multiple_fn (List[Union[str, Callable]]):
+    resolve_multiple_fn (List[Union[Callable, str]]):
         Name of resolve multiple fn, resolved from
         resolve_multiple_functions.py
     fallback (List[Union[Callable, str]]):
