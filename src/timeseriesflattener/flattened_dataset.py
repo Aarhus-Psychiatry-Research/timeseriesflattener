@@ -14,7 +14,6 @@ import coloredlogs
 import numpy as np
 import pandas as pd
 import tqdm
-from dask.diagnostics import ProgressBar
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
 
@@ -30,8 +29,6 @@ from timeseriesflattener.feature_spec_objects import (
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.utils import print_df_dimensions_diff
-
-ProgressBar().register()
 
 log = logging.getLogger(__name__)
 

@@ -10,32 +10,22 @@ classifiers = [
   "Operating System :: Microsoft :: Windows",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10"
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11"
 ]
 
 requires-python = ">=3.8.0,<3.11.0"
 
 dependencies = [
     "scipy>=1.8.0,<1.9.4",
-    "wasabi>=0.9.1,<1.1.2",
     "scikit-learn>=1.1.2,<1.2.3",
-    "wandb>=0.12.0,<0.14.1",
-    "deepchecks>=0.8.0,<0.14.0",
-    "dill>=0.3.0,<0.3.7",
-    "srsly>=2.4.4,<2.4.7",
-    "SQLAlchemy>=1.4.41, <1.5.42",
-    "pyodbc>=4.0.34, <4.0.36",
-    "dask>=2022.9.0,<2023.4.0",
     "pydantic>=1.9.0, <1.11.0",
-    "psutil>=5.9.1, <6.0.0",
     "pandas>=1.4.0,<1.6.0",
     "catalogue>=2.0.0, <2.1.0",
     "numpy>=1.23.3,<1.24.2",
     "pyarrow>=9.0.0,<11.1.0",
     "protobuf<=3.20.3", # Other versions give errors with pytest, super weird!
     "frozendict>=2.3.4,<2.4.0",
-    "skimpy>=0.0.7,<0.1.0",
-    "jupyter>=1.0.0,<1.1.0",
     "coloredlogs>14.0.0,<15.1.0",
     "psycopmlutils>=0.5.0, <0.12.0",
 ]
@@ -44,8 +34,6 @@ dependencies = [
 dev = [
     "black>=22.8.0,<23.1.1",
     "pre-commit>=2.20.0,<3.1.2",
-    "flake8>=5.0.0, <5.0.6",
-    "docformatter>=1.5.0, <1.5.2",
     "mypy>=0.971,<1.2",
     "pytest>=7.1.3, <7.2.3",
     "pytest-cov>=3.0.0,<4.0.1",
@@ -62,9 +50,14 @@ docs = [
     "autodoc_pydantic>=1.1.0,<1.9.0",
 ]
 
+tutorials = [
+    "jupyter>=1.0.0,<1.1.0",
+    "skimpy>=0.0.7,<0.1.0",
+]
+
 text = [
     "transformers>=4.26.0,<4.28.0",
-    "torch>=1.12.0,<2.0.0",
+    "torch>=1.12.0,<2.1.0",
     "sentence-transformers>=1.0.0,<2.5.0",
 ]
 
@@ -159,9 +152,6 @@ max-complexity = 10
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
-
-[tool.isort]
-known_third_party = ["wandb"]
 
 [tool.semantic_release]
 branch = "main"
