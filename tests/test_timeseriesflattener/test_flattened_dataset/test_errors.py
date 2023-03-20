@@ -59,7 +59,7 @@ def test_col_does_not_exist():
 
 
 def test_duplicate_prediction_times():
-    with pytest.raises(ValueError, match=r".*Duplicate.*"):
+    with pytest.raises(ValueError, match=r".*Duplicate.*"):  # noqa
         prediction_times_df_str = """entity_id,timestamp,
                                 1,2021-12-30 00:00:00
                                 1,2021-12-30 00:00:00

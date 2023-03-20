@@ -63,7 +63,7 @@ def test_write_and_check_feature(
     assert cache.feature_exists(feature_spec=test_spec) is True
 
 
-def test_read_feature(tmp_path):
+def test_read_feature(tmp_path: Path):
     """Test that read_feature reads a feature from disk.
 
     Important that one row contains the fallback because we then test

@@ -1,7 +1,7 @@
 """Utilities for testing."""
 
 from io import StringIO
-from typing import Any, Optional, Sequence, Union
+from typing import Any, List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
@@ -75,13 +75,17 @@ def str_to_df(
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
-def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: _AnySpec):
+def _get_value_cols_based_on_spec(
+    df: pd.DataFrame,
+    spec: _AnySpec,
+) -> Union[str, List[str]]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
     # to avoid indexing issues
     if len(value_cols) == 1:
         return value_cols[0]
+
     return value_cols
 
 
@@ -128,7 +132,7 @@ def assert_flattened_data_as_expected(
         raise ValueError("Must provide an expected set of data")
 
 
-def load_long_df_with_multiple_values():
+def load_long_df_with_multiple_values() -> DataFrame:
     """Create a long df."""
     df = synth_predictor_binary()
     df = df.rename(columns={"value": "value_name_1"})
@@ -146,7 +150,7 @@ def load_long_df_with_multiple_values():
 
 
 @data_loaders.register("load_event_times")
-def load_event_times():
+def load_event_times() -> DataFrame:
     """Load event times."""
     event_times_str = """entity_id,timestamp,value,
                     1,2021-12-30 00:00:01, 1
@@ -156,7 +160,7 @@ def load_event_times():
     return str_to_df(event_times_str)
 
 
-def check_any_item_in_list_has_str(list_of_str: list, str_: str):
+def check_any_item_in_list_has_str(list_of_str: list, str_: str) -> bool:
     """Check if any item in a list contains a string.
 
     Args:

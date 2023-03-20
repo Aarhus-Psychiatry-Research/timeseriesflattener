@@ -129,5 +129,4 @@ class ColumnHandler:
                 if isinstance(df.columns, pd.MultiIndex)  # type: ignore
                 else [output_spec.get_col_str()]  # type: ignore
             )
-        else:
-            raise ValueError("Either df or output_spec must be provided.")
+        raise ValueError("Either df or output_spec must be provided.")

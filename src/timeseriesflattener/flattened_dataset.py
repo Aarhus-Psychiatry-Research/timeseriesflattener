@@ -14,7 +14,6 @@ import coloredlogs
 import numpy as np
 import pandas as pd
 import tqdm
-from catalogue import Registry
 from dask.diagnostics import ProgressBar
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
@@ -30,7 +29,6 @@ from timeseriesflattener.feature_spec_objects import (
     _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
-from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import print_df_dimensions_diff
 
 ProgressBar().register()
@@ -45,7 +43,7 @@ class SpecCollection(PydanticBaseModel):
     predictor_specs: List[PredictorSpec] = []
     static_specs: List[_AnySpec] = []
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return number of specs in collection."""
         return (
             len(self.outcome_specs) + len(self.predictor_specs) + len(self.static_specs)
@@ -82,12 +80,15 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             "timestamp_col_name",
             "entity_id_col_name",
         ):
-            if hasattr(self.cache, attr) and getattr(self.cache, attr) is not None:
-                if getattr(self.cache, attr) != getattr(self, attr):
-                    log.info(
-                        f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
-                    )
-                    setattr(self.cache, attr, getattr(self, attr))
+            if (
+                hasattr(self.cache, attr)
+                and getattr(self.cache, attr) is not None
+                and getattr(self.cache, attr) != getattr(self, attr)
+            ):
+                log.info(
+                    f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
+                )
+                setattr(self.cache, attr, getattr(self, attr))
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
@@ -228,6 +229,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             resolve_multiple (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
             df (DataFrame): Source dataframe with all prediction time x val combinations.
             pred_time_uuid_colname (str): Name of uuid column in df.
+            val_timestamp_col_name (str): Name of timestamp column in df.
 
         Returns:
             DataFrame: DataFrame with one row pr. prediction time.
@@ -364,10 +366,13 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             timestamp_value_colname=timestamp_val_col_name,
         )
 
-        df[timestamp_val_col_name].replace({output_spec.fallback: pd.NaT}, inplace=True)
+        df[timestamp_val_col_name].replace(
+            {output_spec.fallback: pd.NaT},
+            inplace=True,  # noqa
+        )
 
         df = TimeseriesFlattener._resolve_multiple_values_within_interval_days(
-            resolve_multiple=output_spec.resolve_multiple_fn,
+            resolve_multiple=output_spec.resolve_multiple_fn,  # type: ignore
             df=df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
             val_timestamp_col_name=timestamp_val_col_name,
@@ -433,7 +438,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         """Get feature. Either load from cache, or generate if necessary.
 
         Args:
-            file_suffix (str, optional): File suffix for the cache lookup. Defaults to "parquet".
+            feature_spec (TemporalSpec): Specification of the feature.
 
         Returns:
             pd.DataFrame: Feature
@@ -445,8 +450,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 )
                 df = self.cache.read_feature(feature_spec=feature_spec)
                 return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
-            else:
-                log.debug(f"Cache miss for {feature_spec.get_col_str()}, generating")
+            log.debug(f"Cache miss for {feature_spec.get_col_str()}, generating")
         elif not self.cache:
             log.debug("No cache specified, not attempting load")
 
@@ -711,7 +715,10 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         return None
 
     @print_df_dimensions_diff
-    def _drop_pred_time_if_insufficient_look_distance(self, df: pd.DataFrame):
+    def _drop_pred_time_if_insufficient_look_distance(
+        self,
+        df: pd.DataFrame,
+    ) -> pd.DataFrame:
         """Drop prediction times if there is insufficient look distance.
 
         A prediction time has insufficient look distance if the feature spec
@@ -911,7 +918,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         ).round(2)
 
         # Remove date of birth column
-        self._df.drop(columns=tmp_date_of_birth_col_name, inplace=True)
+        self._df.drop(columns=tmp_date_of_birth_col_name, inplace=True)  # noqa
 
     def compute(self):
         """Compute the flattened dataset."""

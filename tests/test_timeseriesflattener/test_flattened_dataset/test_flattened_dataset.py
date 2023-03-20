@@ -61,7 +61,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     assert dataset.unprocessed_specs.static_specs == [static_spec]
 
     # Test adding an invalid spec type
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa
         dataset.add_spec("invalid spec")
 
 

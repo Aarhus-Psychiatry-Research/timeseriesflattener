@@ -9,7 +9,6 @@ import pandas as pd
 from frozendict import frozendict
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra, Field
-from pydantic.fields import FieldInfo
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders, split_dfs
@@ -22,7 +21,7 @@ log = logging.getLogger(__name__)
 @lru_cache
 def load_df_with_cache(
     loader_fn: Callable,
-    kwargs: Optional[Dict[str, Any]],
+    kwargs: Dict[str, Any],
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
@@ -810,9 +809,9 @@ class _MinGroupSpec(BaseModel):
                 else self.input_col_name_override
             )
 
-            self.values_df.rename(
+            self.values_df.rename(  # type: ignore
                 columns={input_col_name: self.output_col_name_override},
-                inplace=True,
+                inplace=True,  # noqa
             )
 
 

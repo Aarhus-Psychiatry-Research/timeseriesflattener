@@ -60,7 +60,7 @@ def create_flattened_df(
     predictor_specs: List[PredictorSpec],
     prediction_times_df: pd.DataFrame,
     cache: Optional[FeatureCache] = None,
-):
+) -> pd.DataFrame:
     """Create a dataset df for testing."""
     flat_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,

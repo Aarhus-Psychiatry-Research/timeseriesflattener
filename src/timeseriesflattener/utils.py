@@ -144,7 +144,7 @@ def load_most_recent_file_matching_pattern_as_df(
     return load_dataset_from_file(file_path=most_recent_file)
 
 
-def df_contains_duplicates(df: pd.DataFrame, col_subset: List[str]):
+def df_contains_duplicates(df: pd.DataFrame, col_subset: List[str]) -> bool:
     """Check if a dataframe contains duplicates.
 
     Args:
@@ -191,7 +191,7 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[Dict[str, Any]])
     for d in predictor_spec_list:
         # Remove any keys with unhashable values
         # Otherwise, we get an error when using "in".
-        d = {k: v for k, v in d.items() if isinstance(v, Hashable)}
+        d = {k: v for k, v in d.items() if isinstance(v, Hashable)}  # noqa
 
         d_as_tuple = tuple(d.items())
         if d_as_tuple in seen:  # pylint: disable=R6103
@@ -203,15 +203,15 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[Dict[str, Any]])
         raise ValueError(f"Found duplicates in list of dicts: {duplicates}")
 
 
-def print_df_dimensions_diff(
+def print_df_dimensions_diff(  # noqa
     func: Callable,
     print_when_starting: bool = False,
-    print_when_no_diff=False,
+    print_when_no_diff: bool = False,
 ):
     """Print the difference in rows between the input and output dataframes."""
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # noqa
         log = logging.getLogger(__name__)
 
         if print_when_starting:

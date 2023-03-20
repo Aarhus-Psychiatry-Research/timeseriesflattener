@@ -3,7 +3,7 @@
 import pytest
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser):  # noqa
     parser.addoption(
         "--skiphuggingface",
         action="store_true",
@@ -12,14 +12,14 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_configure(config):
+def pytest_configure(config):  # noqa
     config.addinivalue_line(
         "markers",
         "huggingface: mark test as using huggingface models",
     )
 
 
-def pytest_collection_modifyitems(config, items):
+def pytest_collection_modifyitems(config, items):  # noqa
     if config.getoption("--skiphuggingface"):
         # --skiphuggingface given in cli: skip huggingface tests
         skip_hf = pytest.mark.skip(reason="remove --skiphuggingface option to run")

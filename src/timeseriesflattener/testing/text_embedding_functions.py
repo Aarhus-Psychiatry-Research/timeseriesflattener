@@ -1,6 +1,7 @@
 """Functions for embedding text data into a vector space. These functions are used
 in the tests. You can use them for inspiration to create your own embedding functions."""
 import pickle as pkl
+from pathlib import Path
 
 import pandas as pd
 from pandas import DataFrame, Series
@@ -13,7 +14,7 @@ def _load_bow_model() -> CountVectorizer:
     """Loads the bag-of-words model from a pickle file"""
     filename = PROJECT_ROOT / "tests" / "test_data" / "models" / "synth_bow_model.pkl"
 
-    with open(filename, "rb") as f:
+    with Path(filename).open("rb") as f:
         return pkl.load(f)
 
 
@@ -21,7 +22,7 @@ def _load_pca_model() -> PCA:
     """Loads the PCA model from a pickle file"""
     filename = PROJECT_ROOT / "tests" / "test_data" / "models" / "synth_pca_model.pkl"
 
-    with open(filename, "rb") as f:
+    with Path(filename).open("rb") as f:
         return pkl.load(f)
 
 
