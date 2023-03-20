@@ -59,7 +59,7 @@ docs = [
 ]
 
 text = [
-    "transformers>=4.26.0,<4.27.0",
+    "transformers>=4.26.0,<4.28.0",
     "torch>=1.0.0,<1.14.0",
     "sentence-transformers>=1.0.0,<2.5.0",
 ]
