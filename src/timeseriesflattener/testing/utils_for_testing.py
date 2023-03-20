@@ -1,21 +1,15 @@
 """Utilities for testing."""
 
-from collections.abc import Sequence
 from io import StringIO
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
-import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
-
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import _AnySpec
 from timeseriesflattener.testing.load_synth_data import (
-    load_synth_outcome,
-    load_synth_prediction_times,
-    load_synth_text,
     synth_predictor_binary,
 )
 from timeseriesflattener.utils import data_loaders
@@ -77,13 +71,17 @@ def str_to_df(
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
-def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: _AnySpec):
+def _get_value_cols_based_on_spec(
+    df: pd.DataFrame,
+    spec: _AnySpec,
+) -> Union[str, List[str]]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
     # to avoid indexing issues
     if len(value_cols) == 1:
         return value_cols[0]
+
     return value_cols
 
 
@@ -130,7 +128,7 @@ def assert_flattened_data_as_expected(
         raise ValueError("Must provide an expected set of data")
 
 
-def load_long_df_with_multiple_values():
+def load_long_df_with_multiple_values() -> DataFrame:
     """Create a long df."""
     df = synth_predictor_binary()
     df = df.rename(columns={"value": "value_name_1"})
@@ -148,7 +146,7 @@ def load_long_df_with_multiple_values():
 
 
 @data_loaders.register("load_event_times")
-def load_event_times():
+def load_event_times() -> DataFrame:
     """Load event times."""
     event_times_str = """entity_id,timestamp,value,
                     1,2021-12-30 00:00:01, 1
@@ -158,7 +156,7 @@ def load_event_times():
     return str_to_df(event_times_str)
 
 
-def check_any_item_in_list_has_str(list_of_str: list, str_: str):
+def check_any_item_in_list_has_str(list_of_str: list, str_: str) -> bool:
     """Check if any item in a list contains a string.
 
     Args:
@@ -169,33 +167,3 @@ def check_any_item_in_list_has_str(list_of_str: list, str_: str):
         bool: True if any item in the list contains the string.
     """
     return any(str_ in item for item in list_of_str)
-
-
-@pytest.fixture(scope="function")
-def synth_prediction_times():
-    """Load the prediction times."""
-    return load_synth_prediction_times()
-
-
-@pytest.fixture(scope="function")
-def synth_predictor():
-    """Load the synth outcome times."""
-    return load_synth_outcome(n_rows=1_000)
-
-
-@pytest.fixture(scope="function")
-def synth_outcome():
-    """Load the synth outcome times."""
-    return load_synth_outcome()
-
-
-@pytest.fixture(scope="function")
-def long_df_with_multiple_values():
-    """Load the long df."""
-    return load_long_df_with_multiple_values()
-
-
-@pytest.fixture(scope="function")
-def synth_text_data():
-    """Load the synth text data."""
-    return load_synth_text()

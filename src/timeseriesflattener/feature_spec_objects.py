@@ -2,15 +2,13 @@
 import itertools
 import logging
 import time
-from collections.abc import Callable, Sequence
-from functools import cache
-from typing import Any, Optional, Union
+from functools import lru_cache
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
 import pandas as pd
-from frozendict import frozendict  # type: ignore
+from frozendict import frozendict
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra, Field
-from pydantic.fields import FieldInfo
 
 from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 from timeseriesflattener.utils import data_loaders, split_dfs
@@ -20,10 +18,10 @@ log = logging.getLogger(__name__)
 # pylint: disable=consider-alternative-union-syntax, trailing-whitespace, missing-class-docstring, too-few-public-methods
 
 
-@cache
+@lru_cache
 def load_df_with_cache(
     loader_fn: Callable,
-    kwargs: Optional[dict[str, Any]],
+    kwargs: Dict[str, Any],
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
@@ -48,7 +46,7 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
     return key in d and d[key] is not None
 
 
-def resolve_from_dict_or_registry(data: dict[str, Any]):
+def resolve_from_dict_or_registry(data: Dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
 
     if "values_name" in data and data["values_name"] is not None:
@@ -61,19 +59,17 @@ def resolve_from_dict_or_registry(data: dict[str, Any]):
             data["values_loader"] = data_loaders.get(data["values_loader"])
 
         if callable(data["values_loader"]):
-            if "loader_kwargs" not in data:
-                data["loader_kwargs"] = {}
-            elif data["loader_kwargs"] is None:
+            if "loader_kwargs" not in data or data["loader_kwargs"] is None:
                 data["loader_kwargs"] = {}
 
             data["values_df"] = load_df_with_cache(
                 loader_fn=data["values_loader"],
-                kwargs=frozendict(data["loader_kwargs"]),
+                kwargs=frozendict(data["loader_kwargs"]),  # type: ignore
                 feature_name=data["feature_name"],
             )
 
 
-def resolve_values_df(data: dict[str, Any]):
+def resolve_values_df(data: Dict[str, Any]) -> Dict[str, pd.DataFrame]:
     """Resolve the values_df attribute to a dataframe."""
     if not any(key in data for key in ["values_loader", "values_name", "values_df"]):
         raise ValueError(
@@ -116,7 +112,7 @@ class BaseModel(PydanticBaseModel):
     # This means we want to auto-generate docstrings to support the inheritance,
     # but also need to hard-code the docstring to support pylance.
     class Doc:
-        short_description: str = """Modified Pydantic BaseModel to allow arbitrary 
+        short_description: str = """Modified Pydantic BaseModel to allow arbitrary
         types and disallow attributes not in the class."""
 
     class Config:
@@ -159,7 +155,7 @@ def generate_docstring_from_attributes(cls: BaseModel) -> str:
     return doc
 
 
-def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.DataFrame):
+def check_that_col_names_in_kwargs_exist_in_df(data: Dict[str, Any], df: pd.DataFrame):
     """Check that all column names in data are in the dataframe.
 
     Keys with "col_name" in them specify a column name.
@@ -167,7 +163,7 @@ def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.Data
     The dataframe should be in the values_df key of data.
     """
     attributes_with_col_name = {
-        key for key in data.keys() if "col_name" in key and isinstance(data[key], str)
+        key for key in data if "col_name" in key and isinstance(data[key], str)
     }
 
     skip_attributes = {"output_col_name_override"}
@@ -226,12 +222,12 @@ class _AnySpec(BaseModel):
 
     values_name: Optional[str] = Field(
         default=None,
-        description="""A string that maps to a key in a dictionary instantiated by 
-            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which 
+        description="""A string that maps to a key in a dictionary instantiated by
+            `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.""",
     )
 
-    loader_kwargs: Optional[dict[str, Any]] = Field(
+    loader_kwargs: Optional[Dict[str, Any]] = Field(
         default=None,
         description="""Optional kwargs for the values_loader.""",
     )
@@ -242,7 +238,7 @@ class _AnySpec(BaseModel):
     )
 
     feature_name: str = Field(
-        description="""The name of the feature. Used for column name generation, e.g. 
+        description="""The name of the feature. Used for column name generation, e.g.
             <prefix>_<feature_name>.""",
     )
 
@@ -253,8 +249,8 @@ class _AnySpec(BaseModel):
 
     input_col_name_override: Optional[str] = Field(
         default=None,
-        description="""An override for the input column name. If None, will  attempt 
-            to infer it by looking for the only column that doesn't match id_col_name 
+        description="""An override for the input column name. If None, will  attempt
+            to infer it by looking for the only column that doesn't match id_col_name
             or timestamp_col_name.""",
     )
 
@@ -300,7 +296,7 @@ class _AnySpec(BaseModel):
         col_str = f"{self.prefix}_{feature_name}"
         return col_str
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """Add equality check for dataframes.
 
         Trying to run `spec in list_of_specs` works for all attributes except for df, since the truth value of a dataframe is ambiguous.
@@ -375,23 +371,23 @@ class TemporalSpec(_AnySpec):
     """
 
     class Doc:
-        short_description = """The minimum specification required for collapsing a temporal 
+        short_description = """The minimum specification required for collapsing a temporal
         feature, whether looking ahead or behind. Mostly used for inheritance below."""
 
     interval_days: Union[int, float] = Field(
-        description="""How far to look in the given direction (ahead for outcomes, 
+        description="""How far to look in the given direction (ahead for outcomes,
             behind for predictors)""",
     )
 
     resolve_multiple_fn: Union[Callable, str] = Field(
-        description="""A function used for resolving multiple values within the 
+        description="""A function used for resolving multiple values within the
             interval_days.""",
     )
 
     key_for_resolve_multiple: Optional[str] = Field(
         default=None,
-        description="""Key used to lookup the resolve_multiple_fn in the 
-            resolve_multiple_fns registry. Used for column name generation. Only 
+        description="""Key used to lookup the resolve_multiple_fn in the
+            resolve_multiple_fns registry. Used for column name generation. Only
             required if you don't specify a resolve_multiple_fn. Call
             timeseriesflattener.resolve_multiple_fns.resolve_multiple_fns.get_all()
             for a list of options.""",
@@ -403,7 +399,7 @@ class TemporalSpec(_AnySpec):
 
     allowed_nan_value_prop: float = Field(
         default=0.0,
-        description="""If NaN is higher than this in the input dataframe during 
+        description="""If NaN is higher than this in the input dataframe during
             resolution, raise an error.""",
     )
 
@@ -417,7 +413,7 @@ class TemporalSpec(_AnySpec):
         description="""Optional kwargs passed onto the data loader.""",
     )
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         if not hasattr(self, "key_for_resolve_multiple") and callable(
             data["resolve_multiple_fn"],
         ):
@@ -518,7 +514,7 @@ class PredictorSpec(TemporalSpec):
         description="""How far behind to look for values""",
     )
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         if "lookbehind_days" in data:
             data["interval_days"] = data["lookbehind_days"]
 
@@ -560,7 +556,7 @@ class TextPredictorSpec(PredictorSpec):
         interval_days (Union[int, float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
-        resolve_multiple_fn (Union[str, Callable]):
+        resolve_multiple_fn (Union[Callable, str]):
             A function used for resolving multiple values within the
         interval_days, i.e. how to combine texts within the lookbehind window.
         Defaults to: 'concatenate'. Other possible options are 'latest' and
@@ -593,7 +589,7 @@ class TextPredictorSpec(PredictorSpec):
         )
 
     embedding_fn: Callable = Field(
-        description="""A function used for embedding the text. Should take a 
+        description="""A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.""",
     )
@@ -601,10 +597,10 @@ class TextPredictorSpec(PredictorSpec):
         default=None,
         description="""Optional kwargs passed onto the embedding_fn.""",
     )
-    resolve_multiple_fn: Union[str, Callable] = Field(
+    resolve_multiple_fn: Union[Callable, str] = Field(
         default="concatenate",
         description="""A function used for resolving multiple values within the
-        interval_days, i.e. how to combine texts within the lookbehind window. 
+        interval_days, i.e. how to combine texts within the lookbehind window.
         Defaults to: 'concatenate'. Other possible options are 'latest' and
         'earliest'.""",
     )
@@ -677,9 +673,9 @@ class OutcomeSpec(TemporalSpec):
     )
 
     incident: bool = Field(
-        description="""Whether the outcome is incident or not. 
-            I.e., incident outcomes are outcomes you can only experience once. 
-            For example, type 2 diabetes is incident. Incident outcomes can be handled 
+        description="""Whether the outcome is incident or not.
+            I.e., incident outcomes are outcomes you can only experience once.
+            For example, type 2 diabetes is incident. Incident outcomes can be handled
             in a vectorised way during resolution, which is faster than non-incident outcomes.""",
     )
 
@@ -687,7 +683,7 @@ class OutcomeSpec(TemporalSpec):
         description="""How far ahead to look for values""",
     )
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         if "lookahead_days" in data:
             data["interval_days"] = data["lookahead_days"]
 
@@ -717,20 +713,20 @@ class OutcomeSpec(TemporalSpec):
 
 class _MinGroupSpec(BaseModel):
     class Doc:
-        short_description = """Minimum specification for a group of features, 
-        whether they're looking ahead or behind. 
+        short_description = """Minimum specification for a group of features,
+        whether they're looking ahead or behind.
 
         Used to generate combinations of features."""
 
-    values_loader: Optional[list[str]] = Field(
+    values_loader: Optional[List[str]] = Field(
         default=None,
-        description="""Loader for the df. Tries to resolve from the data_loaders 
+        description="""Loader for the df. Tries to resolve from the data_loaders
             registry, then calls the function which should return a dataframe.""",
     )
 
-    values_name: Optional[list[str]] = Field(
+    values_name: Optional[List[str]] = Field(
         default=None,
-        description="""List of strings that corresponds to a key in a dictionary 
+        description="""List of strings that corresponds to a key in a dictionary
             of multiple dataframes that correspods to a name of a type of values.""",
     )
 
@@ -746,22 +742,22 @@ class _MinGroupSpec(BaseModel):
 
     output_col_name_override: Optional[str] = Field(
         default=None,
-        description="""Override for the column name to use as values in the 
+        description="""Override for the column name to use as values in the
             output df.""",
     )
 
-    resolve_multiple_fn: list[Union[str, Callable]] = Field(
-        description="""Name of resolve multiple fn, resolved from 
+    resolve_multiple_fn: List[Union[Callable, str]] = Field(
+        description="""Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py""",
     )
 
-    fallback: list[Union[Callable, str]] = Field(
+    fallback: List[Union[Callable, str]] = Field(
         description="""Which value to use if no values are found within interval_days.""",
     )
 
-    allowed_nan_value_prop: list[float] = Field(
+    allowed_nan_value_prop: List[float] = Field(
         default=[0.0],
-        description="""If NaN is higher than this in the input dataframe during 
+        description="""If NaN is higher than this in the input dataframe during
             resolution, raise an error.""",
     )
 
@@ -770,7 +766,7 @@ class _MinGroupSpec(BaseModel):
         description="""Prefix for column name, e.g. <prefix>_<feature_name>.""",
     )
 
-    loader_kwargs: Optional[list[dict[str, Any]]] = Field(
+    loader_kwargs: Optional[List[Dict[str, Any]]] = Field(
         default=None,
         description="""Optional kwargs for the values_loader.""",
     )
@@ -783,9 +779,7 @@ class _MinGroupSpec(BaseModel):
         if len(invalid_loaders) != 0:
             # New line variable as f-string can't handle backslashes
             nl = "\n"  # pylint: disable = invalid-name
-            available_loaders = [
-                str(loader) for loader in data_loaders.get_all().keys()
-            ]
+            available_loaders = [str(loader) for loader in data_loaders.get_all()]
 
             avail_loaders_str = nl.join(available_loaders)
 
@@ -801,7 +795,7 @@ class _MinGroupSpec(BaseModel):
 
     # Prefix for the column name. Overrides the default prefix for the feature type.
 
-    def __init__(self, **data):
+    def __init__(self, **data: Any):
         super().__init__(**data)
 
         # Check that all passed loaders are valid
@@ -815,25 +809,25 @@ class _MinGroupSpec(BaseModel):
                 else self.input_col_name_override
             )
 
-            self.values_df.rename(
+            self.values_df.rename(  # type: ignore
                 columns={input_col_name: self.output_col_name_override},
-                inplace=True,
+                inplace=True,  # noqa
             )
 
 
 def create_feature_combinations_from_dict(
-    d: dict[str, Union[str, list]],
-) -> list[dict[str, Union[str, float, int]]]:
+    d: Dict[str, Union[str, list]],
+) -> List[Dict[str, Union[str, float, int]]]:
     """Create feature combinations from a dictionary of feature specifications.
 
     Only unpacks the top level of lists.
 
     Args:
-        d (dict[str]): A dictionary of feature specifications.
+        d (Dict[str]): A dictionary of feature specifications.
 
     Returns
     -------
-        list[dict[str]]: list of all possible combinations of the arguments.
+        List[Dict[str]]: list of all possible combinations of the arguments.
     """
     # Make all elements iterable
     d = {k: v if isinstance(v, (list, tuple)) else [v] for k, v in d.items()}
@@ -848,7 +842,7 @@ def create_feature_combinations_from_dict(
 def create_specs_from_group(
     feature_group_spec: _MinGroupSpec,
     output_class: _AnySpec,
-) -> list[_AnySpec]:
+) -> List[_AnySpec]:
     """Create a list of specs from a GroupSpec."""
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
@@ -877,7 +871,7 @@ class PredictorGroupSpec(_MinGroupSpec):
         output_col_name_override (Optional[str]):
             Override for the column name to use as values in the
             output df.
-        resolve_multiple_fn (List[Union[str, Callable]]):
+        resolve_multiple_fn (List[Union[Callable, str]]):
             Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py
         fallback (List[Union[Callable, str]]):
@@ -887,7 +881,7 @@ class PredictorGroupSpec(_MinGroupSpec):
             resolution, raise an error. Defaults to: [0.0].
         prefix (str):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
-        loader_kwargs (Optional[List[dict[str, Any]]]):
+        loader_kwargs (Optional[List[Dict[str, Any]]]):
             Optional kwargs for the values_loader.
         lookbehind_days (List[Union[int, float]]):
             How far behind to look for values
@@ -901,15 +895,15 @@ class PredictorGroupSpec(_MinGroupSpec):
         description="""Prefix for column name, e,g, <prefix>_<feature_name>.""",
     )
 
-    lookbehind_days: list[Union[int, float]] = Field(
+    lookbehind_days: List[Union[int, float]] = Field(
         description="""How far behind to look for values""",
     )
 
-    def create_combinations(self) -> list[PredictorSpec]:
+    def create_combinations(self) -> List[PredictorSpec]:
         """Create all combinations from the group spec."""
-        return create_specs_from_group(
+        return create_specs_from_group(  # type: ignore
             feature_group_spec=self,
-            output_class=PredictorSpec,
+            output_class=PredictorSpec,  # type: ignore
         )
 
 
@@ -930,7 +924,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
     output_col_name_override (Optional[str]):
         Override for the column name to use as values in the
         output df.
-    resolve_multiple_fn (List[Union[str, Callable]]):
+    resolve_multiple_fn (List[Union[Callable, str]]):
         Name of resolve multiple fn, resolved from
         resolve_multiple_functions.py
     fallback (List[Union[Callable, str]]):
@@ -940,7 +934,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
         resolution, raise an error. Defaults to: [0.0].
     prefix (str):
         Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
-    loader_kwargs (Optional[List[dict[str, Any]]]):
+    loader_kwargs (Optional[List[Dict[str, Any]]]):
         Optional kwargs for the values_loader.
     incident (Sequence[bool]):
         Whether the outcome is incident or not, i.e. whether you
@@ -960,19 +954,19 @@ class OutcomeGroupSpec(_MinGroupSpec):
     )
 
     incident: Sequence[bool] = Field(
-        description="""Whether the outcome is incident or not, i.e. whether you 
-            can experience it more than once. For example, type 2 diabetes is incident. 
-            Incident outcomes can be handled in a vectorised way during resolution, 
+        description="""Whether the outcome is incident or not, i.e. whether you
+            can experience it more than once. For example, type 2 diabetes is incident.
+            Incident outcomes can be handled in a vectorised way during resolution,
              which is faster than non-incident outcomes.""",
     )
 
-    lookahead_days: list[Union[int, float]] = Field(
+    lookahead_days: List[Union[int, float]] = Field(
         description="""How far ahead to look for values""",
     )
 
-    def create_combinations(self) -> list[OutcomeSpec]:
+    def create_combinations(self) -> List[OutcomeSpec]:
         """Create all combinations from the group spec."""
-        return create_specs_from_group(
+        return create_specs_from_group(  # type: ignore
             feature_group_spec=self,
-            output_class=OutcomeSpec,
+            output_class=OutcomeSpec,  # type: ignore
         )

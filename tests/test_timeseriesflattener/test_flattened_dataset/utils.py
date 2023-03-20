@@ -2,11 +2,10 @@
 
 # pylint: disable=unused-import, redefined-outer-name
 
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 import pandas as pd
-
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_spec_objects import PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
@@ -58,10 +57,10 @@ def check_dfs_have_same_contents_by_column(df1: pd.DataFrame, df2: pd.DataFrame)
 
 
 def create_flattened_df(
-    predictor_specs: list[PredictorSpec],
+    predictor_specs: List[PredictorSpec],
     prediction_times_df: pd.DataFrame,
     cache: Optional[FeatureCache] = None,
-):
+) -> pd.DataFrame:
     """Create a dataset df for testing."""
     flat_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,

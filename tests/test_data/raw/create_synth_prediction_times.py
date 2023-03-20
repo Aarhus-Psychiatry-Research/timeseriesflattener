@@ -3,7 +3,6 @@
 from psycopmlutils.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )
-
 from timeseriesflattener.utils import PROJECT_ROOT
 
 if __name__ == "__main__":

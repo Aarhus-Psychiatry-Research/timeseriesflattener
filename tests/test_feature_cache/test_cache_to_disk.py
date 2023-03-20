@@ -5,14 +5,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_spec_objects import PredictorSpec
 from timeseriesflattener.resolve_multiple_functions import latest
-from timeseriesflattener.testing.utils_for_testing import synth_outcome, synth_predictor
-
-# Avoid ruff auto-removing unused imports
-fixtures = [synth_predictor, synth_outcome]
 
 
 def test_write_and_check_feature(
@@ -64,7 +59,7 @@ def test_write_and_check_feature(
     assert cache.feature_exists(feature_spec=test_spec) is True
 
 
-def test_read_feature(tmp_path):
+def test_read_feature(tmp_path: Path):
     """Test that read_feature reads a feature from disk.
 
     Important that one row contains the fallback because we then test

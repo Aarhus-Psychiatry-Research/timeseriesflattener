@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-
 from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
@@ -11,16 +10,7 @@ from timeseriesflattener.feature_spec_objects import (
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.resolve_multiple_functions import latest, mean
-from timeseriesflattener.testing.utils_for_testing import (
-    synth_outcome,
-    synth_prediction_times,
-)
 from timeseriesflattener.text_embedding_functions import sentence_transformers_embedding
-
-# To avoid ruff auto-removing unused imports
-used_funcs = [synth_prediction_times, synth_outcome]
-
-# pylint: disable=missing-function-docstring
 
 
 def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame):
@@ -62,11 +52,11 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     assert dataset.unprocessed_specs.static_specs == [static_spec]
 
     # Test adding an invalid spec type
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa
         dataset.add_spec("invalid spec")
 
 
-@pytest.mark.huggingface
+@pytest.mark.huggingface()
 def test_compute_specs(
     synth_prediction_times: pd.DataFrame,
     synth_outcome: pd.DataFrame,

@@ -2,16 +2,15 @@
 Used for testing purposes."""
 import pickle as pkl
 from pathlib import Path
-from typing import Sequence
+from typing import Any, List, Sequence
 
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import CountVectorizer
-
 from timeseriesflattener.testing.load_synth_data import load_synth_text
 
 
-def train_bow_model(corpus: Sequence[str]):
+def train_bow_model(corpus: Sequence[str]) -> CountVectorizer:
     """
     Trains a bag-of-words model on the synthetic data"
 
@@ -23,7 +22,7 @@ def train_bow_model(corpus: Sequence[str]):
     return model
 
 
-def load_synth_txt_data():
+def load_synth_txt_data() -> List[str]:
     """
     Loads the synthetic text data and returns the text
     """
@@ -31,7 +30,7 @@ def load_synth_txt_data():
     return df["text"].dropna().tolist()
 
 
-def train_pca_model(embedding: np.ndarray):
+def train_pca_model(embedding: np.ndarray) -> PCA:
     """
     Trains a PCA model on the synthetic data
 
@@ -43,7 +42,10 @@ def train_pca_model(embedding: np.ndarray):
     return model
 
 
-def save_model_to_test_dir(model, filename: str):  # pylint: disable=missing-type-doc
+def save_model_to_test_dir(
+    model: Any,
+    filename: str,
+):  # pylint: disable=missing-type-doc
     """
     Saves the model to a pickle file
 
@@ -52,9 +54,9 @@ def save_model_to_test_dir(model, filename: str):  # pylint: disable=missing-typ
         filename: The filename to save the model to
     """
     project_root = Path(__file__).resolve().parents[3]
-    filename = project_root / "tests" / "test_data" / "models" / filename
+    filename = project_root / "tests" / "test_data" / "models" / filename  # type: ignore
 
-    with open(filename, "wb") as f:
+    with Path(filename).open("wb") as f:
         pkl.dump(model, f)
 
 

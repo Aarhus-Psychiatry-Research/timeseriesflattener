@@ -1,7 +1,6 @@
 """Tests for errors raised from flattened dataset class."""
 
 import pytest
-
 from timeseriesflattener.feature_spec_objects import PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.utils_for_testing import (
@@ -19,7 +18,7 @@ def test_col_does_not_exist_in_prediction_times():
     prediction_times_df = str_to_df(prediction_times_str)
 
     with pytest.raises(KeyError, match=r".*does not exist.*"):
-        TimeseriesFlattener(  # noqa
+        TimeseriesFlattener(
             prediction_times_df=prediction_times_df,
             timestamp_col_name="timestamp",
             entity_id_col_name="entity_id",
@@ -60,7 +59,7 @@ def test_col_does_not_exist():
 
 
 def test_duplicate_prediction_times():
-    with pytest.raises(ValueError, match=r".*Duplicate.*"):
+    with pytest.raises(ValueError, match=r".*Duplicate.*"):  # noqa
         prediction_times_df_str = """entity_id,timestamp,
                                 1,2021-12-30 00:00:00
                                 1,2021-12-30 00:00:00

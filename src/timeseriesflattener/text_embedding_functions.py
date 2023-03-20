@@ -1,6 +1,4 @@
 """Functions for embedding text data"""
-from collections.abc import Callable
-from typing import Optional
 
 import pandas as pd
 import torch

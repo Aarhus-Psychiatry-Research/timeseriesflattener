@@ -5,7 +5,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
@@ -315,7 +314,7 @@ def test_add_age_error():
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa
         dataset.add_age(
             date_of_birth_df=str_to_df(static_predictor),
             date_of_birth_col_name="date_of_birth",

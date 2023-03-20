@@ -2,7 +2,6 @@
 # pylint: disable=missing-function-docstring
 
 import numpy as np
-
 from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,

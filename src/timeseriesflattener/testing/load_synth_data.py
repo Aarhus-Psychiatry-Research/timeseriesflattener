@@ -4,7 +4,6 @@ import logging
 from typing import Optional
 
 import pandas as pd
-
 from timeseriesflattener.utils import PROJECT_ROOT, data_loaders
 
 log = logging.getLogger(__name__)

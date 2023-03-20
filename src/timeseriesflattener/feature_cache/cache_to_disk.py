@@ -31,6 +31,8 @@ class DiskCache(FeatureCache):
                 Must be set at some point, but doesn't have to be set at init.
                 Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer. Defaults to None.
             pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids. Defaults to "pred_time_uuid".
+            entity_id_col_name (str, optional): Name of column containing entity ids. Defaults to "entity_id".
+            timestamp_col_name (str, optional): Name of column containing timestamps. Defaults to "timestamp".
             cache_file_suffix (str, optional): File suffix for cache files. Defaults to ".parquet".
         """
 

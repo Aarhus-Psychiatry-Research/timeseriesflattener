@@ -6,15 +6,14 @@ utilities. If this file grows, consider splitting it up.
 import functools
 import logging
 import os
-from collections.abc import Callable, Hashable
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Callable, Dict, Hashable, List, Optional
 
 import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_dfs: dict[str, pd.DataFrame] = {}
+split_dfs: Dict[str, pd.DataFrame] = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -56,7 +55,6 @@ def split_df_and_register_to_dict(
     value_names = df[value_names_col_name].unique()
 
     for value_name in value_names:
-
         value_df = df[df[value_names_col_name] == value_name][
             [entity_id_col_name, timestamp_col_name, value_col_name]
         ]
@@ -110,13 +108,12 @@ def load_dataset_from_file(
     if file_suffix == ".csv":
         return pd.read_csv(file_path, nrows=nrows)
 
-    elif file_suffix == ".parquet":
+    if file_suffix == ".parquet":
         if nrows:
             raise ValueError("nrows not supported for parquet files")
-
         return pd.read_parquet(file_path)
-    else:
-        raise ValueError(f"Invalid file suffix {file_suffix}")
+
+    raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
 def load_most_recent_file_matching_pattern_as_df(
@@ -147,12 +144,12 @@ def load_most_recent_file_matching_pattern_as_df(
     return load_dataset_from_file(file_path=most_recent_file)
 
 
-def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]):
+def df_contains_duplicates(df: pd.DataFrame, col_subset: List[str]) -> bool:
     """Check if a dataframe contains duplicates.
 
     Args:
         df (pd.DataFrame): Dataframe to check.
-        col_subset (list[str]): Columns to check for duplicates.
+        col_subset (List[str]): Columns to check for duplicates.
 
     Returns:
         bool: True if duplicates are found.
@@ -181,11 +178,11 @@ def write_df_to_file(
         raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[Dict[str, Any]]):
     """Find potential duplicates in list of dicts.
 
     Args:
-        predictor_spec_list (list[dict[str, dict[str, Any]]]): List of predictor combinations.
+        predictor_spec_list (List[Dict[str, Dict[str, Any]]]): List of predictor combinations.
     """
     # Find duplicates in list of dicts
     seen = set()
@@ -194,7 +191,7 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]])
     for d in predictor_spec_list:
         # Remove any keys with unhashable values
         # Otherwise, we get an error when using "in".
-        d = {k: v for k, v in d.items() if isinstance(v, Hashable)}
+        d = {k: v for k, v in d.items() if isinstance(v, Hashable)}  # noqa
 
         d_as_tuple = tuple(d.items())
         if d_as_tuple in seen:  # pylint: disable=R6103
@@ -206,15 +203,15 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]])
         raise ValueError(f"Found duplicates in list of dicts: {duplicates}")
 
 
-def print_df_dimensions_diff(
+def print_df_dimensions_diff(  # noqa
     func: Callable,
     print_when_starting: bool = False,
-    print_when_no_diff=False,
+    print_when_no_diff: bool = False,
 ):
     """Print the difference in rows between the input and output dataframes."""
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # noqa
         log = logging.getLogger(__name__)
 
         if print_when_starting:

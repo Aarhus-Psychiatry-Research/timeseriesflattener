@@ -2,17 +2,17 @@
 import random
 import time
 import uuid
-from typing import Callable
+from typing import Any, Callable, List
 
 import pandas as pd
 import pytest
-
+from pandas import DataFrame
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 
 # pylint: disable=protected-access
 
 
-def benchmark(func: Callable, *args, **kwargs):
+def benchmark(func: Callable, *args: Any, **kwargs: Any) -> float:
     """Benchmark a function."""
     start = time.perf_counter()
     func(*args, **kwargs)
@@ -21,7 +21,7 @@ def benchmark(func: Callable, *args, **kwargs):
     return end - start
 
 
-def generate_test_df(uuids: list[str], col_values: list[int] = None):
+def generate_test_df(uuids: List[str], col_values: List[int]) -> DataFrame:
     """Generate a test df with a random integer column and a uuid index."""
     df = pd.DataFrame()
 

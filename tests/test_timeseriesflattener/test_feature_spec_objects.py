@@ -1,10 +1,10 @@
 """Test that feature spec objects work as intended."""
-import difflib
+
+from typing import List
 
 import numpy as np
 import pandas as pd
 import pytest
-
 from timeseriesflattener.feature_spec_objects import (
     BaseModel,
     OutcomeGroupSpec,
@@ -22,8 +22,7 @@ from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unu
     load_synth_predictor_float,
     synth_predictor_binary,
 )
-from timeseriesflattener.testing.utils_for_testing import long_df_with_multiple_values
-from timeseriesflattener.utils import data_loaders, split_df_and_register_to_dict
+from timeseriesflattener.utils import split_df_and_register_to_dict
 
 
 def test_anyspec_init():
@@ -145,6 +144,17 @@ def test_resolve_multiple_fn_to_str():
     assert "maximum" in pred_spec_batch[0].get_col_str()
 
 
+def get_lines_with_diff(text1: str, text2: str) -> List[str]:
+    """Find all lines in text1 which are different from text2."""
+    # Remove whitespace and periods
+    text_1 = text1.replace(" ", "").replace(".", "")
+    text_2 = text2.replace(" ", "").replace(".", "")
+
+    lines1 = text_1.splitlines()
+    lines2 = text_2.splitlines()
+    return [line for line in lines1 if line not in lines2]
+
+
 @pytest.mark.parametrize(
     "spec",
     [
@@ -162,13 +172,26 @@ def test_feature_spec_docstrings(spec: BaseModel):
     current_docstring = spec.__doc__
     generated_docstring = generate_docstring_from_attributes(cls=spec)
     # strip docstrings of newlines and whitespace to allow room for formatting
-    current_docstring_no_whitespace = current_docstring.replace(" ", "").replace(
-        "\n",
-        "",
+    current_docstring_no_whitespace = (
+        current_docstring.replace(" ", "")
+        .replace(
+            "\n",
+            "",
+        )
+        .replace(".", "")
     )
-    generated_docstring_no_whitespace = generated_docstring.replace(" ", "").replace(
-        "\n",
-        "",
+    generated_docstring_no_whitespace = (
+        generated_docstring.replace(" ", "")
+        .replace(
+            "\n",
+            "",
+        )
+        .replace(".", "")
+    )
+
+    lines_with_diff = get_lines_with_diff(
+        text1=current_docstring,
+        text2=generated_docstring,
     )
 
     if current_docstring_no_whitespace != generated_docstring_no_whitespace:
@@ -188,6 +211,8 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Got: \n\n{current_docstring}.
 
         Expected: \n\n{generated_docstring}
+
+        Differences are in lines: \n\n{lines_with_diff}
         """,
         )
 
