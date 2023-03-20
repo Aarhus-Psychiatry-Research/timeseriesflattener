@@ -48,7 +48,7 @@ base_binary_predictor_combinations = PredictorGroupSpec(
 def test_cache_hitting(
     tmp_path: Path,
     predictor_specs: List[PredictorSpec],
-    synth_prediction_times: pd.DataFrame,
+    synth_prediction_times: pd.DataFrame,  # noqa: F811
 ):
     """Test that cache hits."""
 
