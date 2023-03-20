@@ -5,15 +5,11 @@ from typing import Any, List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
-import pytest
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_spec_objects import _AnySpec
 from timeseriesflattener.testing.load_synth_data import (
-    load_synth_outcome,
-    load_synth_prediction_times,
-    load_synth_text,
     synth_predictor_binary,
 )
 from timeseriesflattener.utils import data_loaders
