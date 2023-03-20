@@ -171,33 +171,3 @@ def check_any_item_in_list_has_str(list_of_str: list, str_: str) -> bool:
         bool: True if any item in the list contains the string.
     """
     return any(str_ in item for item in list_of_str)
-
-
-@pytest.fixture()
-def synth_prediction_times() -> DataFrame:
-    """Load the prediction times."""
-    return load_synth_prediction_times()
-
-
-@pytest.fixture()
-def synth_predictor() -> DataFrame:
-    """Load the synth outcome times."""
-    return load_synth_outcome(n_rows=1_000)
-
-
-@pytest.fixture()
-def synth_outcome() -> DataFrame:
-    """Load the synth outcome times."""
-    return load_synth_outcome()
-
-
-@pytest.fixture()
-def long_df_with_multiple_values() -> DataFrame:
-    """Load the long df."""
-    return load_long_df_with_multiple_values()
-
-
-@pytest.fixture()
-def synth_text_data() -> DataFrame:
-    """Load the synth text data."""
-    return load_synth_text()
