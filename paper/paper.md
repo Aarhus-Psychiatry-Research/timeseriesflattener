@@ -39,7 +39,7 @@ bibliography: paper.bib
 # `timeseriesflattener`: A Python package for summarising features from (medical) time series
 
 # Summary
-Time series from e.g. electronic health records often have a large number of variables that are sampled at irregular and differing intervals. Before this type of data can be used for prediction modelling with machine learning methods such as logistic regression or XGBoost [@chen_xgboost_2015], the data needs to be reshaped. In essence, the time series need to be *flattened* so that each prediction time is represented by a vector of predefined length. This vector should hold the set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window. This process of flattening the data lays the foundation for further analyses and requires handling a number of tasks such as 1) how to deal with missing values, 2) which value to use if none fall within the prediction window, 3) how to handle variables measured multiple times within the chosen time window, and 4) how to handle predictors that attempt to look further back than the start of the dataset.  
+Time series from e.g. electronic health records often have a large number of variables that are sampled at irregular and differing intervals. Before this type of data can be used for prediction modelling with machine learning methods such as logistic regression or XGBoost [@chen_xgboost], the data needs to be reshaped. In essence, the time series need to be *flattened* so that each prediction time is represented by a vector of predefined length. This vector should hold the set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window. This process of flattening the data lays the foundation for further analyses and requires handling a number of tasks such as 1) how to deal with missing values, 2) which value to use if none fall within the prediction window, 3) how to handle variables measured multiple times within the chosen time window, and 4) how to handle predictors that attempt to look further back than the start of the dataset.  
 
 `timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series. `timeseriesflattener` implements all the functionality required for aggregating features in specific time windows, grouped by e.g. patient IDs, in a computationally efficient manner. The package is currently used for feature extraction from electronic health records in studies based on the Psychiatric Clinical Outcome Prediction Cohort (PSYCOP) projects [@hansen_psychiatric_2021].
 
@@ -52,7 +52,7 @@ The goal of `timeseriesflattener` is to streamline the process of problem defini
 
 
 # Features & Functionality
-`timeseriesflattener` is a Python package (3.8 | 3.9 | 3.10), and includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.
+`timeseriesflattener` is a Python package (3.8 | 3.9 | 3.10 | 3.11), and includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.
 
 When constructing feature sets from time series in general, or time series from electronic health records in particular, there are several important choices to make: 
 
@@ -68,13 +68,14 @@ Which value to use if there are no data points in the lookbehind.
 
 Table 1 shows a minimal example of input values, and Table 2 shows a flattened version with a prediction time at 2020-06-05 with two lookbehind windows (3 months and 6 months) and using `max` as the aggregation function. `timeseriesflattener` creates informative column names for easy inspection and interpretability in subsequent modelling. 
 
+Table 1: Minimal example of input values
 | datetime       | {value} | id |
 |------------|-------|----|
 | 2020-01-01 | 5     | 1  |
 | 2020-05-01 | 2     | 1  |
 | 2020-06-01 | 1     | 1  |
 
-
+Table 2: Flattened version of Table 1
 | datetime      |id| pred_max_{value}_within_3_months | pred_max_{value}_within_6_months |
 |-----------|--|--------------------------------|-------------------------------|
 | 2020-06-05|1 | 2                              | 5                             |
@@ -82,7 +83,7 @@ Table 1 shows a minimal example of input values, and Table 2 shows a flattened v
 
 Besides the core functionality, the package implements custom caching for quick experimentation and generation of new datasets. The caching mechanisms can easily be overwritten if another caching service (e.g. Redis or SQLite) is desired, rather than the default of writing to disk. 
 
-The [documentation](https://aarhus-psychiatry-research.github.io/timeseriesflattener/) and [tutorials](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/tree/main/docs/tutorials) contain thorough usage examples and continuously updated information on the API.
+The [documentation](https://aarhus-psychiatry-research.github.io/timeseriesflattener/) and [tutorials](https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html) contain thorough usage examples and continuously updated information on the API.
 
 
 # Target Audience
@@ -93,4 +94,4 @@ The package is aimed at researchers and individuals working with irregular time 
 This work is supported by the Lundbeck Foundation (grant number: R344-2020-1073), the Danish Cancer Society (grant number: R283-A16461), the Central Denmark Region Fund for Strengthening of Health Science (grant number: 1-36-72-4-20) and the Danish Agency for Digitisation Investment Fund for New Technologies (grant number 2020-6720). 
 
 
-
+# References
