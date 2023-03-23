@@ -69,6 +69,7 @@ Which value to use if there are no data points in the lookbehind.
 Table 1 shows a minimal example of input values, and Table 2 shows a flattened version with a prediction time at 2020-06-05 with two lookbehind windows (3 months and 6 months) and using `max` as the aggregation function. `timeseriesflattener` creates informative column names for easy inspection and interpretability in subsequent modelling. 
 
 Table 1: Minimal example of input values
+
 | datetime       | {value} | id |
 |------------|-------|----|
 | 2020-01-01 | 5     | 1  |
@@ -76,6 +77,7 @@ Table 1: Minimal example of input values
 | 2020-06-01 | 1     | 1  |
 
 Table 2: Flattened version of Table 1
+
 | datetime      |id| pred_max_{value}_within_3_months | pred_max_{value}_within_6_months |
 |-----------|--|--------------------------------|-------------------------------|
 | 2020-06-05|1 | 2                              | 5                             |
