@@ -82,7 +82,7 @@ Table 1 shows a minimal example of input values, and Table 2 shows a flattened v
 
 Besides the core functionality, the package implements custom caching for quick experimentation and generation of new datasets. The caching mechanisms can easily be overwritten if another caching service (e.g. Redis or SQLite) is desired, rather than the default of writing to disk. 
 
-The [documentation](https://aarhus-psychiatry-research.github.io/timeseriesflattener/) and [tutorials](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/tree/main/docs/tutorials) contain thorough usage examples and continuously updated information on the API.
+The [documentation](https://aarhus-psychiatry-research.github.io/timeseriesflattener/) and [tutorials](https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html) contain thorough usage examples and continuously updated information on the API.
 
 
 # Target Audience
