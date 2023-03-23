@@ -10,7 +10,7 @@ authors:
   - name: Martin Bernstorff
     orcid: 0000-0002-0234-5390
     corresponding: true
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "1, 2, 3" # (Multiple affiliations must be quoted)
   - name: Kenneth Enevoldsen
     orcid: 0000-0001-8733-0966
     affiliation: "2, 3"
