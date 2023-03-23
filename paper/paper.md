@@ -52,7 +52,7 @@ The goal of `timeseriesflattener` is to streamline the process of problem defini
 
 
 # Features & Functionality
-`timeseriesflattener` is a Python package (3.8 | 3.9 | 3.10), and includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.
+`timeseriesflattener` is a Python package (3.8 | 3.9 | 3.10 | 3.11), and includes features required for converting any number of (irregular) time series into a single dataframe with a row for each desired prediction time and columns for each constructed feature. Raw values are aggregated by an ID column, which allows for e.g. aggregating values for each patient independently.
 
 When constructing feature sets from time series in general, or time series from electronic health records in particular, there are several important choices to make: 
 
