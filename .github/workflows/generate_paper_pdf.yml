@@ -2,8 +2,8 @@ name: Create paper pdf
 
 on:
   push:
-    branches:
-      - main 
+    paths:
+      - "paper/*.md"
 
 jobs:
   paper:
