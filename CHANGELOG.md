@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.7 (2023-03-24)
+### Fix
+* Erroneous "." in .bib ([`606c7c6`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/606c7c6e2898d5fd417a5074d329fa5221aef4a1))
+
+### Documentation
+* Update tutorials link ([`1fb7d88`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1fb7d88e1bf58dbe6d2b66d35806dc8bdcc3bd4e))
+* Add 3.11 support to paper ([`af54a97`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/af54a97410de1fed5eb2cbc29ec180f89954b51c))
+* Update paper ([`e1b5d84`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e1b5d84855f1a46b865e4a9b206b04c27de97b9f))
+
 ## v0.23.6 (2023-03-20)
 ### Fix
 * Update supported python versions on pypi ([`6f7959b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6f7959bb5d530b874a90621c66a920ba422a2f4d))
