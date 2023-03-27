@@ -376,6 +376,31 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
     )
 
 
+def test_resolve_multiple_change_per_day_only_one_observation():
+    prediction_times_str = """entity_id,timestamp,
+                            1,2021-12-31 00:00:00
+                            2,2021-12-31 00:00:00
+                            """
+    event_times_str = """entity_id,timestamp,value,
+                        1,2022-01-01 00:00:00, 1
+                        1,2022-01-02 00:00:00, 2
+                        2,2022-01-01 00:00:00, 1
+                        """
+
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=OutcomeSpec(
+            feature_name="value",
+            values_df=str_to_df(event_times_str),
+            resolve_multiple_fn="change_per_day",
+            interval_days=4,
+            fallback=0,
+            incident=False,
+        ),
+        expected_values=[1, 0],
+    )
+
+
 def test_resolve_multiple_variance():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
