@@ -1,0 +1,41 @@
+{
+    "creators": [
+        {
+            "affiliation": "Aarhus University Hospital",
+            "name": "Bernstorff, Martin",
+            "orcid": "0000-0002-0234-5390"
+        },
+        {
+            "affiliation": "Aarhus University",
+            "name": "Enevoldsen, Kenneth",
+            "orcid": "0000-0001-8733-0966"
+        },
+        {
+            "affiliation": "Aarhus University Hospital",
+            "name": "Damgaard, Jakob",
+            "orcid": "0000-0001-7092-2391"
+        },
+        {
+            "affiliation": "Aarhus University Hospital",
+            "name": "Danielsen, Andreas",
+            "orcid": "0000-0002-6585-3616"
+        },
+        {
+            "affiliation": "Aarhus University Hospital",
+            "name": "Hansen, Lasse",
+            "orcid": "0000-0003-1113-4779"
+        }
+    ],
+    "description": "Many applications use remote storage and compute resources. To do so, they need to include code to interact with the scheduling systems and file transfer protocols used on those remote machines. Unfortunately, many different scheduler systems and file transfer protocols exist, often with completely different programming interfaces. This makes it hard for applications to switch to a different system or support multiple remote systems simultaneously. Xenon solves this problem by providing a single programming interface to many different types of remote resources, allowing applications to switch without changing a single line of code.",
+    "keywords": [
+        "Python",
+        "time series",
+        "electronic health records",
+        "medical time series",
+        "feature extraction"
+    ],
+    "license": {
+        "id": "MIT"
+    },
+    "title": "timeseriesflattener: A Python package for summarising features from (medical) time series"
+}
