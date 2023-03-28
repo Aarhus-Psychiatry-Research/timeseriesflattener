@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.11 (2023-03-28)
+### Fix
+* Doi for shamout and imrie ([`4823e1e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4823e1ef0b66c2438f08d8080cd1d14f62696ff2))
+
 ## v0.23.10 (2023-03-28)
 ### Fix
 * Force new release ([`e6522d6`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e6522d6af0c7d302d7326a15cdbc7c3aaee1e71c))
