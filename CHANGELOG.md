@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.23.9 (2023-03-28)
+### Fix
+* Description in .zenodo.json ([`1a4e31a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1a4e31adfd7f3253a56e312444767cd2c4d6a15a))
+
 ## v0.23.8 (2023-03-28)
 ### Fix
 * Add .zenodo.json ([`f6bc274`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f6bc274f79e9e84fe6c7085598eb2534e222c93c))
