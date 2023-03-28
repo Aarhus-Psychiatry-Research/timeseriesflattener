@@ -36,7 +36,6 @@ affiliations:
 date: 2 December 2022
 bibliography: paper.bib
 ---
-# timeseriesflattener: A Python package for summarising features from (medical) time series
 
 # Summary
 Time series from e.g. electronic health records often have a large number of variables that are sampled at irregular and differing intervals. Before this type of data can be used for prediction modelling with machine learning methods such as logistic regression or XGBoost [@chen_xgboost_2016], the data needs to be reshaped. In essence, the time series need to be *flattened* so that each prediction time is represented by a vector of predefined length. This vector should hold the set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window. This process of flattening the data lays the foundation for further analyses and requires handling a number of tasks such as 1) how to deal with missing values, 2) which value to use if none fall within the prediction window, 3) how to handle variables measured multiple times within the chosen time window, and 4) how to handle predictors that attempt to look further back than the start of the dataset.  
