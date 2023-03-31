@@ -89,7 +89,7 @@ def test_compute_specs(
         feature_name="static",
         prefix="pred",
     )
-    text_spec = TextPredictorSpec(
+    text_spec = TextPredictorSpec( # type: ignore
         values_df=synth_text_data,
         feature_name="text",
         lookbehind_days=750,
