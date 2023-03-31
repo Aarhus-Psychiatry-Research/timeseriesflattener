@@ -841,10 +841,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">input_col_name_override</span>
 
-        <span class="k">if</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">output_col_name_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">output_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">output_col_name_override</span>
-        <span class="k">elif</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">feature_name</span><span class="p">:</span>
-            <span class="n">output_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">static_spec</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">static_spec</span><span class="o">.</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">output_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="p">{</span>
@@ -1120,18 +1117,19 @@
 
         <span class="n">output_age_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_age_in_years&quot;</span>
 
+        <span class="n">tmp_prefix</span> <span class="o">=</span> <span class="s2">&quot;tmp&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_static_info</span><span class="p">(</span>
             <span class="n">static_spec</span><span class="o">=</span><span class="n">_AnySpec</span><span class="p">(</span>
                 <span class="n">values_df</span><span class="o">=</span><span class="n">date_of_birth_df</span><span class="p">,</span>
                 <span class="n">input_col_name_override</span><span class="o">=</span><span class="n">date_of_birth_col_name</span><span class="p">,</span>
-                <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;temp&quot;</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">tmp_prefix</span><span class="p">,</span>
                 <span class="c1"># We typically don&#39;t want to use date of birth as a predictor,</span>
                 <span class="c1"># but might want to use transformations - e.g. &quot;year of birth&quot; or &quot;age at prediction time&quot;.</span>
                 <span class="n">feature_name</span><span class="o">=</span><span class="n">date_of_birth_col_name</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span>
 
-        <span class="n">tmp_date_of_birth_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;temp_</span><span class="si">{</span><span class="n">date_of_birth_col_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">tmp_date_of_birth_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tmp_prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">date_of_birth_col_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">output_age_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">(</span>
