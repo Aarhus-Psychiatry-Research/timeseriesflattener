@@ -37,12 +37,12 @@ def git_init(c: Context):
 def setup_venv(
     c: Context,
     python_version: str,
-):
+) -> str:
     venv_name = f'.venv{python_version.replace(".", "")}'
 
     if not Path(venv_name).exists():
         echo_header(
-            f"{Emo.DO} Creating virtual environment for {Emo.PY}{python_version}"
+            f"{Emo.DO} Creating virtual environment for {Emo.PY}{python_version}",
         )
         c.run(f"python{python_version} -m venv {venv_name}")
         print(f"{Emo.GOOD} Virtual environment created")
@@ -50,7 +50,7 @@ def setup_venv(
         print(f"{Emo.GOOD} Virtual environment already exists")
 
     c.run(f"source {venv_name}/bin/activate")
-    
+
     return venv_name
 
 
@@ -188,8 +188,11 @@ def install(c: Context):
 def setup(c: Context, python_version: str = "3.9"):
     git_init(c)
     venv_name = setup_venv(c, python_version=python_version)
-    print(f"{Emo.DO} Activate your virtual environment by running: \n\n\t\t source {venv_name}/bin/activate \n")
+    print(
+        f"{Emo.DO} Activate your virtual environment by running: \n\n\t\t source {venv_name}/bin/activate \n",
+    )
     print(f"{Emo.DO} Then install the project by running: \n\n\t\t inv install\n")
+
 
 @task
 def update(c: Context):
