@@ -290,11 +290,15 @@ class _AnySpec(BaseModel):
             additional_feature_name (Optional[str]): An additional feature name
                 to append to the column name.
         """
+        if self.output_col_name_override:
+            return self.output_col_name_override
+
         feature_name = self.feature_name
+
         if additional_feature_name:
             feature_name = f"{feature_name}-{additional_feature_name}"
-        col_str = f"{self.prefix}_{feature_name}"
-        return col_str
+
+        return f"{self.prefix}_{feature_name}"
 
     def __eq__(self, other: Any) -> bool:
         """Add equality check for dataframes.

@@ -25,4 +25,4 @@ def test_resolve_from_df_dict(long_df_with_multiple_values: pd.DataFrame):
         prefix="test",
     )
 
-    assert len(spec.values_df) == 10000
+    assert len(spec.values_df) == 10000  # type: ignore
