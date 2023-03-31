@@ -615,10 +615,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         else:
             value_col_name = static_spec.input_col_name_override
 
-        if static_spec.output_col_name_override is not None:
-            output_col_name = static_spec.output_col_name_override
-        elif static_spec.feature_name:
-            output_col_name = f"{static_spec.prefix}_{static_spec.feature_name}"
+        output_col_name = static_spec.get_col_str()
 
         df = pd.DataFrame(
             {
@@ -894,18 +891,19 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         output_age_col_name = f"{output_prefix}_age_in_years"
 
+        tmp_prefix = "tmp"
         self._add_static_info(
             static_spec=_AnySpec(
                 values_df=date_of_birth_df,
                 input_col_name_override=date_of_birth_col_name,
-                prefix="temp",
+                prefix=tmp_prefix,
                 # We typically don't want to use date of birth as a predictor,
                 # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
                 feature_name=date_of_birth_col_name,
             ),
         )
 
-        tmp_date_of_birth_col_name = f"temp_{date_of_birth_col_name}"
+        tmp_date_of_birth_col_name = f"{tmp_prefix}_{date_of_birth_col_name}"
 
         self._df[output_age_col_name] = (
             (

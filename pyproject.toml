@@ -164,5 +164,6 @@ build_command = "python -m pip install build; python -m build"
 
 [tool.pytest]
 n = 0
+testpaths = "tests"
 
 [tool.pyright]
