@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+from typing import Optional
 
 import coloredlogs
 
@@ -11,7 +12,7 @@ from timeseriesflattener.utils import PROJECT_ROOT
 def setup_logger(
     name: str,
     level: int = logging.DEBUG,
-    log_file_path: str = None,
+    log_file_path: Optional[str] = None,
     fmt: str = "%(asctime)s [%(levelname)s] %(message)s",
 ) -> logging.Logger:
     """

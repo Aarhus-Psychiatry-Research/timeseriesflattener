@@ -53,7 +53,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
 
     # Test adding an invalid spec type
     with pytest.raises(ValueError):  # noqa
-        dataset.add_spec("invalid spec")
+        dataset.add_spec("invalid spec") # type: ignore
 
 
 @pytest.mark.huggingface()
