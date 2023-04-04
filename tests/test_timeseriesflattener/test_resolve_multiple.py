@@ -272,7 +272,7 @@ def test_resolve_multiple_bool():
     )
 
 
-def test_resolve_multiple_change_per_day():
+def test_resolve_multiple_slope():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -289,7 +289,7 @@ def test_resolve_multiple_change_per_day():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
+            resolve_multiple_fn="slope",
             interval_days=4,
             fallback=np.NaN,
             incident=False,
@@ -298,7 +298,7 @@ def test_resolve_multiple_change_per_day():
     )
 
 
-def test_resolve_multiple_change_per_day_unordered():
+def test_resolve_multiple_slope_unordered():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -315,7 +315,7 @@ def test_resolve_multiple_change_per_day_unordered():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
+            resolve_multiple_fn="slope",
             interval_days=4,
             fallback=np.NaN,
             incident=False,
@@ -324,7 +324,7 @@ def test_resolve_multiple_change_per_day_unordered():
     )
 
 
-def test_resolve_multiple_change_per_day_negative():
+def test_resolve_multiple_slope_negative():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -341,7 +341,7 @@ def test_resolve_multiple_change_per_day_negative():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
+            resolve_multiple_fn="slope",
             interval_days=4,
             fallback=np.NaN,
             incident=False,
@@ -350,7 +350,7 @@ def test_resolve_multiple_change_per_day_negative():
     )
 
 
-def test_resolve_multiple_change_per_day_too_few_datapoints():
+def test_resolve_multiple_slope_too_few_datapoints():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -367,7 +367,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
+            resolve_multiple_fn="slope",
             interval_days=4,
             fallback=99999,
             incident=False,
@@ -376,7 +376,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
     )
 
 
-def test_resolve_multiple_change_per_day_only_one_observation():
+def test_resolve_multiple_slope_only_one_observation():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -392,7 +392,7 @@ def test_resolve_multiple_change_per_day_only_one_observation():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
+            resolve_multiple_fn="slope",
             interval_days=4,
             fallback=0,
             incident=False,
