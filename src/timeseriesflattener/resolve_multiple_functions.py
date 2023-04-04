@@ -88,8 +88,8 @@ def boolean(grouped_df: DataFrame) -> DataFrame:
     return grouped_df
 
 
-@resolve_multiple_fns.register("change_per_day")
-def change_per_day(grouped_df: DataFrame) -> DataFrame:
+@resolve_multiple_fns.register("slope")
+def slope(grouped_df: DataFrame) -> DataFrame:
     """Returns the change in value per day.
 
     Args:
