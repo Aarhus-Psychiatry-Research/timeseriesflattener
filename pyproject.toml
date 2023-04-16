@@ -56,7 +56,7 @@ tutorials = [
 ]
 
 text = [
-    "transformers>=4.26.0,<4.28.0",
+    "transformers>=4.26.0,<4.29.0",
     "torch>=1.12.0,<2.1.0",
     "sentence-transformers>=1.0.0,<2.5.0",
 ]
