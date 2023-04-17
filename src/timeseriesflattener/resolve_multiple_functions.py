@@ -3,6 +3,7 @@ value."""
 
 # pylint: disable=missing-function-docstring
 
+import re
 import catalogue
 from pandas import DataFrame, Series
 from scipy import stats
@@ -149,3 +150,36 @@ def mean_len(grouped_df: DataFrame) -> DataFrame:
             {"value": x.value.str.len().mean()},
         ),
     )
+
+
+@resolve_multiple_fns.register("type_token_ratio")
+def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
+    """Returns the type-token ratio. This is useful for text data.
+
+    Args:
+        grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
+
+    Returns:
+        DataFrame: Dataframe with value column containing the concatenated values.
+    """
+
+    # preprocessing
+    # lowercase
+    grouped_df.apply(lambda x: x.value.str.lower())
+
+    # remove symbols and punctuation
+    grouped_df.apply(lambda x: re.sub("[^ÆØÅæøåA-Za-z0-9 ]+", "", x.value))
+
+    # white-space tokenisation
+    grouped_df.apply(lambda x: x.value.str.split(" "))
+
+    return grouped_df.apply(
+        lambda x: Series(
+            {"value": " ".join(x.value)},
+        ),
+    )
+    # return grouped_df.apply(
+    #     lambda x: Series(
+    #         {"value": " ".join(x.value)},
+    #     ),
+    # )
