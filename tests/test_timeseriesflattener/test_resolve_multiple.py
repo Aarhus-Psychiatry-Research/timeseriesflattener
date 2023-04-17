@@ -478,8 +478,8 @@ def test_resolve_multiple_type_token_ratio():
                             1,2021-12-31 00:00:00
                             """
     event_times_str = """entity_id,timestamp,value,
-                        1,2022-01-01 00:00:00,the patient feels very tired!
-                        1,2022-01-02 00:00:00,the patient is feeling ill.
+                        1,2022-01-01 00:00:00, The patient feels very tired!
+                        1,2022-01-02 00:00:00, The patient is feeling ill.
                         """
 
     assert_flattened_data_as_expected(
@@ -492,7 +492,5 @@ def test_resolve_multiple_type_token_ratio():
             fallback=np.NaN,
             incident=False,
         ),
-        expected_values=[12.5],
+        expected_values=[0.75],
     )
-
-test_resolve_multiple_type_token_ratio()

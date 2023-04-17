@@ -7,6 +7,8 @@ import re
 import catalogue
 from pandas import DataFrame, Series
 from scipy import stats
+import pandas as pd
+import nltk
 
 resolve_multiple_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 
@@ -163,23 +165,18 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
         DataFrame: Dataframe with value column containing the concatenated values.
     """
 
-    # preprocessing
-    # lowercase
-    grouped_df.apply(lambda x: x.value.str.lower())
+    ratios = pd.DataFrame()
 
-    # remove symbols and punctuation
-    grouped_df.apply(lambda x: re.sub("[^ÆØÅæøåA-Za-z0-9 ]+", "", x.value))
+    for group_name, group_df in grouped_df:
+        value = [
+            item
+            for sublist in [
+                re.sub("[^ÆØÅæøåA-Za-z0-9 ]+", "", row["value"].lower()).split(" ")
+                for index, row in group_df.iterrows()
+            ]
+            for item in sublist
+        ]
+        ratios.loc[group_name, "value"] = len(nltk.Counter(value)) / len(value)
+        print(group_name)
 
-    # white-space tokenisation
-    grouped_df.apply(lambda x: x.value.str.split(" "))
-
-    return grouped_df.apply(
-        lambda x: Series(
-            {"value": " ".join(x.value)},
-        ),
-    )
-    # return grouped_df.apply(
-    #     lambda x: Series(
-    #         {"value": " ".join(x.value)},
-    #     ),
-    # )
+    return ratios
