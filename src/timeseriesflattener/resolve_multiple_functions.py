@@ -126,8 +126,26 @@ def concatenate(grouped_df: DataFrame) -> DataFrame:
     Returns:
         DataFrame: Dataframe with value column containing the concatenated values.
     """
+
     return grouped_df.apply(
         lambda x: Series(
             {"value": " ".join(x.value)},
+        ),
+    )
+
+
+@resolve_multiple_fns.register("mean_len")
+def mean_len(grouped_df: DataFrame) -> DataFrame:
+    """Returns the mean length of values. This is useful for text data.
+
+    Args:
+        grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
+
+    Returns:
+        DataFrame: Dataframe with value column containing the concatenated values.
+    """
+    return grouped_df.apply(
+        lambda x: Series(
+            {"value": x.value.str.len().mean()},
         ),
     )
