@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.23 -->
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
         <title>timeseriesflattener.flattened_dataset - Timeseriesflattener</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
@@ -469,7 +469,7 @@
         <span class="c1"># Sort by timestamp_pred in case resolve_multiple needs dates</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">val_timestamp_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">pred_time_uuid_colname</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">resolve_multiple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">resolve_multiple</span><span class="p">):</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">resolve_multiple</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;resolve_multiple must be or resolve to a Callable&quot;</span><span class="p">)</span>

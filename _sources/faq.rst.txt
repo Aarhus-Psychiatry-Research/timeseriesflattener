@@ -5,26 +5,26 @@ Frequently Asked Questions
 Citing this package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you wish to use this library in your research, please cite it using (Changing the version if relevant):
+If you wish to use this library in your research, please cite the `JOSS paper <https://joss.theoj.org/papers/10.21105/joss.05197.pdf>`__:
 
-.. TODO: the following need to be corrected:
 .. code-block::
 
-   @software{Bernstorff_timeseriesflattener_2022,
-      author = {Bernstorff, Martin and Enevoldsen, Kenneth and Damgaard, Jakob Grøhn and Hæstrup, Frida and Hansen, Lasse},
-      doi = {10.5281/zenodo.7389672},
-      month = {11},
-      title = {{timeseriesflattener}},
-      url = {https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener},
-      year = {2022}
-   }
+   @article{bernstorff2023timeseriesflattener,
+  title={timeseriesflattener: A Python package for summarizing features from (medical) time series},
+  author={Bernstorff, Martin and Enevoldsen, Kenneth and Damgaard, Jakob and Danielsen, Andreas and Hansen, Lasse},
+  journal={Journal of Open Source Software},
+  volume={8},
+  number={83},
+  pages={5197},
+  year={2023}
+}
 
 
 Or if you prefer APA:
 
 .. code-block:: 
 
-   Bernstorff, M., Enevoldsen, K., Damgaard, J. G., Hæstrup, F., & Hansen, L. (2022). timeseriesflattener [Computer software]. https://doi.org/10.5281/zenodo.7389672
+   Bernstorff, M., Enevoldsen, K., Damgaard, J., Danielsen, A., & Hansen, L. (2023). timeseriesflattener: A Python package for summarizing features from (medical) time series. Journal of Open Source Software, 8(83), 5197.
 
 
 
@@ -39,7 +39,7 @@ and test utilities defined in the `pyproject.toml <https://github.com/Aarhus-Psy
 
 .. code-block:: bash
 
-   poetry install
+   pip install -e ."[dev]"
 
    python -m pytest
 
