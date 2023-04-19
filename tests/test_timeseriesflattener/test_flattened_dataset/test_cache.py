@@ -2,7 +2,6 @@
 # pylint: disable=unused-import, redefined-outer-name
 
 from pathlib import Path
-from typing import List
 
 import numpy as np
 import pandas as pd
@@ -41,7 +40,7 @@ base_binary_predictor_combinations = PredictorGroupSpec(
 )
 def test_cache_hitting(
     tmp_path: Path,
-    predictor_specs: List[PredictorSpec],
+    predictor_specs: list[PredictorSpec],
     synth_prediction_times: pd.DataFrame,
 ):
     """Test that cache hits."""

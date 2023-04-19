@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Union
+from typing import Callable, Optional, Union
 
 import coloredlogs
 import numpy as np
@@ -36,9 +36,9 @@ log = logging.getLogger(__name__)
 class SpecCollection(PydanticBaseModel):
     """A collection of specs."""
 
-    outcome_specs: List[OutcomeSpec] = []
-    predictor_specs: List[PredictorSpec] = []
-    static_specs: List[_AnySpec] = []
+    outcome_specs: list[OutcomeSpec] = []
+    predictor_specs: list[PredictorSpec] = []
+    static_specs: list[_AnySpec] = []
 
     def __len__(self) -> int:
         """Return number of specs in collection."""
@@ -475,7 +475,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
 
     @staticmethod
-    def _check_dfs_are_ready_for_concat(dfs: List[pd.DataFrame]):
+    def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
         """Sample each df and check for identical indices.
 
         This checks that all the dataframes are aligned before
@@ -521,7 +521,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _concatenate_flattened_timeseries(
         self,
-        flattened_predictor_dfs: List[pd.DataFrame],
+        flattened_predictor_dfs: list[pd.DataFrame],
     ) -> None:
         """Concatenate flattened predictor dfs."""
 
@@ -550,7 +550,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def _add_temporal_batch(  # pylint: disable=too-many-branches
         self,
-        temporal_batch: List[TemporalSpec],
+        temporal_batch: list[TemporalSpec],
     ):
         """Add predictors to the flattened dataframe from a list."""
         # Shuffle predictor specs to avoid IO contention
@@ -824,7 +824,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
     def add_spec(
         self,
-        spec: Union[List[_AnySpec], _AnySpec],
+        spec: Union[list[_AnySpec], _AnySpec],
     ):
         """Add a specification to the flattened dataset.
 
@@ -836,7 +836,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         For further documentation, see those objects and the tutorial.
         """
         if isinstance(spec, _AnySpec):
-            specs_to_process: List[_AnySpec] = [spec]
+            specs_to_process: list[_AnySpec] = [spec]
         else:
             specs_to_process = spec
 

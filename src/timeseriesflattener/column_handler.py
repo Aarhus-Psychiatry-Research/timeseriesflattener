@@ -1,5 +1,5 @@
 """This module contains functions for handling dataframes with multiindex columns."""
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
 import pandas as pd
 
@@ -116,7 +116,7 @@ class ColumnHandler:
     def get_value_col_str_name(
         df: Optional[pd.DataFrame] = None,
         output_spec: Optional[TemporalSpec] = None,
-    ) -> List[str]:
+    ) -> list[str]:
         """Returns the name of the value column in df. If df has a multiindex,
         returns a list of all column names in the 'value' multiindex.
 

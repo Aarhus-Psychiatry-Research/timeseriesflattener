@@ -2,8 +2,9 @@
 import itertools
 import logging
 import time
+from collections.abc import Sequence
 from functools import lru_cache
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union
+from typing import Any, Callable, Optional, Union
 
 import pandas as pd
 from frozendict import frozendict
@@ -21,7 +22,7 @@ log = logging.getLogger(__name__)
 @lru_cache
 def load_df_with_cache(
     loader_fn: Callable,
-    kwargs: Dict[str, Any],
+    kwargs: dict[str, Any],
     feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
@@ -46,7 +47,7 @@ def in_dict_and_not_none(d: dict, key: str) -> bool:
     return key in d and d[key] is not None
 
 
-def resolve_from_dict_or_registry(data: Dict[str, Any]):
+def resolve_from_dict_or_registry(data: dict[str, Any]):
     """Resolve values_df from a dictionary or registry."""
 
     if "values_name" in data and data["values_name"] is not None:
@@ -69,7 +70,7 @@ def resolve_from_dict_or_registry(data: Dict[str, Any]):
             )
 
 
-def resolve_values_df(data: Dict[str, Any]) -> Dict[str, pd.DataFrame]:
+def resolve_values_df(data: dict[str, Any]) -> dict[str, pd.DataFrame]:
     """Resolve the values_df attribute to a dataframe."""
     if not any(key in data for key in ["values_loader", "values_name", "values_df"]):
         raise ValueError(
@@ -155,7 +156,7 @@ def generate_docstring_from_attributes(cls: BaseModel) -> str:
     return doc
 
 
-def check_that_col_names_in_kwargs_exist_in_df(data: Dict[str, Any], df: pd.DataFrame):
+def check_that_col_names_in_kwargs_exist_in_df(data: dict[str, Any], df: pd.DataFrame):
     """Check that all column names in data are in the dataframe.
 
     Keys with "col_name" in them specify a column name.
@@ -227,7 +228,7 @@ class _AnySpec(BaseModel):
             is a subset of the df where the values_name == key.""",
     )
 
-    loader_kwargs: Optional[Dict[str, Any]] = Field(
+    loader_kwargs: Optional[dict[str, Any]] = Field(
         default=None,
         description="""Optional kwargs for the values_loader.""",
     )
@@ -722,13 +723,13 @@ class _MinGroupSpec(BaseModel):
 
         Used to generate combinations of features."""
 
-    values_loader: Optional[List[str]] = Field(
+    values_loader: Optional[list[str]] = Field(
         default=None,
         description="""Loader for the df. Tries to resolve from the data_loaders
             registry, then calls the function which should return a dataframe.""",
     )
 
-    values_name: Optional[List[str]] = Field(
+    values_name: Optional[list[str]] = Field(
         default=None,
         description="""List of strings that corresponds to a key in a dictionary
             of multiple dataframes that correspods to a name of a type of values.""",
@@ -750,16 +751,16 @@ class _MinGroupSpec(BaseModel):
             output df.""",
     )
 
-    resolve_multiple_fn: List[Union[Callable, str]] = Field(
+    resolve_multiple_fn: list[Union[Callable, str]] = Field(
         description="""Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py""",
     )
 
-    fallback: List[Union[Callable, str]] = Field(
+    fallback: list[Union[Callable, str]] = Field(
         description="""Which value to use if no values are found within interval_days.""",
     )
 
-    allowed_nan_value_prop: List[float] = Field(
+    allowed_nan_value_prop: list[float] = Field(
         default=[0.0],
         description="""If NaN is higher than this in the input dataframe during
             resolution, raise an error.""",
@@ -770,7 +771,7 @@ class _MinGroupSpec(BaseModel):
         description="""Prefix for column name, e.g. <prefix>_<feature_name>.""",
     )
 
-    loader_kwargs: Optional[List[Dict[str, Any]]] = Field(
+    loader_kwargs: Optional[list[dict[str, Any]]] = Field(
         default=None,
         description="""Optional kwargs for the values_loader.""",
     )
@@ -820,8 +821,8 @@ class _MinGroupSpec(BaseModel):
 
 
 def create_feature_combinations_from_dict(
-    d: Dict[str, Union[str, list]],
-) -> List[Dict[str, Union[str, float, int]]]:
+    d: dict[str, Union[str, list]],
+) -> list[dict[str, Union[str, float, int]]]:
     """Create feature combinations from a dictionary of feature specifications.
 
     Only unpacks the top level of lists.
@@ -846,7 +847,7 @@ def create_feature_combinations_from_dict(
 def create_specs_from_group(
     feature_group_spec: _MinGroupSpec,
     output_class: _AnySpec,
-) -> List[_AnySpec]:
+) -> list[_AnySpec]:
     """Create a list of specs from a GroupSpec."""
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
@@ -899,11 +900,11 @@ class PredictorGroupSpec(_MinGroupSpec):
         description="""Prefix for column name, e,g, <prefix>_<feature_name>.""",
     )
 
-    lookbehind_days: List[Union[int, float]] = Field(
+    lookbehind_days: list[Union[int, float]] = Field(
         description="""How far behind to look for values""",
     )
 
-    def create_combinations(self) -> List[PredictorSpec]:
+    def create_combinations(self) -> list[PredictorSpec]:
         """Create all combinations from the group spec."""
         return create_specs_from_group(  # type: ignore
             feature_group_spec=self,
@@ -964,11 +965,11 @@ class OutcomeGroupSpec(_MinGroupSpec):
              which is faster than non-incident outcomes.""",
     )
 
-    lookahead_days: List[Union[int, float]] = Field(
+    lookahead_days: list[Union[int, float]] = Field(
         description="""How far ahead to look for values""",
     )
 
-    def create_combinations(self) -> List[OutcomeSpec]:
+    def create_combinations(self) -> list[OutcomeSpec]:
         """Create all combinations from the group spec."""
         return create_specs_from_group(  # type: ignore
             feature_group_spec=self,

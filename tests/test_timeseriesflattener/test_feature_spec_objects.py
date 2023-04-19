@@ -1,6 +1,5 @@
 """Test that feature spec objects work as intended."""
 
-from typing import List
 
 import numpy as np
 import pandas as pd
@@ -144,7 +143,7 @@ def test_resolve_multiple_fn_to_str():
     assert "maximum" in pred_spec_batch[0].get_col_str()
 
 
-def get_lines_with_diff(text1: str, text2: str) -> List[str]:
+def get_lines_with_diff(text1: str, text2: str) -> list[str]:
     """Find all lines in text1 which are different from text2."""
     # Remove whitespace and periods
     text_1 = text1.replace(" ", "").replace(".", "")

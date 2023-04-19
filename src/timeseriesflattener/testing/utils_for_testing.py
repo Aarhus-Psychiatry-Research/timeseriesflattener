@@ -1,7 +1,8 @@
 """Utilities for testing."""
 
+from collections.abc import Sequence
 from io import StringIO
-from typing import Any, List, Optional, Sequence, Union
+from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -74,7 +75,7 @@ def str_to_df(
 def _get_value_cols_based_on_spec(
     df: pd.DataFrame,
     spec: _AnySpec,
-) -> Union[str, List[str]]:
+) -> Union[str, list[str]]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()

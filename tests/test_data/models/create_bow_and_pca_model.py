@@ -1,8 +1,9 @@
 """Script for creating a bag-of-words model and a PCA model on the synthetic data.
 Used for testing purposes."""
 import pickle as pkl
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, List, Sequence
+from typing import Any
 
 import numpy as np
 from sklearn.decomposition import PCA
@@ -22,7 +23,7 @@ def train_bow_model(corpus: Sequence[str]) -> CountVectorizer:
     return model
 
 
-def load_synth_txt_data() -> List[str]:
+def load_synth_txt_data() -> list[str]:
     """
     Loads the synthetic text data and returns the text
     """
