@@ -46,7 +46,7 @@ def train_pca_model(embedding: np.ndarray) -> PCA:
 def save_model_to_test_dir(
     model: Any,
     filename: str,
-):  # pylint: disable=missing-type-doc
+):
     """
     Saves the model to a pickle file
 

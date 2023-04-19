@@ -195,7 +195,7 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]])
         d = {k: v for k, v in d.items() if isinstance(v, Hashable)}  # noqa
 
         d_as_tuple = tuple(d.items())
-        if d_as_tuple in seen:  # pylint: disable=R6103
+        if d_as_tuple in seen:
             duplicates.add(d_as_tuple)
         else:
             seen.add(d_as_tuple)

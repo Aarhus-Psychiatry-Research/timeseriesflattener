@@ -9,8 +9,6 @@ import pytest
 from pandas import DataFrame
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 
-# pylint: disable=protected-access
-
 
 def benchmark(func: Callable, *args: Any, **kwargs: Any) -> float:
     """Benchmark a function."""

@@ -94,10 +94,10 @@ class ColumnHandler:
             output_spec (TemporalSpec): Output specification
         """
         if "value" in df.columns and isinstance(df["value"], pd.DataFrame):
-            df["value"] = df["value"].fillna(output_spec.fallback)
+            df["value"] = df["value"].fillna(output_spec.fallback)  # type: ignore
         else:
             df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
-                output_spec.fallback,
+                output_spec.fallback,  # type: ignore
             )
         return df
 

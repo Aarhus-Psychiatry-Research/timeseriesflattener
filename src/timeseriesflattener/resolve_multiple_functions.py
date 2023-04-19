@@ -1,7 +1,6 @@
 """Functions for resolving multiple values in a time-series into a single
 value."""
 
-# pylint: disable=missing-function-docstring
 
 import catalogue
 from pandas import DataFrame, Series
@@ -11,7 +10,7 @@ resolve_multiple_fns = catalogue.create("timeseriesflattener", "resolve_strategi
 
 
 @resolve_multiple_fns.register("latest")
-def latest(grouped_df: DataFrame) -> DataFrame:
+def latest(grouped_df: DataFrame) -> Series:
     """Get the latest value.
 
     Args:
@@ -20,11 +19,11 @@ def latest(grouped_df: DataFrame) -> DataFrame:
     Returns:
         DataFrame: Dataframe with only the latest value.
     """
-    return grouped_df.last()
+    return grouped_df.last()  # type: ignore
 
 
 @resolve_multiple_fns.register("earliest")
-def earliest(grouped_df: DataFrame) -> DataFrame:
+def earliest(grouped_df: DataFrame) -> Series:
     """Get the earliest value.
 
     Args:
@@ -33,36 +32,36 @@ def earliest(grouped_df: DataFrame) -> DataFrame:
     Returns:
         DataFrame: Dataframe with only the earliest value in each group.
     """
-    return grouped_df.first()
+    return grouped_df.first()  # type: ignore
 
 
 @resolve_multiple_fns.register("max")
-def maximum(grouped_df: DataFrame) -> DataFrame:
+def maximum(grouped_df: DataFrame) -> Series:
     return grouped_df.max()
 
 
 @resolve_multiple_fns.register("min")
-def minimum(grouped_df: DataFrame) -> DataFrame:
+def minimum(grouped_df: DataFrame) -> Series:
     return grouped_df.min()
 
 
 @resolve_multiple_fns.register("mean")
-def mean(grouped_df: DataFrame) -> DataFrame:
+def mean(grouped_df: DataFrame) -> Series:
     return grouped_df.mean(numeric_only=True)
 
 
 @resolve_multiple_fns.register("sum")
-def summed(grouped_df: DataFrame) -> DataFrame:
+def summed(grouped_df: DataFrame) -> Series:
     return grouped_df.sum()
 
 
 @resolve_multiple_fns.register("count")
-def count(grouped_df: DataFrame) -> DataFrame:
+def count(grouped_df: DataFrame) -> Series:
     return grouped_df.count()
 
 
 @resolve_multiple_fns.register("variance")
-def variance(grouped_df: DataFrame) -> DataFrame:
+def variance(grouped_df: DataFrame) -> Series:
     return grouped_df.var()
 
 

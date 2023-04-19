@@ -16,8 +16,6 @@ from timeseriesflattener.utils import data_loaders, split_dfs
 
 log = logging.getLogger(__name__)
 
-# pylint: disable=consider-alternative-union-syntax, trailing-whitespace, missing-class-docstring, too-few-public-methods
-
 
 @lru_cache
 def load_df_with_cache(
@@ -29,7 +27,7 @@ def load_df_with_cache(
     start_time = time.time()
     log.info(
         f"{feature_name}: Loading values",
-    )  # pylint: disable=logging-fstring-interpolation
+    )
 
     df = loader_fn(**kwargs)
 
@@ -37,7 +35,7 @@ def load_df_with_cache(
 
     log.debug(
         f"{feature_name}: Loaded in {end_time - start_time:.2f} seconds",
-    )  # pylint: disable=logging-fstring-interpolation
+    )
 
     return df
 
@@ -756,7 +754,7 @@ class _MinGroupSpec(BaseModel):
             resolve_multiple_functions.py""",
     )
 
-    fallback: list[Union[Callable, str]] = Field(
+    fallback: Sequence[Union[Callable, str, float]] = Field(
         description="""Which value to use if no values are found within interval_days.""",
     )
 
@@ -783,7 +781,7 @@ class _MinGroupSpec(BaseModel):
         )
         if len(invalid_loaders) != 0:
             # New line variable as f-string can't handle backslashes
-            nl = "\n"  # pylint: disable = invalid-name
+            nl = "\n"
             available_loaders = [str(loader) for loader in data_loaders.get_all()]
 
             avail_loaders_str = nl.join(available_loaders)
@@ -879,7 +877,7 @@ class PredictorGroupSpec(_MinGroupSpec):
         resolve_multiple_fn (List[Union[Callable, str]]):
             Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py
-        fallback (List[Union[Callable, str]]):
+        fallback (Sequence[Union[Callable, str]]):
             Which value to use if no values are found within interval_days.
         allowed_nan_value_prop (List[float]):
             If NaN is higher than this in the input dataframe during
@@ -932,7 +930,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
     resolve_multiple_fn (List[Union[Callable, str]]):
         Name of resolve multiple fn, resolved from
         resolve_multiple_functions.py
-    fallback (List[Union[Callable, str]]):
+    fallback (Sequence[Union[Callable, str]]):
         Which value to use if no values are found within interval_days.
     allowed_nan_value_prop (List[float]):
         If NaN is higher than this in the input dataframe during

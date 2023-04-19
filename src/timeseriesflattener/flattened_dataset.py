@@ -47,7 +47,7 @@ class SpecCollection(PydanticBaseModel):
         )
 
 
-class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
+class TimeseriesFlattener:
     """Turn a set of time-series into tabular prediction-time data."""
 
     def _override_cache_attributes_with_self_attributes(
@@ -87,7 +87,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
                 )
                 setattr(self.cache, attr, getattr(self, attr))
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         prediction_times_df: DataFrame,
         drop_pred_times_with_insufficient_look_distance: bool,
@@ -241,10 +241,12 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             log.info("All values are NaT, returning empty dataframe")
 
         # Sort by timestamp_pred in case resolve_multiple needs dates
-        df = df.sort_values(by=val_timestamp_col_name).groupby(pred_time_uuid_colname)
+        grouped_df = df.sort_values(by=val_timestamp_col_name).groupby(
+            pred_time_uuid_colname
+        )
 
         if callable(resolve_multiple):
-            df = resolve_multiple(df).reset_index()
+            df = resolve_multiple(grouped_df).reset_index()
         else:
             raise ValueError("resolve_multiple must be or resolve to a Callable")
 
@@ -276,7 +278,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             DataFrame
         """
         df["time_from_pred_to_val_in_days"] = (
-            (df[timestamp_value_colname] - df[timestamp_pred_colname])
+            (df[timestamp_value_colname] - df[timestamp_pred_colname])  # type: ignore
             / (np.timedelta64(1, "s"))
             / 86_400
         )
@@ -413,7 +415,9 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             df=df,
             pred_times_with_uuid=prediction_times_with_uuid_df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
-        ).fillna(output_spec.fallback)
+        ).fillna(
+            output_spec.fallback  # type: ignore
+        )
 
         return df[[*value_col_str_name, pred_time_uuid_col_name]]
 
@@ -548,7 +552,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         log.info("Merging with original df")
         self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
 
-    def _add_temporal_batch(  # pylint: disable=too-many-branches
+    def _add_temporal_batch(
         self,
         temporal_batch: list[TemporalSpec],
     ):
@@ -670,7 +674,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
 
         if outcome_spec.is_dichotomous():
             outcome_is_within_lookahead = (
-                df[prediction_timestamp_col_name]
+                df[prediction_timestamp_col_name]  # type: ignore
                 + timedelta(days=outcome_spec.interval_days)
                 > df[outcome_timestamp_col_name]
             )
@@ -706,7 +710,8 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
         if isinstance(spec, OutcomeSpec):
             max_val_date = spec.values_df[self.timestamp_col_name].max()  # type: ignore
             return max_val_date - pd.Timedelta(days=spec.lookahead_days)
-        return None
+
+        raise ValueError(f"Spec type {type(spec)} not recognised.")
 
     @print_df_dimensions_diff
     def _drop_pred_time_if_insufficient_look_distance(
@@ -773,7 +778,7 @@ class TimeseriesFlattener:  # pylint: disable=too-many-instance-attributes
             if hasattr(s, "incident") and not s.incident
         ]
 
-        temporal_batch = self.unprocessed_specs.outcome_specs
+        temporal_batch: list[TemporalSpec] = self.unprocessed_specs.outcome_specs  # type: ignore
         temporal_batch += self.unprocessed_specs.predictor_specs
 
         if self.drop_pred_times_with_insufficient_look_distance:

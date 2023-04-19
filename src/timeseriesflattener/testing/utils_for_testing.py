@@ -102,7 +102,7 @@ def assert_flattened_data_as_expected(
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flattened_ds.add_spec(  # pylint: disable=protected-access
+    flattened_ds.add_spec(
         spec=output_spec,
     )
 
