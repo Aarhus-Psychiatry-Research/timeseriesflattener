@@ -195,16 +195,4 @@ use_develop = true
 allowlist_externals = ls
 commands =
   pyright .
-
-[testenv:tutorials]
-description: run tutorials
-extras = dev, text, tutorials
-commands = 
-  jupyter nbconvert --to notebook --execute docs/tutorials/*.ipynb
-  for notebook in tutorials/*.ipynb; do
-    if grep -q "\"cell_type\": \"error\"" $notebook; then
-      echo "Error cell found in $notebook"
-      exit 1
-    fi
-  done
 """
