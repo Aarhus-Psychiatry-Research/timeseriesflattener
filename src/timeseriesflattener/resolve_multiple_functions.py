@@ -165,18 +165,21 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
         DataFrame: Dataframe with value column containing the concatenated values.
     """
 
-    ratios = pd.DataFrame()
-
-    for group_name, group_df in grouped_df:
-        value = [
-            item
-            for sublist in [
-                re.sub("[^ÆØÅæøåA-Za-z0-9 ]+", "", row["value"].lower()).split(" ")
-                for index, row in group_df.iterrows()
-            ]
-            for item in sublist
-        ]
-        ratios.loc[group_name, "value"] = len(nltk.Counter(value)) / len(value)
-        print(group_name)
-
-    return ratios
+    return (
+        grouped_df["value"]
+        .apply(
+            lambda x: len(
+                nltk.Counter(
+                    " ".join(
+                        x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower()
+                    ).split(" ")
+                )
+            )
+            / len(
+                " ".join(
+                    x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower()
+                ).split(" ")
+            )
+        )
+        .reset_index()
+    )
