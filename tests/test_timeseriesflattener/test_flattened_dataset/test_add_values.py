@@ -231,7 +231,7 @@ def test_static_predictor():
     )
 
     dataset.add_spec(
-        StaticSpec(
+        StaticSpec(  # type: ignore
             values_df=str_to_df(static_predictor),
             feature_name=feature_name,
             prefix=prefix,
@@ -427,7 +427,7 @@ def test_add_multiple_static_predictors():
     flattened_dataset.add_spec(
         spec=[
             output_spec,
-            StaticSpec(
+            StaticSpec(  # type: ignore
                 values_df=male_df,
                 feature_name="male",
                 prefix="pred",

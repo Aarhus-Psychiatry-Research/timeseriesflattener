@@ -213,17 +213,17 @@ class _AnySpec(BaseModel):
     class Doc:
         short_description = "A base class for all feature specifications."
 
-    values_loader: Optional[Callable] = Field(
-        None,
-        description="""Loader for the df. Tries to resolve from the data_loaders registry,
-            then calls the function which should return a dataframe.""",
-    )
-
     values_name: Optional[str] = Field(
         default=None,
         description="""A string that maps to a key in a dictionary instantiated by
             `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.""",
+    )
+
+    values_loader: Optional[Callable] = Field(
+        None,
+        description="""Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.""",
     )
 
     loader_kwargs: Optional[dict[str, Any]] = Field(
@@ -323,9 +323,10 @@ class StaticSpec(_AnySpec):
     class Doc:
         short_description = """Specification for a static feature."""
 
-    def __init__(self, values_loader: Optional[Any] = None, **kwargs: Any):  # noqa
-        # Unused argument to make the signature match the parent class
-        super().__init__(**kwargs)
+    def __init__(self, values_loader: Optional[Callable] = None, **kwargs: Any):
+        # Somehow, pyright cannot correctly infer the values_loader type, so we have
+        # to manually specify it
+        super().__init__(values_loader=values_loader, **kwargs)
 
 
 class TemporalSpec(_AnySpec):
@@ -381,7 +382,7 @@ class TemporalSpec(_AnySpec):
         short_description = """The minimum specification required for collapsing a temporal
         feature, whether looking ahead or behind. Mostly used for inheritance below."""
 
-    interval_days: Union[int, float] = Field(
+    interval_days: Optional[Union[int, float]] = Field(
         description="""How far to look in the given direction (ahead for outcomes,
             behind for predictors)""",
     )
@@ -420,8 +421,7 @@ class TemporalSpec(_AnySpec):
         description="""Optional kwargs passed onto the data loader.""",
     )
 
-    def __init__(self, values_loader: Optional[Any] = None, **data: Any):  # noqa
-        # Unused argument 'values_loader' to correctly type hint
+    def __init__(self, **data: Any):  # noqa
         if not hasattr(self, "key_for_resolve_multiple") and callable(
             data["resolve_multiple_fn"],
         ):
@@ -522,7 +522,7 @@ class PredictorSpec(TemporalSpec):
         description="""How far behind to look for values""",
     )
 
-    def __init__(self, interval_days: Optional[float] = None, **data: Any):  # noqa
+    def __init__(self, **data: Any):  # noqa
         # Unused argument to correctly type hint the interface
         if "lookbehind_days" in data:
             data["interval_days"] = data["lookbehind_days"]
@@ -614,7 +614,7 @@ class TextPredictorSpec(PredictorSpec):
         'earliest'.""",
     )
 
-    def __init__(self, interval_days: Optional[float] = None, **data: Any):  # noqa
+    def __init__(self, **data: Any):  # noqa
         # Unused argument to correctly type hint the interface
         if "lookbehind_days" in data:
             data["interval_days"] = data["lookbehind_days"]
@@ -879,7 +879,7 @@ class PredictorGroupSpec(_MinGroupSpec):
     """Specification for a group of predictors.
 
     Fields:
-        values_loader (Optional[List[str]]):
+        values_loader (Optional[Sequence[str]]):
             Loader for the df. Tries to resolve from the data_loaders
             registry, then calls the function which should return a dataframe.
         values_name (Optional[List[str]]):
@@ -895,14 +895,14 @@ class PredictorGroupSpec(_MinGroupSpec):
         resolve_multiple_fn (List[Union[Callable, str]]):
             Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py
-        fallback (Sequence[Union[Callable, str]]):
+        fallback (Sequence[Union[Callable, str, float]]):
             Which value to use if no values are found within interval_days.
         allowed_nan_value_prop (List[float]):
             If NaN is higher than this in the input dataframe during
             resolution, raise an error. Defaults to: [0.0].
         prefix (str):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
-        loader_kwargs (Optional[List[Dict[str, Any]]]):
+        loader_kwargs (Optional[List[dict[str, Any]]]):
             Optional kwargs for the values_loader.
         lookbehind_days (List[Union[int, float]]):
             How far behind to look for values
@@ -932,7 +932,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
     """Specification for a group of outcomes.
 
     Fields:
-    values_loader (Optional[List[str]]):
+    values_loader (Optional[Sequence[str]]):
         Loader for the df. Tries to resolve from the data_loaders
         registry, then calls the function which should return a dataframe.
     values_name (Optional[List[str]]):
@@ -948,14 +948,14 @@ class OutcomeGroupSpec(_MinGroupSpec):
     resolve_multiple_fn (List[Union[Callable, str]]):
         Name of resolve multiple fn, resolved from
         resolve_multiple_functions.py
-    fallback (Sequence[Union[Callable, str]]):
+    fallback (Sequence[Union[Callable, str, float]]):
         Which value to use if no values are found within interval_days.
     allowed_nan_value_prop (List[float]):
         If NaN is higher than this in the input dataframe during
         resolution, raise an error. Defaults to: [0.0].
     prefix (str):
         Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
-    loader_kwargs (Optional[List[Dict[str, Any]]]):
+    loader_kwargs (Optional[List[dict[str,Any]]]):
         Optional kwargs for the values_loader.
     incident (Sequence[bool]):
         Whether the outcome is incident or not, i.e. whether you
