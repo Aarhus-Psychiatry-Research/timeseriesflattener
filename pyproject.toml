@@ -190,11 +190,9 @@ commands =
 
 [testenv:type]
 description: run static type checking
-extras = tests, text
+extras = tests, text, dev
 use_develop = true
-deps = pyright
 allowlist_externals = ls
 commands =
-  ls -la
   pyright .
 """
