@@ -421,7 +421,7 @@ class TemporalSpec(_AnySpec):
         description="""Optional kwargs passed onto the data loader.""",
     )
 
-    def __init__(self, **data: Any):  # noqa
+    def __init__(self, **data: Any):
         if not hasattr(self, "key_for_resolve_multiple") and callable(
             data["resolve_multiple_fn"],
         ):
@@ -522,7 +522,7 @@ class PredictorSpec(TemporalSpec):
         description="""How far behind to look for values""",
     )
 
-    def __init__(self, **data: Any):  # noqa
+    def __init__(self, **data: Any):
         # Unused argument to correctly type hint the interface
         if "lookbehind_days" in data:
             data["interval_days"] = data["lookbehind_days"]
@@ -614,7 +614,7 @@ class TextPredictorSpec(PredictorSpec):
         'earliest'.""",
     )
 
-    def __init__(self, **data: Any):  # noqa
+    def __init__(self, **data: Any):
         # Unused argument to correctly type hint the interface
         if "lookbehind_days" in data:
             data["interval_days"] = data["lookbehind_days"]
