@@ -27,7 +27,7 @@ def generate_test_df(uuids: list[str], col_values: list[int]) -> DataFrame:
     df["random_int"] = col_values
 
     # Set index to uuids
-    df.index = uuids
+    df.index = uuids  # type: ignore
 
     # Sort df by indices
     print("Generated df")

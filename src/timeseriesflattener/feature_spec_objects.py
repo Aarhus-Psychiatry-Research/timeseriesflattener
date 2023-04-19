@@ -323,6 +323,10 @@ class StaticSpec(_AnySpec):
     class Doc:
         short_description = """Specification for a static feature."""
 
+    def __init__(self, values_loader: Optional[Any] = None, **kwargs: Any):  # noqa
+        # Unused argument to make the signature match the parent class
+        super().__init__(**kwargs)
+
 
 class TemporalSpec(_AnySpec):
     """The minimum specification required for collapsing a temporal
@@ -416,7 +420,8 @@ class TemporalSpec(_AnySpec):
         description="""Optional kwargs passed onto the data loader.""",
     )
 
-    def __init__(self, **data: Any):
+    def __init__(self, values_loader: Optional[Any] = None, **data: Any):  # noqa
+        # Unused argument 'values_loader' to correctly type hint
         if not hasattr(self, "key_for_resolve_multiple") and callable(
             data["resolve_multiple_fn"],
         ):
@@ -517,7 +522,8 @@ class PredictorSpec(TemporalSpec):
         description="""How far behind to look for values""",
     )
 
-    def __init__(self, **data: Any):
+    def __init__(self, interval_days: Optional[float] = None, **data: Any):  # noqa
+        # Unused argument to correctly type hint the interface
         if "lookbehind_days" in data:
             data["interval_days"] = data["lookbehind_days"]
 
@@ -607,6 +613,18 @@ class TextPredictorSpec(PredictorSpec):
         Defaults to: 'concatenate'. Other possible options are 'latest' and
         'earliest'.""",
     )
+
+    def __init__(self, interval_days: Optional[float] = None, **data: Any):  # noqa
+        # Unused argument to correctly type hint the interface
+        if "lookbehind_days" in data:
+            data["interval_days"] = data["lookbehind_days"]
+
+        data["lookbehind_days"] = data["interval_days"]
+
+        if not data["interval_days"] and not data["lookbehind_days"]:
+            raise ValueError("lookbehind_days or interval_days must be specified.")
+
+        super().__init__(**data)
 
 
 class OutcomeSpec(TemporalSpec):
@@ -721,7 +739,7 @@ class _MinGroupSpec(BaseModel):
 
         Used to generate combinations of features."""
 
-    values_loader: Optional[list[str]] = Field(
+    values_loader: Optional[Sequence[str]] = Field(
         default=None,
         description="""Loader for the df. Tries to resolve from the data_loaders
             registry, then calls the function which should return a dataframe.""",

@@ -48,6 +48,7 @@ def test_cache_hitting(
     cache = DiskCache(
         feature_cache_dir=tmp_path,
         entity_id_col_name="entity_id",
+        prediction_times_df=synth_prediction_times,
     )
 
     # Create the cache
