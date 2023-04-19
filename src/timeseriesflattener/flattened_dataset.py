@@ -36,9 +36,9 @@ log = logging.getLogger(__name__)
 class SpecCollection(PydanticBaseModel):
     """A collection of specs."""
 
-    outcome_specs: list[OutcomeSpec] = []
-    predictor_specs: list[PredictorSpec] = []
-    static_specs: list[_AnySpec] = []
+    outcome_specs: List[OutcomeSpec] = []
+    predictor_specs: List[PredictorSpec] = []
+    static_specs: List[_AnySpec] = []
 
     def __len__(self) -> int:
         """Return number of specs in collection."""
@@ -479,7 +479,7 @@ class TimeseriesFlattener:
         return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
 
     @staticmethod
-    def _check_dfs_are_ready_for_concat(dfs: list[pd.DataFrame]):
+    def _check_dfs_are_ready_for_concat(dfs: List[pd.DataFrame]):
         """Sample each df and check for identical indices.
 
         This checks that all the dataframes are aligned before
@@ -525,7 +525,7 @@ class TimeseriesFlattener:
 
     def _concatenate_flattened_timeseries(
         self,
-        flattened_predictor_dfs: list[pd.DataFrame],
+        flattened_predictor_dfs: List[pd.DataFrame],
     ) -> None:
         """Concatenate flattened predictor dfs."""
 
@@ -554,7 +554,7 @@ class TimeseriesFlattener:
 
     def _add_temporal_batch(
         self,
-        temporal_batch: list[TemporalSpec],
+        temporal_batch: List[TemporalSpec],
     ):
         """Add predictors to the flattened dataframe from a list."""
         # Shuffle predictor specs to avoid IO contention
@@ -778,7 +778,7 @@ class TimeseriesFlattener:
             if hasattr(s, "incident") and not s.incident
         ]
 
-        temporal_batch: list[TemporalSpec] = self.unprocessed_specs.outcome_specs  # type: ignore
+        temporal_batch: List[TemporalSpec] = self.unprocessed_specs.outcome_specs  # type: ignore
         temporal_batch += self.unprocessed_specs.predictor_specs
 
         if self.drop_pred_times_with_insufficient_look_distance:
@@ -829,7 +829,7 @@ class TimeseriesFlattener:
 
     def add_spec(
         self,
-        spec: Union[list[_AnySpec], _AnySpec],
+        spec: Union[List[_AnySpec], _AnySpec],
     ):
         """Add a specification to the flattened dataset.
 
@@ -841,7 +841,7 @@ class TimeseriesFlattener:
         For further documentation, see those objects and the tutorial.
         """
         if isinstance(spec, _AnySpec):
-            specs_to_process: list[_AnySpec] = [spec]
+            specs_to_process: List[_AnySpec] = [spec]
         else:
             specs_to_process = spec
 

@@ -19,7 +19,7 @@ def benchmark(func: Callable, *args: Any, **kwargs: Any) -> float:
     return end - start
 
 
-def generate_test_df(uuids: list[str], col_values: list[int]) -> DataFrame:
+def generate_test_df(uuids: List[str], col_values: List[int]) -> DataFrame:
     """Generate a test df with a random integer column and a uuid index."""
     df = pd.DataFrame()
 

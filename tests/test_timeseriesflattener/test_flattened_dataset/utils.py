@@ -56,7 +56,7 @@ def check_dfs_have_same_contents_by_column(df1: pd.DataFrame, df2: pd.DataFrame)
 
 
 def create_flattened_df(
-    predictor_specs: list[PredictorSpec],
+    predictor_specs: List[PredictorSpec],
     prediction_times_df: pd.DataFrame,
     cache: Optional[FeatureCache] = None,
 ) -> pd.DataFrame:

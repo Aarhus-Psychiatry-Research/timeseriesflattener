@@ -75,7 +75,7 @@ def str_to_df(
 def _get_value_cols_based_on_spec(
     df: pd.DataFrame,
     spec: _AnySpec,
-) -> Union[str, list[str]]:
+) -> Union[str, List[str]]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()

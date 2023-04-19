@@ -116,7 +116,7 @@ class ColumnHandler:
     def get_value_col_str_name(
         df: Optional[pd.DataFrame] = None,
         output_spec: Optional[TemporalSpec] = None,
-    ) -> list[str]:
+    ) -> List[str]:
         """Returns the name of the value column in df. If df has a multiindex,
         returns a list of all column names in the 'value' multiindex.
 

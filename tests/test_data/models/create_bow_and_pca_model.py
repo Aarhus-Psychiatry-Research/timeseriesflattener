@@ -23,7 +23,7 @@ def train_bow_model(corpus: Sequence[str]) -> CountVectorizer:
     return model
 
 
-def load_synth_txt_data() -> list[str]:
+def load_synth_txt_data() -> List[str]:
     """
     Loads the synthetic text data and returns the text
     """
