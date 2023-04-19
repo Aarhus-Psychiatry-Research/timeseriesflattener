@@ -3,8 +3,6 @@
 utilities. If this file grows, consider splitting it up.
 """
 
-from __future__ import annotations
-
 import functools
 import logging
 import os
@@ -16,7 +14,7 @@ import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_dfs: dict[str, pd.DataFrame] = {}
+split_dfs: Dict[str, pd.DataFrame] = {}  #
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -181,7 +179,7 @@ def write_df_to_file(
         raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[Dict[str, Any]]):
     """Find potential duplicates in list of dicts.
 
     Args:
