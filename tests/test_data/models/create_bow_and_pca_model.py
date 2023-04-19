@@ -3,7 +3,7 @@ Used for testing purposes."""
 import pickle as pkl
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, List
 
 import numpy as np
 from sklearn.decomposition import PCA

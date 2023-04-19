@@ -2,7 +2,7 @@
 
 from collections.abc import Sequence
 from io import StringIO
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -55,7 +55,7 @@ def str_to_df(
         DataFrame: A dataframe.
     """
 
-    df = pd.read_table(StringIO(string), sep=",", index_col=False)
+    df = pd.read_table(StringIO(string), sep=",", index_col=False)  # type: ignore
 
     if convert_timestamp_to_datetime:
         df = convert_cols_with_matching_colnames_to_datetime(df, "timestamp")

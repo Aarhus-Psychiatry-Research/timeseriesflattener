@@ -4,7 +4,7 @@ import logging
 import time
 from collections.abc import Sequence
 from functools import lru_cache
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import pandas as pd
 from frozendict import frozendict
@@ -64,7 +64,7 @@ def resolve_from_dict_or_registry(data: Dict[str, Any]):
             data["values_df"] = load_df_with_cache(
                 loader_fn=data["values_loader"],
                 kwargs=frozendict(data["loader_kwargs"]),  # type: ignore
-                feature_name=data["feature_name"],
+                feature_name=data["feature_name"],  # type: ignore
             )
 
 

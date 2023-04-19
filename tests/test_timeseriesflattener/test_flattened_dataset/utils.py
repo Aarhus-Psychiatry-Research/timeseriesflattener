@@ -1,7 +1,7 @@
 """Integration test for the flattened dataset generation."""
 
 
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 import pandas as pd
