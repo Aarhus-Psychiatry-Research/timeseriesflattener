@@ -186,7 +186,7 @@ description: run unit tests
 extras = tests, text
 use_develop = true
 commands =
-  pytest {posargs:tests}
+  pytest -n auto {posargs:tests}
 
 [testenv:type]
 description: run static type checking
