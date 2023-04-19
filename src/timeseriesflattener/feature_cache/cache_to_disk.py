@@ -2,7 +2,6 @@
 import datetime as dt
 import os
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 
@@ -17,7 +16,7 @@ class DiskCache(FeatureCache):
     def __init__(
         self,
         feature_cache_dir: Path,
-        prediction_times_df: Optional[pd.DataFrame] = None,
+        prediction_times_df: pd.DataFrame,
         pred_time_uuid_col_name: str = "pred_time_uuid",
         entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
@@ -131,7 +130,7 @@ class DiskCache(FeatureCache):
 
         # Replace NaNs with fallback
         df[feature_spec.get_col_str()] = df[feature_spec.get_col_str()].fillna(
-            feature_spec.fallback,
+            feature_spec.fallback,  # type: ignore
         )
 
         return df
@@ -145,7 +144,7 @@ class DiskCache(FeatureCache):
         file_name = self._get_file_name(feature_spec=feature_spec)
 
         # Drop rows containing fallback, since it's non-informative
-        df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()
+        df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()  # type: ignore
 
         # Drop entity and timestamp columns if they exists
         for col in [self.entity_entity_id_col_name, self.timestamp_col_name]:

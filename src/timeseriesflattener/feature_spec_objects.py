@@ -233,7 +233,7 @@ class _AnySpec(BaseModel):
         description="""Optional kwargs for the values_loader.""",
     )
 
-    values_df: Optional[pd.DataFrame] = Field(
+    values_df: Optional[pd.DataFrame] = Field(  # type: ignore
         default=None,
         description="Dataframe with the values.",
     )
@@ -778,8 +778,8 @@ class _MinGroupSpec(BaseModel):
 
     def _check_loaders_are_valid(self):
         """Check that all loaders can be resolved from the data_loaders catalogue."""
-        invalid_loaders = list(
-            set(self.values_loader) - set(data_loaders.get_all().keys()),
+        invalid_loaders: list = list(
+            set(self.values_loader) - set(data_loaders.get_all().keys()),  # type: ignore
         )
         if len(invalid_loaders) != 0:
             # New line variable as f-string can't handle backslashes
