@@ -254,6 +254,6 @@ def print_df_dimensions_diff(  # noqa
                 if print_when_no_diff:
                     log.info(f"{func.__name__}: No {dim} dropped")
 
-        return result
+        return result  # type: ignore
 
     return wrapper
