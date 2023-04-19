@@ -8,7 +8,7 @@ import logging
 import os
 from collections.abc import Hashable
 from pathlib import Path
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, List, Union
 
 import catalogue
 import pandas as pd
@@ -92,7 +92,7 @@ def format_dict_for_printing(d: dict) -> str:
 
 def load_dataset_from_file(
     file_path: Path,
-    nrows: int | None = None,
+    nrows: Union[int, None] = None,
 ) -> pd.DataFrame:
     """Load dataset from file. Handles csv and parquet files based on suffix.
 
@@ -145,7 +145,7 @@ def load_most_recent_file_matching_pattern_as_df(
     return load_dataset_from_file(file_path=most_recent_file)
 
 
-def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]) -> bool:
+def df_contains_duplicates(df: pd.DataFrame, col_subset: List[str]) -> bool:
     """Check if a dataframe contains duplicates.
 
     Args:
@@ -179,7 +179,7 @@ def write_df_to_file(
         raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[Dict[str, Any]]):
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[Dict[str, Any]]):
     """Find potential duplicates in list of dicts.
 
     Args:
