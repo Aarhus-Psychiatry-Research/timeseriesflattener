@@ -2,6 +2,7 @@
 import datetime as dt
 import os
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 
@@ -16,7 +17,7 @@ class DiskCache(FeatureCache):
     def __init__(
         self,
         feature_cache_dir: Path,
-        prediction_times_df: pd.DataFrame,
+        prediction_times_df: Optional[pd.DataFrame] = None,
         pred_time_uuid_col_name: str = "pred_time_uuid",
         entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
@@ -36,7 +37,7 @@ class DiskCache(FeatureCache):
         """
 
         super().__init__(
-            prediction_times_df=prediction_times_df,
+            prediction_times_df=prediction_times_df,  # type: ignore
             pred_time_uuid_col_name=pred_time_uuid_col_name,
         )
 

@@ -179,7 +179,7 @@ include-package-data = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{39,310}, type
+envlist = py{38,39,310,311}, type, tutorials
 
 [testenv]
 description: run unit tests
@@ -195,4 +195,16 @@ use_develop = true
 allowlist_externals = ls
 commands =
   pyright .
+
+[testenv:tutorials]
+description: run tutorials
+extras = dev, text, tutorials
+commands = 
+  jupyter nbconvert --to notebook --execute docs/tutorials/*.ipynb
+  for notebook in tutorials/*.ipynb; do
+    if grep -q "\"cell_type\": \"error\"" $notebook; then
+      echo "Error cell found in $notebook"
+      exit 1
+    fi
+  done
 """
