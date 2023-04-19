@@ -10,13 +10,13 @@ import logging
 import os
 from collections.abc import Hashable
 from pathlib import Path
-from typing import Any, Callable, Dict
+from typing import Any, Callable
 
 import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_dfs: Dict[str, pd.DataFrame] = {}
+split_dfs: dict[str, pd.DataFrame] = {}
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -181,7 +181,7 @@ def write_df_to_file(
         raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[Dict[str, Any]]):
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
     """Find potential duplicates in list of dicts.
 
     Args:
