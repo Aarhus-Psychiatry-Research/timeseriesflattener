@@ -360,7 +360,7 @@ class TimeseriesFlattener:
         df = TimeseriesFlattener._drop_records_outside_interval_days(
             df,
             direction=direction,
-            interval_days=output_spec.interval_days,
+            interval_days=output_spec.interval_days,  # type: ignore
             timestamp_pred_colname=timestamp_pred_col_name,
             timestamp_value_colname=timestamp_val_col_name,
         )
@@ -675,7 +675,7 @@ class TimeseriesFlattener:
         if outcome_spec.is_dichotomous():
             outcome_is_within_lookahead = (
                 df[prediction_timestamp_col_name]  # type: ignore
-                + timedelta(days=outcome_spec.interval_days)
+                + timedelta(days=outcome_spec.interval_days)  # type: ignore
                 > df[outcome_timestamp_col_name]
             )
 
