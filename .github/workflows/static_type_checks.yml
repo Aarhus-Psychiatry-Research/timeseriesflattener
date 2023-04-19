@@ -20,36 +20,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache venv
+      - name: Cache tox
         uses: actions/cache@v3.2.6
-        id: cache_venv
+        id: cache_tox
         with:
           path: |
-            .venv
-          key: ${{ runner.os }}-venv-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
+            .tox
+          key: ${{ runner.os }}-${{ matrix.python-version }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
         id: setup_python
-        if: steps.cache_venv.outputs.cache-hit != 'true'
         with:
           python-version: "3.9"
 
       - name: Install dependencies
         shell: bash
-        if: steps.cache_venv.outputs.cache-hit != 'true'
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -e .[dev,test,text]
+          pip install tox
 
       - name: Run static type checker
         id: pyright
         continue-on-error: true
         run: |
-          source .venv/bin/activate
-          if pyright .; then
+          if tox -e type; then
             echo "pyright check passed"
             echo "pyright_failed=0" >> $GITHUB_OUTPUT
           else

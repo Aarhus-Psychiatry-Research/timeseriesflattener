@@ -43,6 +43,7 @@ dev = [
   "black[jupyter]==22.8.0", # important that these match the pre-commit hooks
   "pandas-stubs", # type stubs for pandas
   "invoke",
+  "tox",
 ]
 tests = [
   "pytest>=7.1.3,<7.3.0",
@@ -79,7 +80,7 @@ repository = "https://github.com/MartinBernstorff/timeseriesflattener"
 documentation = "https://MartinBernstorff.github.io/timeseriesflattener/"
 
 [tool.pyright]
-exclude = [".*venv*"]
+exclude = [".*venv*", ".tox"]
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
@@ -174,3 +175,26 @@ build_command = "python -m pip install build; python -m build"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{39,310}, type
+
+[testenv]
+description: run unit tests
+extras = tests, text
+use_develop = true
+commands =
+  pytest {posargs:tests}
+
+[testenv:type]
+description: run static type checking
+extras = tests, text
+use_develop = true
+deps = pyright
+allowlist_externals = ls
+commands =
+  ls -la
+  pyright .
+"""
