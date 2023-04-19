@@ -8,7 +8,7 @@ import logging
 import os
 from collections.abc import Hashable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Dict
 
 import catalogue
 import pandas as pd
