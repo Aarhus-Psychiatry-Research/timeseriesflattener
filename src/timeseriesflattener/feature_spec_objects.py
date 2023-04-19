@@ -2,9 +2,8 @@
 import itertools
 import logging
 import time
-from collections.abc import Sequence
 from functools import lru_cache
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
 import pandas as pd
 from frozendict import frozendict

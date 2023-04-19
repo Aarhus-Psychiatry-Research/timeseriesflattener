@@ -1,8 +1,7 @@
 """Utilities for testing."""
 
-from collections.abc import Sequence
 from io import StringIO
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd

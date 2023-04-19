@@ -1,9 +1,8 @@
 """Script for creating a bag-of-words model and a PCA model on the synthetic data.
 Used for testing purposes."""
 import pickle as pkl
-from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, List
+from typing import Any, List, Sequence
 
 import numpy as np
 from sklearn.decomposition import PCA

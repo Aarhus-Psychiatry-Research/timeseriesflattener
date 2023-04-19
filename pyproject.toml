@@ -80,7 +80,10 @@ repository = "https://github.com/MartinBernstorff/timeseriesflattener"
 documentation = "https://MartinBernstorff.github.io/timeseriesflattener/"
 
 [tool.pyright]
-exclude = [".*venv*", ".tox"]
+exclude = [
+  ".*venv*/", 
+  ".venv38/",
+  ".tox"]
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
