@@ -242,7 +242,7 @@ class TimeseriesFlattener:
 
         # Sort by timestamp_pred in case resolve_multiple needs dates
         grouped_df = df.sort_values(by=val_timestamp_col_name).groupby(
-            pred_time_uuid_colname
+            pred_time_uuid_colname,
         )
 
         if callable(resolve_multiple):
@@ -416,7 +416,7 @@ class TimeseriesFlattener:
             pred_times_with_uuid=prediction_times_with_uuid_df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
         ).fillna(
-            output_spec.fallback  # type: ignore
+            output_spec.fallback,  # type: ignore
         )
 
         return df[[*value_col_str_name, pred_time_uuid_col_name]]
