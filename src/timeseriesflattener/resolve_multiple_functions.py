@@ -3,12 +3,10 @@ value."""
 
 # pylint: disable=missing-function-docstring
 
-import re
 import catalogue
+import nltk
 from pandas import DataFrame, Series
 from scipy import stats
-import pandas as pd
-import nltk
 
 resolve_multiple_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 
@@ -171,15 +169,15 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
             lambda x: len(
                 nltk.Counter(
                     " ".join(
-                        x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower()
-                    ).split(" ")
-                )
+                        x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower(),
+                    ).split(" "),
+                ),
             )
             / len(
                 " ".join(
-                    x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower()
-                ).split(" ")
-            )
+                    x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower(),
+                ).split(" "),
+            ),
         )
         .reset_index()
     )
