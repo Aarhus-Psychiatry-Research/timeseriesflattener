@@ -10,7 +10,7 @@ import logging
 import os
 from collections.abc import Hashable
 from pathlib import Path
-from typing import Any, Callable, List
+from typing import Any, Callable
 
 import catalogue
 import pandas as pd
@@ -147,7 +147,7 @@ def load_most_recent_file_matching_pattern_as_df(
     return load_dataset_from_file(file_path=most_recent_file)
 
 
-def df_contains_duplicates(df: pd.DataFrame, col_subset: List[str]) -> bool:
+def df_contains_duplicates(df: pd.DataFrame, col_subset: list[str]) -> bool:
     """Check if a dataframe contains duplicates.
 
     Args:
@@ -181,7 +181,7 @@ def write_df_to_file(
         raise ValueError(f"Invalid file suffix {file_suffix}")
 
 
-def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[dict[str, Any]]):
+def assert_no_duplicate_dicts_in_list(predictor_spec_list: list[dict[str, Any]]):
     """Find potential duplicates in list of dicts.
 
     Args:
