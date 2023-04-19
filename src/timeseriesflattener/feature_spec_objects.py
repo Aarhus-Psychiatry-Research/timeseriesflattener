@@ -441,6 +441,7 @@ class TemporalSpec(_AnySpec):
 
     def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
         """Generate the column name for the output column.
+        If interval days is a float, the decimal point is changed to an underscore.
 
         Args:
             additional_feature_name (Optional[str]): additional feature name to
@@ -449,7 +450,7 @@ class TemporalSpec(_AnySpec):
         feature_name = self.feature_name
         if additional_feature_name:
             feature_name = feature_name + "-" + str(additional_feature_name)
-        col_str = f"{self.prefix}_{feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{feature_name}_within_{int(self.interval_days) if self.interval_days.is_integer() else str(self.interval_days).replace('.', '_')}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
         return col_str
 
 
