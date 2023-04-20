@@ -145,6 +145,18 @@ def test_resolve_multiple_fn_to_str():
     assert "maximum" in pred_spec_batch[0].get_col_str()
 
 
+def test_lookbehind_days_handles_floats():
+    """Test that lookbheind days does not coerce floats into ints."""
+    pred_spec_batch = PredictorGroupSpec(
+        values_loader=["synth_predictor_float"],
+        lookbehind_days=[2, 0.5],
+        fallback=[np.nan],
+        resolve_multiple_fn=[maximum],
+    ).create_combinations()
+
+    assert pred_spec_batch[1].lookbehind_days == 0.5
+
+
 def get_lines_with_diff(text1: str, text2: str) -> List[str]:
     """Find all lines in text1 which are different from text2."""
     # Remove whitespace and periods

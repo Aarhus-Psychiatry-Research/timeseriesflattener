@@ -356,7 +356,7 @@ class TemporalSpec(_AnySpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (Union[int, float, NoneType]):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -381,7 +381,7 @@ class TemporalSpec(_AnySpec):
         short_description = """The minimum specification required for collapsing a temporal
         feature, whether looking ahead or behind. Mostly used for inheritance below."""
 
-    interval_days: Optional[Union[int, float]] = Field(
+    interval_days: Optional[float] = Field(
         description="""How far to look in the given direction (ahead for outcomes,
             behind for predictors)""",
     )
@@ -444,6 +444,7 @@ class TemporalSpec(_AnySpec):
 
     def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
         """Generate the column name for the output column.
+        If interval days is a float, the decimal point is changed to an underscore.
 
         Args:
             additional_feature_name (Optional[str]): additional feature name to
@@ -452,7 +453,14 @@ class TemporalSpec(_AnySpec):
         feature_name = self.feature_name
         if additional_feature_name:
             feature_name = feature_name + "-" + str(additional_feature_name)
-        col_str = f"{self.prefix}_{feature_name}_within_{self.interval_days}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+
+        interval_days_str = (  # This is required because pydantic coerces the int 2 to float 2.0
+            int(self.interval_days)  # type: ignore
+            if self.interval_days.is_integer()  # type: ignore
+            else str(self.interval_days).replace(".", "-")
+        )
+
+        col_str = f"{self.prefix}_{feature_name}_within_{interval_days_str}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
         return col_str
 
 
@@ -483,7 +491,7 @@ class PredictorSpec(TemporalSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (Union[int, float, NoneType]):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -502,7 +510,7 @@ class PredictorSpec(TemporalSpec):
             resolution, raise an error. Defaults to: 0.0.
         entity_id_col_name (str):
             Col name for ids in the input dataframe. Defaults to: entity_id.
-        lookbehind_days (Union[int, float]):
+        lookbehind_days (float):
             How far behind to look for values
     """
 
@@ -517,7 +525,7 @@ class PredictorSpec(TemporalSpec):
             <prefix>_<feature_name>.""",
     )
 
-    lookbehind_days: Union[int, float] = Field(
+    lookbehind_days: float = Field(
         description="""How far behind to look for values""",
     )
 
@@ -561,7 +569,7 @@ class TextPredictorSpec(PredictorSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (Union[int, float, NoneType]):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -582,7 +590,7 @@ class TextPredictorSpec(PredictorSpec):
             resolution, raise an error. Defaults to: 0.0.
         entity_id_col_name (str):
             Col name for ids in the input dataframe. Defaults to: entity_id.
-        lookbehind_days (Union[int, float]):
+        lookbehind_days (float):
             How far behind to look for values
         embedding_fn (Callable):
             A function used for embedding the text. Should take a
@@ -653,7 +661,7 @@ class OutcomeSpec(TemporalSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (Union[int, float, NoneType]):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -677,7 +685,7 @@ class OutcomeSpec(TemporalSpec):
             I.e., incident outcomes are outcomes you can only experience once.
             For example, type 2 diabetes is incident. Incident outcomes can be handled
             in a vectorised way during resolution, which is faster than non-incident outcomes.
-        lookahead_days (Union[int, float]):
+        lookahead_days (float):
             How far ahead to look for values
     """
 
@@ -699,7 +707,7 @@ class OutcomeSpec(TemporalSpec):
             in a vectorised way during resolution, which is faster than non-incident outcomes.""",
     )
 
-    lookahead_days: Union[int, float] = Field(
+    lookahead_days: float = Field(
         description="""How far ahead to look for values""",
     )
 
@@ -903,7 +911,7 @@ class PredictorGroupSpec(_MinGroupSpec):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
         loader_kwargs (Optional[List[Dict[str, Any]]]):
             Optional kwargs for the values_loader.
-        lookbehind_days (List[Union[int, float]]):
+        lookbehind_days (List[float]):
             How far behind to look for values
     """
 
@@ -915,7 +923,7 @@ class PredictorGroupSpec(_MinGroupSpec):
         description="""Prefix for column name, e,g, <prefix>_<feature_name>.""",
     )
 
-    lookbehind_days: List[Union[int, float]] = Field(
+    lookbehind_days: List[float] = Field(
         description="""How far behind to look for values""",
     )
 
@@ -961,7 +969,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
         can experience it more than once. For example, type 2 diabetes is incident.
         Incident outcomes can be handled in a vectorised way during resolution,
          which is faster than non-incident outcomes.
-    lookahead_days (List[Union[int, float]]):
+    lookahead_days (List[float]):
         How far ahead to look for values
     """
 
@@ -980,7 +988,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
              which is faster than non-incident outcomes.""",
     )
 
-    lookahead_days: List[Union[int, float]] = Field(
+    lookahead_days: List[float] = Field(
         description="""How far ahead to look for values""",
     )
 
