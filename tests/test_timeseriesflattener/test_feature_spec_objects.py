@@ -146,7 +146,7 @@ def test_resolve_multiple_fn_to_str():
 
 
 def test_lookbehind_days_handles_floats():
-    """Test that resolve_multiple_fn is converted to str correctly."""
+    """Test that lookbheind days does not coerce floats into ints."""
     pred_spec_batch = PredictorGroupSpec(
         values_loader=["synth_predictor_float"],
         lookbehind_days=[2, 0.5],
