@@ -186,14 +186,14 @@ envlist = py{38,39,310,311}, type
 
 [testenv]
 description: run unit tests
-extras = tests, text
+extras = test, text
 use_develop = true
 commands =
   pytest -n auto {posargs:tests}
 
 [testenv:type]
 description: run static type checking
-extras = tests, text, dev
+extras = test, text, dev
 use_develop = true
 allowlist_externals = ls
 commands =

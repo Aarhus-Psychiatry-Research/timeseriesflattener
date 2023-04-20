@@ -205,9 +205,10 @@ def pre_commit(c: Context, auto_fix: bool):
             exit(1)
 
 
+@task
 def static_type_checks(c: Context):
     echo_header(f"{Emo.CLEAN} Running static type checks")
-    c.run("pyright .", pty=True)
+    c.run("tox -e type", pty=True)
 
 
 @task
