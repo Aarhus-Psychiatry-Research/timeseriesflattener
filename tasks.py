@@ -256,9 +256,6 @@ def test(
         ]
 
     pytest_arg_str = " ".join(pytest_args)
-
-    print(pytest_arg_str)
-
     python_versions = python_versions.replace(".", "")
 
     test_result: Result = c.run(
