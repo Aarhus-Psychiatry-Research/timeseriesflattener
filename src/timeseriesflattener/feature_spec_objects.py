@@ -454,10 +454,8 @@ class TemporalSpec(_AnySpec):
         if additional_feature_name:
             feature_name = feature_name + "-" + str(additional_feature_name)
 
-        self.interval_days: float = self.interval_days  # type: ignore
-
         interval_days_str = (
-            int(self.interval_days)
+            int(self.interval_days)  # type: ignore
             if self.interval_days.is_integer()
             else str(self.interval_days).replace(".", "_")
         )
