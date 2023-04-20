@@ -237,14 +237,23 @@ def update(c: Context):
 
 
 @task
-def test(c: Context):
+def test(c: Context, run_all_envs: bool = False):
     """Run tests"""
     echo_header(f"{Emo.TEST} Running tests")
-    test_result: Result = c.run(
-        "pytest -n auto -rfE --failed-first -p no:cov --disable-warnings -q",
-        warn=True,
-        pty=True,
-    )
+    pytest_args = "-n auto -rfE --failed-first -p no:cov --disable-warnings -q"
+
+    if not run_all_envs:
+        test_result: Result = c.run(
+            f"tox -e py311 -- {pytest_args}",
+            warn=True,
+            pty=True,
+        )
+    else:
+        test_result = c.run(
+            f"tox -- {pytest_args}",
+            warn=True,
+            pty=True,
+        )
 
     # If "failed" in the pytest results
     if "failed" in test_result.stdout:
@@ -293,7 +302,7 @@ def pr(c: Context, auto_fix: bool = False):
     """Run all checks and update the PR."""
     add_and_commit(c)
     lint(c, auto_fix=auto_fix)
-    test(c)
+    test(c, run_all_envs=True)
     update_branch(c)
     update_pr(c)
 
