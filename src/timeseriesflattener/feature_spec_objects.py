@@ -356,7 +356,7 @@ class TemporalSpec(_AnySpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (float, NoneType):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -491,7 +491,7 @@ class PredictorSpec(TemporalSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (Union[float, NoneType]):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -569,7 +569,7 @@ class TextPredictorSpec(PredictorSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (Union[float, NoneType]):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -661,7 +661,7 @@ class OutcomeSpec(TemporalSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (Union[float, NoneType]):
+        interval_days (Optional[float]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
