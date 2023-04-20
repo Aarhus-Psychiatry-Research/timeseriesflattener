@@ -7,13 +7,13 @@ import functools
 import logging
 import os
 from pathlib import Path
-from typing import Any, Callable, Dict, Hashable, List, Optional
+from typing import Any, Callable, Dict, Hashable, List, Union
 
 import catalogue
 import pandas as pd
 
 data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
-split_dfs: Dict[str, pd.DataFrame] = {}
+split_dfs: Dict[str, pd.DataFrame] = {}  #
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -91,7 +91,7 @@ def format_dict_for_printing(d: dict) -> str:
 
 def load_dataset_from_file(
     file_path: Path,
-    nrows: Optional[int] = None,
+    nrows: Union[int, None] = None,
 ) -> pd.DataFrame:
     """Load dataset from file. Handles csv and parquet files based on suffix.
 
@@ -194,7 +194,7 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[Dict[str, Any]])
         d = {k: v for k, v in d.items() if isinstance(v, Hashable)}  # noqa
 
         d_as_tuple = tuple(d.items())
-        if d_as_tuple in seen:  # pylint: disable=R6103
+        if d_as_tuple in seen:
             duplicates.add(d_as_tuple)
         else:
             seen.add(d_as_tuple)
@@ -253,6 +253,6 @@ def print_df_dimensions_diff(  # noqa
                 if print_when_no_diff:
                     log.info(f"{func.__name__}: No {dim} dropped")
 
-        return result
+        return result  # type: ignore
 
     return wrapper

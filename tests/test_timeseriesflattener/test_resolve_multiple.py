@@ -1,5 +1,5 @@
 """Tests of resolve_multiple strategies."""
-# pylint: disable=missing-function-docstring
+
 
 import numpy as np
 from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec

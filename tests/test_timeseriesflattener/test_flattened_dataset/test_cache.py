@@ -1,5 +1,5 @@
 """Test that cache hits."""
-# pylint: disable=unused-import, redefined-outer-name
+
 
 from pathlib import Path
 from typing import List
@@ -49,6 +49,7 @@ def test_cache_hitting(
     cache = DiskCache(
         feature_cache_dir=tmp_path,
         entity_id_col_name="entity_id",
+        prediction_times_df=synth_prediction_times,
     )
 
     # Create the cache

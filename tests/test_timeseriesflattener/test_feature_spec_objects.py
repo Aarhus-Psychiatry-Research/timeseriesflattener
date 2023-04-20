@@ -1,5 +1,6 @@
 """Test that feature spec objects work as intended."""
 
+
 from typing import List
 
 import numpy as np
@@ -18,7 +19,7 @@ from timeseriesflattener.feature_spec_objects import (
     generate_docstring_from_attributes,
 )
 from timeseriesflattener.resolve_multiple_functions import maximum
-from timeseriesflattener.testing.load_synth_data import (  # pylint: disable=unused-import; noqa
+from timeseriesflattener.testing.load_synth_data import (
     load_synth_predictor_float,
     synth_predictor_binary,
 )
@@ -169,7 +170,7 @@ def get_lines_with_diff(text1: str, text2: str) -> List[str]:
 )
 def test_feature_spec_docstrings(spec: BaseModel):
     """Test that docstring is generated correctly."""
-    current_docstring = spec.__doc__
+    current_docstring: str = spec.__doc__  # type: ignore
     generated_docstring = generate_docstring_from_attributes(cls=spec)
     # strip docstrings of newlines and whitespace to allow room for formatting
     current_docstring_no_whitespace = (
