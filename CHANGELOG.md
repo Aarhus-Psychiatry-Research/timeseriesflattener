@@ -2,6 +2,25 @@
 
 <!--next-version-placeholder-->
 
+## v0.24.0 (2023-04-20)
+### Feature
+* Modify invoke test command to take python-versions arg ([`4a9c5c2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4a9c5c2e672fc67bd56e57313588f09737b69f88))
+* Improve type hints ([`d53e61e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d53e61e0b7037064b1cb4e0a29455c5523749dba))
+
+### Fix
+* Support multiple python versions for testing ([`d929147`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d929147cc14b59947b559501e31eec60f278f1fc))
+* Correct interval str computation ([`0cd0437`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0cd043743617730f979e1e1b34e3adb30137d36f))
+* Change col str naming ([`f853452`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f85345218cc0fb5dc69b748edb3555806d3bc9fe))
+* Fix interval days type hints in specs ([`e26235c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e26235c78c5068e17b0bce0a5c64c47c2a362ffc))
+* Rename test deps ([`471a63b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/471a63b9147932677cbf816582ed1d228c38b9c0))
+* Type hints ([`21726f2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/21726f2aa976c0110b6a0b7656c2bd60fd10f7ef))
+
+### Documentation
+* Align docstrings ([`8d92a25`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8d92a2553e3909906194e661a4c58e9a5f2d5226))
+* Fix tutorial ([`f856a56`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f856a5661cf3bed9832c0ddd3c25d2f8f3323107))
+* Update docstrings ([`b771f5b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b771f5b89cba1aa2f28b2c5a7dafb47b18e04991))
+* Update citation in faq ([`8fdfbc4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8fdfbc44d8e641e3261d4a623e209234ea8c3d66))
+
 ## v0.23.11 (2023-03-28)
 ### Fix
 * Doi for shamout and imrie ([`4823e1e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4823e1ef0b66c2438f08d8080cd1d14f62696ff2))
