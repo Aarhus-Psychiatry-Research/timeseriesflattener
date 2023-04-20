@@ -85,5 +85,4 @@ jobs:
         id: fail_run
         if: ${{steps.pyright.outputs.pyright_failed == 1}}
         run: |
-          source .venv/bin/activate
-          pyright . # Rerunning pyright isn't optimal computationally, but typically takes no more than a couple of seconds, and this ensures that the errors are in the failing step
+          tox -e type # Rerunning pyright isn't optimal computationally, but typically takes no more than a couple of seconds, and this ensures that the errors are in the failing step
