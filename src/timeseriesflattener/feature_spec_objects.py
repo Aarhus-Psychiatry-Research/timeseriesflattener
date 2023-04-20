@@ -454,7 +454,11 @@ class TemporalSpec(_AnySpec):
         if additional_feature_name:
             feature_name = feature_name + "-" + str(additional_feature_name)
 
-        interval_days_str = str(self.interval_days).replace(".", "-")
+        interval_days_str = (  # This is required because pydantic coerces the int 2 to float 2.0
+            int(self.interval_days)  # type: ignore
+            if self.interval_days.is_integer()  # type: ignore
+            else str(self.interval_days).replace(".", "-")
+        )
 
         col_str = f"{self.prefix}_{feature_name}_within_{interval_days_str}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
         return col_str
