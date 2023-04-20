@@ -1,6 +1,5 @@
 """Integration test for the flattened dataset generation."""
 
-# pylint: disable=unused-import, redefined-outer-name
 
 from typing import List, Optional
 

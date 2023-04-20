@@ -54,7 +54,7 @@ def str_to_df(
         DataFrame: A dataframe.
     """
 
-    df = pd.read_table(StringIO(string), sep=",", index_col=False)
+    df = pd.read_table(StringIO(string), sep=",", index_col=False)  # type: ignore
 
     if convert_timestamp_to_datetime:
         df = convert_cols_with_matching_colnames_to_datetime(df, "timestamp")
@@ -101,7 +101,7 @@ def assert_flattened_data_as_expected(
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flattened_ds.add_spec(  # pylint: disable=protected-access
+    flattened_ds.add_spec(
         spec=output_spec,
     )
 

@@ -36,7 +36,7 @@ def test_write_and_check_feature(
 
     test_spec = PredictorSpec(
         values_df=values_df,
-        interval_days=5,
+        lookbehind_days=5,
         resolve_multiple_fn=latest,
         key_for_resolve_multiple="latest",
         fallback=np.nan,

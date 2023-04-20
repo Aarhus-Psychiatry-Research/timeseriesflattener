@@ -67,7 +67,7 @@ def setup_logger(
         if level:
             file_handler.setLevel(level)
         if fmt:
-            file_handler.setFormatter(formatter)
+            file_handler.setFormatter(formatter)  # type: ignore
 
         logger.addHandler(file_handler)
 

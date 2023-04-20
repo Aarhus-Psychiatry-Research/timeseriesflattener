@@ -15,8 +15,6 @@ from timeseriesflattener.utils import data_loaders, split_dfs
 
 log = logging.getLogger(__name__)
 
-# pylint: disable=consider-alternative-union-syntax, trailing-whitespace, missing-class-docstring, too-few-public-methods
-
 
 @lru_cache
 def load_df_with_cache(
@@ -28,7 +26,7 @@ def load_df_with_cache(
     start_time = time.time()
     log.info(
         f"{feature_name}: Loading values",
-    )  # pylint: disable=logging-fstring-interpolation
+    )
 
     df = loader_fn(**kwargs)
 
@@ -36,7 +34,7 @@ def load_df_with_cache(
 
     log.debug(
         f"{feature_name}: Loaded in {end_time - start_time:.2f} seconds",
-    )  # pylint: disable=logging-fstring-interpolation
+    )
 
     return df
 
@@ -65,7 +63,7 @@ def resolve_from_dict_or_registry(data: Dict[str, Any]):
             data["values_df"] = load_df_with_cache(
                 loader_fn=data["values_loader"],
                 kwargs=frozendict(data["loader_kwargs"]),  # type: ignore
-                feature_name=data["feature_name"],
+                feature_name=data["feature_name"],  # type: ignore
             )
 
 
@@ -186,13 +184,13 @@ class _AnySpec(BaseModel):
     """A base class for all feature specifications.
 
     Fields:
-        values_loader (Optional[Callable]):
-            Loader for the df. Tries to resolve from the data_loaders registry,
-            then calls the function which should return a dataframe.
         values_name (Optional[str]):
             A string that maps to a key in a dictionary instantiated by
             `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
         loader_kwargs (Optional[Mapping[str, Any]]):
             Optional kwargs for the values_loader.
         values_df (Optional[DataFrame]):
@@ -208,17 +206,11 @@ class _AnySpec(BaseModel):
             to infer it by looking for the only column that doesn't match id_col_name
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
-    Override the generated column name after flattening the time series
+            Override the generated column name after flattening the time series
     """
 
     class Doc:
         short_description = "A base class for all feature specifications."
-
-    values_loader: Optional[Callable] = Field(
-        None,
-        description="""Loader for the df. Tries to resolve from the data_loaders registry,
-            then calls the function which should return a dataframe.""",
-    )
 
     values_name: Optional[str] = Field(
         default=None,
@@ -227,12 +219,18 @@ class _AnySpec(BaseModel):
             is a subset of the df where the values_name == key.""",
     )
 
+    values_loader: Optional[Callable] = Field(
+        None,
+        description="""Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.""",
+    )
+
     loader_kwargs: Optional[Dict[str, Any]] = Field(
         default=None,
         description="""Optional kwargs for the values_loader.""",
     )
 
-    values_df: Optional[pd.DataFrame] = Field(
+    values_df: Optional[pd.DataFrame] = Field(  # type: ignore
         default=None,
         description="Dataframe with the values.",
     )
@@ -324,19 +322,24 @@ class StaticSpec(_AnySpec):
     class Doc:
         short_description = """Specification for a static feature."""
 
+    def __init__(self, values_loader: Optional[Callable] = None, **kwargs: Any):
+        # Somehow, pyright cannot correctly infer the values_loader type, so we have
+        # to manually specify it
+        super().__init__(values_loader=values_loader, **kwargs)
+
 
 class TemporalSpec(_AnySpec):
     """The minimum specification required for collapsing a temporal
         feature, whether looking ahead or behind. Mostly used for inheritance below.
 
     Fields:
-        values_loader (Optional[Callable]):
-            Loader for the df. Tries to resolve from the data_loaders registry,
-            then calls the function which should return a dataframe.
         values_name (Optional[str]):
             A string that maps to a key in a dictionary instantiated by
             `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
         loader_kwargs (Optional[dict]):
             Optional kwargs passed onto the data loader.
         values_df (Optional[DataFrame]):
@@ -353,7 +356,7 @@ class TemporalSpec(_AnySpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (float):
+        interval_days (float, NoneType):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -378,7 +381,7 @@ class TemporalSpec(_AnySpec):
         short_description = """The minimum specification required for collapsing a temporal
         feature, whether looking ahead or behind. Mostly used for inheritance below."""
 
-    interval_days: float = Field(
+    interval_days: Optional[float] = Field(
         description="""How far to look in the given direction (ahead for outcomes,
             behind for predictors)""",
     )
@@ -458,13 +461,13 @@ class PredictorSpec(TemporalSpec):
     """Specification for a single predictor, where the df has been resolved.
 
     Fields:
-        values_loader (Optional[Callable]):
-            Loader for the df. Tries to resolve from the data_loaders registry,
-            then calls the function which should return a dataframe.
         values_name (Optional[str]):
             A string that maps to a key in a dictionary instantiated by
             `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
         loader_kwargs (Optional[dict]):
             Optional kwargs passed onto the data loader.
         values_df (Optional[DataFrame]):
@@ -481,7 +484,7 @@ class PredictorSpec(TemporalSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (float):
+        interval_days (Union[float, NoneType]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -520,6 +523,7 @@ class PredictorSpec(TemporalSpec):
     )
 
     def __init__(self, **data: Any):
+        # Unused argument to correctly type hint the interface
         if "lookbehind_days" in data:
             data["interval_days"] = data["lookbehind_days"]
 
@@ -535,13 +539,13 @@ class TextPredictorSpec(PredictorSpec):
     """Specification for a text predictor, where the df has been resolved.
 
     Fields:
-        values_loader (Optional[Callable]):
-            Loader for the df. Tries to resolve from the data_loaders registry,
-            then calls the function which should return a dataframe.
         values_name (Optional[str]):
             A string that maps to a key in a dictionary instantiated by
             `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
         loader_kwargs (Optional[dict]):
             Optional kwargs passed onto the data loader.
         values_df (Optional[DataFrame]):
@@ -558,7 +562,7 @@ class TextPredictorSpec(PredictorSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (float):
+        interval_days (Union[float, NoneType]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -610,18 +614,30 @@ class TextPredictorSpec(PredictorSpec):
         'earliest'.""",
     )
 
+    def __init__(self, **data: Any):
+        # Unused argument to correctly type hint the interface
+        if "lookbehind_days" in data:
+            data["interval_days"] = data["lookbehind_days"]
+
+        data["lookbehind_days"] = data["interval_days"]
+
+        if not data["interval_days"] and not data["lookbehind_days"]:
+            raise ValueError("lookbehind_days or interval_days must be specified.")
+
+        super().__init__(**data)
+
 
 class OutcomeSpec(TemporalSpec):
     """Specification for a single outcome, where the df has been resolved.
 
     Fields:
-        values_loader (Optional[Callable]):
-            Loader for the df. Tries to resolve from the data_loaders registry,
-            then calls the function which should return a dataframe.
         values_name (Optional[str]):
             A string that maps to a key in a dictionary instantiated by
             `split_df_and_register_to_dict`. Each key corresponds to a dataframe, which
             is a subset of the df where the values_name == key.
+        values_loader (Optional[Callable]):
+            Loader for the df. Tries to resolve from the data_loaders registry,
+            then calls the function which should return a dataframe.
         loader_kwargs (Optional[dict]):
             Optional kwargs passed onto the data loader.
         values_df (Optional[DataFrame]):
@@ -638,7 +654,7 @@ class OutcomeSpec(TemporalSpec):
             or timestamp_col_name.
         output_col_name_override (Optional[str]):
             Override the generated column name after flattening the time series
-        interval_days (float):
+        interval_days (Union[float, NoneType]):
             How far to look in the given direction (ahead for outcomes,
             behind for predictors)
         resolve_multiple_fn (Union[Callable, str]):
@@ -723,7 +739,7 @@ class _MinGroupSpec(BaseModel):
 
         Used to generate combinations of features."""
 
-    values_loader: Optional[List[str]] = Field(
+    values_loader: Optional[Sequence[str]] = Field(
         default=None,
         description="""Loader for the df. Tries to resolve from the data_loaders
             registry, then calls the function which should return a dataframe.""",
@@ -756,7 +772,7 @@ class _MinGroupSpec(BaseModel):
             resolve_multiple_functions.py""",
     )
 
-    fallback: List[Union[Callable, str]] = Field(
+    fallback: Sequence[Union[Callable, str, float]] = Field(
         description="""Which value to use if no values are found within interval_days.""",
     )
 
@@ -778,12 +794,12 @@ class _MinGroupSpec(BaseModel):
 
     def _check_loaders_are_valid(self):
         """Check that all loaders can be resolved from the data_loaders catalogue."""
-        invalid_loaders = list(
-            set(self.values_loader) - set(data_loaders.get_all().keys()),
+        invalid_loaders: list = list(
+            set(self.values_loader) - set(data_loaders.get_all().keys()),  # type: ignore
         )
         if len(invalid_loaders) != 0:
             # New line variable as f-string can't handle backslashes
-            nl = "\n"  # pylint: disable = invalid-name
+            nl = "\n"
             available_loaders = [str(loader) for loader in data_loaders.get_all()]
 
             avail_loaders_str = nl.join(available_loaders)
@@ -863,7 +879,7 @@ class PredictorGroupSpec(_MinGroupSpec):
     """Specification for a group of predictors.
 
     Fields:
-        values_loader (Optional[List[str]]):
+        values_loader (Optional[Sequence[str]]):
             Loader for the df. Tries to resolve from the data_loaders
             registry, then calls the function which should return a dataframe.
         values_name (Optional[List[str]]):
@@ -879,7 +895,7 @@ class PredictorGroupSpec(_MinGroupSpec):
         resolve_multiple_fn (List[Union[Callable, str]]):
             Name of resolve multiple fn, resolved from
             resolve_multiple_functions.py
-        fallback (List[Union[Callable, str]]):
+        fallback (Sequence[Union[Callable, str, float]]):
             Which value to use if no values are found within interval_days.
         allowed_nan_value_prop (List[float]):
             If NaN is higher than this in the input dataframe during
@@ -916,7 +932,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
     """Specification for a group of outcomes.
 
     Fields:
-    values_loader (Optional[List[str]]):
+    values_loader (Optional[Sequence[str]]):
         Loader for the df. Tries to resolve from the data_loaders
         registry, then calls the function which should return a dataframe.
     values_name (Optional[List[str]]):
@@ -932,14 +948,14 @@ class OutcomeGroupSpec(_MinGroupSpec):
     resolve_multiple_fn (List[Union[Callable, str]]):
         Name of resolve multiple fn, resolved from
         resolve_multiple_functions.py
-    fallback (List[Union[Callable, str]]):
+    fallback (Sequence[Union[Callable, str, float]]):
         Which value to use if no values are found within interval_days.
     allowed_nan_value_prop (List[float]):
         If NaN is higher than this in the input dataframe during
         resolution, raise an error. Defaults to: [0.0].
     prefix (str):
         Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
-    loader_kwargs (Optional[List[Dict[str, Any]]]):
+    loader_kwargs (Optional[List[Dict[str,Any]]]):
         Optional kwargs for the values_loader.
     incident (Sequence[bool]):
         Whether the outcome is incident or not, i.e. whether you

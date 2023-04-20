@@ -37,7 +37,7 @@ class DiskCache(FeatureCache):
         """
 
         super().__init__(
-            prediction_times_df=prediction_times_df,
+            prediction_times_df=prediction_times_df,  # type: ignore
             pred_time_uuid_col_name=pred_time_uuid_col_name,
         )
 
@@ -131,7 +131,7 @@ class DiskCache(FeatureCache):
 
         # Replace NaNs with fallback
         df[feature_spec.get_col_str()] = df[feature_spec.get_col_str()].fillna(
-            feature_spec.fallback,
+            feature_spec.fallback,  # type: ignore
         )
 
         return df
@@ -145,7 +145,7 @@ class DiskCache(FeatureCache):
         file_name = self._get_file_name(feature_spec=feature_spec)
 
         # Drop rows containing fallback, since it's non-informative
-        df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()
+        df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()  # type: ignore
 
         # Drop entity and timestamp columns if they exists
         for col in [self.entity_entity_id_col_name, self.timestamp_col_name]:

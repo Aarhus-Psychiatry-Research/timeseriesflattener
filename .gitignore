@@ -166,3 +166,5 @@ poetry.lock
 /.idea/*
 **/tmp/
 **/.tmp/
+
+*nbconvert*

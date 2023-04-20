@@ -9,8 +9,6 @@ import pytest
 from pandas import DataFrame
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 
-# pylint: disable=protected-access
-
 
 def benchmark(func: Callable, *args: Any, **kwargs: Any) -> float:
     """Benchmark a function."""
@@ -29,7 +27,7 @@ def generate_test_df(uuids: List[str], col_values: List[int]) -> DataFrame:
     df["random_int"] = col_values
 
     # Set index to uuids
-    df.index = uuids
+    df.index = uuids  # type: ignore
 
     # Sort df by indices
     print("Generated df")

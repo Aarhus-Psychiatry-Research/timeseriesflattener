@@ -1,0 +1,16 @@
+{
+    "_copy_without_render": [
+        "*.github"
+    ],
+    "_template": "https://github.com/MartinBernstorff/swift-python-cookiecutter",
+    "add_makefile": "y",
+    "author": "Martin Bernstorff",
+    "copyright_year": "2023",
+    "email": "martinbernstorff@gmail.com",
+    "friendly_name": "Timeseriesflattener",
+    "github_user": "MartinBernstorff",
+    "license": "MIT",
+    "package_name": "timeseriesflattener",
+    "project_name": "timeseriesflattener",
+    "version": "0.0.0"
+}

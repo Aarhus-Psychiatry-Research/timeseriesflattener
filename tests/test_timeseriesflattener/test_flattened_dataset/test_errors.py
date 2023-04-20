@@ -4,10 +4,8 @@ import pytest
 from timeseriesflattener.feature_spec_objects import PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.utils_for_testing import (
-    str_to_df,  # pylint: disable=import-error
+    str_to_df,
 )
-
-# pylint: disable=missing-function-docstring
 
 
 def test_col_does_not_exist_in_prediction_times():

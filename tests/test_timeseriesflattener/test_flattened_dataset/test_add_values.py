@@ -1,6 +1,5 @@
 """Tests for adding values to a flattened dataset."""
 
-# pylint: disable=missing-function-docstring
 
 import numpy as np
 import pandas as pd
@@ -17,8 +16,6 @@ from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
 )
-
-# pylint: disable=import-error
 
 
 # Predictors
@@ -234,7 +231,7 @@ def test_static_predictor():
     )
 
     dataset.add_spec(
-        StaticSpec(
+        StaticSpec(  # type: ignore
             values_df=str_to_df(static_predictor),
             feature_name=feature_name,
             prefix=prefix,
@@ -430,7 +427,7 @@ def test_add_multiple_static_predictors():
     flattened_dataset.add_spec(
         spec=[
             output_spec,
-            StaticSpec(
+            StaticSpec(  # type: ignore
                 values_df=male_df,
                 feature_name="male",
                 prefix="pred",
