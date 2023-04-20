@@ -239,8 +239,8 @@ def update(c: Context):
 @task(iterable="pytest_args")
 def test(
     c: Context,
-    pytest_args: List[str] = [],  # noqa
     python_versions: str = "3.9",
+    pytest_args: List[str] = [],  # noqa
 ):
     """Run tests"""
     echo_header(f"{Emo.TEST} Running tests")
@@ -256,10 +256,13 @@ def test(
         ]
 
     pytest_arg_str = " ".join(pytest_args)
-    python_versions = python_versions.replace(".", "")
+
+    python_version_list = python_versions.replace(".", "").split(",")
+    python_version_strings = [f"py{v}" for v in python_version_list]
+    python_version_arg_string = ",".join(python_version_strings)
 
     test_result: Result = c.run(
-        f"tox -e py{python_versions} -- {pytest_arg_str}",
+        f"tox -e {python_version_arg_string} -- {pytest_arg_str}",
         warn=True,
         pty=True,
     )
