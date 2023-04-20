@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Adding text features" href="03_text.html" /><link rel="prev" title="Introductory Tutorial" href="01_basic.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
         <title>Advanced Tutorial - Timeseriesflattener</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
@@ -507,7 +507,9 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
     <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
     <span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
     <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">cache</span><span class="o">=</span><span class="n">DiskCache</span><span class="p">(</span><span class="n">feature_cache_dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.tmp&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;feature_cache&quot;</span><span class="p">),</span>
+    <span class="n">cache</span><span class="o">=</span><span class="n">DiskCache</span><span class="p">(</span>
+        <span class="n">feature_cache_dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.tmp&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;feature_cache&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
     <span class="n">drop_pred_times_with_insufficient_look_distance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
@@ -531,12 +533,100 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2022-12-09 11:44:44 [INFO] There were unprocessed specs, computing...
-2022-12-09 11:44:44 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 4038 (40.38%) rows
-100%|██████████| 4/4 [00:01&lt;00:00,  2.91it/s]
-2022-12-09 11:44:46 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features. This is normal.
-2022-12-09 11:44:46 [INFO] Concatenation took 0.019 seconds
-2022-12-09 11:44:46 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-04-19 15:30:57 [INFO] There were unprocessed specs, computing...
+2023-04-19 15:30:57 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 4038 (40.38%) rows
+2023-04-19 15:30:57 [INFO] Processing 4 temporal features in parallel with 4 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+  0%|          | 0/4 [00:01&lt;?, ?it/s]
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">RemoteTraceback</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="ne">Remote</span>Traceback: 
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Traceback (most recent call last):</span>
+<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/pandas/core/indexes/base.py&quot;, line 3802, in get_loc</span>
+<span class="sd">    return self._engine.get_loc(casted_key)</span>
+<span class="sd">  File &quot;pandas/_libs/index.pyx&quot;, line 138, in pandas._libs.index.IndexEngine.get_loc</span>
+<span class="sd">  File &quot;pandas/_libs/index.pyx&quot;, line 165, in pandas._libs.index.IndexEngine.get_loc</span>
+<span class="sd">  File &quot;pandas/_libs/hashtable_class_helper.pxi&quot;, line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item</span>
+<span class="sd">  File &quot;pandas/_libs/hashtable_class_helper.pxi&quot;, line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item</span>
+<span class="ne">KeyError</span>: &#39;prediction_time_uuid&#39;
+
+<span class="sd">The above exception was the direct cause of the following exception:</span>
+
+<span class="sd">Traceback (most recent call last):</span>
+<span class="sd">  File &quot;/opt/homebrew/Cellar/python@3.9/3.9.16/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/pool.py&quot;, line 125, in worker</span>
+<span class="sd">    result = (True, func(*args, **kwds))</span>
+<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py&quot;, line 452, in _get_temporal_feature</span>
+<span class="sd">    df = self.cache.read_feature(feature_spec=feature_spec)</span>
+<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/src/timeseriesflattener/feature_cache/cache_to_disk.py&quot;, line 124, in read_feature</span>
+<span class="sd">    left=self.prediction_times_df[self.pred_time_uuid_col_name],</span>
+<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/pandas/core/frame.py&quot;, line 3807, in __getitem__</span>
+<span class="sd">    indexer = self.columns.get_loc(key)</span>
+<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/pandas/core/indexes/base.py&quot;, line 3804, in get_loc</span>
+<span class="sd">    raise KeyError(key) from err</span>
+<span class="ne">KeyError</span>: &#39;prediction_time_uuid&#39;
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">The</span> <span class="n">above</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">the</span> <span class="n">direct</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">exception</span><span class="p">:</span>
+
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">df</span> <span class="o">=</span> <span class="n">ts_flattener</span><span class="o">.</span><span class="n">get_df</span><span class="p">()</span>
+
+<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:940,</span> in <span class="ni">TimeseriesFlattener.get_df</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">938</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">939</span>     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;There were unprocessed specs, computing...&quot;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">940</span>     <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">942</span> <span class="c1"># Process</span>
+<span class="g g-Whitespace">    </span><span class="mi">943</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+
+<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:929,</span> in <span class="ni">TimeseriesFlattener.compute</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">926</span>     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No unprocessed specs, skipping&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">927</span>     <span class="k">return</span>
+<span class="ne">--&gt; </span><span class="mi">929</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">930</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_static_specs</span><span class="p">()</span>
+
+<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:788,</span> in <span class="ni">TimeseriesFlattener._process_temporal_specs</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">785</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drop_pred_time_if_insufficient_look_distance</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">787</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">788</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_add_temporal_batch</span><span class="p">(</span><span class="n">temporal_batch</span><span class="o">=</span><span class="n">temporal_batch</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">790</span> <span class="c1"># Remove the processed specs</span>
+<span class="g g-Whitespace">    </span><span class="mi">791</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:574,</span> in <span class="ni">TimeseriesFlattener._add_temporal_batch</span><span class="nt">(self, temporal_batch)</span>
+<span class="g g-Whitespace">    </span><span class="mi">569</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">570</span>     <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> temporal features in parallel with </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers. Chunksize is </span><span class="si">{</span><span class="n">chunksize</span><span class="si">}</span><span class="s2">. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">571</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">573</span> <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">574</span>     <span class="n">flattened_predictor_dfs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">575</span>         <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">576</span>             <span class="n">p</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">577</span>                 <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_temporal_feature</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">578</span>                 <span class="n">iterable</span><span class="o">=</span><span class="n">temporal_batch</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">579</span>                 <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">580</span>             <span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">581</span>             <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">582</span>         <span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">583</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">585</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concatenate_flattened_timeseries</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">586</span>     <span class="n">flattened_predictor_dfs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">587</span> <span class="p">)</span>
+
+<span class="nn">File ~/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/tqdm/std.py:1178,</span> in <span class="ni">tqdm.__iter__</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1175</span> <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span>
+<span class="g g-Whitespace">   </span><span class="mi">1177</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1178</span>     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1179</span>         <span class="k">yield</span> <span class="n">obj</span>
+<span class="g g-Whitespace">   </span><span class="mi">1180</span>         <span class="c1"># Update and possibly print the progressbar.</span>
+<span class="g g-Whitespace">   </span><span class="mi">1181</span>         <span class="c1"># Note: does not call self.update(1) for speed optimisation.</span>
+
+<span class="nn">File /opt/homebrew/Cellar/python@3.9/3.9.16/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/pool.py:870,</span> in <span class="ni">IMapIterator.next</span><span class="nt">(self, timeout)</span>
+<span class="g g-Whitespace">    </span><span class="mi">868</span> <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">869</span>     <span class="k">return</span> <span class="n">value</span>
+<span class="ne">--&gt; </span><span class="mi">870</span> <span class="k">raise</span> <span class="n">value</span>
+
+<span class="ne">KeyError</span>: &#39;prediction_time_uuid&#39;
 </pre></div>
 </div>
 </div>
@@ -606,8 +696,9 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 <span class="n">base_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;prediction_time_uuid&quot;</span><span class="p">]</span>
 <span class="n">renamed_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rename_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-<span class="n">df_renamed</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">][</span><span class="n">base_cols</span> <span class="o">+</span> <span class="n">renamed_cols</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="o">.</span>\
-    <span class="n">set_table_attributes</span><span class="p">(</span><span class="s1">&#39;style=&quot;font-size: 14px&quot;&#39;</span><span class="p">)</span>
+<span class="n">df_renamed</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">][</span><span class="n">base_cols</span> <span class="o">+</span> <span class="n">renamed_cols</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">set_table_attributes</span><span class="p">(</span>
+    <span class="s1">&#39;style=&quot;font-size: 14px&quot;&#39;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -816,9 +907,6 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
     </aside>
   </div>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>

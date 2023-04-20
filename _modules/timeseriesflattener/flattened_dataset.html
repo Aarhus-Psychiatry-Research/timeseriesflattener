@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
         <title>timeseriesflattener.flattened_dataset - Timeseriesflattener</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
@@ -273,7 +273,7 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TimeseriesFlattener"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">[docs]</a><span class="k">class</span> <span class="nc">TimeseriesFlattener</span><span class="p">:</span>  <span class="c1"># pylint: disable=too-many-instance-attributes</span>
+<div class="viewcode-block" id="TimeseriesFlattener"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener">[docs]</a><span class="k">class</span> <span class="nc">TimeseriesFlattener</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn a set of time-series into tabular prediction-time data.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_override_cache_attributes_with_self_attributes</span><span class="p">(</span>
@@ -313,7 +313,7 @@
                 <span class="p">)</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prediction_times_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">drop_pred_times_with_insufficient_look_distance</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -467,10 +467,12 @@
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All values are NaT, returning empty dataframe&quot;</span><span class="p">)</span>
 
         <span class="c1"># Sort by timestamp_pred in case resolve_multiple needs dates</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">val_timestamp_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">pred_time_uuid_colname</span><span class="p">)</span>
+        <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">val_timestamp_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+            <span class="n">pred_time_uuid_colname</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">resolve_multiple</span><span class="p">):</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">resolve_multiple</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">resolve_multiple</span><span class="p">(</span><span class="n">grouped_df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;resolve_multiple must be or resolve to a Callable&quot;</span><span class="p">)</span>
 
@@ -502,7 +504,7 @@
 <span class="sd">            DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">timestamp_value_colname</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">timestamp_pred_colname</span><span class="p">])</span>
+            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">timestamp_value_colname</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">timestamp_pred_colname</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
             <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">))</span>
             <span class="o">/</span> <span class="mi">86_400</span>
         <span class="p">)</span>
@@ -584,7 +586,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">_drop_records_outside_interval_days</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span>
             <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span>
-            <span class="n">interval_days</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">interval_days</span><span class="p">,</span>
+            <span class="n">interval_days</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">interval_days</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="n">timestamp_pred_colname</span><span class="o">=</span><span class="n">timestamp_pred_col_name</span><span class="p">,</span>
             <span class="n">timestamp_value_colname</span><span class="o">=</span><span class="n">timestamp_val_col_name</span><span class="p">,</span>
         <span class="p">)</span>
@@ -639,7 +641,9 @@
             <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
             <span class="n">pred_times_with_uuid</span><span class="o">=</span><span class="n">prediction_times_with_uuid_df</span><span class="p">,</span>
             <span class="n">pred_time_uuid_colname</span><span class="o">=</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">output_spec</span><span class="o">.</span><span class="n">fallback</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+            <span class="n">output_spec</span><span class="o">.</span><span class="n">fallback</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="o">*</span><span class="n">value_col_str_name</span><span class="p">,</span> <span class="n">pred_time_uuid_col_name</span><span class="p">]]</span>
 
@@ -774,7 +778,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging with original df&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">new_features</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_add_temporal_batch</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
+    <span class="k">def</span> <span class="nf">_add_temporal_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">temporal_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TemporalSpec</span><span class="p">],</span>
     <span class="p">):</span>
@@ -896,8 +900,8 @@
 
         <span class="k">if</span> <span class="n">outcome_spec</span><span class="o">.</span><span class="n">is_dichotomous</span><span class="p">():</span>
             <span class="n">outcome_is_within_lookahead</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">df</span><span class="p">[</span><span class="n">prediction_timestamp_col_name</span><span class="p">]</span>
-                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">interval_days</span><span class="p">)</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">prediction_timestamp_col_name</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">interval_days</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
                 <span class="o">&gt;</span> <span class="n">df</span><span class="p">[</span><span class="n">outcome_timestamp_col_name</span><span class="p">]</span>
             <span class="p">)</span>
 
@@ -932,7 +936,8 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
             <span class="n">max_val_date</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="k">return</span> <span class="n">max_val_date</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spec type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s2"> not recognised.&quot;</span><span class="p">)</span>
 
     <span class="nd">@print_df_dimensions_diff</span>
     <span class="k">def</span> <span class="nf">_drop_pred_time_if_insufficient_look_distance</span><span class="p">(</span>
@@ -999,7 +1004,7 @@
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;incident&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">incident</span>
         <span class="p">]</span>
 
-        <span class="n">temporal_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span>
+        <span class="n">temporal_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TemporalSpec</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span>  <span class="c1"># type: ignore</span>
         <span class="n">temporal_batch</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">predictor_specs</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_pred_times_with_insufficient_look_distance</span><span class="p">:</span>
@@ -1202,9 +1207,6 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
