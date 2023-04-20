@@ -456,7 +456,7 @@ class TemporalSpec(_AnySpec):
 
         interval_days_str = (
             int(self.interval_days)  # type: ignore
-            if self.interval_days.is_integer()
+            if self.interval_days.is_integer()  # type: ignore
             else str(self.interval_days).replace(".", "_")
         )
 
