@@ -582,7 +582,7 @@
 <span class="sd">            or timestamp_col_name.</span>
 <span class="sd">        output_col_name_override (Optional[str]):</span>
 <span class="sd">            Override the generated column name after flattening the time series</span>
-<span class="sd">        interval_days (Union[int, float, NoneType]):</span>
+<span class="sd">        interval_days (Optional[float]):</span>
 <span class="sd">            How far to look in the given direction (ahead for outcomes,</span>
 <span class="sd">            behind for predictors)</span>
 <span class="sd">        resolve_multiple_fn (Union[Callable, str]):</span>
@@ -607,7 +607,7 @@
         <span class="n">short_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The minimum specification required for collapsing a temporal</span>
 <span class="s2">        feature, whether looking ahead or behind. Mostly used for inheritance below.&quot;&quot;&quot;</span></div>
 
-    <span class="n">interval_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">interval_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;How far to look in the given direction (ahead for outcomes,</span>
 <span class="s2">            behind for predictors)&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
@@ -670,6 +670,7 @@
 
 <div class="viewcode-block" id="TemporalSpec.get_col_str"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TemporalSpec.get_col_str">[docs]</a>    <span class="k">def</span> <span class="nf">get_col_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">additional_feature_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the column name for the output column.</span>
+<span class="sd">        If interval days is a float, the decimal point is changed to an underscore.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            additional_feature_name (Optional[str]): additional feature name to</span>
@@ -678,7 +679,14 @@
         <span class="n">feature_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_name</span>
         <span class="k">if</span> <span class="n">additional_feature_name</span><span class="p">:</span>
             <span class="n">feature_name</span> <span class="o">=</span> <span class="n">feature_name</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">additional_feature_name</span><span class="p">)</span>
-        <span class="n">col_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">_within_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval_days</span><span class="si">}</span><span class="s2">_days_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key_for_resolve_multiple</span><span class="si">}</span><span class="s2">_fallback_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">interval_days_str</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># This is required because pydantic coerces the int 2 to float 2.0</span>
+            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval_days</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_days</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval_days</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">col_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">_within_</span><span class="si">{</span><span class="n">interval_days_str</span><span class="si">}</span><span class="s2">_days_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key_for_resolve_multiple</span><span class="si">}</span><span class="s2">_fallback_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">col_str</span></div></div>
 
 
@@ -709,7 +717,7 @@
 <span class="sd">            or timestamp_col_name.</span>
 <span class="sd">        output_col_name_override (Optional[str]):</span>
 <span class="sd">            Override the generated column name after flattening the time series</span>
-<span class="sd">        interval_days (Union[int, float, NoneType]):</span>
+<span class="sd">        interval_days (Optional[float]):</span>
 <span class="sd">            How far to look in the given direction (ahead for outcomes,</span>
 <span class="sd">            behind for predictors)</span>
 <span class="sd">        resolve_multiple_fn (Union[Callable, str]):</span>
@@ -728,7 +736,7 @@
 <span class="sd">            resolution, raise an error. Defaults to: 0.0.</span>
 <span class="sd">        entity_id_col_name (str):</span>
 <span class="sd">            Col name for ids in the input dataframe. Defaults to: entity_id.</span>
-<span class="sd">        lookbehind_days (Union[int, float]):</span>
+<span class="sd">        lookbehind_days (float):</span>
 <span class="sd">            How far behind to look for values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -743,7 +751,7 @@
 <span class="s2">            &lt;prefix&gt;_&lt;feature_name&gt;.&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">lookbehind_days</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">lookbehind_days</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;How far behind to look for values&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -787,7 +795,7 @@
 <span class="sd">            or timestamp_col_name.</span>
 <span class="sd">        output_col_name_override (Optional[str]):</span>
 <span class="sd">            Override the generated column name after flattening the time series</span>
-<span class="sd">        interval_days (Union[int, float, NoneType]):</span>
+<span class="sd">        interval_days (Optional[float]):</span>
 <span class="sd">            How far to look in the given direction (ahead for outcomes,</span>
 <span class="sd">            behind for predictors)</span>
 <span class="sd">        resolve_multiple_fn (Union[Callable, str]):</span>
@@ -808,7 +816,7 @@
 <span class="sd">            resolution, raise an error. Defaults to: 0.0.</span>
 <span class="sd">        entity_id_col_name (str):</span>
 <span class="sd">            Col name for ids in the input dataframe. Defaults to: entity_id.</span>
-<span class="sd">        lookbehind_days (Union[int, float]):</span>
+<span class="sd">        lookbehind_days (float):</span>
 <span class="sd">            How far behind to look for values</span>
 <span class="sd">        embedding_fn (Callable):</span>
 <span class="sd">            A function used for embedding the text. Should take a</span>
@@ -879,7 +887,7 @@
 <span class="sd">            or timestamp_col_name.</span>
 <span class="sd">        output_col_name_override (Optional[str]):</span>
 <span class="sd">            Override the generated column name after flattening the time series</span>
-<span class="sd">        interval_days (Union[int, float, NoneType]):</span>
+<span class="sd">        interval_days (Optional[float]):</span>
 <span class="sd">            How far to look in the given direction (ahead for outcomes,</span>
 <span class="sd">            behind for predictors)</span>
 <span class="sd">        resolve_multiple_fn (Union[Callable, str]):</span>
@@ -903,7 +911,7 @@
 <span class="sd">            I.e., incident outcomes are outcomes you can only experience once.</span>
 <span class="sd">            For example, type 2 diabetes is incident. Incident outcomes can be handled</span>
 <span class="sd">            in a vectorised way during resolution, which is faster than non-incident outcomes.</span>
-<span class="sd">        lookahead_days (Union[int, float]):</span>
+<span class="sd">        lookahead_days (float):</span>
 <span class="sd">            How far ahead to look for values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -925,7 +933,7 @@
 <span class="s2">            in a vectorised way during resolution, which is faster than non-incident outcomes.&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">lookahead_days</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">lookahead_days</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;How far ahead to look for values&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -1129,7 +1137,7 @@
 <span class="sd">            Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</span>
 <span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
 <span class="sd">            Optional kwargs for the values_loader.</span>
-<span class="sd">        lookbehind_days (List[Union[int, float]]):</span>
+<span class="sd">        lookbehind_days (List[float]):</span>
 <span class="sd">            How far behind to look for values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1141,7 +1149,7 @@
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;.&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">lookbehind_days</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">lookbehind_days</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;How far behind to look for values&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -1187,7 +1195,7 @@
 <span class="sd">        can experience it more than once. For example, type 2 diabetes is incident.</span>
 <span class="sd">        Incident outcomes can be handled in a vectorised way during resolution,</span>
 <span class="sd">         which is faster than non-incident outcomes.</span>
-<span class="sd">    lookahead_days (List[Union[int, float]]):</span>
+<span class="sd">    lookahead_days (List[float]):</span>
 <span class="sd">        How far ahead to look for values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1206,7 +1214,7 @@
 <span class="s2">             which is faster than non-incident outcomes.&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">lookahead_days</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">lookahead_days</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;How far ahead to look for values&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
