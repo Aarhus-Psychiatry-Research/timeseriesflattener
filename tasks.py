@@ -20,7 +20,7 @@ import platform
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from invoke import Context, Result, task
 
@@ -236,16 +236,33 @@ def update(c: Context):
     c.run("pip install --upgrade -e '.[dev,tests,docs]'")
 
 
-@task
-def test(c: Context, python_versions: str = "3.9"):
+@task(iterable="pytest_args")
+def test(
+    c: Context,
+    pytest_args: List[str],
+    python_versions: str = "3.9",
+):
     """Run tests"""
     echo_header(f"{Emo.TEST} Running tests")
-    pytest_args = "-n auto -rfE --failed-first -p no:cov --disable-warnings -q"
+
+    if len(pytest_args) == 0:
+        pytest_args = [
+            "-n auto",
+            "-rfE",
+            "--failed-first",
+            "-p no:cov",
+            "--disable-warnings",
+            "-q",
+        ]
+
+    pytest_arg_str = " ".join(pytest_args)
+
+    print(pytest_arg_str)
 
     python_versions = python_versions.replace(".", "")
 
     test_result: Result = c.run(
-        f"tox -e py{python_versions} -- {pytest_args}",
+        f"tox -e py{python_versions} -- {pytest_arg_str}",
         warn=True,
         pty=True,
     )
