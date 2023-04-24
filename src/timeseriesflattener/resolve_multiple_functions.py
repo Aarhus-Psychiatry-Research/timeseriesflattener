@@ -166,18 +166,5 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
     return (
         grouped_df["value"]
         .apply(
-            lambda x: len(
-                nltk.Counter(
-                    " ".join(
-                        x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower(),
-                    ).split(" "),
-                ),
-            )
-            / len(
-                " ".join(
-                    x.replace(r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True).str.lower(),
-                ).split(" "),
-            ),
-        )
-        .reset_index()
+            lambda x: len(set(x.str.lower().split(" ")) / len(x.str.split(" "))
     )
