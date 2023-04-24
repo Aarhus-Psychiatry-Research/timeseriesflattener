@@ -169,18 +169,18 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
                     set(
                         " ".join(
                             x.value.replace(
-                                r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True
+                                r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True,
                             ).str.lower(),
                         ).split(" "),
-                    )
+                    ),
                 )
                 / len(
                     " ".join(
                         x.value.replace(
-                            r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True
+                            r"[^ÆØÅæøåA-Za-z0-9 ]+", "", regex=True,
                         ).str.lower(),
                     ).split(" "),
-                )
+                ),
             },
         ),
     )
