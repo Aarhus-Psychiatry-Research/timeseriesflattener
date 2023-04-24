@@ -4,7 +4,6 @@ value."""
 # pylint: disable=missing-function-docstring
 
 import catalogue
-import nltk
 from pandas import DataFrame, Series
 from scipy import stats
 
@@ -136,7 +135,7 @@ def concatenate(grouped_df: DataFrame) -> DataFrame:
 
 
 @resolve_multiple_fns.register("mean_len")
-def mean_len(grouped_df: DataFrame) -> DataFrame:
+def mean_number_of_characters(grouped_df: DataFrame) -> DataFrame:
     """Returns the mean length of values. This is useful for text data.
 
     Args:
@@ -163,8 +162,8 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
         DataFrame: Dataframe with value column containing the concatenated values.
     """
 
-    return (
-        grouped_df["value"]
-        .apply(
-            lambda x: len(set(x.str.lower().split(" ")) / len(x.str.split(" ")),
+    return grouped_df["value"].apply(
+        lambda x: len(
+            set(x.str.lower().split(" ")) / len(x.str.split(" ")),
+        ),
     )
