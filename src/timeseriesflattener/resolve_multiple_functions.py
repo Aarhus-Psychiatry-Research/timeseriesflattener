@@ -166,5 +166,5 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
     return (
         grouped_df["value"]
         .apply(
-            lambda x: len(set(x.str.lower().split(" ")) / len(x.str.split(" "))
+            lambda x: len(set(x.str.lower().split(" ")) / len(x.str.split(" ")),
     )
