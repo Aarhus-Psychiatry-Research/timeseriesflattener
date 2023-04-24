@@ -162,8 +162,11 @@ def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
         DataFrame: Dataframe with value column containing the concatenated values.
     """
 
-    return grouped_df["value"].apply(
-        lambda x: len(
-            set(x.str.lower().split(" ")) / len(x.str.split(" ")),
+    return grouped_df.apply(
+        lambda x: Series(
+            {
+                "value": len(set(x.value.str.lower().split(" ")).int)
+                / len(x.value.str.split(" "))
+            },
         ),
     )
