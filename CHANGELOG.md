@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.25.0 (2023-04-26)
+### Feature
+* Add type-token-ratio resolve multiple fn ([`12be531`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/12be531382e1702fe21d9698dfa3ecaf256be8bb))
+* Mean_len ([`3a38cd5`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3a38cd593f949c498fba2942b2b603a351389c05))
+
+### Fix
+* Remove undone test ([`07ecfca`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/07ecfca2af68a839c4a48d289a7677580b9214bf))
+
 ## v0.24.0 (2023-04-20)
 ### Feature
 * Modify invoke test command to take python-versions arg ([`4a9c5c2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4a9c5c2e672fc67bd56e57313588f09737b69f88))
