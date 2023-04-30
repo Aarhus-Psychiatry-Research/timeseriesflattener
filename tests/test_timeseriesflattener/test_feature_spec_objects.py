@@ -13,6 +13,7 @@ from timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
     PredictorSpec,
     TemporalSpec,
+    TextPredictorGroupSpec,
     TextPredictorSpec,
     _AnySpec,
     check_that_col_names_in_kwargs_exist_in_df,
@@ -21,6 +22,7 @@ from timeseriesflattener.feature_spec_objects import (
 from timeseriesflattener.resolve_multiple_functions import maximum
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_predictor_float,
+    load_synth_text,
     synth_predictor_binary,
 )
 from timeseriesflattener.utils import split_df_and_register_to_dict
@@ -249,3 +251,24 @@ def test_predictorgroupspec_combinations_loader_kwargs():
 
     pd.testing.assert_frame_equal(binary_100_rows, combinations[0].values_df)
     pd.testing.assert_frame_equal(float_100_rows, combinations[1].values_df)
+
+
+def test_textpredictorgroupspec_combinations_loader_kwargs():
+    """Test that loader kwargs are used correctly in TextPredictorGroupSpec combinations."""
+
+    text_10_rows = load_synth_text(n_rows=10)
+    text_100_rows = load_synth_text(n_rows=100)
+
+    spec = TextPredictorGroupSpec(
+        values_loader=("synth_text",),
+        loader_kwargs=[{"n_rows": 10}, {"n_rows": 100}],
+        prefix="test_",
+        resolve_multiple_fn=["concatenate"],
+        fallback=[0],
+        lookbehind_days=[10],
+    )
+
+    combinations = spec.create_combinations()
+
+    pd.testing.assert_frame_equal(text_10_rows, combinations[0].values_df)
+    pd.testing.assert_frame_equal(text_100_rows, combinations[1].values_df)
