@@ -604,7 +604,8 @@ class TextPredictorSpec(PredictorSpec):
             """Specification for a text predictor, where the df has been resolved."""
         )
 
-    embedding_fn: Callable = Field(
+    embedding_fn: Optional[Callable] = Field(
+        default=None,
         description="""A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.""",
