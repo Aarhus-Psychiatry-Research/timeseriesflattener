@@ -592,7 +592,7 @@ class TextPredictorSpec(PredictorSpec):
             Col name for ids in the input dataframe. Defaults to: entity_id.
         lookbehind_days (float):
             How far behind to look for values
-        embedding_fn (Callable):
+        embedding_fn (Optional[Callable]):
             A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.
