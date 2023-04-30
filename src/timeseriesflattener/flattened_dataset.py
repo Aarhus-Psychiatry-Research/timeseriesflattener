@@ -386,7 +386,7 @@ class TimeseriesFlattener:
             df = ColumnHandler.embed_text_column(
                 df=df,
                 text_col_name="value",
-                embedding_fn=output_spec.embedding_fn, # type: ignore
+                embedding_fn=output_spec.embedding_fn,  # type: ignore
                 embedding_fn_kwargs=output_spec.embedding_fn_kwargs,
             )
 
