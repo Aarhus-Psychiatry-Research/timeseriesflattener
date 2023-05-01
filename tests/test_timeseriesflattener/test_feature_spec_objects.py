@@ -25,6 +25,8 @@ from timeseriesflattener.testing.load_synth_data import (
     load_synth_text,
     synth_predictor_binary,
 )
+from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
+from timeseriesflattener.text_embedding_functions import sklearn_embedding
 from timeseriesflattener.utils import split_df_and_register_to_dict
 
 
@@ -259,6 +261,9 @@ def test_textpredictorgroupspec_combinations_loader_kwargs():
     text_10_rows = load_synth_text(n_rows=10)
     text_100_rows = load_synth_text(n_rows=100)
 
+    df = load_synth_text()
+    bow_model = bow_test_embedding(df["text"])
+
     spec = TextPredictorGroupSpec(
         values_loader=("synth_text",),
         loader_kwargs=[{"n_rows": 10}, {"n_rows": 100}],
@@ -266,6 +271,8 @@ def test_textpredictorgroupspec_combinations_loader_kwargs():
         resolve_multiple_fn=["concatenate"],
         fallback=[0],
         lookbehind_days=[10],
+        embedding_fn=[sklearn_embedding],
+        embedding_fn_kwargs=[{"model": bow_model}],
     )
 
     combinations = spec.create_combinations()
