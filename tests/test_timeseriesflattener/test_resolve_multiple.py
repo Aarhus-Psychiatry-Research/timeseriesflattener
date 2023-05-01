@@ -464,7 +464,7 @@ def test_resolve_multiple_mean_len():
         output_spec=OutcomeSpec(
             feature_name="value",
             values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="mean_number_of_characters",
+            resolve_multiple_fn="mean_len",
             interval_days=4,
             fallback=np.NaN,
             incident=False,

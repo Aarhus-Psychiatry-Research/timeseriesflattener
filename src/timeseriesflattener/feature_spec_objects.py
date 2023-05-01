@@ -595,7 +595,6 @@ class TextEmbeddingPredictorSpec(PredictorSpec):
         embedding_fn (Callable):
             A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
-        Defaults to: None.
         embedding_fn_kwargs (Optional[dict]):
             Optional kwargs passed onto the embedding_fn."""
 
@@ -605,10 +604,8 @@ class TextEmbeddingPredictorSpec(PredictorSpec):
         )
 
     embedding_fn: Callable = Field(
-        default=None,
         description="""A function used for embedding the text. Should take a
-        pandas series of strings and return a pandas dataframe of embeddings.
-        Defaults to: None.""",
+        pandas series of strings and return a pandas dataframe of embeddings.""",
     )
     embedding_fn_kwargs: Optional[dict] = Field(
         default=None,
