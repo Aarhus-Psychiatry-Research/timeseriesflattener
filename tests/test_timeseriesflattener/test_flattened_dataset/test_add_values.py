@@ -9,7 +9,7 @@ from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
-    TextPredictorSpec,
+    TextEmbeddingPredictorSpec,
 )
 from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
 from timeseriesflattener.testing.utils_for_testing import (
@@ -75,7 +75,7 @@ def test_text_predictor():
 
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
-        output_spec=TextPredictorSpec(
+        output_spec=TextEmbeddingPredictorSpec(
             values_df=str_to_df(predictor_df_str),
             embedding_fn=bow_test_embedding,
             lookbehind_days=1,

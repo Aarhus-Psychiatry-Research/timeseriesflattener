@@ -542,7 +542,7 @@ class PredictorSpec(TemporalSpec):
         super().__init__(**data)
 
 
-class TextPredictorSpec(PredictorSpec):
+class TextEmbeddingPredictorSpec(PredictorSpec):
     """Specification for a text predictor, where the df has been resolved.
 
     Fields:
@@ -592,7 +592,7 @@ class TextPredictorSpec(PredictorSpec):
             Col name for ids in the input dataframe. Defaults to: entity_id.
         lookbehind_days (float):
             How far behind to look for values
-        embedding_fn (Optional[Callable]):
+        embedding_fn (Callable):
             A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.
@@ -604,7 +604,7 @@ class TextPredictorSpec(PredictorSpec):
             """Specification for a text predictor, where the df has been resolved."""
         )
 
-    embedding_fn: Optional[Callable] = Field(
+    embedding_fn: Callable = Field(
         default=None,
         description="""A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.

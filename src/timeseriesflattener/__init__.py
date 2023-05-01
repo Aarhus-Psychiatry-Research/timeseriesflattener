@@ -4,6 +4,6 @@ from .feature_spec_objects import (
     OutcomeSpec,
     PredictorGroupSpec,
     PredictorSpec,
-    TextPredictorSpec,
+    TextEmbeddingPredictorSpec,
 )
 from .flattened_dataset import TimeseriesFlattener

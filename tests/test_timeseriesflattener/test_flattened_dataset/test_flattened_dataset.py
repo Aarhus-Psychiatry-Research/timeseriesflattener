@@ -6,7 +6,7 @@ from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
-    TextPredictorSpec,
+    TextEmbeddingPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.resolve_multiple_functions import latest, mean
@@ -89,7 +89,7 @@ def test_compute_specs(
         feature_name="static",
         prefix="pred",
     )
-    text_spec = TextPredictorSpec(  # type: ignore
+    text_spec = TextEmbeddingPredictorSpec(  # type: ignore
         values_df=synth_text_data,
         feature_name="text",
         lookbehind_days=750,

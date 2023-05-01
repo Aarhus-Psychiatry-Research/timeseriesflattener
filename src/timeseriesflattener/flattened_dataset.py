@@ -24,11 +24,10 @@ from timeseriesflattener.feature_spec_objects import (
     PredictorSpec,
     StaticSpec,
     TemporalSpec,
-    TextPredictorSpec,
+    TextEmbeddingPredictorSpec,
     _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
-from timeseriesflattener.resolve_multiple_functions import concatenate
 from timeseriesflattener.utils import print_df_dimensions_diff
 
 log = logging.getLogger(__name__)
@@ -379,10 +378,7 @@ class TimeseriesFlattener:
         )
 
         # handle embedding and dimensionality reduction if text predictor
-        if (
-            isinstance(output_spec, TextPredictorSpec)
-            and output_spec.resolve_multiple_fn == concatenate
-        ):
+        if isinstance(output_spec, TextEmbeddingPredictorSpec):
             df = ColumnHandler.embed_text_column(
                 df=df,
                 text_col_name="value",
