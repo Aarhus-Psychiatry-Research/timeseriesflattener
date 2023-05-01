@@ -1032,10 +1032,9 @@ class TextPredictorGroupSpec(PredictorGroupSpec):
             Optional kwargs for the values_loader.
         lookbehind_days (List[float]):
             How far behind to look for values
-        embedding_fn (Optional[list[Callable]]):
+        embedding_fn (list[Callable]):
             A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
-        Defaults to: None.
         embedding_fn_kwargs (Optional[list[dict]]):
             Optional kwargs passed onto the embedding_fn.
     """
@@ -1043,8 +1042,7 @@ class TextPredictorGroupSpec(PredictorGroupSpec):
     class Doc:
         short_description = """Specification for a group of text predictors."""
 
-    embedding_fn: Optional[list[Callable]] = Field(
-        default=None,
+    embedding_fn: list[Callable] = Field(
         description="""A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.""",
