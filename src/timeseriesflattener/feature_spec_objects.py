@@ -998,3 +998,70 @@ class OutcomeGroupSpec(_MinGroupSpec):
             feature_group_spec=self,
             output_class=OutcomeSpec,  # type: ignore
         )
+
+
+class TextPredictorGroupSpec(PredictorGroupSpec):
+    """Specification for a group of text predictors.
+    Fields:
+        values_loader (Optional[Sequence[str]]):
+            Loader for the df. Tries to resolve from the data_loaders
+            registry, then calls the function which should return a dataframe.
+        values_name (Optional[List[str]]):
+            List of strings that corresponds to a key in a dictionary
+            of multiple dataframes that correspods to a name of a type of values.
+        values_df (Optional[DataFrame]):
+            Dataframe with the values.
+        input_col_name_override (Optional[str]):
+            Override for the column name to use as values in df.
+        output_col_name_override (Optional[str]):
+            Override for the column name to use as values in the
+            output df.
+        resolve_multiple_fn (List[Union[Callable, str]]):
+            A function used for resolving multiple values within the
+            interval_days, i.e. how to combine texts within the lookbehind window.
+            Defaults to: 'concatenate'. Other possible options are 'latest' and
+            'earliest'.
+        fallback (Sequence[Union[Callable, str, float]]):
+            Which value to use if no values are found within interval_days.
+        allowed_nan_value_prop (List[float]):
+            If NaN is higher than this in the input dataframe during
+            resolution, raise an error. Defaults to: [0.0].
+        prefix (str):
+            Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
+        loader_kwargs (Optional[List[Dict[str, Any]]]):
+            Optional kwargs for the values_loader.
+        lookbehind_days (List[float]):
+            How far behind to look for values
+        embedding_fn (List[Callable]):
+            A function used for embedding the text. Should take a
+        pandas series of strings and return a pandas dataframe of embeddings.
+        embedding_fn_kwargs (Optional[List[dict]]):
+            Optional kwargs passed onto the embedding_fn.
+    """
+
+    class Doc:
+        short_description = """Specification for a group of text predictors."""
+
+    embedding_fn: List[Callable] = Field(
+        description="""A function used for embedding the text. Should take a
+        pandas series of strings and return a pandas dataframe of embeddings.
+        Defaults to: None.""",
+    )
+    embedding_fn_kwargs: Optional[List[dict]] = Field(
+        default=None,
+        description="""Optional kwargs passed onto the embedding_fn.""",
+    )
+    resolve_multiple_fn: List[Union[Callable, str]] = Field(
+        default=["concatenate"],
+        description="""A function used for resolving multiple values within the
+        interval_days, i.e. how to combine texts within the lookbehind window.
+        Defaults to: 'concatenate'. Other possible options are 'latest' and
+        'earliest'.""",
+    )
+
+    def create_combinations(self) -> List[TextPredictorSpec]:
+        """Create all combinations from the group spec."""
+        return create_specs_from_group(  # type: ignore
+            feature_group_spec=self,
+            output_class=TextPredictorSpec,  # type: ignore
+        )
