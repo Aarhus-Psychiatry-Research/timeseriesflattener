@@ -125,8 +125,65 @@ def concatenate(grouped_df: DataFrame) -> DataFrame:
     Returns:
         DataFrame: Dataframe with value column containing the concatenated values.
     """
+
     return grouped_df.apply(
         lambda x: Series(
             {"value": " ".join(x.value)},
+        ),
+    )
+
+
+@resolve_multiple_fns.register("mean_len")
+def mean_number_of_characters(grouped_df: DataFrame) -> DataFrame:
+    """Returns the mean length of values. This is useful for text data.
+
+    Args:
+        grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
+
+    Returns:
+        DataFrame: Dataframe with value column containing the concatenated values.
+    """
+    return grouped_df.apply(
+        lambda x: Series(
+            {"value": x.value.str.len().mean()},
+        ),
+    )
+
+
+@resolve_multiple_fns.register("type_token_ratio")
+def type_token_ratio(grouped_df: DataFrame) -> DataFrame:
+    """Returns the type-token ratio. This is useful for text data.
+
+    Args:
+        grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
+
+    Returns:
+        DataFrame: Dataframe with value column containing the concatenated values.
+    """
+
+    return grouped_df.apply(
+        lambda x: Series(
+            {
+                "value": len(
+                    set(
+                        " ".join(
+                            x.value.replace(
+                                r"[^ÆØÅæøåA-Za-z0-9 ]+",
+                                "",
+                                regex=True,
+                            ).str.lower(),
+                        ).split(" "),
+                    ),
+                )
+                / len(
+                    " ".join(
+                        x.value.replace(
+                            r"[^ÆØÅæøåA-Za-z0-9 ]+",
+                            "",
+                            regex=True,
+                        ).str.lower(),
+                    ).split(" "),
+                ),
+            },
         ),
     )
