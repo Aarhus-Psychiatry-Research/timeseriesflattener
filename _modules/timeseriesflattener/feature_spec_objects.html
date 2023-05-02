@@ -1224,6 +1224,73 @@
             <span class="n">feature_group_spec</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">output_class</span><span class="o">=</span><span class="n">OutcomeSpec</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TextPredictorGroupSpec"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec">[docs]</a><span class="k">class</span> <span class="nc">TextPredictorGroupSpec</span><span class="p">(</span><span class="n">PredictorGroupSpec</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a group of text predictors.</span>
+<span class="sd">    Fields:</span>
+<span class="sd">        values_loader (Optional[Sequence[str]]):</span>
+<span class="sd">            Loader for the df. Tries to resolve from the data_loaders</span>
+<span class="sd">            registry, then calls the function which should return a dataframe.</span>
+<span class="sd">        values_name (Optional[List[str]]):</span>
+<span class="sd">            List of strings that corresponds to a key in a dictionary</span>
+<span class="sd">            of multiple dataframes that correspods to a name of a type of values.</span>
+<span class="sd">        values_df (Optional[DataFrame]):</span>
+<span class="sd">            Dataframe with the values.</span>
+<span class="sd">        input_col_name_override (Optional[str]):</span>
+<span class="sd">            Override for the column name to use as values in df.</span>
+<span class="sd">        output_col_name_override (Optional[str]):</span>
+<span class="sd">            Override for the column name to use as values in the</span>
+<span class="sd">            output df.</span>
+<span class="sd">        resolve_multiple_fn (List[Union[Callable, str]]):</span>
+<span class="sd">            A function used for resolving multiple values within the</span>
+<span class="sd">            interval_days, i.e. how to combine texts within the lookbehind window.</span>
+<span class="sd">            Defaults to: &#39;concatenate&#39;. Other possible options are &#39;latest&#39; and</span>
+<span class="sd">            &#39;earliest&#39;.</span>
+<span class="sd">        fallback (Sequence[Union[Callable, str, float]]):</span>
+<span class="sd">            Which value to use if no values are found within interval_days.</span>
+<span class="sd">        allowed_nan_value_prop (List[float]):</span>
+<span class="sd">            If NaN is higher than this in the input dataframe during</span>
+<span class="sd">            resolution, raise an error. Defaults to: [0.0].</span>
+<span class="sd">        prefix (str):</span>
+<span class="sd">            Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</span>
+<span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
+<span class="sd">            Optional kwargs for the values_loader.</span>
+<span class="sd">        lookbehind_days (List[float]):</span>
+<span class="sd">            How far behind to look for values</span>
+<span class="sd">        embedding_fn (List[Callable]):</span>
+<span class="sd">            A function used for embedding the text. Should take a</span>
+<span class="sd">        pandas series of strings and return a pandas dataframe of embeddings.</span>
+<span class="sd">        embedding_fn_kwargs (Optional[List[dict]]):</span>
+<span class="sd">            Optional kwargs passed onto the embedding_fn.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TextPredictorGroupSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
+        <span class="n">short_description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Specification for a group of text predictors.&quot;&quot;&quot;</span></div>
+
+    <span class="n">embedding_fn</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;A function used for embedding the text. Should take a</span>
+<span class="s2">        pandas series of strings and return a pandas dataframe of embeddings.</span>
+<span class="s2">        Defaults to: None.&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">embedding_fn_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Optional kwargs passed onto the embedding_fn.&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">resolve_multiple_fn</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;concatenate&quot;</span><span class="p">],</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;A function used for resolving multiple values within the</span>
+<span class="s2">        interval_days, i.e. how to combine texts within the lookbehind window.</span>
+<span class="s2">        Defaults to: &#39;concatenate&#39;. Other possible options are &#39;latest&#39; and</span>
+<span class="s2">        &#39;earliest&#39;.&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="TextPredictorGroupSpec.create_combinations"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.create_combinations">[docs]</a>    <span class="k">def</span> <span class="nf">create_combinations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TextPredictorSpec</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create all combinations from the group spec.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">create_specs_from_group</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+            <span class="n">feature_group_spec</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">output_class</span><span class="o">=</span><span class="n">TextPredictorSpec</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span></div></div>
 </pre></div>
         </article>
       </div>

@@ -1296,6 +1296,193 @@ append to the column name.</p>
 </dd></dl>
 
 <dl class="py class pydantic_model">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec">
+<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TextPredictorGroupSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#TextPredictorGroupSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#timeseriesflattener.feature_spec_objects.PredictorGroupSpec" title="timeseriesflattener.feature_spec_objects.PredictorGroupSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorGroupSpec</span></code></a></p>
+<p>Specification for a group of text predictors.
+Fields:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>values_loader (Optional[Sequence[str]]):</dt><dd><p>Loader for the df. Tries to resolve from the data_loaders
+registry, then calls the function which should return a dataframe.</p>
+</dd>
+<dt>values_name (Optional[List[str]]):</dt><dd><p>List of strings that corresponds to a key in a dictionary
+of multiple dataframes that correspods to a name of a type of values.</p>
+</dd>
+<dt>values_df (Optional[DataFrame]):</dt><dd><p>Dataframe with the values.</p>
+</dd>
+<dt>input_col_name_override (Optional[str]):</dt><dd><p>Override for the column name to use as values in df.</p>
+</dd>
+<dt>output_col_name_override (Optional[str]):</dt><dd><p>Override for the column name to use as values in the
+output df.</p>
+</dd>
+<dt>resolve_multiple_fn (List[Union[Callable, str]]):</dt><dd><p>A function used for resolving multiple values within the
+interval_days, i.e. how to combine texts within the lookbehind window.
+Defaults to: ‘concatenate’. Other possible options are ‘latest’ and
+‘earliest’.</p>
+</dd>
+<dt>fallback (Sequence[Union[Callable, str, float]]):</dt><dd><p>Which value to use if no values are found within interval_days.</p>
+</dd>
+<dt>allowed_nan_value_prop (List[float]):</dt><dd><p>If NaN is higher than this in the input dataframe during
+resolution, raise an error. Defaults to: [0.0].</p>
+</dd>
+<dt>prefix (str):</dt><dd><p>Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</p>
+</dd>
+<dt>loader_kwargs (Optional[List[Dict[str, Any]]]):</dt><dd><p>Optional kwargs for the values_loader.</p>
+</dd>
+<dt>lookbehind_days (List[float]):</dt><dd><p>How far behind to look for values</p>
+</dd>
+<dt>embedding_fn (List[Callable]):</dt><dd><p>A function used for embedding the text. Should take a</p>
+</dd>
+</dl>
+<p>pandas series of strings and return a pandas dataframe of embeddings.
+embedding_fn_kwargs (Optional[List[dict]]):</p>
+<blockquote>
+<div><p>Optional kwargs passed onto the embedding_fn.</p>
+</div></blockquote>
+</div></blockquote>
+<p><details  class="autodoc_pydantic_collapsable_json">
+<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TextPredictorGroupSpec&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for a group of text predictors.\nFields:\n    values_loader (Optional[Sequence[str]]):\n        Loader for the df. Tries to resolve from the data_loaders\n        registry, then calls the function which should return a dataframe.\n    values_name (Optional[List[str]]):\n        List of strings that corresponds to a key in a dictionary\n        of multiple dataframes that correspods to a name of a type of values.\n    values_df (Optional[DataFrame]):\n        Dataframe with the values.\n    input_col_name_override (Optional[str]):\n        Override for the column name to use as values in df.\n    output_col_name_override (Optional[str]):\n        Override for the column name to use as values in the\n        output df.\n    resolve_multiple_fn (List[Union[Callable, str]]):\n        A function used for resolving multiple values within the\n        interval_days, i.e. how to combine texts within the lookbehind window.\n        Defaults to: &#39;concatenate&#39;. Other possible options are &#39;latest&#39; and\n        &#39;earliest&#39;.\n    fallback (Sequence[Union[Callable, str, float]]):\n        Which value to use if no values are found within interval_days.\n    allowed_nan_value_prop (List[float]):\n        If NaN is higher than this in the input dataframe during\n        resolution, raise an error. Defaults to: [0.0].\n    prefix (str):\n        Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.\n    loader_kwargs (Optional[List[Dict[str, Any]]]):\n        Optional kwargs for the values_loader.\n    lookbehind_days (List[float]):\n        How far behind to look for values\n    embedding_fn (List[Callable]):\n        A function used for embedding the text. Should take a\n    pandas series of strings and return a pandas dataframe of embeddings.\n    embedding_fn_kwargs (Optional[List[dict]]):\n        Optional kwargs passed onto the embedding_fn.&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;values_loader&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Values Loader&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Loader for the df. Tries to resolve from the data_loaders\n            registry, then calls the function which should return a dataframe.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;values_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Values Name&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;List of strings that corresponds to a key in a dictionary\n            of multiple dataframes that correspods to a name of a type of values.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;values_df&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Values Df&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;input_col_name_override&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Input Col Name Override&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Override for the column name to use as values in df.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;output_col_name_override&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Output Col Name Override&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Override for the column name to use as values in the\n            output df.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;allowed_nan_value_prop&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Allowed Nan Value Prop&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;If NaN is higher than this in the input dataframe during\n            resolution, raise an error.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="mf">0.0</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pred&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;loader_kwargs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Loader Kwargs&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Optional kwargs for the values_loader.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;lookbehind_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lookbehind Days&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;How far behind to look for values&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;embedding_fn_kwargs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Embedding Fn Kwargs&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Optional kwargs passed onto the embedding_fn.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">         </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">},</span>
+<span class="w">   </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;lookbehind_days&quot;</span>
+<span class="w">   </span><span class="p">],</span>
+<span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</details></p><dl class="field-list simple">
+<dt class="field-odd">Config<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arbitrary_types_allowed</strong>: <em>bool = True</em></p></li>
+<li><p><strong>extra</strong>: <em>Extra = forbid</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Fields<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn" title="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">embedding_fn</span> <span class="pre">(List[Callable])</span></code></a></p></li>
+<li><p><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn_kwargs" title="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn_kwargs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">embedding_fn_kwargs</span> <span class="pre">(List[dict]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.resolve_multiple_fn" title="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.resolve_multiple_fn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_multiple_fn</span> <span class="pre">(List[Callable</span> <span class="pre">|</span> <span class="pre">str])</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embedding_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn" title="Permalink to this definition">#</a></dt>
+<dd><p>A function used for embedding the text. Should take a
+pandas series of strings and return a pandas dataframe of embeddings.
+Defaults to: None.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn_kwargs">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embedding_fn_kwargs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn_kwargs" title="Permalink to this definition">#</a></dt>
+<dd><p>Optional kwargs passed onto the embedding_fn.</p>
+</dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.resolve_multiple_fn">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resolve_multiple_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['concatenate']</span></em><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.resolve_multiple_fn" title="Permalink to this definition">#</a></dt>
+<dd><p>A function used for resolving multiple values within the
+interval_days, i.e. how to combine texts within the lookbehind window.
+Defaults to: ‘concatenate’. Other possible options are ‘latest’ and
+‘earliest’.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.Doc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Doc</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#TextPredictorGroupSpec.Doc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.Doc" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.Doc.short_description">
+<span class="sig-name descname"><span class="pre">short_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Specification</span> <span class="pre">for</span> <span class="pre">a</span> <span class="pre">group</span> <span class="pre">of</span> <span class="pre">text</span> <span class="pre">predictors.'</span></em><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.Doc.short_description" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.create_combinations">
+<span class="sig-name descname"><span class="pre">create_combinations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorSpec" title="timeseriesflattener.feature_spec_objects.TextPredictorSpec"><span class="pre">TextPredictorSpec</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#TextPredictorGroupSpec.create_combinations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.create_combinations" title="Permalink to this definition">#</a></dt>
+<dd><p>Create all combinations from the group spec.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class pydantic_model">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_spec_objects.TextPredictorSpec">
 <em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TextPredictorSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_spec_objects.html#TextPredictorSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_spec_objects.TextPredictorSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#timeseriesflattener.feature_spec_objects.PredictorSpec" title="timeseriesflattener.feature_spec_objects.PredictorSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorSpec</span></code></a></p>
@@ -1695,6 +1882,17 @@ class. The rest of the docstring is generated from the attributes of the class.<
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TemporalSpec.get_col_str"><code class="docutils literal notranslate"><span class="pre">TemporalSpec.get_col_str()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec"><code class="docutils literal notranslate"><span class="pre">TextPredictorGroupSpec</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn"><code class="docutils literal notranslate"><span class="pre">TextPredictorGroupSpec.embedding_fn</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.embedding_fn_kwargs"><code class="docutils literal notranslate"><span class="pre">TextPredictorGroupSpec.embedding_fn_kwargs</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.resolve_multiple_fn"><code class="docutils literal notranslate"><span class="pre">TextPredictorGroupSpec.resolve_multiple_fn</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.Doc"><code class="docutils literal notranslate"><span class="pre">TextPredictorGroupSpec.Doc</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.Doc.short_description"><code class="docutils literal notranslate"><span class="pre">TextPredictorGroupSpec.Doc.short_description</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorGroupSpec.create_combinations"><code class="docutils literal notranslate"><span class="pre">TextPredictorGroupSpec.create_combinations()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_spec_objects.TextPredictorSpec"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec</span></code></a><ul>
