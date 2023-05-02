@@ -286,7 +286,7 @@ def test(
             print(f"FAILED {Emo.FAIL} #{line_sans_suffix}     ")
 
     if test_result.return_code != 0:
-        exit(0)
+        exit(test_result.return_code)
 
 
 def test_for_rej():

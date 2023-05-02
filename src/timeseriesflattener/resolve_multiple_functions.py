@@ -133,7 +133,7 @@ def concatenate(grouped_df: DataFrame) -> DataFrame:
     )
 
 
-@resolve_multiple_fns.register("mean_len")
+@resolve_multiple_fns.register("mean_number_of_characters")
 def mean_number_of_characters(grouped_df: DataFrame) -> DataFrame:
     """Returns the mean length of values. This is useful for text data.
 

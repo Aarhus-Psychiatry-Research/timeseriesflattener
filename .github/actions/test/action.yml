@@ -20,7 +20,6 @@ runs:
 
     - name: Set up Python
       uses: actions/setup-python@v4
-      if: steps.cache_tox.outputs.cache-hit != 'true'
       with:
         python-version: ${{ inputs.python-version }}
 
