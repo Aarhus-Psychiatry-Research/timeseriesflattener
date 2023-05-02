@@ -1035,23 +1035,23 @@ class TextPredictorGroupSpec(PredictorGroupSpec):
         embedding_fn (List[Callable]):
             A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
-        embedding_fn_kwargs (Optional[list[dict]]):
+        embedding_fn_kwargs (Optional[List[dict]]):
             Optional kwargs passed onto the embedding_fn.
     """
 
     class Doc:
         short_description = """Specification for a group of text predictors."""
 
-    embedding_fn: list[Callable] = Field(
+    embedding_fn: List[Callable] = Field(
         description="""A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
         Defaults to: None.""",
     )
-    embedding_fn_kwargs: Optional[list[dict]] = Field(
+    embedding_fn_kwargs: Optional[List[dict]] = Field(
         default=None,
         description="""Optional kwargs passed onto the embedding_fn.""",
     )
-    resolve_multiple_fn: list[Union[Callable, str]] = Field(
+    resolve_multiple_fn: List[Union[Callable, str]] = Field(
         default=["concatenate"],
         description="""A function used for resolving multiple values within the
         interval_days, i.e. how to combine texts within the lookbehind window.
