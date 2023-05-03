@@ -38,7 +38,7 @@ def sentence_transformers_embedding(
     """
     model = SentenceTransformer(model_name)
     embeddings = model.encode(text_series.to_list())
-    return pd.DataFrame(embeddings)
+    return pd.DataFrame(embeddings)  # type: ignore
 
 
 def sklearn_embedding(
