@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.25.1 (2023-05-02)
+### Fix
+* Bump version to generate new release ([`2316b38`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2316b388aa71573aceeeba3f899037a93c71cb4f))
+
 ## v0.25.0 (2023-04-26)
 ### Feature
 * Add type-token-ratio resolve multiple fn ([`12be531`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/12be531382e1702fe21d9698dfa3ecaf256be8bb))

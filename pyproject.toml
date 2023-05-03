@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "timeseriesflattener"
-version = "0.25.0"
+version = "0.25.1"
 authors = [{name = "Lasse Hansen", email = "lasseh0310@gmail.com"}, {name = "Jakob Grøhn Damgaard", email = "bokajgd@gmail.com"}, {name = "Kenneth Enevoldsen"}, {name = "Martin Bernstorff", email = "martinbernstorff@gmail.com"}]
 description = "A package for converting time series data from e.g. electronic health records into wide format data."
 classifiers = [
@@ -18,17 +18,17 @@ classifiers = [
 ]
 requires-python = ">=3.8.0,<3.12.0"
 dependencies = [
-    "scipy>=1.8.0,<1.9.4",
-    "scikit-learn>=1.1.2,<1.2.3",
-    "pydantic>=1.9.0, <1.11.0",
-    "pandas>=1.4.0,<2.1.0",
-    "catalogue>=2.0.0, <2.1.0",
-    "numpy>=1.23.3,<1.24.4",
-    "pyarrow>=9.0.0,<11.1.0",
+    "scipy>=1.8.0",
+    "scikit-learn>=1.1.2",
+    "pydantic>=1.9.0",
+    "pandas>=1.4.0",
+    "catalogue>=2.0.0",
+    "numpy>=1.23.3",
+    "pyarrow>=9.0.0",
     "protobuf<=4.22.3", # Other versions give errors with pytest, super weird!
-    "frozendict>=2.3.4,<2.4.0",
-    "coloredlogs>14.0.0,<15.1.0",
-    "psycopmlutils>=0.5.0, <0.12.0",
+    "frozendict>=2.3.4",
+    "coloredlogs>14.0.0",
+    "psycopmlutils>=0.5.0",
 ]
 
 [project.license]
@@ -39,7 +39,7 @@ dev = [
   "cruft",
   "pyright",  
   "pre-commit==2.20.0,<2.21.0",
-  "ruff==0.0.262", # important that these match the pre-commit hooks
+  "ruff==0.0.263", # important that these match the pre-commit hooks
   "black[jupyter]==22.8.0", # important that these match the pre-commit hooks
   "pandas-stubs", # type stubs for pandas
   "invoke",
@@ -52,7 +52,7 @@ test = [
   "pytest-sugar>=0.9.4,<0.10.0",
 ]
 docs = [
-    "sphinx>=5.3.0,<6.3.0",
+    "sphinx>=5.3.0,<7.1.0",
     "furo==2023.3.27",
     "sphinx-copybutton>=0.5.1,<0.5.3",
     "sphinxext-opengraph>=0.7.3,<0.8.3",
@@ -65,9 +65,9 @@ tutorials = [
     "skimpy>=0.0.7,<0.1.0",
 ]
 text = [
-    "transformers>=4.26.0,<4.29.0",
-    "torch>=1.12.0,<2.1.0",
-    "sentence-transformers>=1.0.0,<2.5.0",
+    "transformers>=4.26.0",
+    "torch>=1.12.0",
+    "sentence-transformers>=1.0.0",
 ]
 
 [project.readme]
