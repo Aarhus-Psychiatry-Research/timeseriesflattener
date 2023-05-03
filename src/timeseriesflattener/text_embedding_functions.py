@@ -19,7 +19,7 @@ def huggingface_embedding(text_series: pd.Series, model_name: str) -> pd.DataFra
     """
     extractor = pipeline(model=model_name, task="feature-extraction")
     embeddings = extractor(text_series.to_list(), return_tensors=True)
-    embeddings = [torch.mean(embedding, dim=1).squeeze() for embedding in embeddings]
+    embeddings = [torch.mean(embedding, dim=1).squeeze() for embedding in embeddings]  # type: ignore
     return pd.DataFrame(embeddings).astype(float)
 
 
@@ -56,6 +56,6 @@ def sklearn_embedding(
         model (TransformerMixin): Trained sklearn model
     """
     return pd.DataFrame(
-        model.transform(text_series).toarray(),
-        columns=model.get_feature_names_out(),
+        model.transform(text_series).toarray(),  # type: ignore
+        columns=model.get_feature_names_out(),  # type: ignore
     )

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     }
 
     df = generate_data_columns(
-        predictors=column_specs,
+        predictors=column_specs,  # type: ignore
         n_samples=10_000,
     )
 

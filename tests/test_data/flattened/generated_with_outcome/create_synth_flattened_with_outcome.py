@@ -31,7 +31,7 @@ if __name__ == "__main__":
     }
 
     synth_df = generate_synth_data(
-        predictors=column_specifications,
+        predictors=column_specifications,  # type: ignore
         outcome_column_name="outc_dichotomous_t2d_within_30_days_max_fallback_0",
         n_samples=10_000,
         logistic_outcome_model="1*pred_hba1c_within_100_days_max_fallback_nan+1*pred_hdl_within_100_days_max_fallback_nan",
