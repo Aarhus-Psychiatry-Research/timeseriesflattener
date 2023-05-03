@@ -13,8 +13,8 @@ from timeseriesflattener.feature_spec_objects import (
     PredictorGroupSpec,
     PredictorSpec,
     TemporalSpec,
+    TextEmbeddingPredictorGroupSpec,
     TextEmbeddingPredictorSpec,
-    TextPredictorGroupSpec,
     _AnySpec,
     check_that_col_names_in_kwargs_exist_in_df,
     generate_docstring_from_attributes,
@@ -264,7 +264,7 @@ def test_textpredictorgroupspec_combinations_loader_kwargs():
     df = load_synth_text()
     bow_model = bow_test_embedding(df["text"])
 
-    spec = TextPredictorGroupSpec(
+    spec = TextEmbeddingPredictorGroupSpec(
         values_loader=("synth_text",),
         loader_kwargs=[{"n_rows": 10}, {"n_rows": 100}],
         prefix="test_",

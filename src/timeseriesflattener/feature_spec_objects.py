@@ -998,7 +998,7 @@ class OutcomeGroupSpec(_MinGroupSpec):
         )
 
 
-class TextPredictorGroupSpec(PredictorGroupSpec):
+class TextEmbeddingPredictorGroupSpec(PredictorGroupSpec):
     """Specification for a group of text predictors.
     Fields:
         values_loader (Optional[Sequence[str]]):
@@ -1057,9 +1057,9 @@ class TextPredictorGroupSpec(PredictorGroupSpec):
         'earliest'.""",
     )
 
-    def create_combinations(self) -> List[TextPredictorSpec]:
+    def create_combinations(self) -> List[TextEmbeddingPredictorSpec]:
         """Create all combinations from the group spec."""
         return create_specs_from_group(  # type: ignore
             feature_group_spec=self,
-            output_class=TextPredictorSpec,  # type: ignore
+            output_class=TextEmbeddingPredictorSpec,  # type: ignore
         )

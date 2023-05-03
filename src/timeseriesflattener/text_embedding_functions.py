@@ -9,7 +9,7 @@ from transformers import pipeline
 
 def huggingface_embedding(text_series: pd.Series, model_name: str) -> pd.DataFrame:
     """Embeds the text data using a huggingface model. To use this in timeseriesflattener,
-    supply the model_name as an embedding_fn_kwargs argument to TextPredictorSpec.
+    supply the model_name as an embedding_fn_kwargs argument to TextEmbeddingPredictorSpec.
     For example:
     `embedding_fn_kwargs={"model_name": "bert-base-uncased"}`
 
@@ -29,7 +29,7 @@ def sentence_transformers_embedding(
 ) -> pd.DataFrame:
     """Embeds the text data using a sentence-transformers model. To use this in
     timeseriesflattener, supply the model_name as an embedding_fn_kwargs argument
-    to TextPredictorSpec. For example:
+    to TextEmbeddingPredictorSpec. For example:
     `embedding_fn_kwargs={"model_name": "paraphrase-multilingual-MiniLM-L12-v2"}`
 
     Args:
@@ -48,7 +48,7 @@ def sklearn_embedding(
     """Embeds text data using a sklearn model. The model should be trained
     before using this function and have a `get_feature_names` attribute.
     To use this in timeseriesflattener, supply the model as an embedding_fn_kwargs
-    argument to TextPredictorSpec. For example:
+    argument to TextEmbeddingPredictorSpec. For example:
     `embedding_fn_kwargs={"model": tf_idf_model}`
 
     Args:
