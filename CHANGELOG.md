@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.26.0 (2023-05-04)
+### Feature
+* Add group spec for text predictor spec ([`75a0112`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/75a0112f7c2717d16e1996d5087d993ba7f75cc4))
+
+### Fix
+* Update type hints ([`887bc06`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/887bc062bf970690077fea105b5ca77018049e6d))
+* Incorrect naming of resolve_multiple_fn ([`0a4607e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0a4607ee48e9dd6227205bca09ab123b6d30504a))
+
 ## v0.25.1 (2023-05-02)
 ### Fix
 * Bump version to generate new release ([`2316b38`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2316b388aa71573aceeeba3f899037a93c71cb4f))
