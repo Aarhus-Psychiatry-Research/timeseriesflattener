@@ -37,10 +37,10 @@ def test_anyspec_init():
     spec = _AnySpec(
         values_loader=values_loader_name,
         prefix="test",
+        feature_name="test_feature",
     )
 
     assert isinstance(spec.values_df, pd.DataFrame)
-    assert spec.feature_name == values_loader_name
 
 
 def test_loader_kwargs():
@@ -49,6 +49,7 @@ def test_loader_kwargs():
         values_loader="synth_predictor_float",
         prefix="test",
         loader_kwargs={"n_rows": 10},
+        feature_name="test_feature",
     )
 
     assert len(spec.values_df) == 10
@@ -62,13 +63,18 @@ def test_invalid_multiple_data_args():
             values_loader="synth_predictor_float",
             values_name="synth_data",
             prefix="test",
+            feature_name="test_feature",
         )
 
 
 def test_anyspec_incorrect_values_loader_str():
     """Raise error if values loader is not a key in registry."""
     with pytest.raises(ValueError, match=r".*in registry.*"):
-        _AnySpec(values_loader="I don't exist", prefix="test")
+        _AnySpec(
+            values_loader="I don't exist",
+            prefix="test",
+            feature_name="test_feature",
+        )
 
 
 def test_that_col_names_in_kwargs_exist_in_df():
@@ -101,6 +107,7 @@ def test_create_combinations_while_resolving_from_registry(
         resolve_multiple_fn=["mean"],
         lookbehind_days=[30],
         fallback=[0],
+        feature_name="test_feature",
     ).create_combinations()
 
     assert len(group_spec) == 2
@@ -117,6 +124,7 @@ def test_skip_all_if_no_need_to_process():
                 resolve_multiple_fn=["max"],
                 fallback=[0],
                 allowed_nan_value_prop=[0.5],
+                feature_name="test_feature",
             ).create_combinations(),
         )
         == 1
@@ -132,6 +140,7 @@ def test_skip_one_if_no_need_to_process():
         resolve_multiple_fn=["max", "min"],
         fallback=[0],
         allowed_nan_value_prop=[0],
+        feature_name="test_feature",
     ).create_combinations()
 
     assert len(created_combinations) == 4
@@ -144,6 +153,7 @@ def test_resolve_multiple_fn_to_str():
         lookbehind_days=[365, 730],
         fallback=[np.nan],
         resolve_multiple_fn=[maximum],
+        feature_name="test_feature",
     ).create_combinations()
 
     assert "maximum" in pred_spec_batch[0].get_col_str()
@@ -156,6 +166,7 @@ def test_lookbehind_days_handles_floats():
         lookbehind_days=[2, 0.5],
         fallback=[np.nan],
         resolve_multiple_fn=[maximum],
+        feature_name="test_feature",
     ).create_combinations()
 
     assert pred_spec_batch[1].lookbehind_days == 0.5
@@ -247,6 +258,7 @@ def test_predictorgroupspec_combinations_loader_kwargs():
         resolve_multiple_fn=["bool"],
         fallback=[0],
         lookbehind_days=[10],
+        feature_name="test_feature",
     )
 
     combinations = spec.create_combinations()
@@ -273,6 +285,7 @@ def test_textpredictorgroupspec_combinations_loader_kwargs():
         lookbehind_days=[10],
         embedding_fn=[sklearn_embedding],
         embedding_fn_kwargs=[{"model": bow_model}],
+        feature_name="test_feature",
     )
 
     combinations = spec.create_combinations()

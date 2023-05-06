@@ -6,11 +6,18 @@ from timeseriesflattener.feature_spec_objects import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
+    TextPredictorGroupSpec,
     TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.resolve_multiple_functions import latest, mean
-from timeseriesflattener.text_embedding_functions import sentence_transformers_embedding
+from timeseriesflattener.testing.text_embedding_functions import (
+    _load_bow_model,
+)
+from timeseriesflattener.text_embedding_functions import (
+    sentence_transformers_embedding,
+    sklearn_embedding,
+)
 
 
 def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame):
@@ -217,3 +224,45 @@ def test_double_compute_doesn_not_duplicate_columns():
     df = ts_flattener.get_df()
 
     assert df.shape[0] == 4
+
+
+def test_group_spec_feature_name(
+    synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame,
+):
+    # Create an instance of the class that contains the `add_spec` method
+    dataset = TimeseriesFlattener(
+        prediction_times_df=synth_prediction_times,
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
+
+    # Create sample specs
+    outcome_spec = OutcomeSpec(
+        values_df=synth_outcome,
+        feature_name="outcome",
+        lookahead_days=1,
+        resolve_multiple_fn=mean,
+        fallback=0,
+        incident=False,
+    )
+
+    bow_model = _load_bow_model()
+
+    predictor_spec = TextPredictorGroupSpec(
+        values_loader=("synth_text",),
+        prefix="test",
+        resolve_multiple_fn=["concatenate"],
+        fallback=[np.nan],
+        lookbehind_days=[100],
+        feature_name="bow",
+        embedding_fn=[sklearn_embedding],
+        embedding_fn_kwargs=[{"model": bow_model}],
+        input_col_name_override="text",
+    ).create_combinations()
+
+    dataset.add_spec(outcome_spec)
+    dataset.add_spec(predictor_spec)  # type: ignore
+
+    df = dataset.get_df()
+
+    # assert correct feature names
+    assert "test_bow-for_within_100_days_concatenate_fallback_nan" in df.columns
