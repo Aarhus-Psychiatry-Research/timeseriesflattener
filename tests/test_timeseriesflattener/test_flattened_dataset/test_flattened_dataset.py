@@ -227,7 +227,8 @@ def test_double_compute_doesn_not_duplicate_columns():
 
 
 def test_group_spec_feature_name(
-    synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame,
+    synth_prediction_times: pd.DataFrame,
+    synth_outcome: pd.DataFrame,
 ):
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
