@@ -22,7 +22,7 @@ def test_huggingface_embedding(synth_text_data: pd.DataFrame):
     df = df.head(5)
     embedding_df = huggingface_embedding(
         df["text"],
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        model="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     )
     assert embedding_df.shape == (df.shape[0], 384)
 
@@ -34,6 +34,6 @@ def test_sentence_transformer_embedding(synth_text_data: pd.DataFrame):
     df = df.head(5)
     embedding_df = sentence_transformers_embedding(
         df["text"],
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        model="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     )
     assert embedding_df.shape == (df.shape[0], 384)

@@ -103,7 +103,7 @@ def test_compute_specs(
         fallback=np.nan,
         embedding_fn=sentence_transformers_embedding,
         embedding_fn_kwargs={
-            "model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+            "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         },
     )
 

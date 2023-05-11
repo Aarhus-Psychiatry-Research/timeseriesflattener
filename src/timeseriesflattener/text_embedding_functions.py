@@ -7,17 +7,17 @@ from sklearn.base import TransformerMixin
 from transformers import pipeline
 
 
-def huggingface_embedding(text_series: pd.Series, model_name: str) -> pd.DataFrame:
+def huggingface_embedding(text_series: pd.Series, model: str) -> pd.DataFrame:
     """Embeds the text data using a huggingface model. To use this in timeseriesflattener,
-    supply the model_name as an embedding_fn_kwargs argument to TextPredictorSpec.
+    supply the model as an embedding_fn_kwargs argument to TextPredictorSpec.
     For example:
-    `embedding_fn_kwargs={"model_name": "bert-base-uncased"}`
+    `embedding_fn_kwargs={"model": "bert-base-uncased"}`
 
     Args:
         text_series (pd.Series): Series of text to be embedded.
-        model_name (str): Name of the huggingface model to use.
+        model (str): Name of the huggingface model to use.
     """
-    extractor = pipeline(model=model_name, task="feature-extraction")
+    extractor = pipeline(model=model, task="feature-extraction")
     embeddings = extractor(text_series.to_list(), return_tensors=True)
     embeddings = [torch.mean(embedding, dim=1).squeeze() for embedding in embeddings]
     return pd.DataFrame(embeddings).astype(float)
@@ -25,18 +25,18 @@ def huggingface_embedding(text_series: pd.Series, model_name: str) -> pd.DataFra
 
 def sentence_transformers_embedding(
     text_series: pd.Series,
-    model_name: str,
+    model: str,
 ) -> pd.DataFrame:
     """Embeds the text data using a sentence-transformers model. To use this in
-    timeseriesflattener, supply the model_name as an embedding_fn_kwargs argument
+    timeseriesflattener, supply the model as an embedding_fn_kwargs argument
     to TextPredictorSpec. For example:
-    `embedding_fn_kwargs={"model_name": "paraphrase-multilingual-MiniLM-L12-v2"}`
+    `embedding_fn_kwargs={"model": "paraphrase-multilingual-MiniLM-L12-v2"}`
 
     Args:
         text_series (pd.Series): Series of text to be embedded.
-        model_name (str): Name of the sentence-transformers model to use.
+        model (str): Name of the sentence-transformers model to use.
     """
-    model = SentenceTransformer(model_name)
+    model = SentenceTransformer(model)
     embeddings = model.encode(text_series.to_list())
     return pd.DataFrame(embeddings)
 
