@@ -1,7 +1,6 @@
 """Templates for feature specifications."""
 import itertools
 import logging
-import re
 import time
 from functools import lru_cache
 from typing import Any, Callable, Dict, List, Optional, Sequence, Union
@@ -653,12 +652,8 @@ class TextPredictorSpec(PredictorSpec):
         )
 
         if self.embedding_fn_kwargs is not None:
-            kwarg_values = re.sub(
-                "\\(.*?\\)|\\[.*?\\]",
-                "",
-                str(self.embedding_fn_kwargs.get("model")),
-            )
-            return f"{self.prefix}_{feature_name}_{kwarg_values}_within_{interval_days_str}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+            col_str = f"{self.prefix}_{feature_name}_{str(self.embedding_fn_kwargs.get('model'))}_within_{interval_days_str}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+            return col_str
 
         col_str = f"{self.prefix}_{feature_name}_within_{interval_days_str}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
         return col_str

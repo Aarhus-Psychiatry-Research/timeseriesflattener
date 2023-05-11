@@ -264,6 +264,6 @@ def test_group_spec_feature_name(
 
     # assert correct feature names
     assert (
-        "test_synth_text-and_CountVectorizer_within_100_days_concatenate_fallback_nan"
+        "test_synth_text-and_CountVectorizer(max_features=10)_within_100_days_concatenate_fallback_nan"
         in df.columns
     )
