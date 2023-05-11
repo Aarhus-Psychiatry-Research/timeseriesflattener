@@ -1,6 +1,7 @@
 """Templates for feature specifications."""
 import itertools
 import logging
+import re
 import time
 from functools import lru_cache
 from typing import Any, Callable, Dict, List, Optional, Sequence, Union
@@ -632,6 +633,35 @@ class TextPredictorSpec(PredictorSpec):
             raise ValueError("lookbehind_days or interval_days must be specified.")
 
         super().__init__(**data)
+
+    def get_col_str(self, additional_feature_name: Optional[str] = None) -> str:
+        """Generate the column name for the output column.
+        If interval days is a float, the decimal point is changed to an underscore.
+
+        Args:
+            additional_feature_name (Optional[str]): additional feature name to
+                append to the column name.
+        """
+        feature_name = self.feature_name
+        if additional_feature_name:
+            feature_name = feature_name + "-" + str(additional_feature_name)
+
+        interval_days_str = (  # This is required because pydantic coerces the int 2 to float 2.0
+            int(self.interval_days)  # type: ignore
+            if self.interval_days.is_integer()  # type: ignore
+            else str(self.interval_days).replace(".", "-")
+        )
+
+        if self.embedding_fn_kwargs is not None:
+            kwarg_values = re.sub(
+                "\\(.*?\\)|\\[.*?\\]",
+                "",
+                str(self.embedding_fn_kwargs.get("model")),
+            )
+            return f"{self.prefix}_{feature_name}_{kwarg_values}_within_{interval_days_str}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+
+        col_str = f"{self.prefix}_{feature_name}_within_{interval_days_str}_days_{self.key_for_resolve_multiple}_fallback_{self.fallback}"
+        return col_str
 
 
 class OutcomeSpec(TemporalSpec):
