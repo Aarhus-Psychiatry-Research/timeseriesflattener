@@ -1655,6 +1655,7 @@
     "    lookbehind_days=365,\n",
     "    fallback=np.nan,\n",
     "    resolve_multiple_fn=mean,\n",
+    "    feature_name=\"value\",\n",
     ")"
    ]
   },

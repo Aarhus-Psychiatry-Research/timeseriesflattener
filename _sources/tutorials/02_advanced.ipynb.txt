@@ -269,6 +269,7 @@
                 "    lookbehind_days=[365, 730],\n",
                 "    fallback=[np.nan],\n",
                 "    resolve_multiple_fn=[mean, maximum],\n",
+                "    feature_name=\"group_predictors\",\n",
                 ").create_combinations()"
             ]
         },

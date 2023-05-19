@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 7.0.0 and Furo 2023.03.27 -->
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.03.27 -->
         <title>timeseriesflattener.feature_spec_objects - Timeseriesflattener</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
@@ -276,10 +276,8 @@
     <span class="k">if</span> <span class="s2">&quot;values_name&quot;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resolving values_df from </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;values_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_df&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">split_dfs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">])</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feature_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_name&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_loader&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feature_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_loader&quot;</span><span class="p">]</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_loader&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_loaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_loader&quot;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;values_loader&quot;</span><span class="p">]):</span>
@@ -1025,6 +1023,11 @@
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Optional kwargs for the values_loader.&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
+    <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;The name of the feature. Used for column name generation, e.g.</span>
+<span class="s2">            &lt;prefix&gt;_&lt;feature_name&gt;.&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_check_loaders_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all loaders can be resolved from the data_loaders catalogue.&quot;&quot;&quot;</span>
         <span class="n">invalid_loaders</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
@@ -1137,6 +1140,9 @@
 <span class="sd">            Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</span>
 <span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
 <span class="sd">            Optional kwargs for the values_loader.</span>
+<span class="sd">        feature_name (str):</span>
+<span class="sd">            The name of the feature. Used for column name generation, e.g.</span>
+<span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;.</span>
 <span class="sd">        lookbehind_days (List[float]):</span>
 <span class="sd">            How far behind to look for values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1165,38 +1171,41 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a group of outcomes.</span>
 
 <span class="sd">    Fields:</span>
-<span class="sd">    values_loader (Optional[Sequence[str]]):</span>
-<span class="sd">        Loader for the df. Tries to resolve from the data_loaders</span>
-<span class="sd">        registry, then calls the function which should return a dataframe.</span>
-<span class="sd">    values_name (Optional[List[str]]):</span>
-<span class="sd">        List of strings that corresponds to a key in a dictionary</span>
-<span class="sd">        of multiple dataframes that correspods to a name of a type of values.</span>
-<span class="sd">    values_df (Optional[DataFrame]):</span>
-<span class="sd">        Dataframe with the values.</span>
-<span class="sd">    input_col_name_override (Optional[str]):</span>
-<span class="sd">        Override for the column name to use as values in df.</span>
-<span class="sd">    output_col_name_override (Optional[str]):</span>
-<span class="sd">        Override for the column name to use as values in the</span>
-<span class="sd">        output df.</span>
-<span class="sd">    resolve_multiple_fn (List[Union[Callable, str]]):</span>
-<span class="sd">        Name of resolve multiple fn, resolved from</span>
-<span class="sd">        resolve_multiple_functions.py</span>
-<span class="sd">    fallback (Sequence[Union[Callable, str, float]]):</span>
-<span class="sd">        Which value to use if no values are found within interval_days.</span>
-<span class="sd">    allowed_nan_value_prop (List[float]):</span>
-<span class="sd">        If NaN is higher than this in the input dataframe during</span>
-<span class="sd">        resolution, raise an error. Defaults to: [0.0].</span>
-<span class="sd">    prefix (str):</span>
-<span class="sd">        Prefix for column name, e.g. &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: outc.</span>
-<span class="sd">    loader_kwargs (Optional[List[Dict[str,Any]]]):</span>
-<span class="sd">        Optional kwargs for the values_loader.</span>
-<span class="sd">    incident (Sequence[bool]):</span>
-<span class="sd">        Whether the outcome is incident or not, i.e. whether you</span>
-<span class="sd">        can experience it more than once. For example, type 2 diabetes is incident.</span>
-<span class="sd">        Incident outcomes can be handled in a vectorised way during resolution,</span>
-<span class="sd">         which is faster than non-incident outcomes.</span>
-<span class="sd">    lookahead_days (List[float]):</span>
-<span class="sd">        How far ahead to look for values</span>
+<span class="sd">        values_loader (Optional[Sequence[str]]):</span>
+<span class="sd">            Loader for the df. Tries to resolve from the data_loaders</span>
+<span class="sd">            registry, then calls the function which should return a dataframe.</span>
+<span class="sd">        values_name (Optional[List[str]]):</span>
+<span class="sd">            List of strings that corresponds to a key in a dictionary</span>
+<span class="sd">            of multiple dataframes that correspods to a name of a type of values.</span>
+<span class="sd">        values_df (Optional[DataFrame]):</span>
+<span class="sd">            Dataframe with the values.</span>
+<span class="sd">        input_col_name_override (Optional[str]):</span>
+<span class="sd">            Override for the column name to use as values in df.</span>
+<span class="sd">        output_col_name_override (Optional[str]):</span>
+<span class="sd">            Override for the column name to use as values in the</span>
+<span class="sd">            output df.</span>
+<span class="sd">        resolve_multiple_fn (List[Union[Callable, str]]):</span>
+<span class="sd">            Name of resolve multiple fn, resolved from</span>
+<span class="sd">            resolve_multiple_functions.py</span>
+<span class="sd">        fallback (Sequence[Union[Callable, str, float]]):</span>
+<span class="sd">            Which value to use if no values are found within interval_days.</span>
+<span class="sd">        allowed_nan_value_prop (List[float]):</span>
+<span class="sd">            If NaN is higher than this in the input dataframe during</span>
+<span class="sd">            resolution, raise an error. Defaults to: [0.0].</span>
+<span class="sd">        prefix (str):</span>
+<span class="sd">            Prefix for column name, e.g. &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: outc.</span>
+<span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
+<span class="sd">            Optional kwargs for the values_loader.</span>
+<span class="sd">        feature_name (str):</span>
+<span class="sd">            The name of the feature. Used for column name generation, e.g.</span>
+<span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;.</span>
+<span class="sd">        incident (Sequence[bool]):</span>
+<span class="sd">            Whether the outcome is incident or not, i.e. whether you</span>
+<span class="sd">            can experience it more than once. For example, type 2 diabetes is incident.</span>
+<span class="sd">            Incident outcomes can be handled in a vectorised way during resolution,</span>
+<span class="sd">             which is faster than non-incident outcomes.</span>
+<span class="sd">        lookahead_days (List[float]):</span>
+<span class="sd">            How far ahead to look for values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="OutcomeGroupSpec.Doc"><a class="viewcode-back" href="../../feature_specifications.html#timeseriesflattener.feature_spec_objects.OutcomeGroupSpec.Doc">[docs]</a>    <span class="k">class</span> <span class="nc">Doc</span><span class="p">:</span>
@@ -1254,6 +1263,9 @@
 <span class="sd">            resolution, raise an error. Defaults to: [0.0].</span>
 <span class="sd">        prefix (str):</span>
 <span class="sd">            Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</span>
+<span class="sd">        feature_name (str):</span>
+<span class="sd">            The name of the feature. Used for column name generation, e.g.</span>
+<span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;.</span>
 <span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
 <span class="sd">            Optional kwargs for the values_loader.</span>
 <span class="sd">        lookbehind_days (List[float]):</span>
