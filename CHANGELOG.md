@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.27.0 (2023-05-19)
+### Feature
+* Add feature_name arg to group specs and make non-optional for non group specs ([`34df7a3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/34df7a3561206d952cb17474f8c1efa097146e6f))
+
 ## v0.26.0 (2023-05-04)
 ### Feature
 * Add group spec for text predictor spec ([`75a0112`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/75a0112f7c2717d16e1996d5087d993ba7f75cc4))
