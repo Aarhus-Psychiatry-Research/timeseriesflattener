@@ -25,7 +25,7 @@ dependencies = [
     "catalogue>=2.0.0",
     "numpy>=1.23.3",
     "pyarrow>=9.0.0",
-    "protobuf<=4.22.3", # Other versions give errors with pytest, super weird!
+    "protobuf<=4.23.1", # Other versions give errors with pytest, super weird!
     "frozendict>=2.3.4",
     "coloredlogs>14.0.0",
     "psycopmlutils>=0.5.0",
