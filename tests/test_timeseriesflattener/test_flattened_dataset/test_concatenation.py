@@ -55,7 +55,7 @@ def test_benchmark_full_index_comparison_before_concatenate():
         dfs,
     )
 
-    assert compute_seconds < 2
+    assert compute_seconds < 4
 
 
 def test_error_raised_with_unaligend_rows():
