@@ -1023,11 +1023,6 @@
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Optional kwargs for the values_loader.&quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;The name of the feature. Used for column name generation, e.g.</span>
-<span class="s2">            &lt;prefix&gt;_&lt;feature_name&gt;.&quot;&quot;&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">_check_loaders_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that all loaders can be resolved from the data_loaders catalogue.&quot;&quot;&quot;</span>
         <span class="n">invalid_loaders</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
@@ -1140,9 +1135,6 @@
 <span class="sd">            Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</span>
 <span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
 <span class="sd">            Optional kwargs for the values_loader.</span>
-<span class="sd">        feature_name (str):</span>
-<span class="sd">            The name of the feature. Used for column name generation, e.g.</span>
-<span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;.</span>
 <span class="sd">        lookbehind_days (List[float]):</span>
 <span class="sd">            How far behind to look for values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1196,9 +1188,6 @@
 <span class="sd">            Prefix for column name, e.g. &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: outc.</span>
 <span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
 <span class="sd">            Optional kwargs for the values_loader.</span>
-<span class="sd">        feature_name (str):</span>
-<span class="sd">            The name of the feature. Used for column name generation, e.g.</span>
-<span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;.</span>
 <span class="sd">        incident (Sequence[bool]):</span>
 <span class="sd">            Whether the outcome is incident or not, i.e. whether you</span>
 <span class="sd">            can experience it more than once. For example, type 2 diabetes is incident.</span>
@@ -1263,9 +1252,6 @@
 <span class="sd">            resolution, raise an error. Defaults to: [0.0].</span>
 <span class="sd">        prefix (str):</span>
 <span class="sd">            Prefix for column name, e,g, &lt;prefix&gt;_&lt;feature_name&gt;. Defaults to: pred.</span>
-<span class="sd">        feature_name (str):</span>
-<span class="sd">            The name of the feature. Used for column name generation, e.g.</span>
-<span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;.</span>
 <span class="sd">        loader_kwargs (Optional[List[Dict[str, Any]]]):</span>
 <span class="sd">            Optional kwargs for the values_loader.</span>
 <span class="sd">        lookbehind_days (List[float]):</span>
