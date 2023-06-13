@@ -797,11 +797,6 @@ class _MinGroupSpec(BaseModel):
         description="""Optional kwargs for the values_loader.""",
     )
 
-    feature_name: str = Field(
-        description="""The name of the feature. Used for column name generation, e.g.
-            <prefix>_<feature_name>.""",
-    )
-
     def _check_loaders_are_valid(self):
         """Check that all loaders can be resolved from the data_loaders catalogue."""
         invalid_loaders: list = list(
@@ -914,9 +909,6 @@ class PredictorGroupSpec(_MinGroupSpec):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
         loader_kwargs (Optional[List[Dict[str, Any]]]):
             Optional kwargs for the values_loader.
-        feature_name (str):
-            The name of the feature. Used for column name generation, e.g.
-            <prefix>_<feature_name>.
         lookbehind_days (List[float]):
             How far behind to look for values
     """
@@ -970,9 +962,6 @@ class OutcomeGroupSpec(_MinGroupSpec):
             Prefix for column name, e.g. <prefix>_<feature_name>. Defaults to: outc.
         loader_kwargs (Optional[List[Dict[str, Any]]]):
             Optional kwargs for the values_loader.
-        feature_name (str):
-            The name of the feature. Used for column name generation, e.g.
-            <prefix>_<feature_name>.
         incident (Sequence[bool]):
             Whether the outcome is incident or not, i.e. whether you
             can experience it more than once. For example, type 2 diabetes is incident.
@@ -1037,9 +1026,6 @@ class TextPredictorGroupSpec(PredictorGroupSpec):
             resolution, raise an error. Defaults to: [0.0].
         prefix (str):
             Prefix for column name, e,g, <prefix>_<feature_name>. Defaults to: pred.
-        feature_name (str):
-            The name of the feature. Used for column name generation, e.g.
-            <prefix>_<feature_name>.
         loader_kwargs (Optional[List[Dict[str, Any]]]):
             Optional kwargs for the values_loader.
         lookbehind_days (List[float]):
