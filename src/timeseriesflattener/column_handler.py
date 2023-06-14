@@ -4,6 +4,7 @@ from typing import Callable, List, Optional
 import pandas as pd
 
 from timeseriesflattener.feature_specs.single_specs import (
+    AnySpec,
     TemporalSpec,
     TextPredictorSpec,
 )
@@ -46,7 +47,7 @@ class ColumnHandler:
     @staticmethod
     def rename_value_column(
         df: pd.DataFrame,
-        output_spec: TextPredictorSpec,
+        output_spec: AnySpec,
     ) -> pd.DataFrame:
         """Renames the value column to the column name specified in the output_spec.
         Handles the case where the output_spec has a multiindex.
@@ -56,9 +57,15 @@ class ColumnHandler:
             df (pd.DataFrame): Dataframe with value column
         """
         if isinstance(df["value"], pd.DataFrame):
+            if not isinstance(output_spec, TextPredictorSpec):
+                raise ValueError(
+                    f"output_spec must be a TextPredictorSpec if the value column is a "
+                    f"multiindex. Got {type(output_spec)}."
+                )
             df = ColumnHandler._rename_multi_index_dataframe(output_spec, df)
         else:
             df = df.rename(columns={"value": output_spec.get_output_col_name()})
+
         return df
 
     @staticmethod
