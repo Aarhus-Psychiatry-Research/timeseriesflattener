@@ -107,7 +107,6 @@ def test_create_combinations_while_resolving_from_registry(
         resolve_multiple_fn=["mean"],
         lookbehind_days=[30],
         fallback=[0],
-        feature_name="test_feature",
     ).create_combinations()
 
     assert len(group_spec) == 2
@@ -139,7 +138,6 @@ def test_skip_one_if_no_need_to_process():
         resolve_multiple_fn=["max", "min"],
         fallback=[0],
         allowed_nan_value_prop=[0],
-        feature_name="test_feature",
     ).create_combinations()
 
     assert len(created_combinations) == 4
