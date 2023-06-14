@@ -1,12 +1,10 @@
 import itertools
+from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Sequence, Union
 
+import pandas as pd
 from pydantic import Field
 from timeseriesflattener.aggregation_functions import concatenate
-from timeseriesflattener.feature_specs.base_group_spec import (
-    GroupSpec,
-    NamedDataframe,
-)
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,
@@ -16,44 +14,10 @@ from timeseriesflattener.feature_specs.single_specs import (
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
-def create_feature_combinations_from_dict(
-    dictionary: Dict[str, Union[str, list]],
-) -> List[Dict[str, Union[str, float, int]]]:
-    """Create feature combinations from a dictionary of feature specifications.
-    Only unpacks the top level of lists.
-    Args:
-        dictionary (Dict[str]): A dictionary of feature specifications.
-    Returns
-    -------
-        List[Dict[str]]: list of all possible combinations of the arguments.
-    """
-    # Make all elements iterable
-    dictionary = {
-        k: v if isinstance(v, (list, tuple)) else [v] for k, v in dictionary.items()
-    }
-    keys, values = zip(*dictionary.items())
-
-    # Create all combinations of top level elements
-    permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
-
-    return permutations_dicts  # type: ignore
-
-
-def create_specs_from_group(
-    feature_group_spec: GroupSpec,
-    output_class: AnySpec,
-) -> List[AnySpec]:
-    """Create a list of specs from a GroupSpec."""
-    # Create all combinations of top level elements
-    # For each attribute in the FeatureGroupSpec
-
-    feature_group_spec_dict = feature_group_spec.__dict__
-
-    permuted_dicts = create_feature_combinations_from_dict(
-        dictionary=feature_group_spec_dict,
-    )
-
-    return [output_class(**d) for d in permuted_dicts]  # type: ignore
+@dataclass(frozen=True)
+class NamedDataframe:
+    df: pd.DataFrame
+    name: str
 
 
 class PredictorGroupSpec(BaseModel):
@@ -196,3 +160,43 @@ class TextPredictorGroupSpec(BaseModel):
 
 
 GroupSpec = Union[PredictorGroupSpec, OutcomeGroupSpec, TextPredictorGroupSpec]
+
+
+def create_feature_combinations_from_dict(
+    dictionary: Dict[str, Union[str, list]],
+) -> List[Dict[str, Union[str, float, int]]]:
+    """Create feature combinations from a dictionary of feature specifications.
+    Only unpacks the top level of lists.
+    Args:
+        dictionary (Dict[str]): A dictionary of feature specifications.
+    Returns
+    -------
+        List[Dict[str]]: list of all possible combinations of the arguments.
+    """
+    # Make all elements iterable
+    dictionary = {
+        k: v if isinstance(v, (list, tuple)) else [v] for k, v in dictionary.items()
+    }
+    keys, values = zip(*dictionary.items())
+
+    # Create all combinations of top level elements
+    permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
+
+    return permutations_dicts  # type: ignore
+
+
+def create_specs_from_group(
+    feature_group_spec: GroupSpec,
+    output_class: AnySpec,
+) -> List[AnySpec]:
+    """Create a list of specs from a GroupSpec."""
+    # Create all combinations of top level elements
+    # For each attribute in the FeatureGroupSpec
+
+    feature_group_spec_dict = feature_group_spec.__dict__
+
+    permuted_dicts = create_feature_combinations_from_dict(
+        dictionary=feature_group_spec_dict,
+    )
+
+    return [output_class(**d) for d in permuted_dicts]  # type: ignore

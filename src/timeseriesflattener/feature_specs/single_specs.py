@@ -6,37 +6,6 @@ from pydantic import Field
 from timeseriesflattener.aggregation_functions import concatenate
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
-BASE_VALUES_DEF = Field(
-    default=None,
-    description="Dataframe with the values.",
-)
-FEATURE_BASE_NAME_DEF = Field(
-    description="""The name of the feature. Used for column name generation, e.g.
-            <prefix>_<feature_baase_name>_<metadata>.""",
-)
-PRED_PREFIX_DEF = Field(
-    default="pred",
-    description="""The prefix used for column name generation, e.g.
-            <prefix>_<feature_name>_<metadata>.""",
-)
-OUTC_PREFIX_DEF = Field(
-    default="outc",
-    description="""The prefix used for column name generation, e.g.
-            <prefix>_<feature_name>_<metadata>.""",
-)
-AGGREGATION_FN_DEFINITION = Field(
-    description="""How to aggregate multiple values within a window. Can be a string, a function, or a list of functions.""",
-)
-FALLBACK_DEFINITION = Field(
-    description="""Value to return if no values is found within window.""",
-)
-LOOKAHEAD_DAYS_DEF = Field(
-    description="""How far ahead from the prediction time to look for outcome values""",
-)
-LOOKBEHIND_DAYS_DEF = Field(
-    description="""How far behind to look for values""",
-)
-
 
 @dataclass(frozen=True)
 class CoercedFloats:
