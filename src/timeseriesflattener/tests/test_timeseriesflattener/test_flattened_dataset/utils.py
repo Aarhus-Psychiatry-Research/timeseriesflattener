@@ -69,7 +69,7 @@ def create_flattened_df(
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flat_ds.add_specs(
+    flat_ds.add_spec(
         spec=predictor_specs,  # type: ignore
     )
 

@@ -53,17 +53,17 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     )
 
     # Test adding a single spec
-    dataset.add_specs(outcome_spec)
+    dataset.add_spec(outcome_spec)
     assert dataset.unprocessed_specs.outcome_specs == [outcome_spec]
 
     # Test adding multiple specs
-    dataset.add_specs([predictor_spec, static_spec])
+    dataset.add_spec([predictor_spec, static_spec])
     assert dataset.unprocessed_specs.predictor_specs == [predictor_spec]
     assert dataset.unprocessed_specs.static_specs == [static_spec]
 
     # Test adding an invalid spec type
     with pytest.raises(ValueError):  # noqa
-        dataset.add_specs("invalid spec")  # type: ignore
+        dataset.add_spec("invalid spec")  # type: ignore
 
 
 @pytest.mark.huggingface()
@@ -112,7 +112,7 @@ def test_compute_specs(
     )
 
     # Test adding a single spec
-    dataset.add_specs([outcome_spec, predictor_spec, static_spec, text_spec])
+    dataset.add_spec([outcome_spec, predictor_spec, static_spec, text_spec])
 
     df = dataset.get_df()
 
@@ -169,7 +169,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
         incident=False,
     )
 
-    ts_flattener.add_specs(spec=[predictor_spec, outcome_spec])
+    ts_flattener.add_spec(spec=[predictor_spec, outcome_spec])
 
     out_df = ts_flattener.get_df()
 
@@ -221,7 +221,7 @@ def test_double_compute_doesn_not_duplicate_columns():
         n_workers=1,
         drop_pred_times_with_insufficient_look_distance=True,
     )
-    ts_flattener.add_specs([predictor_spec])
+    ts_flattener.add_spec([predictor_spec])
     df = ts_flattener.get_df()
     df = ts_flattener.get_df()
 
@@ -260,8 +260,8 @@ def test_group_spec_feature_name(
         embedding_fn_kwargs=[{"model": bow_model}],
     ).create_combinations()
 
-    dataset.add_specs(outcome_spec)
-    dataset.add_specs(predictor_spec)  # type: ignore
+    dataset.add_spec(outcome_spec)
+    dataset.add_spec(predictor_spec)  # type: ignore
 
     df = dataset.get_df()
 
