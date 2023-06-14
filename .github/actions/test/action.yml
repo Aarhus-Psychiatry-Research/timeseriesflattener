@@ -31,4 +31,4 @@ runs:
     - name: Run tests
       shell: bash
       run: |
-        inv test --python-versions=${{ matrix.python-version }} --pytest-args "-n auto"  --pytest-args "--skiphuggingface" --pytest-args "--cov=src" --pytest-args "--cov-report term-missing" --pytest-args="--color=yes"
+        inv test --python-versions=${{ matrix.python-version }} --pytest-args "--skiphuggingface" --pytest-args "--cov=src" --pytest-args "--cov-report term-missing" --pytest-args="--color=yes"

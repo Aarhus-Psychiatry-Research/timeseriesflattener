@@ -85,6 +85,11 @@ exclude = [
   ".venv38/",
   ".tox"]
 
+[tool.pytest.ini_options]
+testpaths = [
+    "src",
+]
+
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = [

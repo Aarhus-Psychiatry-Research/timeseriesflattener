@@ -247,6 +247,7 @@ def test(
 
     if len(pytest_args) == 0:
         pytest_args = [
+            "src",
             "-n auto",
             "-rfE",
             "--failed-first",
