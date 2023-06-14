@@ -254,7 +254,6 @@ def test_group_spec_feature_name(
         resolve_multiple_fn=["concatenate"],
         fallback=[np.nan],
         lookbehind_days=[100],
-        feature_name="bow",
         embedding_fn=[sklearn_embedding],
         embedding_fn_kwargs=[{"model": bow_model}],
         input_col_name_override="text",

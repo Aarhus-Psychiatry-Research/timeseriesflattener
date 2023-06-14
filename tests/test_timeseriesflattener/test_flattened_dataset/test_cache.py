@@ -24,7 +24,6 @@ base_float_predictor_combinations = PredictorGroupSpec(
     resolve_multiple_fn=["mean"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
-    feature_name="test_feature",
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
@@ -33,7 +32,6 @@ base_binary_predictor_combinations = PredictorGroupSpec(
     resolve_multiple_fn=["max"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
-    feature_name="test_feature",
 ).create_combinations()
 
 

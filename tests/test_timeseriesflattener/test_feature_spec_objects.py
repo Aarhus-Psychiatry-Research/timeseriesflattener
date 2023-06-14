@@ -124,7 +124,6 @@ def test_skip_all_if_no_need_to_process():
                 resolve_multiple_fn=["max"],
                 fallback=[0],
                 allowed_nan_value_prop=[0.5],
-                feature_name="test_feature",
             ).create_combinations(),
         )
         == 1
@@ -153,7 +152,6 @@ def test_resolve_multiple_fn_to_str():
         lookbehind_days=[365, 730],
         fallback=[np.nan],
         resolve_multiple_fn=[maximum],
-        feature_name="test_feature",
     ).create_combinations()
 
     assert "maximum" in pred_spec_batch[0].get_col_str()
@@ -166,7 +164,6 @@ def test_lookbehind_days_handles_floats():
         lookbehind_days=[2, 0.5],
         fallback=[np.nan],
         resolve_multiple_fn=[maximum],
-        feature_name="test_feature",
     ).create_combinations()
 
     assert pred_spec_batch[1].lookbehind_days == 0.5
@@ -258,7 +255,6 @@ def test_predictorgroupspec_combinations_loader_kwargs():
         resolve_multiple_fn=["bool"],
         fallback=[0],
         lookbehind_days=[10],
-        feature_name="test_feature",
     )
 
     combinations = spec.create_combinations()
@@ -285,7 +281,6 @@ def test_textpredictorgroupspec_combinations_loader_kwargs():
         lookbehind_days=[10],
         embedding_fn=[sklearn_embedding],
         embedding_fn_kwargs=[{"model": bow_model}],
-        feature_name="test_feature",
     )
 
     combinations = spec.create_combinations()
