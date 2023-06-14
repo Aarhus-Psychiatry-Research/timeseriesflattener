@@ -20,12 +20,11 @@ log = logging.getLogger(__name__)
 def load_df_with_cache(
     loader_fn: Callable,
     kwargs: Dict[str, Any],
-    feature_name: str,
 ) -> pd.DataFrame:
     """Wrapper function to cache dataframe loading."""
     start_time = time.time()
     log.info(
-        f"{feature_name}: Loading values",
+        f"{loader_fn.__name__}: Loading values",
     )
 
     df = loader_fn(**kwargs)
@@ -33,7 +32,7 @@ def load_df_with_cache(
     end_time = time.time()
 
     log.debug(
-        f"{feature_name}: Loaded in {end_time - start_time:.2f} seconds",
+        f"{loader_fn.__name__}: Loaded in {end_time - start_time:.2f} seconds",
     )
 
     return df
@@ -61,7 +60,6 @@ def resolve_from_dict_or_registry(data: Dict[str, Any]):
             data["values_df"] = load_df_with_cache(
                 loader_fn=data["values_loader"],
                 kwargs=frozendict(data["loader_kwargs"]),  # type: ignore
-                feature_name=data["feature_name"],  # type: ignore
             )
 
 
