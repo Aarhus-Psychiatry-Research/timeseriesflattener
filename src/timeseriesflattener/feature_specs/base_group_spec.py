@@ -30,7 +30,7 @@ class GroupSpec(BaseModel, ABC):
 
         Used to generate combinations of features."""
 
-    prefix: str = PRED_PREFIX_DEF
+    prefix: str = "pred"
     values_pairs: Sequence[Inputdf] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
     fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION

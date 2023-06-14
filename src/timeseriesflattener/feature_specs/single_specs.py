@@ -38,9 +38,9 @@ LOOKBEHIND_DAYS_DEF = Field(
 
 @dataclass(frozen=True)
 class StaticSpec:
-    base_values_df: pd.DataFrame = BASE_VALUES_DEF
-    prefix: str = PRED_PREFIX_DEF
-    feature_base_name: str = FEATURE_BASE_NAME_DEF
+    base_values_df: pd.DataFrame
+    feature_base_name: str
+    prefix: str = "pred"
 
     class Doc:
         short_description = """Specification for a static feature."""
@@ -51,12 +51,12 @@ class StaticSpec:
 
 @dataclass(frozen=True)
 class OutcomeSpec:
-    base_values_df: pd.DataFrame = BASE_VALUES_DEF
-    prefix: str = PRED_PREFIX_DEF
-    feature_base_name: str = FEATURE_BASE_NAME_DEF
-    lookahead_days: float = LOOKAHEAD_DAYS_DEF
-    aggregation_fn: Callable = AGGREGATION_FN_DEFINITION
-    fallback: Union[str, int] = FALLBACK_DEFINITION
+    base_values_df: pd.DataFrame
+    feature_base_name: str
+    lookahead_days: float
+    aggregation_fn: Callable
+    fallback: Union[str, int]
+    prefix: str = "pred"
 
     class Doc:
         short_description = (
@@ -84,12 +84,12 @@ class OutcomeSpec:
 class PredictorSpec:
     """Specification for a predictor."""
 
-    base_values_df: pd.DataFrame = BASE_VALUES_DEF
-    prefix: str = PRED_PREFIX_DEF
-    feature_base_name: str = FEATURE_BASE_NAME_DEF
-    aggregation_fn: Callable = AGGREGATION_FN_DEFINITION
-    fallback: Union[str, int] = FALLBACK_DEFINITION
+    base_values_df: pd.DataFrame
+    feature_base_name: str
+    aggregation_fn: Callable
+    fallback: Union[str, int]
     lookbehind_days: float = LOOKBEHIND_DAYS_DEF
+    prefix: str = "pred"
 
     class Doc:
         short_description = """Specification for a single predictor."""
@@ -110,14 +110,14 @@ class PredictorSpec:
 class TextPredictorSpec:
     """Specification for a text predictor, where the df has been resolved."""
 
-    base_values_df: pd.DataFrame = BASE_VALUES_DEF
-    prefix: str = PRED_PREFIX_DEF
-    feature_base_name: str = FEATURE_BASE_NAME_DEF
-    aggregation_fn: Callable = AGGREGATION_FN_DEFINITION
-    fallback: Union[str, int] = FALLBACK_DEFINITION
+    base_values_df: pd.DataFrame
+    feature_base_name: str
+    aggregation_fn: Callable
+    fallback: Union[str, int]
     lookbehind_days: float = Field(
         description="""How far behind to look for values""",
     )
+    prefix: str = "pred"
 
     class Doc:
         short_description = (

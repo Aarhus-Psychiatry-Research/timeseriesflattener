@@ -19,11 +19,11 @@ from pydantic import BaseModel as PydanticBaseModel
 
 from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_specs.base_specs import StaticSpec
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,
     PredictorSpec,
+    StaticSpec,
     TemporalSpec,
     TextPredictorSpec,
 )
@@ -347,10 +347,6 @@ class TimeseriesFlattener:
 
         timestamp_val_col_name = f"{timestamp_col_name}_val"
         timestamp_pred_col_name = f"{timestamp_col_name}_pred"
-        df = TimeseriesFlattener.rename_input_col_to_value(
-            df=df,
-            output_spec=output_spec,
-        )
 
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
@@ -423,17 +419,6 @@ class TimeseriesFlattener:
         )
 
         return df[[*value_col_str_name, pred_time_uuid_col_name]]
-
-    @staticmethod
-    def rename_input_col_to_value(
-        df: pd.DataFrame,
-        output_spec: TemporalSpec,
-    ) -> pd.DataFrame:
-        """Checks whether 'value' is a column in df, and if not, renames the
-        input column"""
-        if "value" not in df.columns:
-            df = df.rename(columns={output_spec.input_col_name_override: "value"})
-        return df
 
     def _get_temporal_feature(
         self,
@@ -604,25 +589,22 @@ class TimeseriesFlattener:
             ValueError: If input_col_name does not match a column in info_df.
         """
         # Try to infer value col name if not provided
-        if static_spec.input_col_name_override is None:
-            possible_value_cols = [
-                col
-                for col in static_spec.base_values_df.columns  # type: ignore
-                if col not in self.entity_id_col_name
-            ]
+        possible_value_cols = [
+            col
+            for col in static_spec.base_values_df.columns  # type: ignore
+            if col not in self.entity_id_col_name
+        ]
 
-            if len(possible_value_cols) == 1:
-                value_col_name = possible_value_cols[0]
-            elif len(possible_value_cols) > 1:
-                raise ValueError(
-                    f"Only one value column can be added to static info, found multiple: {possible_value_cols}",
-                )
-            elif len(possible_value_cols) == 0:
-                raise ValueError(
-                    "No value column found in spec.df, please check.",
-                )
-        else:
-            value_col_name = static_spec.input_col_name_override
+        if len(possible_value_cols) == 1:
+            value_col_name = possible_value_cols[0]
+        elif len(possible_value_cols) > 1:
+            raise ValueError(
+                f"Only one value column can be added to static info, found multiple: {possible_value_cols}",
+            )
+        elif len(possible_value_cols) == 0:
+            raise ValueError(
+                "No value column found in spec.df, please check.",
+            )
 
         output_col_name = static_spec.get_output_col_name()
 
@@ -877,7 +859,7 @@ class TimeseriesFlattener:
     def add_age(
         self,
         date_of_birth_df: DataFrame,
-        date_of_birth_col_name: Optional[str] = "date_of_birth",
+        date_of_birth_col_name: str = "date_of_birth",
         output_prefix: str = "pred",
     ):
         """Add age at prediction time as predictor.
@@ -905,13 +887,12 @@ class TimeseriesFlattener:
 
         tmp_prefix = "tmp"
         self._add_static_info(
-            static_spec=AnySpec(
-                values_df=date_of_birth_df,
-                input_col_name_override=date_of_birth_col_name,
+            static_spec=StaticSpec(
+                base_values_df=date_of_birth_df,
                 prefix=tmp_prefix,
+                feature_base_name=date_of_birth_col_name,
                 # We typically don't want to use date of birth as a predictor,
                 # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
-                feature_name=date_of_birth_col_name,
             ),
         )
 
