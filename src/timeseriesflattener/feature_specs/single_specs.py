@@ -70,6 +70,19 @@ class StaticSpec(BaseModel):
         return f"{self.prefix}_{self.feature_base_name}"
 
 
+def get_temporal_col_name(
+    prefix: str,
+    feature_base_name: str,
+    lookwindow: Union[float, int],
+    aggregation_fn: Callable,
+    fallback: Union[float, int],
+) -> str:
+    """Get the column name for the temporal feature."""
+    coerced = coerce_floats(lookwindow=lookwindow, fallback=fallback)
+    col_str = f"{prefix}_{feature_base_name}_within_{str(coerced.lookwindow)}_days_{aggregation_fn.__name__}_fallback_{coerced.fallback}"
+    return col_str
+
+
 class OutcomeSpec(BaseModel):
     """Specification for a static feature.
 
@@ -104,8 +117,13 @@ class OutcomeSpec(BaseModel):
 
     def get_output_col_name(self) -> str:
         """Get the column name for the output column."""
-        coerced = coerce_floats(lookwindow=self.lookahead_days, fallback=self.fallback)
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(coerced.lookwindow)}_days_{self.aggregation_fn.__name__}_fallback_{coerced.fallback}"
+        col_str = get_temporal_col_name(
+            prefix=self.prefix,
+            feature_base_name=self.feature_base_name,
+            lookwindow=self.lookahead_days,
+            aggregation_fn=self.aggregation_fn,
+            fallback=self.fallback,
+        )
 
         if self.is_dichotomous:
             col_str += "_dichotomous"
@@ -143,10 +161,13 @@ class PredictorSpec(BaseModel):
 
     def get_output_col_name(self) -> str:
         """Generate the column name for the output column."""
-        coerced = coerce_floats(lookwindow=self.lookbehind_days, fallback=self.fallback)
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(coerced.lookwindow)}_days_{self.aggregation_fn.__name__}_fallback_{coerced.fallback}"
-
-        return col_str
+        return get_temporal_col_name(
+            prefix=self.prefix,
+            feature_base_name=self.feature_base_name,
+            lookwindow=self.lookbehind_days,
+            aggregation_fn=self.aggregation_fn,
+            fallback=self.fallback,
+        )
 
 
 class TextPredictorSpec(BaseModel):
@@ -193,9 +214,13 @@ class TextPredictorSpec(BaseModel):
         if additional_feature_name is not None:
             feature_name += f"-{additional_feature_name}"
 
-        coerced = coerce_floats(lookwindow=self.lookbehind_days, fallback=self.fallback)
-
-        col_str = f"{self.prefix}_{feature_name}_within_{str(coerced.lookwindow)}_days_{self.aggregation_fn.__name__}_fallback_{coerced.fallback}"
+        col_str = col_str = get_temporal_col_name(
+            prefix=self.prefix,
+            feature_base_name=feature_name,
+            lookwindow=self.lookbehind_days,
+            aggregation_fn=self.aggregation_fn,
+            fallback=self.fallback,
+        )
 
         return col_str
 
