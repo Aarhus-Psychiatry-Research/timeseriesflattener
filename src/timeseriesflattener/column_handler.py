@@ -60,7 +60,7 @@ class ColumnHandler:
             if not isinstance(output_spec, TextPredictorSpec):
                 raise ValueError(
                     f"output_spec must be a TextPredictorSpec if the value column is a "
-                    f"multiindex. Got {type(output_spec)}."
+                    f"multiindex. Got {type(output_spec)}.",
                 )
             df = ColumnHandler._rename_multi_index_dataframe(output_spec, df)
         else:
