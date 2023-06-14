@@ -1,6 +1,5 @@
 import pytest
 from pandas import DataFrame
-
 from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
