@@ -189,13 +189,13 @@ class TextPredictorSpec(BaseModel):
         if additional_feature_name is not None:
             feature_name += f"-{additional_feature_name}"
 
-        lookahead_days = (
-            int(self.lookahead_days)
-            if self.lookahead_days.is_integer()
-            else self.lookahead_days
+        lookbehind_days = (
+            int(self.lookbehind_days)
+            if self.lookbehind_days.is_integer()
+            else self.lookbehind_days
         )
 
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str()}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
         return col_str
 
