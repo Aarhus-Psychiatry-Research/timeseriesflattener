@@ -3,14 +3,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from src.timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
+from src.timeseriesflattener.testing.load_synth_data import load_synth_text
 from timeseriesflattener.aggregation_functions import concatenate, latest, mean
-from timeseriesflattener.feature_specs.base_single_specs import (
-    StaticSpec,
-)
 from timeseriesflattener.feature_specs.group_specs import TextPredictorGroupSpec
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
+    StaticSpec,
     TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
@@ -209,7 +209,6 @@ def test_double_compute_doesn_not_duplicate_columns():
         base_values_df=predictor_df,
         lookbehind_days=15,
         fallback=np.nan,
-        entity_id_col_name="entity_id",
         aggregation_fn=mean,
         feature_base_name="test_feature",
     )
@@ -251,7 +250,7 @@ def test_group_spec_feature_name(
     bow_model = _load_bow_model()
 
     predictor_spec = TextPredictorGroupSpec(
-        values_loader=("synth_text",),
+        named_dataframes=[NamedDataframe(df=load_synth_text(), name="synth_text")],
         prefix="test",
         aggregation_fn=[concatenate],
         fallback=[np.nan],

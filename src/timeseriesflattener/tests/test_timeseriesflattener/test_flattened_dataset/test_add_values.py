@@ -6,13 +6,11 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.aggregation_functions import concatenate, maximum
-from timeseriesflattener.feature_specs.base_single_specs import (
-    StaticSpec,
-)
+from timeseriesflattener.aggregation_functions import concatenate, maximum, minimum
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
+    StaticSpec,
     TextPredictorSpec,
 )
 from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
@@ -434,7 +432,6 @@ def test_add_multiple_static_predictors():
                 base_values_df=male_df,
                 feature_base_name="male",
                 prefix="pred",
-                output_col_name_override="pred_male_overridden",
             ),
         ],
     )
@@ -499,10 +496,9 @@ def test_add_temporal_predictors_then_temporal_outcome():
         spec=[
             PredictorSpec(
                 base_values_df=predictors_df,
-                interval_days=365,
-                aggregation_fn="min",
+                lookbehind_days=365,
+                aggregation_fn=minimum,
                 fallback=np.nan,
-                allowed_nan_value_prop=0,
                 feature_base_name="value",
             ),
             OutcomeSpec(

@@ -841,7 +841,7 @@ class TimeseriesFlattener:
 
             self._check_that_spec_df_has_required_columns(spec=spec_i)
 
-            if isinstance(spec_i, TemporalSpec):
+            if isinstance(spec_i, TemporalSpec):  # type: ignore
                 self._check_that_spec_df_timestamp_col_is_correctly_formatted(
                     spec=spec_i,
                 )

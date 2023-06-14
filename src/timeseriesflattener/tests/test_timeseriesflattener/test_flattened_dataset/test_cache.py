@@ -7,12 +7,8 @@ from typing import List
 import numpy as np
 import pandas as pd
 import pytest
-from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
-    check_dfs_have_same_contents_by_column,
-    create_flattened_df,
-)
 
-from timeseriesflattener.aggregation_functions import mean
+from timeseriesflattener.aggregation_functions import maximum, mean
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.group_specs import (
@@ -23,6 +19,10 @@ from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
     load_synth_predictor_float,
     synth_predictor_binary,
+)
+from timeseriesflattener.tests.test_timeseriesflattener.test_flattened_dataset.utils import (
+    check_dfs_have_same_contents_by_column,
+    create_flattened_df,
 )
 
 base_float_predictor_combinations = PredictorGroupSpec(
@@ -39,9 +39,8 @@ base_binary_predictor_combinations = PredictorGroupSpec(
         NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary"),
     ],
     lookbehind_days=[365, 730],
-    aggregation_fns=["max"],
+    aggregation_fns=[maximum],
     fallback=[np.NaN],
-    allowed_nan_value_prop=[0.0],
 ).create_combinations()
 
 

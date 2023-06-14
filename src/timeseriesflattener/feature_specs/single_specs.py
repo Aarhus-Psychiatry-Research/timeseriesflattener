@@ -134,8 +134,10 @@ class TextPredictorSpec:
     feature_base_name: str
     fallback: Union[str, float]
     embedding_fn: Callable
-    embedding_fn_kwargs: Optional[dict]
-    lookbehind_days: float
+    embedding_fn_kwargs: Optional[dict] = None
+    lookbehind_days: float = Field(
+        description="""How far behind to look for values""",
+    )
     prefix: str = "pred"
 
     class Doc:

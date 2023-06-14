@@ -32,7 +32,7 @@ def test_skip_all_if_no_need_to_process(empty_named_df: NamedDataframe):
             PredictorGroupSpec(
                 named_dataframes=[empty_named_df],
                 lookbehind_days=[1],
-                aggregation_fns=maximum,
+                aggregation_fns=[maximum],
                 fallback=[0],
             ).create_combinations(),
         )
@@ -45,7 +45,7 @@ def test_skip_one_if_no_need_to_process(empty_named_df: NamedDataframe):
     created_combinations = PredictorGroupSpec(
         named_dataframes=[empty_named_df],
         lookbehind_days=[1, 2],
-        aggregation_fns=maximum,
+        aggregation_fns=[maximum],
         fallback=[0],
     ).create_combinations()
 
@@ -58,7 +58,7 @@ def test_resolve_multiple_fn_to_str(empty_named_df: NamedDataframe):
         named_dataframes=[empty_named_df],
         lookbehind_days=[365, 730],
         fallback=[np.nan],
-        aggregation_fns=maximum,
+        aggregation_fns=[maximum],
     ).create_combinations()
 
     assert "maximum" in pred_spec_batch[0].get_output_col_name()
@@ -70,7 +70,7 @@ def test_lookbehind_days_handles_floats(empty_named_df: NamedDataframe):
         named_dataframes=[empty_named_df],
         lookbehind_days=[2, 0.5],
         fallback=[np.nan],
-        aggregation_fns=maximum,
+        aggregation_fns=[maximum],
     ).create_combinations()
 
     assert pred_spec_batch[1].lookbehind_days == 0.5

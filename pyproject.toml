@@ -194,7 +194,7 @@ commands =
 [testenv:type]
 description: run static type checking
 extras = test, text, dev
-basepython = py38
+basepython = py39
 use_develop = true
 allowlist_externals = ls
 commands =

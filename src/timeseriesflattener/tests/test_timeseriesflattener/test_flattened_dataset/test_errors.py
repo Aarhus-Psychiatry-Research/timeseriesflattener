@@ -50,7 +50,7 @@ def test_col_does_not_exist():
         flattened_df.add_spec(
             spec=PredictorSpec(
                 base_values_df=event_times_df,
-                lookahead_days=2,
+                lookbehind_days=2,
                 aggregation_fn=maximum,
                 fallback=2,
                 feature_base_name="value",
