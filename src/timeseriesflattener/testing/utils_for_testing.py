@@ -112,9 +112,9 @@ def assert_flattened_data_as_expected(
                 check_dtype=False,
             )
     elif expected_values:
-        output = flattened_ds.get_df()
-        value_cols = _get_value_cols_based_on_spec(output, output_spec)
-        output = flattened_ds.get_df()[value_cols].values.tolist()
+        output_df = flattened_ds.get_df()
+        value_cols = _get_value_cols_based_on_spec(output_df, output_spec)
+        output = output_df[value_cols].values.tolist()
         expected = list(expected_values)
 
         for i, expected_val in enumerate(expected):

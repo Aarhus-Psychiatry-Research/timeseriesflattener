@@ -77,7 +77,7 @@ class OutcomeSpec(BaseModel):
     feature_base_name: str
     lookahead_days: Union[int, float]
     aggregation_fn: Callable
-    fallback: Union[str, int, float]
+    fallback: Union[float, int, str]
     incident: bool
     prefix: str = "outc"
 
