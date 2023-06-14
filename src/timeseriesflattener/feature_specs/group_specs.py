@@ -57,6 +57,18 @@ def create_specs_from_group(
 
 
 class PredictorGroupSpec(BaseModel):
+    """A group of predictor specifications.
+
+    Args:
+        prefix: The prefix to use for the feature names.
+        named_dataframes: A list of dataframes and their names.
+        aggregation_fns: How to handle multiple values within the lookahead window.
+        fallback: A list of fallback values to use if the aggregation fails.
+        lookbehind: The number of days to look behind from the prediction time for outcome values.
+        incident: Whether the outcome is incident or not, i.e. whether you can experience it more than once.
+
+    """
+
     # Shared attributes from GroupSpec
     prefix: str = "pred"
     lookbehind_days: List[float]
@@ -84,6 +96,18 @@ class PredictorGroupSpec(BaseModel):
 
 
 class OutcomeGroupSpec(BaseModel):
+    """A group of outcome specifications.
+
+    Args:
+        prefix: The prefix to use for the feature names.
+        named_dataframes: A list of dataframes and their names.
+        aggregation_fns: How to handle multiple values within the lookahead window.
+        fallback: A list of fallback values to use if the aggregation fails.
+        lookahead_days: The number of days to look ahead from the prediction time for outcome values.
+        incident: Whether the outcome is incident or not, i.e. whether you can experience it more than once.
+
+    """
+
     # Shared attributes from GroupSpec
     prefix: str = "outc"
     named_dataframes: Sequence[NamedDataframe]
@@ -119,6 +143,8 @@ class OutcomeGroupSpec(BaseModel):
 
 
 class TextPredictorGroupSpec(BaseModel):
+    """A group of text predictor specifications. See PredictorGroupSpec and TextPredictorSpec for more details."""
+
     # Shared attributes from GroupSpec
     lookbehind_days: List[float]
     named_dataframes: Sequence[NamedDataframe]
