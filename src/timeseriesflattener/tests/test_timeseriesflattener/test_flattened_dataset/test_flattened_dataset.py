@@ -3,9 +3,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
-from src.timeseriesflattener.testing.load_synth_data import load_synth_text
 from timeseriesflattener.aggregation_functions import concatenate, latest, mean
+from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.group_specs import TextPredictorGroupSpec
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
@@ -14,6 +13,7 @@ from timeseriesflattener.feature_specs.single_specs import (
     TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
+from timeseriesflattener.testing.load_synth_data import load_synth_text
 from timeseriesflattener.testing.text_embedding_functions import (
     _load_bow_model,
 )
@@ -77,6 +77,8 @@ def test_compute_specs(
         prediction_times_df=synth_prediction_times,
         drop_pred_times_with_insufficient_look_distance=False,
     )
+
+    synth_text_data["value"] = synth_text_data["text"]
 
     # Create sample specs
     outcome_spec = OutcomeSpec(
@@ -252,7 +254,7 @@ def test_group_spec_feature_name(
     predictor_spec = TextPredictorGroupSpec(
         named_dataframes=[NamedDataframe(df=load_synth_text(), name="synth_text")],
         prefix="test",
-        aggregation_fn=[concatenate],
+        aggregation_fns=[concatenate],
         fallback=[np.nan],
         lookbehind_days=[100],
         embedding_fn=[sklearn_embedding],

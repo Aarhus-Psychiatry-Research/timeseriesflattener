@@ -14,6 +14,7 @@ from timeseriesflattener.aggregation_functions import (
     mean,
     mean_number_of_characters,
     minimum,
+    summed,
     type_token_ratio,
     variance,
 )
@@ -25,30 +26,6 @@ from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
 )
-
-
-def test_resolve_multiple_catalogue():
-    """Test that resolve_multiple functions can be retrieved from catalogue."""
-    prediction_times_str = """entity_id,timestamp,
-                            1,2021-12-31 00:00:00
-                            """
-    event_times_str = """entity_id,timestamp,value,
-                        1,2022-01-01 00:00:01, 1
-                        1,2022-01-01 00:00:02, 2
-                        """
-
-    assert_flattened_data_as_expected(
-        prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            base_values_df=str_to_df(event_times_str),
-            feature_base_name="outcome",
-            aggregation_fn=minimum,
-            lookahead_days=2,
-            fallback=0,
-            incident=False,
-        ),
-        expected_values=[1],
-    )
 
 
 def test_resolve_multiple_max():
@@ -235,7 +212,7 @@ def test_resolve_multiple_sum():
         output_spec=PredictorSpec(
             feature_base_name="value",
             base_values_df=str_to_df(predictor_df_str),
-            aggregation_fn=sum,
+            aggregation_fn=summed,
             lookbehind_days=2,
             fallback=0,
         ),

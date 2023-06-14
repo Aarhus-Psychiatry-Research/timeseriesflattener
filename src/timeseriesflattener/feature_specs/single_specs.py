@@ -57,23 +57,31 @@ class OutcomeSpec:
     lookahead_days: float
     aggregation_fn: Callable
     fallback: Union[str, float]
-    prefix: str = "pred"
+    incident: bool
+    prefix: str = "outc"
 
     class Doc:
         short_description = (
             """Specification for a single outcome, where the df has been resolved."""
         )
 
-    incident: bool = Field(
+    Field(
         description="""Whether the outcome is incident or not.
             I.e., incident outcomes are outcomes you can only experience once.
             For example, type 2 diabetes is incident. Incident outcomes can be handled
             in a vectorised way during resolution, which is faster than non-incident outcomes.""",
     )
 
-    def get_output_col_name(self, additional_feature_name: str = "") -> str:
+    def get_output_col_name(self, additional_feature_name: Optional[str] = None) -> str:
         """Get the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookahead_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}_{additional_feature_name}"
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookahead_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+
+        if self.is_dichotomous:
+            col_str += "_dichotomous"
+
+        if additional_feature_name is not None:
+            col_str += f"_{additional_feature_name}"
+
         return col_str
 
     def is_dichotomous(self) -> bool:
@@ -95,7 +103,7 @@ class PredictorSpec:
     class Doc:
         short_description = """Specification for a single predictor."""
 
-    def get_output_col_name(self, additional_feature_name: str = "") -> str:
+    def get_output_col_name(self, additional_feature_name: Optional[str] = None) -> str:
         """Generate the column name for the output column.
         If interval days is a float, the decimal point is changed to an underscore.
 
@@ -103,7 +111,11 @@ class PredictorSpec:
             additional_feature_name (Optional[str]): additional feature name to
                 append to the column name.
         """
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}_{additional_feature_name}"
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+
+        if additional_feature_name is not None:
+            col_str += f"_{additional_feature_name}"
+
         return col_str
 
 
@@ -147,7 +159,7 @@ class TextPredictorSpec:
 
     aggregation_fn: Callable = concatenate
 
-    def get_output_col_name(self, additional_feature_name: str = "") -> str:
+    def get_output_col_name(self, additional_feature_name: Optional[str] = None) -> str:
         """Generate the column name for the output column.
         If interval days is a float, the decimal point is changed to an underscore.
 
@@ -155,7 +167,11 @@ class TextPredictorSpec:
             additional_feature_name (Optional[str]): additional feature name to
                 append to the column name.
         """
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}_{additional_feature_name}"
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+
+        if additional_feature_name is not None:
+            col_str += f"_{additional_feature_name}"
+
         return col_str
 
 

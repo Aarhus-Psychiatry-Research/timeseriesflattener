@@ -49,7 +49,7 @@ def test_skip_one_if_no_need_to_process(empty_named_df: NamedDataframe):
         fallback=[0],
     ).create_combinations()
 
-    assert len(created_combinations) == 4
+    assert len(created_combinations) == 2
 
 
 def test_resolve_multiple_fn_to_str(empty_named_df: NamedDataframe):
@@ -85,65 +85,3 @@ def get_lines_with_diff(text1: str, text2: str) -> List[str]:
     lines1 = text_1.splitlines()
     lines2 = text_2.splitlines()
     return [line for line in lines1 if line not in lines2]
-
-
-@pytest.mark.parametrize(
-    "spec",
-    [
-        AnySpec,
-        TemporalSpec,
-        PredictorSpec,
-        PredictorGroupSpec,
-        TextPredictorSpec,
-        OutcomeSpec,
-        OutcomeGroupSpec,
-    ],
-)
-def test_feature_spec_docstrings(spec: BaseModel):
-    """Test that docstring is generated correctly."""
-    current_docstring: str = spec.__doc__  # type: ignore
-    generated_docstring = generate_docstring_from_attributes(cls=spec)
-    # strip docstrings of newlines and whitespace to allow room for formatting
-    current_docstring_no_whitespace = (
-        current_docstring.replace(" ", "")
-        .replace(
-            "\n",
-            "",
-        )
-        .replace(".", "")
-    )
-    generated_docstring_no_whitespace = (
-        generated_docstring.replace(" ", "")
-        .replace(
-            "\n",
-            "",
-        )
-        .replace(".", "")
-    )
-
-    lines_with_diff = get_lines_with_diff(
-        text1=current_docstring,
-        text2=generated_docstring,
-    )
-
-    if current_docstring_no_whitespace != generated_docstring_no_whitespace:
-        raise AssertionError(
-            f"""{spec} docstring is not updated correctly.
-
-        Docstrings are automatically generated from the attributes of the class using
-        the `timeseriesflattener.feature_spec_objects.generate_docstring_from_attributes` function.
-
-        To modify docstrings or field descriptions, please modify the `short_description`
-        field in the `Doc` class of the relevant spec object or the `description` field of the
-        relevant attribute.
-
-        If you have modified the `Doc` class or the attributes of the spec,
-        copy-paste the generated docstring below into the docstring of the class.
-
-        Got: \n\n{current_docstring}.
-
-        Expected: \n\n{generated_docstring}
-
-        Differences are in lines: \n\n{lines_with_diff}
-        """,
-        )

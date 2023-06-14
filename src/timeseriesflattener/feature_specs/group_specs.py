@@ -68,11 +68,11 @@ class PredictorGroupSpec(GroupSpec):
         short_description = """Specification for a group of predictors."""
 
     # Shared attributes from GroupSpec
-    prefix: Sequence[str] = PRED_PREFIX_DEF
-    lookbehind_days: List[float] = LOOKBEHIND_DAYS_DEF
-    named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
-    aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
-    fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
+    prefix: str = "pred"
+    lookbehind_days: List[float]
+    named_dataframes: Sequence[NamedDataframe]
+    aggregation_fns: Sequence[Callable]
+    fallback: Sequence[Union[Callable, str, float]]
 
     def create_combinations(self) -> List[PredictorSpec]:
         """Create all combinations from the group spec."""
@@ -83,8 +83,8 @@ class PredictorGroupSpec(GroupSpec):
         return [
             PredictorSpec(
                 prefix=d["prefix"],  # type: ignore
-                base_values_df=d["values_pairs"].df,  # type: ignore
-                feature_base_name=d["values_pairs"].base_feature_name,  # type: ignore
+                base_values_df=d["named_dataframes"].df,  # type: ignore
+                feature_base_name=d["named_dataframes"].name,  # type: ignore
                 lookbehind_days=d["lookbehind_days"],  # type: ignore
                 aggregation_fn=d["aggregation_fns"],  # type: ignore
                 fallback=d["fallback"],  # type: ignore
@@ -98,13 +98,13 @@ class OutcomeGroupSpec(GroupSpec):
         short_description = """Specification for a group of outcomes."""
 
     # Shared attributes from GroupSpec
-    prefix: Sequence[str] = OUTC_PREFIX_DEF
-    named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
-    aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
-    fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
+    prefix: str = "outc"
+    named_dataframes: Sequence[NamedDataframe]
+    aggregation_fns: Sequence[Callable]
+    fallback: Sequence[Union[Callable, str, float]]
 
     # Individual attributes
-    lookahead_days: List[float] = LOOKAHEAD_DAYS_DEF
+    lookahead_days: List[float]
     incident: Sequence[bool] = Field(
         description="""Whether the outcome is incident or not, i.e. whether you
             can experience it more than once. For example, type 2 diabetes is incident.
@@ -134,14 +134,15 @@ class OutcomeGroupSpec(GroupSpec):
 @dataclass(frozen=True)
 class TextPredictorGroupSpec:
     # Shared attributes from GroupSpec
-    prefix: Sequence[str] = PRED_PREFIX_DEF
-    lookbehind_days: List[float] = LOOKBEHIND_DAYS_DEF
-    named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
-    aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
-    fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
+    lookbehind_days: List[float]
+    named_dataframes: Sequence[NamedDataframe]
+    aggregation_fns: Sequence[Callable]
+    fallback: Sequence[Union[Callable, str, float]]
 
     class Doc:
         short_description = """Specification for a group of text predictors."""
+
+    prefix: Sequence[str] = "pred"
 
     # Individual attributes
     embedding_fn: Sequence[Callable] = Field(

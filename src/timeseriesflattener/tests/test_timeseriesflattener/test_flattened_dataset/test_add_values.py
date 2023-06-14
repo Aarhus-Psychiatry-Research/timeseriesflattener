@@ -333,7 +333,7 @@ def test_incident_outcome_removing_prediction_times():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_maximum_fallback_nan_dichotomous,
                         1,2021-12-31 00:00:00, 1.0
                         2,2021-12-31 00:00:00, 1.0
                         3,2023-12-31 00:00:00, 0.0
@@ -386,7 +386,7 @@ def test_add_multiple_static_predictors():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_max_fallback_0_dichotomous,pred_age_in_years,pred_male_overridden
+    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_maximum_fallback_0_dichotomous,pred_age_in_years,pred_male
                         1,2021-12-31 00:00:00, 1.0,22.00,1
                         2,2021-12-31 00:00:00, 1.0,22.00,0
                         3,2023-12-31 00:00:00, 0.0,23.99,1
@@ -446,9 +446,9 @@ def test_add_multiple_static_predictors():
     for col in (
         "entity_id",
         "timestamp",
-        "outc_value_within_2_days_max_fallback_0_dichotomous",
+        "outc_value_within_2_days_maximum_fallback_0_dichotomous",
         "pred_age_in_years",
-        "pred_male_overridden",
+        "pred_male",
     ):
         pd.testing.assert_series_equal(
             outcome_df[col].reset_index(drop=True),
@@ -535,7 +535,7 @@ def test_add_temporal_incident_binary_outcome():
                         1,2021-11-06 00:00:01, 1
                         """
 
-    expected_df_str = """outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """outc_value_within_2_days_maximum_fallback_nan_dichotomous,
     1
     0"""
 

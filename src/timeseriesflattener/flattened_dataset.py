@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Callable, List, Optional, Sequence, Type, Union
 
 import coloredlogs
 import numpy as np
@@ -37,7 +37,7 @@ class SpecCollection(PydanticBaseModel):
     """A collection of specs."""
 
     outcome_specs: List[OutcomeSpec] = []
-    predictor_specs: List[PredictorSpec] = []
+    predictor_specs: List[Union[PredictorSpec, TextPredictorSpec]] = []
     static_specs: List[AnySpec] = []
 
     class Config:
@@ -351,15 +351,17 @@ class TimeseriesFlattener:
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
             direction = "ahead"
-        elif isinstance(output_spec, PredictorSpec):
+            interval_days = output_spec.lookahead_days
+        elif isinstance(output_spec, (PredictorSpec, TextPredictorSpec)):
             direction = "behind"
+            interval_days = output_spec.lookbehind_days
         else:
             raise ValueError(f"Unknown output_spec type {type(output_spec)}")
 
         df = TimeseriesFlattener._drop_records_outside_interval_days(
             df,
             direction=direction,
-            interval_days=output_spec.interval_days,  # type: ignore
+            interval_days=interval_days,
             timestamp_pred_colname=timestamp_pred_col_name,
             timestamp_value_colname=timestamp_val_col_name,
         )
@@ -662,7 +664,7 @@ class TimeseriesFlattener:
         if outcome_spec.is_dichotomous():
             outcome_is_within_lookahead = (
                 df[prediction_timestamp_col_name]  # type: ignore
-                + timedelta(days=outcome_spec.interval_days)  # type: ignore
+                + timedelta(days=outcome_spec.lookahead_days)
                 > df[outcome_timestamp_col_name]
             )
 
@@ -790,7 +792,7 @@ class TimeseriesFlattener:
 
         for col in required_columns:
             if col not in spec.base_values_df.columns:  # type: ignore
-                raise ValueError(f"Missing required column: {col}")
+                raise KeyError(f"Missing required column: {col}")
 
     def _check_that_spec_df_timestamp_col_is_correctly_formatted(
         self,
@@ -832,7 +834,12 @@ class TimeseriesFlattener:
         specs_to_process = [spec] if not isinstance(spec, Sequence) else spec
 
         for spec_i in specs_to_process:
-            allowed_spec_types = (OutcomeSpec, PredictorSpec, StaticSpec)
+            allowed_spec_types = (
+                OutcomeSpec,
+                PredictorSpec,
+                StaticSpec,
+                TextPredictorSpec,
+            )
 
             if not isinstance(spec_i, allowed_spec_types):
                 raise ValueError(
@@ -841,14 +848,14 @@ class TimeseriesFlattener:
 
             self._check_that_spec_df_has_required_columns(spec=spec_i)
 
-            if isinstance(spec_i, TemporalSpec):  # type: ignore
+            if isinstance(spec_i, (PredictorSpec, OutcomeSpec, TextPredictorSpec)):
                 self._check_that_spec_df_timestamp_col_is_correctly_formatted(
-                    spec=spec_i,
+                    spec=spec_i,  # type: ignore
                 )
 
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
-            elif isinstance(spec_i, PredictorSpec):
+            elif isinstance(spec_i, (PredictorSpec, TextPredictorSpec)):
                 self.unprocessed_specs.predictor_specs.append(spec_i)
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)
