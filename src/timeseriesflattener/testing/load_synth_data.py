@@ -117,4 +117,6 @@ def load_synth_text(
     Returns:
         pd.DataFrame
     """
-    return load_raw_test_csv("synth_text_data.csv", n_rows=n_rows)
+    df = load_raw_test_csv("synth_text_data.csv", n_rows=n_rows)
+    df["value"] = df["text"]
+    return df

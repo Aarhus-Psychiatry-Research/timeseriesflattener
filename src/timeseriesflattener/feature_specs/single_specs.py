@@ -72,15 +72,12 @@ class OutcomeSpec:
             in a vectorised way during resolution, which is faster than non-incident outcomes.""",
     )
 
-    def get_output_col_name(self, additional_feature_name: Optional[str] = None) -> str:
+    def get_output_col_name(self) -> str:
         """Get the column name for the output column."""
         col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookahead_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
         if self.is_dichotomous:
             col_str += "_dichotomous"
-
-        if additional_feature_name is not None:
-            col_str += f"_{additional_feature_name}"
 
         return col_str
 
@@ -103,18 +100,9 @@ class PredictorSpec:
     class Doc:
         short_description = """Specification for a single predictor."""
 
-    def get_output_col_name(self, additional_feature_name: Optional[str] = None) -> str:
-        """Generate the column name for the output column.
-        If interval days is a float, the decimal point is changed to an underscore.
-
-        Args:
-            additional_feature_name (Optional[str]): additional feature name to
-                append to the column name.
-        """
+    def get_output_col_name(self) -> str:
+        """Generate the column name for the output column."""
         col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
-
-        if additional_feature_name is not None:
-            col_str += f"_{additional_feature_name}"
 
         return col_str
 
@@ -167,10 +155,11 @@ class TextPredictorSpec:
             additional_feature_name (Optional[str]): additional feature name to
                 append to the column name.
         """
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
-
+        feature_name = self.feature_base_name
         if additional_feature_name is not None:
-            col_str += f"_{additional_feature_name}"
+            feature_name += f"-{additional_feature_name}"
+
+        col_str = f"{self.prefix}_{feature_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
         return col_str
 

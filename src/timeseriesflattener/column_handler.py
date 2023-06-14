@@ -3,7 +3,10 @@ from typing import Callable, List, Optional
 
 import pandas as pd
 
-from timeseriesflattener.feature_specs.single_specs import TemporalSpec
+from timeseriesflattener.feature_specs.single_specs import (
+    TemporalSpec,
+    TextPredictorSpec,
+)
 
 
 class ColumnHandler:
@@ -43,7 +46,7 @@ class ColumnHandler:
     @staticmethod
     def rename_value_column(
         df: pd.DataFrame,
-        output_spec: TemporalSpec,
+        output_spec: TextPredictorSpec,
     ) -> pd.DataFrame:
         """Renames the value column to the column name specified in the output_spec.
         Handles the case where the output_spec has a multiindex.
@@ -60,7 +63,7 @@ class ColumnHandler:
 
     @staticmethod
     def _rename_multi_index_dataframe(
-        output_spec: TemporalSpec,
+        output_spec: TextPredictorSpec,
         df: pd.DataFrame,
     ) -> pd.DataFrame:
         """Renames a multiindex dataframe to the column names specified in the

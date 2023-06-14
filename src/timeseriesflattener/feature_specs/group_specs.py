@@ -14,6 +14,7 @@ from timeseriesflattener.feature_specs.single_specs import (
     PredictorSpec,
     TextPredictorSpec,
 )
+from torch import embedding
 
 
 def create_feature_combinations_from_dict(
@@ -135,9 +136,12 @@ class TextPredictorGroupSpec:
     class Doc:
         short_description = """Specification for a group of text predictors."""
 
+    embedding_fn_name: str
+
     prefix: Sequence[str] = "pred"
 
     # Individual attributes
+
     embedding_fn: Sequence[Callable] = Field(
         description="""A function used for embedding the text. Should take a
         pandas series of strings and return a pandas dataframe of embeddings.
@@ -164,11 +168,13 @@ class TextPredictorGroupSpec:
         return [
             TextPredictorSpec(
                 prefix=d["prefix"],  # type: ignore
-                base_values_df=d["values_pairs"].df,  # type: ignore
-                feature_base_name=d["values_pairs"].base_feature_name,  # type: ignore
-                lookbehind_days=d["lookahead_days"],  # type: ignore
+                base_values_df=d["named_dataframes"].df,  # type: ignore
+                feature_base_name=d["embedding_fn_name"],  # type: ignore
+                lookbehind_days=d["lookbehind_days"],  # type: ignore
                 aggregation_fn=d["aggregation_fns"],  # type: ignore
                 fallback=d["fallback"],  # type: ignore
+                embedding_fn=d["embedding_fn"],  # type: ignore
+                embedding_fn_kwargs=d["embedding_fn_kwargs"],  # type: ignore
             )
             for d in combination_dict
         ]

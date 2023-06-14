@@ -257,6 +257,7 @@ def test_group_spec_feature_name(
         aggregation_fns=[concatenate],
         fallback=[np.nan],
         lookbehind_days=[100],
+        embedding_fn_name="bow",
         embedding_fn=[sklearn_embedding],
         embedding_fn_kwargs=[{"model": bow_model}],
     ).create_combinations()
