@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
 import pandas as pd

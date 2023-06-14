@@ -1,5 +1,4 @@
 import itertools
-from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Sequence, Union
 
 from pydantic import Field
