@@ -21,6 +21,7 @@ def test_combinations_from_group():
 
     first_spec = output[0]
     expected_spec = PredictorSpec(
+        base_values_df=test_df,
         prefix="pred",
         feature_base_name="col",
         aggregation_fn=mean,

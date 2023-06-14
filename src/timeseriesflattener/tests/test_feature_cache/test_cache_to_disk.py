@@ -35,12 +35,11 @@ def test_write_and_check_feature(
     )
 
     test_spec = PredictorSpec(
-        values_df=values_df,
+        feature_base_name="test_feature",
+        base_values_df=values_df,
         lookbehind_days=5,
-        resolve_multiple_fn=latest,
-        key_for_resolve_multiple="latest",
+        aggregation_fn=latest,
         fallback=np.nan,
-        feature_name="test_feature",
     )
 
     generated_df = pd.DataFrame(
@@ -90,12 +89,11 @@ def test_read_feature(tmp_path: Path):
     )
 
     test_spec = PredictorSpec(
-        values_df=values_df,
-        interval_days=5,
-        resolve_multiple_fn=latest,
-        key_for_resolve_multiple="latest",
+        base_values_df=values_df,
+        lookbehind_days=5,
+        aggregation_fn=latest,
         fallback=np.nan,
-        feature_name="test_feature",
+        feature_base_name="test_feature",
     )
 
     generated_df = pd.DataFrame(
