@@ -1,6 +1,7 @@
 """Tests for errors raised from flattened dataset class."""
 
 import pytest
+
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.utils_for_testing import (

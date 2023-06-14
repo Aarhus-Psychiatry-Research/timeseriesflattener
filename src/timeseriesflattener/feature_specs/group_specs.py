@@ -55,7 +55,7 @@ def create_specs_from_group(
     feature_group_spec_dict = feature_group_spec.__dict__
 
     permuted_dicts = create_feature_combinations_from_dict(
-        dictionary=feature_group_spec_dict
+        dictionary=feature_group_spec_dict,
     )
 
     return [output_class(**d) for d in permuted_dicts]  # type: ignore

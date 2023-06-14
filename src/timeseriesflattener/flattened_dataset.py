@@ -457,7 +457,7 @@ class TimeseriesFlattener:
                 df = self.cache.read_feature(feature_spec=feature_spec)
                 return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
             log.debug(
-                f"Cache miss for {feature_spec.get_output_col_name()}, generating"
+                f"Cache miss for {feature_spec.get_output_col_name()}, generating",
             )
         elif not self.cache:
             log.debug("No cache specified, not attempting load")
@@ -687,7 +687,7 @@ class TimeseriesFlattener:
             )
 
             df[outcome_spec.get_output_col_name()] = outcome_is_within_lookahead.astype(
-                int
+                int,
             )
 
         df = df.rename(

@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import pytest
+
 from timeseriesflattener.feature_specs.base_single_specs import (
     StaticSpec,
 )

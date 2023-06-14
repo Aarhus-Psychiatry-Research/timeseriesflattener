@@ -1,6 +1,7 @@
 """Tests for the text embedding functions"""
 import pandas as pd
 import pytest
+
 from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
 from timeseriesflattener.text_embedding_functions import (
     huggingface_embedding,

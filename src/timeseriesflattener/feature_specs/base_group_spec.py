@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable, Optional, Sequence, Union
+from typing import Callable, Sequence, Union
 
 import pandas as pd
 from pydantic import Field

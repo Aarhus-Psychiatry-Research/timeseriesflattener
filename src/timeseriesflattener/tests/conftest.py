@@ -1,5 +1,6 @@
 import pytest
 from pandas import DataFrame
+
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,

@@ -7,6 +7,11 @@ from typing import List
 import numpy as np
 import pandas as pd
 import pytest
+from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
+    check_dfs_have_same_contents_by_column,
+    create_flattened_df,
+)
+
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_specs.group_specs import (
     PredictorGroupSpec,
@@ -14,11 +19,6 @@ from timeseriesflattener.feature_specs.group_specs import (
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
-)
-
-from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
-    check_dfs_have_same_contents_by_column,
-    create_flattened_df,
 )
 
 base_float_predictor_combinations = PredictorGroupSpec(

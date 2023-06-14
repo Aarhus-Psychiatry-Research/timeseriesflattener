@@ -2,6 +2,7 @@
 
 
 import numpy as np
+
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,

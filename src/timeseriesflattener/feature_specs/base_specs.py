@@ -1,14 +1,10 @@
 """Templates for feature specifications."""
 import logging
-import time
 from abc import ABC, abstractmethod
-from functools import lru_cache
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import pandas as pd
 from pydantic import Field
-from timeseriesflattener.misc_utils import data_loaders, split_dfs
-from timeseriesflattener.resolve_multiple_functions import resolve_multiple_fns
 
 log = logging.getLogger(__name__)
 

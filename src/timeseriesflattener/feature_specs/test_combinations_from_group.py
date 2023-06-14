@@ -1,7 +1,5 @@
-from typing import Protocol, Sequence
 
 import numpy as np
-from attr import dataclass
 from timeseriesflattener.feature_specs.base_group_spec import Inputdf
 from timeseriesflattener.feature_specs.group_specs import PredictorGroupSpec
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec

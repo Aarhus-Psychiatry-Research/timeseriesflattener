@@ -1,5 +1,6 @@
 """Test that feature spec objects work as intended."""
 import pandas as pd
+
 from timeseriesflattener.feature_specs.single_specs import AnySpec
 from timeseriesflattener.misc_utils import split_df_and_register_to_dict, split_dfs
 
