@@ -7,7 +7,6 @@ import pandas as pd
 from pandas import DataFrame, Series
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import CountVectorizer
-from timeseriesflattener.misc_utils import PROJECT_ROOT
 from timeseriesflattener.testing.load_synth_data import TEST_DATA_PATH
 
 

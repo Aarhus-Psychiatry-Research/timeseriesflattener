@@ -4,25 +4,12 @@
 from typing import List
 
 import numpy as np
-import pytest
 
 from timeseriesflattener.aggregation_functions import maximum
 from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.group_specs import (
-    OutcomeGroupSpec,
     PredictorGroupSpec,
 )
-from timeseriesflattener.feature_specs.single_specs import (
-    AnySpec,
-    OutcomeSpec,
-    PredictorSpec,
-    TemporalSpec,
-    TextPredictorSpec,
-)
-from timeseriesflattener.feature_specs.utils.generate_docstring_from_attributes import (
-    generate_docstring_from_attributes,
-)
-from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
 def test_skip_all_if_no_need_to_process(empty_named_df: NamedDataframe):

@@ -5,17 +5,10 @@ from typing import Callable, Dict, List, Optional, Sequence, Union
 from pydantic import Field
 from timeseriesflattener.aggregation_functions import concatenate
 from timeseriesflattener.feature_specs.base_group_spec import (
-    VALUES_PAIRS_DEF,
     GroupSpec,
     NamedDataframe,
 )
 from timeseriesflattener.feature_specs.single_specs import (
-    AGGREGATION_FN_DEFINITION,
-    FALLBACK_DEFINITION,
-    LOOKAHEAD_DAYS_DEF,
-    LOOKBEHIND_DAYS_DEF,
-    OUTC_PREFIX_DEF,
-    PRED_PREFIX_DEF,
     AnySpec,
     OutcomeSpec,
     PredictorSpec,
