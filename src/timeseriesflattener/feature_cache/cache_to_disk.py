@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
@@ -129,11 +130,13 @@ class DiskCache(FeatureCache):
             validate="m:1",
         )
 
+        fallback = np.nan if feature_spec.fallback == "nan" else feature_spec.fallback
+
         # Replace NaNs with fallback
         df[feature_spec.get_output_col_name()] = df[
             feature_spec.get_output_col_name()
         ].fillna(
-            feature_spec.fallback,  # type: ignore
+            fallback,  # type: ignore
         )
 
         return df

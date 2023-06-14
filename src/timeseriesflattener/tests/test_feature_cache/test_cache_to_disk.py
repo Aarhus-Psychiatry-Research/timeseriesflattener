@@ -92,7 +92,7 @@ def test_read_feature(tmp_path: Path):
         base_values_df=values_df,
         lookbehind_days=5,
         aggregation_fn=latest,
-        fallback=np.nan,
+        fallback=np.NaN,
         feature_base_name="test_feature",
     )
 
