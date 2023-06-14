@@ -195,7 +195,7 @@ class TextPredictorSpec(BaseModel):
             else self.lookbehind_days
         )
 
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str()}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
         return col_str
 
