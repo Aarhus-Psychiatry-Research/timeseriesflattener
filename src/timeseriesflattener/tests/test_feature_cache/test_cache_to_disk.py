@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_spec_objects import PredictorSpec
+from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.resolve_multiple_functions import latest
 
 
@@ -48,7 +48,7 @@ def test_write_and_check_feature(
             "entity_id": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
-            f"{test_spec.get_col_str()}": [1, 2, 3],
+            f"{test_spec.get_output_col_name()}": [1, 2, 3],
         },
     )
 
@@ -107,7 +107,7 @@ def test_read_feature(tmp_path: Path):
             ],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
-            f"{test_spec.get_col_str()}": [1, 2, np.nan],
+            f"{test_spec.get_output_col_name()}": [1, 2, np.nan],
         },
     )
 

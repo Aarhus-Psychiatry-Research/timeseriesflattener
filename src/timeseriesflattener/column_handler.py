@@ -3,7 +3,7 @@ from typing import Callable, List, Optional
 
 import pandas as pd
 
-from timeseriesflattener.feature_spec_objects import TemporalSpec
+from timeseriesflattener.feature_specs.single_specs import TemporalSpec
 
 
 class ColumnHandler:
@@ -55,7 +55,7 @@ class ColumnHandler:
         if isinstance(df["value"], pd.DataFrame):
             df = ColumnHandler._rename_multi_index_dataframe(output_spec, df)
         else:
-            df = df.rename(columns={"value": output_spec.get_col_str()})
+            df = df.rename(columns={"value": output_spec.get_output_col_name()})
         return df
 
     @staticmethod
@@ -72,7 +72,7 @@ class ColumnHandler:
         """
         feature_names = df["value"].columns
         col_names = [
-            output_spec.get_col_str(additional_feature_name=feature_name)
+            output_spec.get_output_col_name(additional_feature_name=feature_name)
             for feature_name in feature_names
         ]
         feature_col_name_mapping = dict(zip(feature_names, col_names))
@@ -96,7 +96,9 @@ class ColumnHandler:
         if "value" in df.columns and isinstance(df["value"], pd.DataFrame):
             df["value"] = df["value"].fillna(output_spec.fallback)  # type: ignore
         else:
-            df[output_spec.get_col_str()] = df[output_spec.get_col_str()].fillna(
+            df[output_spec.get_output_col_name()] = df[
+                output_spec.get_output_col_name()
+            ].fillna(
                 output_spec.fallback,  # type: ignore
             )
         return df
@@ -127,6 +129,6 @@ class ColumnHandler:
             return (
                 df["value"].columns.tolist()  # type: ignore
                 if isinstance(df.columns, pd.MultiIndex)  # type: ignore
-                else [output_spec.get_col_str()]  # type: ignore
+                else [output_spec.get_output_col_name()]  # type: ignore
             )
         raise ValueError("Either df or output_spec must be provided.")

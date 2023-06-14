@@ -2,7 +2,10 @@
 
 
 import numpy as np
-from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec
+from timeseriesflattener.feature_specs.single_specs import (
+    OutcomeSpec,
+    PredictorSpec,
+)
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,

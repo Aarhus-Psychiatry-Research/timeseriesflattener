@@ -6,7 +6,7 @@ from typing import List, Optional
 import numpy as np
 import pandas as pd
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_spec_objects import PredictorSpec
+from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 
 

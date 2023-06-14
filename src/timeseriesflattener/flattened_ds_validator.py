@@ -1,7 +1,7 @@
 """Validator for a flattened dataset."""
 import pandas as pd
 
-from timeseriesflattener.utils import df_contains_duplicates
+from timeseriesflattener.misc_utils import df_contains_duplicates
 
 
 class ValidateInitFlattenedDataset:

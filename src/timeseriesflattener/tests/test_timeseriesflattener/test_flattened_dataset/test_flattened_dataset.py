@@ -2,11 +2,13 @@
 import numpy as np
 import pandas as pd
 import pytest
-from timeseriesflattener.feature_spec_objects import (
+from timeseriesflattener.feature_specs.base_single_specs import (
+    StaticSpec,
+)
+from timeseriesflattener.feature_specs.group_specs import TextPredictorGroupSpec
+from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
-    StaticSpec,
-    TextPredictorGroupSpec,
     TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
@@ -251,7 +253,7 @@ def test_group_spec_feature_name(
     predictor_spec = TextPredictorGroupSpec(
         values_loader=("synth_text",),
         prefix="test",
-        resolve_multiple_fn=["concatenate"],
+        aggregation_fn=["concatenate"],
         fallback=[np.nan],
         lookbehind_days=[100],
         embedding_fn=[sklearn_embedding],

@@ -4,7 +4,7 @@ from typing import Any
 
 import pandas as pd
 
-from timeseriesflattener.feature_spec_objects import TemporalSpec
+from timeseriesflattener.feature_specs.single_specs import TemporalSpec
 
 
 class FeatureCache(metaclass=ABCMeta):

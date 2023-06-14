@@ -6,7 +6,7 @@ from typing import Optional, Union
 
 import coloredlogs
 
-from timeseriesflattener.utils import PROJECT_ROOT
+from timeseriesflattener.misc_utils import PROJECT_ROOT
 
 
 def setup_logger(

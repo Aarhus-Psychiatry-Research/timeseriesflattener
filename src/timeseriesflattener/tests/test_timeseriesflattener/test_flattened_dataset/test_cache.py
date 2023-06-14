@@ -8,7 +8,10 @@ import numpy as np
 import pandas as pd
 import pytest
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, PredictorSpec
+from timeseriesflattener.feature_specs.group_specs import (
+    PredictorGroupSpec,
+)
+from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
 )
@@ -21,7 +24,7 @@ from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
 base_float_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_float"],
     lookbehind_days=[365, 730],
-    resolve_multiple_fn=["mean"],
+    aggregation_fns=["mean"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
 ).create_combinations()
@@ -29,7 +32,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 base_binary_predictor_combinations = PredictorGroupSpec(
     values_loader=["synth_predictor_binary"],
     lookbehind_days=[365, 730],
-    resolve_multiple_fn=["max"],
+    aggregation_fns=["max"],
     fallback=[np.NaN],
     allowed_nan_value_prop=[0.0],
 ).create_combinations()

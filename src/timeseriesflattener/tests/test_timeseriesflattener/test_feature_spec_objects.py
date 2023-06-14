@@ -6,19 +6,26 @@ from typing import List
 import numpy as np
 import pandas as pd
 import pytest
-from timeseriesflattener.feature_spec_objects import (
-    BaseModel,
+
+from timeseriesflattener.feature_specs.base_single_specs import (
+    check_col_names_exist_in_df,
+)
+from timeseriesflattener.feature_specs.group_specs import (
     OutcomeGroupSpec,
-    OutcomeSpec,
     PredictorGroupSpec,
+    TextPredictorGroupSpec,
+)
+from timeseriesflattener.feature_specs.single_specs import (
+    AnySpec,
+    OutcomeSpec,
     PredictorSpec,
     TemporalSpec,
-    TextPredictorGroupSpec,
     TextPredictorSpec,
-    _AnySpec,
-    check_that_col_names_in_kwargs_exist_in_df,
+)
+from timeseriesflattener.feature_specs.utils.generate_docstring_from_attributes import (
     generate_docstring_from_attributes,
 )
+from timeseriesflattener.misc_utils import split_df_and_register_to_dict
 from timeseriesflattener.resolve_multiple_functions import maximum
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_predictor_float,
@@ -27,39 +34,39 @@ from timeseriesflattener.testing.load_synth_data import (
 )
 from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
 from timeseriesflattener.text_embedding_functions import sklearn_embedding
-from timeseriesflattener.utils import split_df_and_register_to_dict
+from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
 def test_anyspec_init():
     """Test that AnySpec initialises correctly."""
     values_loader_name = "synth_predictor_float"
 
-    spec = _AnySpec(
+    spec = AnySpec(
         values_loader=values_loader_name,
         prefix="test",
         feature_name="test_feature",
     )
 
-    assert isinstance(spec.values_df, pd.DataFrame)
+    assert isinstance(spec.base_values_df, pd.DataFrame)
 
 
 def test_loader_kwargs():
     """Test that loader kwargs are passed correctly."""
-    spec = _AnySpec(
+    spec = AnySpec(
         values_loader="synth_predictor_float",
         prefix="test",
         loader_kwargs={"n_rows": 10},
         feature_name="test_feature",
     )
 
-    assert len(spec.values_df) == 10
+    assert len(spec.base_values_df) == 10
 
 
 def test_invalid_multiple_data_args():
     """Test that error is raised if multiple data args are passed."""
 
     with pytest.raises(ValueError, match=r".*nly one of.*"):
-        _AnySpec(
+        AnySpec(
             values_loader="synth_predictor_float",
             values_name="synth_data",
             prefix="test",
@@ -70,7 +77,7 @@ def test_invalid_multiple_data_args():
 def test_anyspec_incorrect_values_loader_str():
     """Raise error if values loader is not a key in registry."""
     with pytest.raises(ValueError, match=r".*in registry.*"):
-        _AnySpec(
+        AnySpec(
             values_loader="I don't exist",
             prefix="test",
             feature_name="test_feature",
@@ -84,12 +91,12 @@ def test_that_col_names_in_kwargs_exist_in_df():
 
     # Test valid column names
     data = {"col_name_1": "A", "col_name_2": "B", "values_df": df}
-    check_that_col_names_in_kwargs_exist_in_df(data=data, df=df)
+    check_col_names_exist_in_df(data=data, df=df)
 
     # Test invalid column names
     data = {"col_name_1": "A", "col_name_2": "D", "values_df": df}
     with pytest.raises(ValueError, match="D is not in df"):
-        check_that_col_names_in_kwargs_exist_in_df(data=data, df=df)
+        check_col_names_exist_in_df(data=data, df=df)
 
 
 def test_create_combinations_while_resolving_from_registry(
@@ -104,7 +111,7 @@ def test_create_combinations_while_resolving_from_registry(
             "value_name_1",
             "value_name_2",
         ],
-        resolve_multiple_fn=["mean"],
+        aggregation_fns=["mean"],
         lookbehind_days=[30],
         fallback=[0],
     ).create_combinations()
@@ -120,7 +127,7 @@ def test_skip_all_if_no_need_to_process():
                 values_loader=["synth_predictor_float"],
                 input_col_name_override="value",
                 lookbehind_days=[1],
-                resolve_multiple_fn=["max"],
+                aggregation_fns=["max"],
                 fallback=[0],
                 allowed_nan_value_prop=[0.5],
             ).create_combinations(),
@@ -135,7 +142,7 @@ def test_skip_one_if_no_need_to_process():
         values_loader=["synth_predictor_float"],
         input_col_name_override="value",
         lookbehind_days=[1, 2],
-        resolve_multiple_fn=["max", "min"],
+        aggregation_fns=["max", "min"],
         fallback=[0],
         allowed_nan_value_prop=[0],
     ).create_combinations()
@@ -149,10 +156,10 @@ def test_resolve_multiple_fn_to_str():
         values_loader=["synth_predictor_float"],
         lookbehind_days=[365, 730],
         fallback=[np.nan],
-        resolve_multiple_fn=[maximum],
+        aggregation_fns=[maximum],
     ).create_combinations()
 
-    assert "maximum" in pred_spec_batch[0].get_col_str()
+    assert "maximum" in pred_spec_batch[0].get_output_col_name()
 
 
 def test_lookbehind_days_handles_floats():
@@ -161,7 +168,7 @@ def test_lookbehind_days_handles_floats():
         values_loader=["synth_predictor_float"],
         lookbehind_days=[2, 0.5],
         fallback=[np.nan],
-        resolve_multiple_fn=[maximum],
+        aggregation_fns=[maximum],
     ).create_combinations()
 
     assert pred_spec_batch[1].lookbehind_days == 0.5
@@ -181,7 +188,7 @@ def get_lines_with_diff(text1: str, text2: str) -> List[str]:
 @pytest.mark.parametrize(
     "spec",
     [
-        _AnySpec,
+        AnySpec,
         TemporalSpec,
         PredictorSpec,
         PredictorGroupSpec,
@@ -250,15 +257,15 @@ def test_predictorgroupspec_combinations_loader_kwargs():
         values_loader=("synth_predictor_binary", "synth_predictor_float"),
         loader_kwargs=[{"n_rows": 100}],
         prefix="test_",
-        resolve_multiple_fn=["bool"],
+        aggregation_fns=["bool"],
         fallback=[0],
         lookbehind_days=[10],
     )
 
     combinations = spec.create_combinations()
 
-    pd.testing.assert_frame_equal(binary_100_rows, combinations[0].values_df)
-    pd.testing.assert_frame_equal(float_100_rows, combinations[1].values_df)
+    pd.testing.assert_frame_equal(binary_100_rows, combinations[0].base_values_df)
+    pd.testing.assert_frame_equal(float_100_rows, combinations[1].base_values_df)
 
 
 def test_textpredictorgroupspec_combinations_loader_kwargs():
@@ -274,7 +281,7 @@ def test_textpredictorgroupspec_combinations_loader_kwargs():
         values_loader=("synth_text",),
         loader_kwargs=[{"n_rows": 10}, {"n_rows": 100}],
         prefix="test_",
-        resolve_multiple_fn=["concatenate"],
+        aggregation_fn=["concatenate"],
         fallback=[0],
         lookbehind_days=[10],
         embedding_fn=[sklearn_embedding],
@@ -283,5 +290,5 @@ def test_textpredictorgroupspec_combinations_loader_kwargs():
 
     combinations = spec.create_combinations()
 
-    pd.testing.assert_frame_equal(text_10_rows, combinations[0].values_df)
-    pd.testing.assert_frame_equal(text_100_rows, combinations[1].values_df)
+    pd.testing.assert_frame_equal(text_10_rows, combinations[0].base_values_df)
+    pd.testing.assert_frame_equal(text_100_rows, combinations[1].base_values_df)

@@ -5,10 +5,12 @@ import numpy as np
 import pandas as pd
 import pytest
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_spec_objects import (
+from timeseriesflattener.feature_specs.base_single_specs import (
+    StaticSpec,
+)
+from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
-    StaticSpec,
     TextPredictorSpec,
 )
 from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
