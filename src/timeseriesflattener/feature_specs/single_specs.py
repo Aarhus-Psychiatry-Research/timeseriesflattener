@@ -55,7 +55,7 @@ class OutcomeSpec:
     feature_base_name: str
     lookahead_days: float
     aggregation_fn: Callable
-    fallback: Union[str, int]
+    fallback: Union[str, float]
     prefix: str = "pred"
 
     class Doc:
@@ -134,7 +134,7 @@ class TextPredictorSpec:
         description="""Optional kwargs passed onto the embedding_fn.""",
     )
     resolve_multiple_fn: Union[Callable, str] = Field(
-        default="concatenate",
+        default=concatenate,
         description="""A function used for resolving multiple values within the
         interval_days, i.e. how to combine texts within the lookbehind window.
         Defaults to: 'concatenate'. Other possible options are 'latest' and

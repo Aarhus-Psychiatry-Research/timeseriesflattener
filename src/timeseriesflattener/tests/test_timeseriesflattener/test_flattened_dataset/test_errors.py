@@ -48,11 +48,11 @@ def test_col_does_not_exist():
     with pytest.raises(KeyError):
         flattened_df.add_spec(
             spec=PredictorSpec(
-                values_df=event_times_df,
-                interval_days=2,
-                resolve_multiple_fn="max",
+                base_values_df=event_times_df,
+                lookahead_days=2,
+                aggregation_fn=maximum,
                 fallback=2,
-                feature_name="value",
+                feature_base_name="value",
             ),
         )
 

@@ -28,7 +28,6 @@ def load_raw_test_csv(filename: str, n_rows: Optional[int] = None) -> pd.DataFra
     return df
 
 
-@data_loaders.register("synth_predictor_float")
 def load_synth_predictor_float(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -43,7 +42,6 @@ def load_synth_predictor_float(
     return load_raw_test_csv("synth_raw_float_1.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_sex")
 def load_synth_sex(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -58,7 +56,6 @@ def load_synth_sex(
     return load_raw_test_csv("synth_sex.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_predictor_binary")
 def synth_predictor_binary(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -73,7 +70,6 @@ def synth_predictor_binary(
     return load_raw_test_csv("synth_raw_binary_1.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_outcome")
 def load_synth_outcome(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -94,7 +90,6 @@ def load_synth_outcome(
     return df
 
 
-@data_loaders.register("synth_prediction_times")
 def load_synth_prediction_times(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -109,7 +104,6 @@ def load_synth_prediction_times(
     return load_raw_test_csv("synth_prediction_times.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_text")
 def load_synth_text(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:

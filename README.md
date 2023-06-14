@@ -59,7 +59,7 @@ if __name__ == "__main__":
     from timeseriesflattener.resolve_multiple_functions import maximum, mean
 
     predictor_spec = PredictorSpec(
-        values_df=predictor_df,
+        base_values_df=predictor_df,
         lookbehind_days=30,
         fallback=np.nan,
         entity_id_col_name="id",
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         feature_name="test_feature",
     )
     outcome_spec = OutcomeSpec(
-        values_df=outcome_df,
+        base_values_df=outcome_df,
         lookahead_days=31,
         fallback=0,
         entity_id_col_name="id",

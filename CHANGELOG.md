@@ -114,7 +114,7 @@
 * Example text embedding functions ([`f4ce9a2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f4ce9a2e08dfaf93b5cf1fa30e28cdffb2dc1867))
 * Handle text features and features with multiple columns ([`a3cafe9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a3cafe9ce1a9aae3db1ae6f7f2b9c394323409d5))
 * TextSpec and option for additional feature name .get_col_str ([`2986203`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2986203e3d595c5bb387db8feee34bb1fa6a5ddf))
-* Added "concatenate" resolve_multiple_fn ([`5dc8c9f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5dc8c9f7025099bf0186881af5ecc158af0aadda))
+* Added concatenate resolve_multiple_fn ([`5dc8c9f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5dc8c9f7025099bf0186881af5ecc158af0aadda))
 
 ### Fix
 * Fix semantic release ([`7e993e3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7e993e34c2b670a3239a452703213cd368261d18))

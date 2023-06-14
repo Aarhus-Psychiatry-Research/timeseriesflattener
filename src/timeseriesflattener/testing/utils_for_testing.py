@@ -145,7 +145,6 @@ def load_long_df_with_multiple_values() -> DataFrame:
     return long_df
 
 
-@data_loaders.register("load_event_times")
 def load_event_times() -> DataFrame:
     """Load event times."""
     event_times_str = """entity_id,timestamp,value,

@@ -3,6 +3,21 @@
 
 import numpy as np
 
+from timeseriesflattener.aggregation_functions import (
+    boolean,
+    change_per_day,
+    concatenate,
+    count,
+    earliest,
+    latest,
+    maximum,
+    mean,
+    mean_number_of_characters,
+    minimum,
+    summed,
+    type_token_ratio,
+    variance,
+)
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
@@ -26,10 +41,10 @@ def test_resolve_multiple_catalogue():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="min",
-            interval_days=2,
+            base_values_df=str_to_df(event_times_str),
+            feature_base_name="outcome",
+            aggregation_fn=minimum,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -49,10 +64,10 @@ def test_resolve_multiple_max():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="max",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=maximum,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -72,10 +87,10 @@ def test_resolve_multiple_min():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="min",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=minimum,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -95,10 +110,10 @@ def test_resolve_multiple_avg():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=PredictorSpec(
-            feature_name="value",
-            values_df=str_to_df(predictor_df_str),
-            resolve_multiple_fn="mean",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(predictor_df_str),
+            aggregation_fn=mean,
+            lookbehind_days=2,
             fallback=0,
         ),
         expected_values=[1.5],
@@ -122,10 +137,10 @@ def test_resolve_multiple_latest():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="latest",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=latest,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -146,10 +161,10 @@ def test_resolve_multiple_latest_no_values():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="latest",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=latest,
+            lookahead_days=2,
             fallback=np.nan,
             incident=False,
         ),
@@ -168,10 +183,10 @@ def test_resolve_multiple_latest_one_vlaue():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="latest",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=latest,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -196,10 +211,10 @@ def test_resolve_multiple_earliest():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="earliest",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=earliest,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -219,10 +234,10 @@ def test_resolve_multiple_sum():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=PredictorSpec(
-            feature_name="value",
-            values_df=str_to_df(predictor_df_str),
-            resolve_multiple_fn="sum",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(predictor_df_str),
+            aggregation_fn=sum,
+            lookbehind_days=2,
             fallback=0,
         ),
         expected_values=[3],
@@ -241,10 +256,10 @@ def test_resolve_multiple_count():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="count",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=count,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -265,10 +280,10 @@ def test_resolve_multiple_bool():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="bool",
-            interval_days=2,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=boolean,
+            lookahead_days=2,
             fallback=0,
             incident=False,
         ),
@@ -291,10 +306,10 @@ def test_resolve_multiple_change_per_day():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=change_per_day,
+            lookahead_days=4,
             fallback=np.NaN,
             incident=False,
         ),
@@ -317,10 +332,10 @@ def test_resolve_multiple_change_per_day_unordered():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=change_per_day,
+            lookahead_days=4,
             fallback=np.NaN,
             incident=False,
         ),
@@ -343,10 +358,10 @@ def test_resolve_multiple_change_per_day_negative():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=change_per_day,
+            lookahead_days=4,
             fallback=np.NaN,
             incident=False,
         ),
@@ -369,10 +384,10 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=change_per_day,
+            lookahead_days=4,
             fallback=99999,
             incident=False,
         ),
@@ -394,10 +409,10 @@ def test_resolve_multiple_change_per_day_only_one_observation():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="change_per_day",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=change_per_day,
+            lookahead_days=4,
             fallback=0,
             incident=False,
         ),
@@ -420,10 +435,10 @@ def test_resolve_multiple_variance():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="variance",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=variance,
+            lookahead_days=4,
             fallback=np.NaN,
             incident=False,
         ),
@@ -443,10 +458,10 @@ def test_resolve_multiple_concatenate():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="concatenate",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=concatenate,
+            lookahead_days=4,
             fallback=np.NaN,
             incident=False,
         ),
@@ -466,10 +481,10 @@ def test_resolve_multiple_mean_len():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="mean_number_of_characters",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=mean_number_of_characters,
+            lookahead_days=4,
             fallback=np.NaN,
             incident=False,
         ),
@@ -492,10 +507,10 @@ def test_resolve_multiple_type_token_ratio():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
-            feature_name="value",
-            values_df=str_to_df(event_times_str),
-            resolve_multiple_fn="type_token_ratio",
-            interval_days=4,
+            feature_base_name="value",
+            base_values_df=str_to_df(event_times_str),
+            aggregation_fn=type_token_ratio,
+            lookahead_days=4,
             fallback=np.NaN,
             incident=False,
         ),

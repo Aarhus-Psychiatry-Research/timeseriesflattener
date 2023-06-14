@@ -22,7 +22,7 @@ from timeseriesflattener.testing.load_synth_data import (
 )
 
 base_float_predictor_combinations = PredictorGroupSpec(
-    values_loader=["synth_predictor_float"],
+    named_dataframes=[empty_named_df],
     lookbehind_days=[365, 730],
     aggregation_fns=["mean"],
     fallback=[np.NaN],

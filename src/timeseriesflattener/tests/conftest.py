@@ -1,6 +1,7 @@
 import pytest
 from pandas import DataFrame
 
+from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_outcome,
     load_synth_prediction_times,
@@ -65,3 +66,14 @@ def long_df_with_multiple_values() -> DataFrame:
 def synth_text_data() -> DataFrame:
     """Load the synth text data."""
     return load_synth_text()
+
+
+@pytest.fixture()
+def empty_df() -> DataFrame:
+    """Create an empty dataframe."""
+    return DataFrame()
+
+
+@pytest.fixture()
+def empty_named_df() -> NamedDataframe:
+    return NamedDataframe(df=DataFrame(), name="empty")

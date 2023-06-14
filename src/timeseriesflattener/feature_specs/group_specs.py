@@ -1,11 +1,12 @@
 import itertools
+from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Sequence, Union
 
 from pydantic import Field
 from timeseriesflattener.feature_specs.base_group_spec import (
     VALUES_PAIRS_DEF,
     GroupSpec,
-    Inputdf,
+    NamedDataframe,
 )
 from timeseriesflattener.feature_specs.single_specs import (
     AGGREGATION_FN_DEFINITION,
@@ -68,7 +69,7 @@ class PredictorGroupSpec(GroupSpec):
     # Shared attributes from GroupSpec
     prefix: Sequence[str] = PRED_PREFIX_DEF
     lookbehind_days: List[float] = LOOKBEHIND_DAYS_DEF
-    values_pairs: Sequence[Inputdf] = VALUES_PAIRS_DEF
+    named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
     fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
 
@@ -97,7 +98,7 @@ class OutcomeGroupSpec(GroupSpec):
 
     # Shared attributes from GroupSpec
     prefix: Sequence[str] = OUTC_PREFIX_DEF
-    values_pairs: Sequence[Inputdf] = VALUES_PAIRS_DEF
+    named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
     fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
 
@@ -129,11 +130,12 @@ class OutcomeGroupSpec(GroupSpec):
         ]
 
 
+@dataclass(frozen=True)
 class TextPredictorGroupSpec:
     # Shared attributes from GroupSpec
     prefix: Sequence[str] = PRED_PREFIX_DEF
     lookbehind_days: List[float] = LOOKBEHIND_DAYS_DEF
-    values_pairs: Sequence[Inputdf] = VALUES_PAIRS_DEF
+    named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
     fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
 
@@ -151,10 +153,10 @@ class TextPredictorGroupSpec:
         description="""Optional kwargs passed onto the embedding_fn.""",
     )
     aggregation_fn: Sequence[Callable] = Field(
-        default=["concatenate"],
+        default=[concatenate],
         description="""A function used for resolving multiple values within the
         interval_days, i.e. how to combine texts within the lookbehind window.
-        Defaults to: "concatenate". Other possible options are "latest" and
+        Defaults to: concatenate. Other possible options are "latest" and
         "earliest".""",
     )
 

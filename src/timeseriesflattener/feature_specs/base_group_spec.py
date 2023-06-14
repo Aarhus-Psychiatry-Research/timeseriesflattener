@@ -12,9 +12,9 @@ from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
 @dataclass(frozen=True)
-class Inputdf:
+class NamedDataframe:
     df: pd.DataFrame
-    base_feature_name: str
+    name: str
 
 
 VALUES_PAIRS_DEF = Field(
@@ -30,7 +30,7 @@ class GroupSpec(BaseModel, ABC):
         Used to generate combinations of features."""
 
     prefix: str = "pred"
-    values_pairs: Sequence[Inputdf] = VALUES_PAIRS_DEF
+    named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
     fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
 

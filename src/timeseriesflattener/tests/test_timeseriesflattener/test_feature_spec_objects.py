@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from timeseriesflattener.aggregation_functions import maximum
+from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.base_single_specs import (
     check_col_names_exist_in_df,
 )
@@ -26,7 +28,6 @@ from timeseriesflattener.feature_specs.utils.generate_docstring_from_attributes 
     generate_docstring_from_attributes,
 )
 from timeseriesflattener.misc_utils import split_df_and_register_to_dict
-from timeseriesflattener.resolve_multiple_functions import maximum
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_predictor_float,
     load_synth_text,
@@ -37,138 +38,52 @@ from timeseriesflattener.text_embedding_functions import sklearn_embedding
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
-def test_anyspec_init():
-    """Test that AnySpec initialises correctly."""
-    values_loader_name = "synth_predictor_float"
-
-    spec = AnySpec(
-        values_loader=values_loader_name,
-        prefix="test",
-        feature_name="test_feature",
-    )
-
-    assert isinstance(spec.base_values_df, pd.DataFrame)
-
-
-def test_loader_kwargs():
-    """Test that loader kwargs are passed correctly."""
-    spec = AnySpec(
-        values_loader="synth_predictor_float",
-        prefix="test",
-        loader_kwargs={"n_rows": 10},
-        feature_name="test_feature",
-    )
-
-    assert len(spec.base_values_df) == 10
-
-
-def test_invalid_multiple_data_args():
-    """Test that error is raised if multiple data args are passed."""
-
-    with pytest.raises(ValueError, match=r".*nly one of.*"):
-        AnySpec(
-            values_loader="synth_predictor_float",
-            values_name="synth_data",
-            prefix="test",
-            feature_name="test_feature",
-        )
-
-
-def test_anyspec_incorrect_values_loader_str():
-    """Raise error if values loader is not a key in registry."""
-    with pytest.raises(ValueError, match=r".*in registry.*"):
-        AnySpec(
-            values_loader="I don't exist",
-            prefix="test",
-            feature_name="test_feature",
-        )
-
-
-def test_that_col_names_in_kwargs_exist_in_df():
-    """Raise error if col name specified which is not in df."""
-    # Create a sample dataframe
-    df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
-
-    # Test valid column names
-    data = {"col_name_1": "A", "col_name_2": "B", "values_df": df}
-    check_col_names_exist_in_df(data=data, df=df)
-
-    # Test invalid column names
-    data = {"col_name_1": "A", "col_name_2": "D", "values_df": df}
-    with pytest.raises(ValueError, match="D is not in df"):
-        check_col_names_exist_in_df(data=data, df=df)
-
-
-def test_create_combinations_while_resolving_from_registry(
-    long_df_with_multiple_values: pd.DataFrame,
-):
-    """Test that split_df_and_register_to_dict resolves correctly when multiple dataframes are fetched."""
-
-    split_df_and_register_to_dict(df=long_df_with_multiple_values)
-
-    group_spec = PredictorGroupSpec(
-        values_name=[
-            "value_name_1",
-            "value_name_2",
-        ],
-        aggregation_fns=["mean"],
-        lookbehind_days=[30],
-        fallback=[0],
-    ).create_combinations()
-
-    assert len(group_spec) == 2
-
-
-def test_skip_all_if_no_need_to_process():
+def test_skip_all_if_no_need_to_process(empty_named_df: NamedDataframe):
     """Test that no combinations are created if no need to process."""
     assert (
         len(
             PredictorGroupSpec(
-                values_loader=["synth_predictor_float"],
-                input_col_name_override="value",
+                named_dataframes=[empty_named_df],
                 lookbehind_days=[1],
-                aggregation_fns=["max"],
+                aggregation_fns=maximum,
                 fallback=[0],
-                allowed_nan_value_prop=[0.5],
             ).create_combinations(),
         )
         == 1
     )
 
 
-def test_skip_one_if_no_need_to_process():
+def test_skip_one_if_no_need_to_process(empty_named_df: NamedDataframe):
     """Test that one combination is skipped if no need to process."""
     created_combinations = PredictorGroupSpec(
-        values_loader=["synth_predictor_float"],
-        input_col_name_override="value",
+        named_dataframes=[empty_named_df],
         lookbehind_days=[1, 2],
-        aggregation_fns=["max", "min"],
+        aggregation_fns=maximum,
         fallback=[0],
-        allowed_nan_value_prop=[0],
     ).create_combinations()
 
     assert len(created_combinations) == 4
 
 
-def test_resolve_multiple_fn_to_str():
+def test_resolve_multiple_fn_to_str(empty_named_df: NamedDataframe):
     """Test that resolve_multiple_fn is converted to str correctly."""
     pred_spec_batch = PredictorGroupSpec(
-        values_loader=["synth_predictor_float"],
+        named_dataframes=[empty_named_df],
         lookbehind_days=[365, 730],
         fallback=[np.nan],
-        aggregation_fns=[maximum],
+        aggregation_fns=maximum,
     ).create_combinations()
 
     assert "maximum" in pred_spec_batch[0].get_output_col_name()
 
 
-def test_lookbehind_days_handles_floats():
+def test_lookbehind_days_handles_floats(empty_named_df: NamedDataframe):
     """Test that lookbheind days does not coerce floats into ints."""
     pred_spec_batch = PredictorGroupSpec(
-        values_loader=["synth_predictor_float"],
+        named_dataframes=[empty_named_df],
         lookbehind_days=[2, 0.5],
         fallback=[np.nan],
-        aggregation_fns=[maximum],
+        aggregation_fns=maximum,
     ).create_combinations()
 
     assert pred_spec_batch[1].lookbehind_days == 0.5
@@ -245,50 +160,3 @@ def test_feature_spec_docstrings(spec: BaseModel):
         Differences are in lines: \n\n{lines_with_diff}
         """,
         )
-
-
-def test_predictorgroupspec_combinations_loader_kwargs():
-    """Test that loader kwargs are used correctly in PredictorGroupSpec combinations."""
-
-    binary_100_rows = synth_predictor_binary(n_rows=100)
-    float_100_rows = load_synth_predictor_float(n_rows=100)
-
-    spec = PredictorGroupSpec(
-        values_loader=("synth_predictor_binary", "synth_predictor_float"),
-        loader_kwargs=[{"n_rows": 100}],
-        prefix="test_",
-        aggregation_fns=["bool"],
-        fallback=[0],
-        lookbehind_days=[10],
-    )
-
-    combinations = spec.create_combinations()
-
-    pd.testing.assert_frame_equal(binary_100_rows, combinations[0].base_values_df)
-    pd.testing.assert_frame_equal(float_100_rows, combinations[1].base_values_df)
-
-
-def test_textpredictorgroupspec_combinations_loader_kwargs():
-    """Test that loader kwargs are used correctly in TextPredictorGroupSpec combinations."""
-
-    text_10_rows = load_synth_text(n_rows=10)
-    text_100_rows = load_synth_text(n_rows=100)
-
-    df = load_synth_text()
-    bow_model = bow_test_embedding(df["text"])
-
-    spec = TextPredictorGroupSpec(
-        values_loader=("synth_text",),
-        loader_kwargs=[{"n_rows": 10}, {"n_rows": 100}],
-        prefix="test_",
-        aggregation_fn=["concatenate"],
-        fallback=[0],
-        lookbehind_days=[10],
-        embedding_fn=[sklearn_embedding],
-        embedding_fn_kwargs=[{"model": bow_model}],
-    )
-
-    combinations = spec.create_combinations()
-
-    pd.testing.assert_frame_equal(text_10_rows, combinations[0].base_values_df)
-    pd.testing.assert_frame_equal(text_100_rows, combinations[1].base_values_df)

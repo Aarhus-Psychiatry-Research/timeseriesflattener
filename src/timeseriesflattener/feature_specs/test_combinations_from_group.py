@@ -1,8 +1,8 @@
 import numpy as np
-from timeseriesflattener.feature_specs.base_group_spec import Inputdf
+from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.group_specs import PredictorGroupSpec
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
-from timeseriesflattener.resolve_multiple_functions import mean
+from timeseriesflattener.aggregation_functions import mean
 from timeseriesflattener.testing.utils_for_testing import str_to_df
 
 
@@ -10,7 +10,7 @@ def test_combinations_from_group():
     test_df = str_to_df("""col""")
 
     test_class = PredictorGroupSpec(
-        values_pairs=[Inputdf(df=test_df, base_feature_name="col")],
+        named_dataframes=[NamedDataframe(df=test_df, name="col")],
         prefix="pred",
         lookbehind_days=[1, 2, 3],
         aggregation_fns=[mean],
