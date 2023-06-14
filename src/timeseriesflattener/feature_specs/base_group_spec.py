@@ -26,8 +26,8 @@ class GroupSpec(BaseModel, ABC):
     prefix: str = "pred"
     named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
-    fallback: Sequence[Union[Callable, str, float]] = FALLBACK_DEFINITION
-
+    fallback: Sequence[Union[int, float, str]]
+    
     @abstractmethod
     def create_combinations(self):
         ...

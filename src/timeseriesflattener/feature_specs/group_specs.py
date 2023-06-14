@@ -74,7 +74,7 @@ class PredictorGroupSpec(BaseModel):
     lookbehind_days: List[float]
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[Callable]
-    fallback: Sequence[Union[Callable, str, float]]
+    fallback: Sequence[Union[int, float, str]]
 
     def create_combinations(self) -> List[PredictorSpec]:
         """Create all combinations from the group spec."""
@@ -112,7 +112,7 @@ class OutcomeGroupSpec(BaseModel):
     prefix: str = "outc"
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[Callable]
-    fallback: Sequence[Union[Callable, str, float]]
+    fallback: Sequence[Union[int, float, str]]
 
     # Individual attributes
     lookahead_days: List[float]
@@ -149,11 +149,11 @@ class TextPredictorGroupSpec(BaseModel):
     lookbehind_days: List[float]
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[Callable]
-    fallback: Sequence[Union[Callable, str, float]]
+    fallback: Sequence[Union[int, float, str]]
 
     embedding_fn_name: str
 
-    prefix: Sequence[str] = "pred"
+    prefix: str = "pred"
 
     # Individual attributes
 

@@ -77,7 +77,7 @@ class OutcomeSpec(BaseModel):
     feature_base_name: str
     lookahead_days: Union[int, float]
     aggregation_fn: Callable
-    fallback: Union[float, int, str]
+    fallback: Union[int, float, str]
     incident: bool
     prefix: str = "outc"
 
@@ -122,8 +122,8 @@ class PredictorSpec(BaseModel):
     base_values_df: pd.DataFrame
     feature_base_name: str
     aggregation_fn: Callable
-    fallback: Union[str, float]
-    lookbehind_days: float
+    fallback: Union[int, float, str]
+    lookbehind_days: Union[int, float]
     prefix: str = "pred"
 
     def get_output_col_name(self) -> str:
@@ -157,12 +157,10 @@ class TextPredictorSpec(BaseModel):
 
     base_values_df: pd.DataFrame
     feature_base_name: str
-    fallback: Union[str, float]
+    fallback: Union[int, float, str]
     embedding_fn: Callable
     embedding_fn_kwargs: Optional[dict] = None
-    lookbehind_days: float = Field(
-        description="""How far behind to look for values""",
-    )
+    lookbehind_days: Union[int, float]
     prefix: str = "pred"
 
     aggregation_fn: Callable = concatenate
