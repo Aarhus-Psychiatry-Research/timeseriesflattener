@@ -19,9 +19,7 @@ from pydantic import BaseModel as PydanticBaseModel
 
 from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_specs.base_single_specs import (
-    StaticSpec,
-)
+from timeseriesflattener.feature_specs.base_specs import StaticSpec
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,
