@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
 import pandas as pd
@@ -35,6 +36,19 @@ LOOKAHEAD_DAYS_DEF = Field(
 LOOKBEHIND_DAYS_DEF = Field(
     description="""How far behind to look for values""",
 )
+
+
+@dataclass(frozen=True)
+class CoercedFloats:
+    lookwindow: Union[float, int]
+    fallback: Union[float, int]
+
+
+def coerce_floats(lookwindow: float, fallback: float) -> CoercedFloats:
+    lookwindow = lookwindow if not lookwindow.is_integer() else int(lookwindow)
+    fallback = fallback if not fallback.is_integer() else int(fallback)
+
+    return CoercedFloats(lookwindow=lookwindow, fallback=fallback)
 
 
 class StaticSpec(BaseModel):
@@ -77,7 +91,7 @@ class OutcomeSpec(BaseModel):
     feature_base_name: str
     lookahead_days: float
     aggregation_fn: Callable
-    fallback: Union[float, str]
+    fallback: Union[float, int]
     incident: bool
     prefix: str = "outc"
 
@@ -90,13 +104,8 @@ class OutcomeSpec(BaseModel):
 
     def get_output_col_name(self) -> str:
         """Get the column name for the output column."""
-        lookahead_days = (
-            int(self.lookahead_days)
-            if self.lookahead_days.is_integer()
-            else self.lookahead_days
-        )
-
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookahead_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        coerced = coerce_floats(lookwindow=self.lookahead_days, fallback=self.fallback)
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(coerced.lookwindow)}_days_{self.aggregation_fn.__name__}_fallback_{coerced.fallback}"
 
         if self.is_dichotomous:
             col_str += "_dichotomous"
@@ -128,19 +137,14 @@ class PredictorSpec(BaseModel):
     base_values_df: pd.DataFrame
     feature_base_name: str
     aggregation_fn: Callable
-    fallback: Union[int, float, str]
+    fallback: Union[float, int]
     lookbehind_days: float
     prefix: str = "pred"
 
     def get_output_col_name(self) -> str:
         """Generate the column name for the output column."""
-        lookbehind_days = (
-            int(self.lookbehind_days)
-            if self.lookbehind_days.is_integer()
-            else self.lookbehind_days
-        )
-
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        coerced = coerce_floats(lookwindow=self.lookbehind_days, fallback=self.fallback)
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(coerced.lookwindow)}_days_{self.aggregation_fn.__name__}_fallback_{coerced.fallback}"
 
         return col_str
 
@@ -169,7 +173,7 @@ class TextPredictorSpec(BaseModel):
 
     base_values_df: pd.DataFrame
     feature_base_name: str
-    fallback: Union[int, float, str]
+    fallback: Union[float, int]
     embedding_fn: Callable
     embedding_fn_kwargs: Optional[dict] = None
     lookbehind_days: float
@@ -189,13 +193,9 @@ class TextPredictorSpec(BaseModel):
         if additional_feature_name is not None:
             feature_name += f"-{additional_feature_name}"
 
-        lookbehind_days = (
-            int(self.lookbehind_days)
-            if self.lookbehind_days.is_integer()
-            else self.lookbehind_days
-        )
+        coerced = coerce_floats(lookwindow=self.lookbehind_days, fallback=self.fallback)
 
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        col_str = f"{self.prefix}_{feature_name}_within_{str(coerced.lookwindow)}_days_{self.aggregation_fn.__name__}_fallback_{coerced.fallback}"
 
         return col_str
 
