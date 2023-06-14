@@ -829,10 +829,7 @@ class TimeseriesFlattener:
         Most of the complexity lies in the OutcomeSpec and PredictorSpec objects.
         For further documentation, see those objects and the tutorial.
         """
-        if not isinstance(spec, Sequence):
-            specs_to_process: List[AnySpec] = [spec]
-        else:
-            specs_to_process = spec
+        specs_to_process = [spec] if not isinstance(spec, Sequence) else spec
 
         for spec_i in specs_to_process:
             allowed_spec_types = (OutcomeSpec, PredictorSpec, StaticSpec)

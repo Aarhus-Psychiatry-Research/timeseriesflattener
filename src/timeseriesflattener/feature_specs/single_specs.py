@@ -132,11 +132,10 @@ class TextPredictorSpec:
 
     base_values_df: pd.DataFrame
     feature_base_name: str
-    aggregation_fn: Callable = concatenate
     fallback: Union[str, float]
-    lookbehind_days: float = Field(
-        description="""How far behind to look for values""",
-    )
+    embedding_fn: Callable
+    embedding_fn_kwargs: Optional[dict]
+    lookbehind_days: float
     prefix: str = "pred"
 
     class Doc:
@@ -144,8 +143,7 @@ class TextPredictorSpec:
             """Specification for a text predictor, where the df has been resolved."""
         )
 
-    embedding_fn: Callable
-    embedding_fn_kwargs: Optional[dict]
+    aggregation_fn: Callable = concatenate
 
     def get_output_col_name(self, additional_feature_name: str = "") -> str:
         """Generate the column name for the output column.

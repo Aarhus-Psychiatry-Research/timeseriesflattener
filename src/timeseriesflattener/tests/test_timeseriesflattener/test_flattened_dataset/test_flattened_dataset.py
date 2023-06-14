@@ -35,7 +35,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         base_values_df=synth_outcome,
         feature_base_name="outcome",
         lookahead_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=0,
         incident=False,
     )
@@ -43,7 +43,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         base_values_df=synth_outcome,
         feature_base_name="predictor",
         lookbehind_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
@@ -83,7 +83,7 @@ def test_compute_specs(
         base_values_df=synth_outcome,
         feature_base_name="outcome",
         lookahead_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=0,
         incident=False,
     )
@@ -91,7 +91,7 @@ def test_compute_specs(
         base_values_df=synth_outcome,
         feature_base_name="predictor",
         lookbehind_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
@@ -147,7 +147,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     predictor_spec = PredictorSpec(
         base_values_df=pred_val_df,
         lookbehind_days=1,
-        resolve_multiple_fn=latest,
+        aggregation_fn=latest,
         fallback=np.nan,
         feature_base_name="test_feature",
     )
@@ -163,7 +163,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     outcome_spec = OutcomeSpec(
         base_values_df=out_val_df,
         lookahead_days=2,
-        resolve_multiple_fn=latest,
+        aggregation_fn=latest,
         fallback=np.nan,
         feature_base_name="test_feature",
         incident=False,
@@ -210,7 +210,7 @@ def test_double_compute_doesn_not_duplicate_columns():
         lookbehind_days=15,
         fallback=np.nan,
         entity_id_col_name="entity_id",
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         feature_base_name="test_feature",
     )
 
@@ -243,7 +243,7 @@ def test_group_spec_feature_name(
         base_values_df=synth_outcome,
         feature_base_name="outcome",
         lookahead_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=0,
         incident=False,
     )

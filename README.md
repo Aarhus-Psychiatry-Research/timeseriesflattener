@@ -63,7 +63,7 @@ if __name__ == "__main__":
         lookbehind_days=30,
         fallback=np.nan,
         entity_id_col_name="id",
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         feature_base_name="test_feature",
     )
     outcome_spec = OutcomeSpec(
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         lookahead_days=31,
         fallback=0,
         entity_id_col_name="id",
-        resolve_multiple_fn=maximum,
+        aggregation_fn=maximum,
         feature_base_name="test_outcome",
         incident=False,
     )
