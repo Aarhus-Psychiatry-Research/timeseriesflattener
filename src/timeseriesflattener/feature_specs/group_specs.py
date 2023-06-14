@@ -14,7 +14,6 @@ from timeseriesflattener.feature_specs.single_specs import (
     PredictorSpec,
     TextPredictorSpec,
 )
-from torch import embedding
 
 
 def create_feature_combinations_from_dict(
