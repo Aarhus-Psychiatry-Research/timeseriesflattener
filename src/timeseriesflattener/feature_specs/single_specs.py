@@ -90,8 +90,11 @@ class OutcomeSpec(BaseModel):
 
     def get_output_col_name(self) -> str:
         """Get the column name for the output column."""
-        if self.lookahead_days.is_integer():
-            lookahead_days = int(self.lookahead_days)
+        lookahead_days = (
+            int(self.lookahead_days)
+            if self.lookahead_days.is_integer()
+            else self.lookahead_days
+        )
 
         col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookahead_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
@@ -131,8 +134,11 @@ class PredictorSpec(BaseModel):
 
     def get_output_col_name(self) -> str:
         """Generate the column name for the output column."""
-        if self.lookbehind_days.is_integer():
-            lookbehind_days = int(self.lookbehind_days)
+        lookbehind_days = (
+            int(self.lookbehind_days)
+            if self.lookbehind_days.is_integer()
+            else self.lookbehind_days
+        )
 
         col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
@@ -183,8 +189,11 @@ class TextPredictorSpec(BaseModel):
         if additional_feature_name is not None:
             feature_name += f"-{additional_feature_name}"
 
-        if self.lookbehind_days.is_integer():
-            lookbehind_days = int(self.lookbehind_days)
+        lookahead_days = (
+            int(self.lookahead_days)
+            if self.lookahead_days.is_integer()
+            else self.lookahead_days
+        )
 
         col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
