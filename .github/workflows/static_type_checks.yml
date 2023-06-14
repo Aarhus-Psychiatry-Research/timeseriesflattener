@@ -67,10 +67,15 @@ jobs:
         with:
           message: |
             ✨ Looks like pyright failed ✨
-
+          
             If you want to fix this, we recommend doing it locally by either:
-              a) Enabling pyright in VSCode and going through the errors in the problems tab (VSCode settings > Python > Analysis: Type checking mode > "basic")
+            
+              a) Enabling pyright in VSCode and going through the errors in the problems tab 
+            
+            `VSCode settings > Python > Analysis: Type checking mode > "basic"`
+            
               b) Debugging via the command line
+            
                 1. Installing pyright, which is included in the dev dependencies: `pip install -e ".[dev]"`
                 2. Diagnosing the errors by running `pyright .`
 

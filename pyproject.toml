@@ -134,7 +134,6 @@ exclude = [
   ".eggs",
   ".git",
   ".hg",
-  ".mypy_cache",
   ".nox",
   ".pants.d",
   ".pytype",
