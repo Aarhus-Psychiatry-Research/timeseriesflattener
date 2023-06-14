@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener import TimeseriesFlattener
+from timeseriesflattener.aggregation_functions import concatenate, maximum
 from timeseriesflattener.feature_specs.base_single_specs import (
     StaticSpec,
 )
@@ -84,7 +85,7 @@ def test_text_predictor():
             lookbehind_days=1,
             aggregation_fn=concatenate,
             fallback=np.NaN,
-            feature_name="text_value",
+            feature_base_name="text_value",
         ),
         expected_values=[[0] * 10],
     )
@@ -110,7 +111,7 @@ def test_multiple_citizens_predictor():
         prediction_times_df=prediction_times_df_str,
         output_spec=PredictorSpec(
             base_values_df=str_to_df(predictor_df_str),
-            lookahead_days=2,
+            lookbehind_days=2,
             fallback=np.NaN,
             feature_base_name="value",
             aggregation_fn=maximum,
@@ -236,7 +237,7 @@ def test_static_predictor():
     dataset.add_spec(
         StaticSpec(  # type: ignore
             base_values_df=str_to_df(static_predictor),
-            feature_name=feature_name,
+            feature_base_name=feature_name,
             prefix=prefix,
         ),
     )
@@ -431,7 +432,7 @@ def test_add_multiple_static_predictors():
             output_spec,
             StaticSpec(  # type: ignore
                 base_values_df=male_df,
-                feature_name="male",
+                feature_base_name="male",
                 prefix="pred",
                 output_col_name_override="pred_male_overridden",
             ),

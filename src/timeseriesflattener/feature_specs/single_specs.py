@@ -113,7 +113,7 @@ class TextPredictorSpec:
     base_values_df: pd.DataFrame
     feature_base_name: str
     aggregation_fn: Callable
-    fallback: Union[str, int]
+    fallback: Union[str, float]
     lookbehind_days: float = Field(
         description="""How far behind to look for values""",
     )

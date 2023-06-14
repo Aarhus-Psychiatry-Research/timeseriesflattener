@@ -33,7 +33,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     # Create sample specs
     outcome_spec = OutcomeSpec(
         base_values_df=synth_outcome,
-        feature_name="outcome",
+        feature_base_name="outcome",
         lookahead_days=1,
         resolve_multiple_fn=mean,
         fallback=0,
@@ -41,14 +41,14 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
     )
     predictor_spec = PredictorSpec(
         base_values_df=synth_outcome,
-        feature_name="predictor",
+        feature_base_name="predictor",
         lookbehind_days=1,
         resolve_multiple_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
         base_values_df=synth_outcome,
-        feature_name="static",
+        feature_base_name="static",
         prefix="pred",
     )
 
@@ -81,7 +81,7 @@ def test_compute_specs(
     # Create sample specs
     outcome_spec = OutcomeSpec(
         base_values_df=synth_outcome,
-        feature_name="outcome",
+        feature_base_name="outcome",
         lookahead_days=1,
         resolve_multiple_fn=mean,
         fallback=0,
@@ -89,19 +89,19 @@ def test_compute_specs(
     )
     predictor_spec = PredictorSpec(
         base_values_df=synth_outcome,
-        feature_name="predictor",
+        feature_base_name="predictor",
         lookbehind_days=1,
         resolve_multiple_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
         base_values_df=synth_outcome[["value", "entity_id"]],
-        feature_name="static",
+        feature_base_name="static",
         prefix="pred",
     )
     text_spec = TextPredictorSpec(  # type: ignore
         base_values_df=synth_text_data,
-        feature_name="text",
+        feature_base_name="text",
         lookbehind_days=750,
         aggregation_fn=concatenate,
         fallback=np.nan,
@@ -149,7 +149,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
         lookbehind_days=1,
         resolve_multiple_fn=latest,
         fallback=np.nan,
-        feature_name="test_feature",
+        feature_base_name="test_feature",
     )
 
     out_val_df = pd.DataFrame(
@@ -165,7 +165,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
         lookahead_days=2,
         resolve_multiple_fn=latest,
         fallback=np.nan,
-        feature_name="test_feature",
+        feature_base_name="test_feature",
         incident=False,
     )
 
@@ -211,7 +211,7 @@ def test_double_compute_doesn_not_duplicate_columns():
         fallback=np.nan,
         entity_id_col_name="entity_id",
         resolve_multiple_fn=mean,
-        feature_name="test_feature",
+        feature_base_name="test_feature",
     )
 
     ts_flattener = TimeseriesFlattener(
@@ -241,7 +241,7 @@ def test_group_spec_feature_name(
     # Create sample specs
     outcome_spec = OutcomeSpec(
         base_values_df=synth_outcome,
-        feature_name="outcome",
+        feature_base_name="outcome",
         lookahead_days=1,
         resolve_multiple_fn=mean,
         fallback=0,

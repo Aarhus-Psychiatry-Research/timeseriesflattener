@@ -64,7 +64,7 @@ if __name__ == "__main__":
         fallback=np.nan,
         entity_id_col_name="id",
         resolve_multiple_fn=mean,
-        feature_name="test_feature",
+        feature_base_name="test_feature",
     )
     outcome_spec = OutcomeSpec(
         base_values_df=outcome_df,
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         fallback=0,
         entity_id_col_name="id",
         resolve_multiple_fn=maximum,
-        feature_name="test_outcome",
+        feature_base_name="test_outcome",
         incident=False,
     )
 

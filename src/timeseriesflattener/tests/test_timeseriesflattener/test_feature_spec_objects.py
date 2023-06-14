@@ -4,18 +4,13 @@
 from typing import List
 
 import numpy as np
-import pandas as pd
 import pytest
 
 from timeseriesflattener.aggregation_functions import maximum
 from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
-from timeseriesflattener.feature_specs.base_single_specs import (
-    check_col_names_exist_in_df,
-)
 from timeseriesflattener.feature_specs.group_specs import (
     OutcomeGroupSpec,
     PredictorGroupSpec,
-    TextPredictorGroupSpec,
 )
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
@@ -27,14 +22,6 @@ from timeseriesflattener.feature_specs.single_specs import (
 from timeseriesflattener.feature_specs.utils.generate_docstring_from_attributes import (
     generate_docstring_from_attributes,
 )
-from timeseriesflattener.misc_utils import split_df_and_register_to_dict
-from timeseriesflattener.testing.load_synth_data import (
-    load_synth_predictor_float,
-    load_synth_text,
-    synth_predictor_binary,
-)
-from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
-from timeseriesflattener.text_embedding_functions import sklearn_embedding
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 

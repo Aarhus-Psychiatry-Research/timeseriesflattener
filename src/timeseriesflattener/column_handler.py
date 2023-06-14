@@ -73,7 +73,7 @@ class ColumnHandler:
         feature_names = df["value"].columns
 
         col_names = [
-            output_spec.get_output_col_name(additional_feature_name=feature_name)
+            output_spec.get_output_col_name(additional_feature_base_name=feature_name)
             for feature_name in feature_names
         ]
 

@@ -12,25 +12,32 @@ from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
     create_flattened_df,
 )
 
+from timeseriesflattener.aggregation_functions import mean
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
+from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.group_specs import (
     PredictorGroupSpec,
 )
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
+    load_synth_predictor_float,
+    synth_predictor_binary,
 )
 
 base_float_predictor_combinations = PredictorGroupSpec(
-    named_dataframes=[empty_named_df],
+    named_dataframes=[
+        NamedDataframe(df=load_synth_predictor_float(), name="synth_predictor_float")
+    ],
     lookbehind_days=[365, 730],
-    aggregation_fns=["mean"],
+    aggregation_fns=[mean],
     fallback=[np.NaN],
-    allowed_nan_value_prop=[0.0],
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
-    values_loader=["synth_predictor_binary"],
+    named_dataframes=[
+        NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary")
+    ],
     lookbehind_days=[365, 730],
     aggregation_fns=["max"],
     fallback=[np.NaN],

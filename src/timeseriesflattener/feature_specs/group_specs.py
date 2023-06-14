@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Sequence, Union
 
 from pydantic import Field
+from timeseriesflattener.aggregation_functions import concatenate
 from timeseriesflattener.feature_specs.base_group_spec import (
     VALUES_PAIRS_DEF,
     GroupSpec,

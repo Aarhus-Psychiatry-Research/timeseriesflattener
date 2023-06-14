@@ -9,7 +9,6 @@ from pandas import DataFrame
 from pandas.testing import assert_series_equal
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_specs.single_specs import AnySpec
-from timeseriesflattener.misc_utils import data_loaders
 from timeseriesflattener.testing.load_synth_data import (
     synth_predictor_binary,
 )

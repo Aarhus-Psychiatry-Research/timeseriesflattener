@@ -14,7 +14,6 @@ from timeseriesflattener.aggregation_functions import (
     mean,
     mean_number_of_characters,
     minimum,
-    summed,
     type_token_ratio,
     variance,
 )

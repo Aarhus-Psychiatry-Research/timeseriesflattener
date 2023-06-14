@@ -1,8 +1,8 @@
 import numpy as np
+from timeseriesflattener.aggregation_functions import mean
 from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.group_specs import PredictorGroupSpec
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
-from timeseriesflattener.aggregation_functions import mean
 from timeseriesflattener.testing.utils_for_testing import str_to_df
 
 

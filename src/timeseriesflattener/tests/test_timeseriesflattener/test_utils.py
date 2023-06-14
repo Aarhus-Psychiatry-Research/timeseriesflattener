@@ -22,7 +22,7 @@ def test_resolve_from_df_dict(long_df_with_multiple_values: pd.DataFrame):
 
     spec = AnySpec(
         values_name="value_name_1",
-        feature_name="test",
+        feature_base_name="test",
         prefix="test",
     )
 
