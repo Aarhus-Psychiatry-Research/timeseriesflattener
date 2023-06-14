@@ -6,7 +6,6 @@ import pandas as pd
 from pydantic import Field
 from timeseriesflattener.feature_specs.single_specs import (
     AGGREGATION_FN_DEFINITION,
-    FALLBACK_DEFINITION,
 )
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
@@ -27,7 +26,7 @@ class GroupSpec(BaseModel, ABC):
     named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION
     fallback: Sequence[Union[int, float, str]]
-    
+
     @abstractmethod
     def create_combinations(self):
         ...

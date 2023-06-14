@@ -75,9 +75,9 @@ class OutcomeSpec(BaseModel):
 
     base_values_df: pd.DataFrame
     feature_base_name: str
-    lookahead_days: Union[int, float]
+    lookahead_days: float
     aggregation_fn: Callable
-    fallback: Union[int, float, str]
+    fallback: Union[float, str]
     incident: bool
     prefix: str = "outc"
 
@@ -90,7 +90,10 @@ class OutcomeSpec(BaseModel):
 
     def get_output_col_name(self) -> str:
         """Get the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookahead_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        if self.lookahead_days.is_integer():
+            lookahead_days = int(self.lookahead_days)
+
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookahead_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
         if self.is_dichotomous:
             col_str += "_dichotomous"
@@ -123,12 +126,15 @@ class PredictorSpec(BaseModel):
     feature_base_name: str
     aggregation_fn: Callable
     fallback: Union[int, float, str]
-    lookbehind_days: Union[int, float]
+    lookbehind_days: float
     prefix: str = "pred"
 
     def get_output_col_name(self) -> str:
         """Generate the column name for the output column."""
-        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        if self.lookbehind_days.is_integer():
+            lookbehind_days = int(self.lookbehind_days)
+
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
         return col_str
 
@@ -160,7 +166,7 @@ class TextPredictorSpec(BaseModel):
     fallback: Union[int, float, str]
     embedding_fn: Callable
     embedding_fn_kwargs: Optional[dict] = None
-    lookbehind_days: Union[int, float]
+    lookbehind_days: float
     prefix: str = "pred"
 
     aggregation_fn: Callable = concatenate
@@ -177,7 +183,10 @@ class TextPredictorSpec(BaseModel):
         if additional_feature_name is not None:
             feature_name += f"-{additional_feature_name}"
 
-        col_str = f"{self.prefix}_{feature_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
+        if self.lookbehind_days.is_integer():
+            lookbehind_days = int(self.lookbehind_days)
+
+        col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
 
         return col_str
 
