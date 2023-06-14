@@ -7,7 +7,6 @@ from pydantic import Field
 from timeseriesflattener.feature_specs.single_specs import (
     AGGREGATION_FN_DEFINITION,
     FALLBACK_DEFINITION,
-    PRED_PREFIX_DEF,
 )
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
