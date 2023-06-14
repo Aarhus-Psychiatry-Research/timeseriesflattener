@@ -23,12 +23,6 @@ VALUES_PAIRS_DEF = Field(
 
 
 class GroupSpec(BaseModel, ABC):
-    class Doc:
-        short_description = """Minimum specification for a group of features,
-        whether they're looking ahead or behind.
-
-        Used to generate combinations of features."""
-
     prefix: str = "pred"
     named_dataframes: Sequence[NamedDataframe] = VALUES_PAIRS_DEF
     aggregation_fns: Sequence[Callable] = AGGREGATION_FN_DEFINITION

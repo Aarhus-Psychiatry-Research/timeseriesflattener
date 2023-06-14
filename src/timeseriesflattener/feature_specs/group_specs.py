@@ -14,6 +14,7 @@ from timeseriesflattener.feature_specs.single_specs import (
     PredictorSpec,
     TextPredictorSpec,
 )
+from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
 def create_feature_combinations_from_dict(
@@ -56,10 +57,7 @@ def create_specs_from_group(
     return [output_class(**d) for d in permuted_dicts]  # type: ignore
 
 
-class PredictorGroupSpec(GroupSpec):
-    class Doc:
-        short_description = """Specification for a group of predictors."""
-
+class PredictorGroupSpec(BaseModel):
     # Shared attributes from GroupSpec
     prefix: str = "pred"
     lookbehind_days: List[float]
@@ -86,10 +84,7 @@ class PredictorGroupSpec(GroupSpec):
         ]
 
 
-class OutcomeGroupSpec(GroupSpec):
-    class Doc:
-        short_description = """Specification for a group of outcomes."""
-
+class OutcomeGroupSpec(BaseModel):
     # Shared attributes from GroupSpec
     prefix: str = "outc"
     named_dataframes: Sequence[NamedDataframe]
@@ -124,16 +119,12 @@ class OutcomeGroupSpec(GroupSpec):
         ]
 
 
-@dataclass(frozen=True)
-class TextPredictorGroupSpec:
+class TextPredictorGroupSpec(BaseModel):
     # Shared attributes from GroupSpec
     lookbehind_days: List[float]
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[Callable]
     fallback: Sequence[Union[Callable, str, float]]
-
-    class Doc:
-        short_description = """Specification for a group of text predictors."""
 
     embedding_fn_name: str
 
@@ -177,3 +168,6 @@ class TextPredictorGroupSpec:
             )
             for d in combination_dict
         ]
+
+
+GroupSpec = Union[PredictorGroupSpec, OutcomeGroupSpec, TextPredictorGroupSpec]

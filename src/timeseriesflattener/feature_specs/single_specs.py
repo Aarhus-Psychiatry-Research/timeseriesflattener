@@ -4,6 +4,7 @@ from typing import Callable, Optional, Union
 import pandas as pd
 from pydantic import Field
 from timeseriesflattener.aggregation_functions import concatenate
+from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 BASE_VALUES_DEF = Field(
     default=None,
@@ -37,21 +38,42 @@ LOOKBEHIND_DAYS_DEF = Field(
 )
 
 
-@dataclass(frozen=True)
-class StaticSpec:
+class StaticSpec(BaseModel):
+    """Specification for a static feature.
+
+    Args:
+        base_values_df (pd.DataFrame): Dataframe with the values. Should contain columns named "entity_id", "value" and "timestamp".
+        feature_base_name (str): The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_baase_name>_<metadata>.
+        prefix (str, optional): The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>_<metadata>. Defaults to "pred".
+    """
+
     base_values_df: pd.DataFrame
     feature_base_name: str
     prefix: str = "pred"
-
-    class Doc:
-        short_description = """Specification for a static feature."""
 
     def get_output_col_name(self) -> str:
         return f"{self.prefix}_{self.feature_base_name}"
 
 
-@dataclass(frozen=True)
-class OutcomeSpec:
+class OutcomeSpec(BaseModel):
+    """Specification for a static feature.
+
+    Args:
+        base_values_df (pd.DataFrame): Dataframe with the values. Should contain columns named "entity_id", "value" and "timestamp".
+        feature_base_name (str): The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_baase_name>_<metadata>.
+        lookahead_days (float): How far ahead from the prediction time to look for outcome values.
+        aggregation_fn (Callable): How to aggregate multiple values within lookahead days. Should take a grouped dataframe as input and return a single value.
+        fallback (Union[str, float]): Value to return if no values is found within window.
+        incident (bool): Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.
+            Incident outcomes can be handled in a vectorised way during resolution, which is faster than non-incident outcomes.
+            Requires that each entity only occurs once in the base_values_df.
+        prefix (str, optional): The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>_<metadata>. Defaults to "pred".
+    """
+
     base_values_df: pd.DataFrame
     feature_base_name: str
     lookahead_days: float
@@ -59,11 +81,6 @@ class OutcomeSpec:
     fallback: Union[str, float]
     incident: bool
     prefix: str = "outc"
-
-    class Doc:
-        short_description = (
-            """Specification for a single outcome, where the df has been resolved."""
-        )
 
     Field(
         description="""Whether the outcome is incident or not.
@@ -86,9 +103,22 @@ class OutcomeSpec:
         return len(self.base_values_df["value"].unique()) <= 2
 
 
-@dataclass(frozen=True)
-class PredictorSpec:
-    """Specification for a predictor."""
+class PredictorSpec(BaseModel):
+    """Specification for a static feature.
+
+    Args:
+        base_values_df (pd.DataFrame): Dataframe with the values. Should contain columns named "entity_id", "value" and "timestamp".
+        feature_base_name (str): The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_baase_name>_<metadata>.
+        lookahead_days (float): How far ahead from the prediction time to look for outcome values.
+        aggregation_fn (Callable): How to aggregate multiple values within lookahead days. Should take a grouped dataframe as input and return a single value.
+        fallback (Union[str, float]): Value to return if no values is found within window.
+        incident (bool): Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.
+            Incident outcomes can be handled in a vectorised way during resolution, which is faster than non-incident outcomes.
+            Requires that each entity only occurs once in the base_values_df.
+        prefix (str, optional): The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>_<metadata>. Defaults to "pred".
+    """
 
     base_values_df: pd.DataFrame
     feature_base_name: str
@@ -97,9 +127,6 @@ class PredictorSpec:
     lookbehind_days: float
     prefix: str = "pred"
 
-    class Doc:
-        short_description = """Specification for a single predictor."""
-
     def get_output_col_name(self) -> str:
         """Generate the column name for the output column."""
         col_str = f"{self.prefix}_{self.feature_base_name}_within_{str(self.lookbehind_days)}_days_{self.aggregation_fn.__name__}_fallback_{self.fallback}"
@@ -107,8 +134,7 @@ class PredictorSpec:
         return col_str
 
 
-@dataclass(frozen=True)
-class TextPredictorSpec:
+class TextPredictorSpec(BaseModel):
     """Specification for a text predictor, where the df has been resolved.
 
     Args:
@@ -139,11 +165,6 @@ class TextPredictorSpec:
         description="""How far behind to look for values""",
     )
     prefix: str = "pred"
-
-    class Doc:
-        short_description = (
-            """Specification for a text predictor, where the df has been resolved."""
-        )
 
     aggregation_fn: Callable = concatenate
 
