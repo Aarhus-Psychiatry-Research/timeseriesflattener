@@ -3,6 +3,7 @@ from typing import Callable, Optional, Union
 
 import pandas as pd
 from pydantic import Field
+from timeseriesflattener.aggregation_functions import concatenate
 
 BASE_VALUES_DEF = Field(
     default=None,
@@ -88,7 +89,7 @@ class PredictorSpec:
     feature_base_name: str
     aggregation_fn: Callable
     fallback: Union[str, float]
-    lookbehind_days: float = LOOKBEHIND_DAYS_DEF
+    lookbehind_days: float
     prefix: str = "pred"
 
     class Doc:
@@ -108,11 +109,30 @@ class PredictorSpec:
 
 @dataclass(frozen=True)
 class TextPredictorSpec:
-    """Specification for a text predictor, where the df has been resolved."""
+    """Specification for a text predictor, where the df has been resolved.
+
+    Args:
+        base_values_df (pd.DataFrame): Dataframe with the values.
+        feature_base_name (str): The name of the feature. Used for column name generation, e.g.
+            <prefix>_<feature_baase_name>_<metadata>.
+        aggregation_fn (Callable): How to aggregate multiple values within a window. Can be a string, a function, or a list of functions.
+        fallback (Union[str, float]): Value to return if no values is found within window.
+        lookbehind_days (float, optional): How far behind to look for values. Defaults to LOOKBEHIND_DAYS_DEF.
+        prefix (str, optional): The prefix used for column name generation, e.g.
+            <prefix>_<feature_name>_<metadata>. Defaults to "pred".
+        embedding_fn (Callable, optional): A function used for embedding the text. Should take a
+            pandas series of strings and return a pandas dataframe of embeddings.
+            Defaults to None.
+        embedding_fn_kwargs (Optional[dict], optional): Optional kwargs passed onto the embedding_fn.
+            Defaults to None.
+        resolve_multiple_fn (Union[Callable, str], optional): A function used for resolving multiple
+            values within a window. Defaults to concatenate.
+
+    """
 
     base_values_df: pd.DataFrame
     feature_base_name: str
-    aggregation_fn: Callable
+    aggregation_fn: Callable = concatenate
     fallback: Union[str, float]
     lookbehind_days: float = Field(
         description="""How far behind to look for values""",
@@ -124,22 +144,8 @@ class TextPredictorSpec:
             """Specification for a text predictor, where the df has been resolved."""
         )
 
-    embedding_fn: Callable = Field(
-        description="""A function used for embedding the text. Should take a
-        pandas series of strings and return a pandas dataframe of embeddings.
-        Defaults to: None.""",
-    )
-    embedding_fn_kwargs: Optional[dict] = Field(
-        default=None,
-        description="""Optional kwargs passed onto the embedding_fn.""",
-    )
-    resolve_multiple_fn: Union[Callable, str] = Field(
-        default=concatenate,
-        description="""A function used for resolving multiple values within the
-        interval_days, i.e. how to combine texts within the lookbehind window.
-        Defaults to: 'concatenate'. Other possible options are 'latest' and
-        'earliest'.""",
-    )
+    embedding_fn: Callable
+    embedding_fn_kwargs: Optional[dict]
 
     def get_output_col_name(self, additional_feature_name: str = "") -> str:
         """Generate the column name for the output column.

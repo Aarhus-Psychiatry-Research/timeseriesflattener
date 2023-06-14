@@ -27,7 +27,7 @@ from timeseriesflattener.testing.load_synth_data import (
 
 base_float_predictor_combinations = PredictorGroupSpec(
     named_dataframes=[
-        NamedDataframe(df=load_synth_predictor_float(), name="synth_predictor_float")
+        NamedDataframe(df=load_synth_predictor_float(), name="synth_predictor_float"),
     ],
     lookbehind_days=[365, 730],
     aggregation_fns=[mean],
@@ -36,7 +36,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 
 base_binary_predictor_combinations = PredictorGroupSpec(
     named_dataframes=[
-        NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary")
+        NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary"),
     ],
     lookbehind_days=[365, 730],
     aggregation_fns=["max"],
