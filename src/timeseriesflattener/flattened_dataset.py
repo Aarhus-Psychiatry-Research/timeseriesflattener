@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Sequence, Union
 
 import coloredlogs
 import numpy as np
@@ -818,7 +818,7 @@ class TimeseriesFlattener:
 
     def add_spec(
         self,
-        spec: Union[List[AnySpec], AnySpec],
+        spec: Union[Sequence[AnySpec], AnySpec],
     ):
         """Add a specification to the flattened dataset.
 
@@ -829,7 +829,7 @@ class TimeseriesFlattener:
         Most of the complexity lies in the OutcomeSpec and PredictorSpec objects.
         For further documentation, see those objects and the tutorial.
         """
-        if isinstance(spec, AnySpec):
+        if not isinstance(spec, Sequence):
             specs_to_process: List[AnySpec] = [spec]
         else:
             specs_to_process = spec

@@ -234,7 +234,7 @@ def test_static_predictor():
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    dataset.add_spec(
+    dataset.add_specs(
         StaticSpec(  # type: ignore
             base_values_df=str_to_df(static_predictor),
             feature_base_name=feature_name,
@@ -353,7 +353,7 @@ def test_incident_outcome_removing_prediction_times():
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flattened_dataset.add_spec(
+    flattened_dataset.add_specs(
         spec=OutcomeSpec(
             base_values_df=event_times_df,
             lookahead_days=2,
@@ -427,7 +427,7 @@ def test_add_multiple_static_predictors():
         feature_base_name="value",
     )
 
-    flattened_dataset.add_spec(
+    flattened_dataset.add_specs(
         spec=[
             output_spec,
             StaticSpec(  # type: ignore
@@ -495,7 +495,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flattened_dataset.add_spec(
+    flattened_dataset.add_specs(
         spec=[
             PredictorSpec(
                 base_values_df=predictors_df,
@@ -555,7 +555,7 @@ def test_add_temporal_incident_binary_outcome():
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    flattened_dataset.add_spec(
+    flattened_dataset.add_specs(
         spec=OutcomeSpec(
             base_values_df=event_times_df,
             lookahead_days=2,
