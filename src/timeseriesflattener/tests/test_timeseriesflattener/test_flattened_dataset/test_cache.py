@@ -10,8 +10,8 @@ import pytest
 
 from timeseriesflattener.aggregation_functions import maximum, mean
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
 from timeseriesflattener.feature_specs.group_specs import (
+    NamedDataframe,
     PredictorGroupSpec,
 )
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec

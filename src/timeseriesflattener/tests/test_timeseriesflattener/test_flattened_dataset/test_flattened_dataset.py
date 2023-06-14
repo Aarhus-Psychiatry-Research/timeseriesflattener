@@ -4,8 +4,10 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener.aggregation_functions import concatenate, latest, mean
-from timeseriesflattener.feature_specs.base_group_spec import NamedDataframe
-from timeseriesflattener.feature_specs.group_specs import TextPredictorGroupSpec
+from timeseriesflattener.feature_specs.group_specs import (
+    NamedDataframe,
+    TextPredictorGroupSpec,
+)
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
