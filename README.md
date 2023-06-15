@@ -55,24 +55,22 @@ if __name__ == "__main__":
     outcome_df = pd.DataFrame({"id": [1], "date": ["2020-03-01"], "value": [1]})
 
     # Specify how to aggregate the predictors and define the outcome
-    from timeseriesflattener.feature_spec_objects import OutcomeSpec, PredictorSpec
-    from timeseriesflattener.resolve_multiple_functions import maximum, mean
+    from timeseriesflattener.feature_specs.single_specs import OutcomeSpec, PredictorSpec
+    from timeseriesflattener.aggregation_fns import maximum, mean
 
     predictor_spec = PredictorSpec(
-        values_df=predictor_df,
+        timeseries_df=predictor_df,
         lookbehind_days=30,
         fallback=np.nan,
-        entity_id_col_name="id",
-        resolve_multiple_fn=mean,
-        feature_name="test_feature",
+        aggregation_fn=mean,
+        feature_base_name="test_feature",
     )
     outcome_spec = OutcomeSpec(
-        values_df=outcome_df,
+        timeseries_df=outcome_df,
         lookahead_days=31,
         fallback=0,
-        entity_id_col_name="id",
-        resolve_multiple_fn=maximum,
-        feature_name="test_outcome",
+        aggregation_fn=maximum,
+        feature_base_name="test_outcome",
         incident=False,
     )
 

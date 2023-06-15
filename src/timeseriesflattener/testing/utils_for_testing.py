@@ -8,11 +8,10 @@ import pandas as pd
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_spec_objects import _AnySpec
+from timeseriesflattener.feature_specs.single_specs import AnySpec
 from timeseriesflattener.testing.load_synth_data import (
     synth_predictor_binary,
 )
-from timeseriesflattener.utils import data_loaders
 
 
 def convert_cols_with_matching_colnames_to_datetime(
@@ -73,10 +72,10 @@ def str_to_df(
 
 def _get_value_cols_based_on_spec(
     df: pd.DataFrame,
-    spec: _AnySpec,
+    spec: AnySpec,
 ) -> Union[str, List[str]]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
-    feature_name = spec.feature_name
+    feature_name = spec.feature_base_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
     # to avoid indexing issues
     if len(value_cols) == 1:
@@ -87,7 +86,7 @@ def _get_value_cols_based_on_spec(
 
 def assert_flattened_data_as_expected(
     prediction_times_df: Union[pd.DataFrame, str],
-    output_spec: _AnySpec,
+    output_spec: AnySpec,
     expected_df: Optional[pd.DataFrame] = None,
     expected_values: Optional[Sequence[Any]] = None,
 ):
@@ -113,9 +112,9 @@ def assert_flattened_data_as_expected(
                 check_dtype=False,
             )
     elif expected_values:
-        output = flattened_ds.get_df()
-        value_cols = _get_value_cols_based_on_spec(output, output_spec)
-        output = flattened_ds.get_df()[value_cols].values.tolist()
+        output_df = flattened_ds.get_df()
+        value_cols = _get_value_cols_based_on_spec(output_df, output_spec)
+        output = output_df[value_cols].values.tolist()
         expected = list(expected_values)
 
         for i, expected_val in enumerate(expected):
@@ -145,7 +144,6 @@ def load_long_df_with_multiple_values() -> DataFrame:
     return long_df
 
 
-@data_loaders.register("load_event_times")
 def load_event_times() -> DataFrame:
     """Load event times."""
     event_times_str = """entity_id,timestamp,value,

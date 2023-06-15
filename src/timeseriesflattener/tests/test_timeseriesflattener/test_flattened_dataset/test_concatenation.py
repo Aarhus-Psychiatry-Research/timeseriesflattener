@@ -7,6 +7,7 @@ from typing import Any, Callable, List
 import pandas as pd
 import pytest
 from pandas import DataFrame
+
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 
 

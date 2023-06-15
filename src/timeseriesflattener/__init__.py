@@ -1,9 +1,11 @@
 """Init timeseriesflattener."""
-from .feature_spec_objects import (
-    OutcomeGroupSpec,
+from .feature_specs.group_specs import PredictorGroupSpec
+from .feature_specs.single_specs import (
     OutcomeSpec,
-    PredictorGroupSpec,
     PredictorSpec,
     TextPredictorSpec,
+)
+from .feature_specs.group_specs import (
+    OutcomeGroupSpec,
 )
 from .flattened_dataset import TimeseriesFlattener

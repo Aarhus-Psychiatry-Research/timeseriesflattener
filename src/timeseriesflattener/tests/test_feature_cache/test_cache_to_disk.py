@@ -5,9 +5,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from timeseriesflattener.aggregation_fns import latest
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_spec_objects import PredictorSpec
-from timeseriesflattener.resolve_multiple_functions import latest
+from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 
 
 def test_write_and_check_feature(
@@ -35,12 +35,11 @@ def test_write_and_check_feature(
     )
 
     test_spec = PredictorSpec(
-        values_df=values_df,
+        feature_base_name="test_feature",
+        timeseries_df=values_df,
         lookbehind_days=5,
-        resolve_multiple_fn=latest,
-        key_for_resolve_multiple="latest",
+        aggregation_fn=latest,
         fallback=np.nan,
-        feature_name="test_feature",
     )
 
     generated_df = pd.DataFrame(
@@ -48,7 +47,7 @@ def test_write_and_check_feature(
             "entity_id": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
-            f"{test_spec.get_col_str()}": [1, 2, 3],
+            f"{test_spec.get_output_col_name()}": [1, 2, 3],
         },
     )
 
@@ -90,12 +89,11 @@ def test_read_feature(tmp_path: Path):
     )
 
     test_spec = PredictorSpec(
-        values_df=values_df,
-        interval_days=5,
-        resolve_multiple_fn=latest,
-        key_for_resolve_multiple="latest",
-        fallback=np.nan,
-        feature_name="test_feature",
+        timeseries_df=values_df,
+        lookbehind_days=5,
+        aggregation_fn=latest,
+        fallback=np.NaN,
+        feature_base_name="test_feature",
     )
 
     generated_df = pd.DataFrame(
@@ -107,7 +105,7 @@ def test_read_feature(tmp_path: Path):
             ],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
-            f"{test_spec.get_col_str()}": [1, 2, np.nan],
+            f"{test_spec.get_output_col_name()}": [1, 2, np.nan],
         },
     )
 

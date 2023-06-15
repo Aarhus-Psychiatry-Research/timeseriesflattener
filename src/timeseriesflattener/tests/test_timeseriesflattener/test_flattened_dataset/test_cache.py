@@ -7,33 +7,40 @@ from typing import List
 import numpy as np
 import pandas as pd
 import pytest
+
+from timeseriesflattener.aggregation_fns import maximum, mean
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_spec_objects import PredictorGroupSpec, PredictorSpec
+from timeseriesflattener.feature_specs.group_specs import (
+    NamedDataframe,
+    PredictorGroupSpec,
+)
+from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
+    load_synth_predictor_float,
+    synth_predictor_binary,
 )
-
-from tests.test_timeseriesflattener.test_flattened_dataset.utils import (
+from timeseriesflattener.tests.test_timeseriesflattener.test_flattened_dataset.utils import (
     check_dfs_have_same_contents_by_column,
     create_flattened_df,
 )
 
 base_float_predictor_combinations = PredictorGroupSpec(
-    values_loader=["synth_predictor_float"],
+    named_dataframes=[
+        NamedDataframe(df=load_synth_predictor_float(), name="synth_predictor_float"),
+    ],
     lookbehind_days=[365, 730],
-    resolve_multiple_fn=["mean"],
+    aggregation_fns=[mean],
     fallback=[np.NaN],
-    allowed_nan_value_prop=[0.0],
-    feature_name="test_feature",
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
-    values_loader=["synth_predictor_binary"],
+    named_dataframes=[
+        NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary"),
+    ],
     lookbehind_days=[365, 730],
-    resolve_multiple_fn=["max"],
+    aggregation_fns=[maximum],
     fallback=[np.NaN],
-    allowed_nan_value_prop=[0.0],
-    feature_name="test_feature",
 ).create_combinations()
 
 

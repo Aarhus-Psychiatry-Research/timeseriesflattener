@@ -4,9 +4,11 @@ import logging
 from typing import Optional
 
 import pandas as pd
-from timeseriesflattener.utils import PROJECT_ROOT, data_loaders
+from timeseriesflattener.misc_utils import PROJECT_ROOT
 
 log = logging.getLogger(__name__)
+
+TEST_DATA_PATH = PROJECT_ROOT / "src" / "timeseriesflattener" / "testing" / "test_data"
 
 
 def load_raw_test_csv(filename: str, n_rows: Optional[int] = None) -> pd.DataFrame:
@@ -17,7 +19,7 @@ def load_raw_test_csv(filename: str, n_rows: Optional[int] = None) -> pd.DataFra
         n_rows (int, optional): Number of rows to load. Defaults to None.
     """
     df = pd.read_csv(
-        PROJECT_ROOT / "tests" / "test_data" / "raw" / filename,
+        TEST_DATA_PATH / "raw" / filename,
         nrows=n_rows,
     )
 
@@ -28,7 +30,6 @@ def load_raw_test_csv(filename: str, n_rows: Optional[int] = None) -> pd.DataFra
     return df
 
 
-@data_loaders.register("synth_predictor_float")
 def load_synth_predictor_float(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -43,7 +44,6 @@ def load_synth_predictor_float(
     return load_raw_test_csv("synth_raw_float_1.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_sex")
 def load_synth_sex(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -58,7 +58,6 @@ def load_synth_sex(
     return load_raw_test_csv("synth_sex.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_predictor_binary")
 def synth_predictor_binary(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -73,7 +72,6 @@ def synth_predictor_binary(
     return load_raw_test_csv("synth_raw_binary_1.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_outcome")
 def load_synth_outcome(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -94,7 +92,6 @@ def load_synth_outcome(
     return df
 
 
-@data_loaders.register("synth_prediction_times")
 def load_synth_prediction_times(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -109,7 +106,6 @@ def load_synth_prediction_times(
     return load_raw_test_csv("synth_prediction_times.csv", n_rows=n_rows)
 
 
-@data_loaders.register("synth_text")
 def load_synth_text(
     n_rows: Optional[int] = None,
 ) -> pd.DataFrame:
@@ -121,4 +117,6 @@ def load_synth_text(
     Returns:
         pd.DataFrame
     """
-    return load_raw_test_csv("synth_text_data.csv", n_rows=n_rows)
+    df = load_raw_test_csv("synth_text_data.csv", n_rows=n_rows)
+    df["value"] = df["text"]
+    return df

@@ -4,8 +4,10 @@
 import numpy as np
 import pandas as pd
 import pytest
+
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_spec_objects import (
+from timeseriesflattener.aggregation_fns import concatenate, maximum, minimum
+from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
@@ -34,11 +36,11 @@ def test_predictor_after_prediction_time():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
         output_spec=PredictorSpec(
-            values_df=predictor_df,
+            timeseries_df=predictor_df,
             lookbehind_days=2,
-            resolve_multiple_fn="max",
+            aggregation_fn=maximum,
             fallback=np.NaN,
-            feature_name="value",
+            feature_base_name="value",
         ),
         expected_values=[np.NaN],
     )
@@ -55,11 +57,11 @@ def test_predictor_before_prediction():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
         output_spec=PredictorSpec(
-            values_df=str_to_df(predictor_df_str),
+            timeseries_df=str_to_df(predictor_df_str),
             lookbehind_days=2,
-            resolve_multiple_fn="max",
+            aggregation_fn=maximum,
             fallback=np.NaN,
-            feature_name="value",
+            feature_base_name="value",
         ),
         expected_values=[1],
     )
@@ -76,12 +78,12 @@ def test_text_predictor():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
         output_spec=TextPredictorSpec(
-            values_df=str_to_df(predictor_df_str),
+            timeseries_df=str_to_df(predictor_df_str),
             embedding_fn=bow_test_embedding,
             lookbehind_days=1,
-            resolve_multiple_fn="concatenate",
+            aggregation_fn=concatenate,
             fallback=np.NaN,
-            feature_name="text_value",
+            feature_base_name="text_value",
         ),
         expected_values=[[0] * 10],
     )
@@ -106,11 +108,11 @@ def test_multiple_citizens_predictor():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=PredictorSpec(
-            values_df=str_to_df(predictor_df_str),
-            interval_days=2,
+            timeseries_df=str_to_df(predictor_df_str),
+            lookbehind_days=2,
             fallback=np.NaN,
-            feature_name="value",
-            resolve_multiple_fn="max",
+            feature_base_name="value",
+            aggregation_fn=maximum,
         ),
         expected_values=[0, 1, 0, 2, np.NaN],
     )
@@ -128,12 +130,12 @@ def test_event_after_prediction_time():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
-            resolve_multiple_fn="max",
+            aggregation_fn=maximum,
             incident=True,
             fallback=np.NaN,
-            feature_name="value",
+            feature_base_name="value",
         ),
         expected_values=[1],
     )
@@ -150,12 +152,12 @@ def test_event_before_prediction():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
-            resolve_multiple_fn="max",
+            aggregation_fn=maximum,
             incident=False,
             fallback=np.NaN,
-            feature_name="value",
+            feature_base_name="value",
         ),
         expected_values=[np.NaN],
     )
@@ -178,12 +180,12 @@ def test_multiple_citizens_outcome():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
-            resolve_multiple_fn="max",
+            aggregation_fn=maximum,
             incident=False,
             fallback=np.NaN,
-            feature_name="value",
+            feature_base_name="value",
         ),
         expected_values=[1, np.NaN, 1, np.NaN],
     )
@@ -200,12 +202,12 @@ def test_citizen_without_outcome():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
-            resolve_multiple_fn="max",
+            aggregation_fn=maximum,
             incident=False,
             fallback=np.NaN,
-            feature_name="value",
+            feature_base_name="value",
         ),
         expected_values=[np.NaN],
     )
@@ -232,10 +234,9 @@ def test_static_predictor():
 
     dataset.add_spec(
         StaticSpec(  # type: ignore
-            values_df=str_to_df(static_predictor),
-            feature_name=feature_name,
+            timeseries_df=str_to_df(static_predictor),
+            feature_base_name=feature_name,
             prefix=prefix,
-            input_col_name_override=feature_name,
         ),
     )
 
@@ -332,7 +333,7 @@ def test_incident_outcome_removing_prediction_times():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_maximum_fallback_nan_dichotomous,
                         1,2021-12-31 00:00:00, 1.0
                         2,2021-12-31 00:00:00, 1.0
                         3,2023-12-31 00:00:00, 0.0
@@ -352,12 +353,12 @@ def test_incident_outcome_removing_prediction_times():
 
     flattened_dataset.add_spec(
         spec=OutcomeSpec(
-            values_df=event_times_df,
-            interval_days=2,
+            timeseries_df=event_times_df,
+            lookahead_days=2,
             incident=True,
             fallback=np.NaN,
-            feature_name="value",
-            resolve_multiple_fn="max",
+            feature_base_name="value",
+            aggregation_fn=maximum,
         ),
     )
 
@@ -385,7 +386,7 @@ def test_add_multiple_static_predictors():
                         2,2021-12-31 00:00:01, 1
                         """
 
-    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_max_fallback_0_dichotomous,pred_age_in_years,pred_male_overridden
+    expected_df_str = """entity_id,timestamp,outc_value_within_2_days_maximum_fallback_0_dichotomous,pred_age_in_years,pred_male
                         1,2021-12-31 00:00:00, 1.0,22.00,1
                         2,2021-12-31 00:00:00, 1.0,22.00,0
                         3,2023-12-31 00:00:00, 0.0,23.99,1
@@ -416,23 +417,21 @@ def test_add_multiple_static_predictors():
     )
 
     output_spec = OutcomeSpec(
-        values_df=event_times_df,
-        interval_days=2,
-        resolve_multiple_fn="max",
+        timeseries_df=event_times_df,
+        lookahead_days=2,
+        aggregation_fn=maximum,
         fallback=0,
         incident=True,
-        feature_name="value",
+        feature_base_name="value",
     )
 
     flattened_dataset.add_spec(
         spec=[
             output_spec,
             StaticSpec(  # type: ignore
-                values_df=male_df,
-                feature_name="male",
+                timeseries_df=male_df,
+                feature_base_name="male",
                 prefix="pred",
-                input_col_name_override="male",
-                output_col_name_override="pred_male_overridden",
             ),
         ],
     )
@@ -447,9 +446,9 @@ def test_add_multiple_static_predictors():
     for col in (
         "entity_id",
         "timestamp",
-        "outc_value_within_2_days_max_fallback_0_dichotomous",
+        "outc_value_within_2_days_maximum_fallback_0_dichotomous",
         "pred_age_in_years",
-        "pred_male_overridden",
+        "pred_male",
     ):
         pd.testing.assert_series_equal(
             outcome_df[col].reset_index(drop=True),
@@ -496,20 +495,19 @@ def test_add_temporal_predictors_then_temporal_outcome():
     flattened_dataset.add_spec(
         spec=[
             PredictorSpec(
-                values_df=predictors_df,
-                interval_days=365,
-                resolve_multiple_fn="min",
+                timeseries_df=predictors_df,
+                lookbehind_days=365,
+                aggregation_fn=minimum,
                 fallback=np.nan,
-                allowed_nan_value_prop=0,
-                feature_name="value",
+                feature_base_name="value",
             ),
             OutcomeSpec(
-                values_df=event_times_df,
-                interval_days=2,
-                resolve_multiple_fn="max",
+                timeseries_df=event_times_df,
+                lookahead_days=2,
+                aggregation_fn=maximum,
                 fallback=0,
                 incident=True,
-                feature_name="value",
+                feature_base_name="value",
             ),
         ],
     )
@@ -537,7 +535,7 @@ def test_add_temporal_incident_binary_outcome():
                         1,2021-11-06 00:00:01, 1
                         """
 
-    expected_df_str = """outc_value_within_2_days_max_fallback_nan_dichotomous,
+    expected_df_str = """outc_value_within_2_days_maximum_fallback_nan_dichotomous,
     1
     0"""
 
@@ -555,12 +553,12 @@ def test_add_temporal_incident_binary_outcome():
 
     flattened_dataset.add_spec(
         spec=OutcomeSpec(
-            values_df=event_times_df,
-            interval_days=2,
+            timeseries_df=event_times_df,
+            lookahead_days=2,
             incident=True,
             fallback=np.NaN,
-            feature_name="value",
-            resolve_multiple_fn="max",
+            feature_base_name="value",
+            aggregation_fn=maximum,
         ),
     )
 

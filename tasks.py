@@ -247,6 +247,7 @@ def test(
 
     if len(pytest_args) == 0:
         pytest_args = [
+            "src",
             "-n auto",
             "-rfE",
             "--failed-first",
@@ -310,11 +311,19 @@ def lint(c: Context, auto_fix: bool = False):
 
 
 @task
+def test_tutorials(c: Context):
+    c.run(
+        "find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs jupyter nbconvert --to notebook --execute",
+    )
+
+
+@task
 def pr(c: Context, auto_fix: bool = False):
     """Run all checks and update the PR."""
     add_and_commit(c)
     lint(c, auto_fix=auto_fix)
     test(c, python_versions="3.8,3.11")
+    test_tutorials(c)
     update_branch(c)
     update_pr(c)
 

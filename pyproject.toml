@@ -182,7 +182,7 @@ include-package-data = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{38,311}
+envlist = py39
 
 [testenv]
 description: run unit tests
@@ -194,7 +194,7 @@ commands =
 [testenv:type]
 description: run static type checking
 extras = test, text, dev
-basepython = py38
+basepython = py39
 use_develop = true
 allowlist_externals = ls
 commands =

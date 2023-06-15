@@ -4,11 +4,12 @@ import os
 from pathlib import Path
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_spec_objects import TemporalSpec
-from timeseriesflattener.utils import load_dataset_from_file, write_df_to_file
+from timeseriesflattener.feature_specs.single_specs import TemporalSpec
+from timeseriesflattener.misc_utils import load_dataset_from_file, write_df_to_file
 
 
 class DiskCache(FeatureCache):
@@ -87,9 +88,9 @@ class DiskCache(FeatureCache):
         Returns:
             str: File name
         """
-        n_rows = feature_spec.values_df.shape[0]  # type: ignore
+        n_rows = feature_spec.timeseries_df.shape[0]  # type: ignore
 
-        return f"{feature_spec.get_col_str()}_{n_rows}_rows_in_values_df"
+        return f"{feature_spec.get_output_col_name()}_{n_rows}_rows_in_values_df"
 
     def _get_file_pattern(
         self,
@@ -129,9 +130,13 @@ class DiskCache(FeatureCache):
             validate="m:1",
         )
 
+        fallback = np.nan if feature_spec.fallback == "nan" else feature_spec.fallback
+
         # Replace NaNs with fallback
-        df[feature_spec.get_col_str()] = df[feature_spec.get_col_str()].fillna(
-            feature_spec.fallback,  # type: ignore
+        df[feature_spec.get_output_col_name()] = df[
+            feature_spec.get_output_col_name()
+        ].fillna(
+            fallback,  # type: ignore
         )
 
         return df
@@ -145,7 +150,7 @@ class DiskCache(FeatureCache):
         file_name = self._get_file_name(feature_spec=feature_spec)
 
         # Drop rows containing fallback, since it's non-informative
-        df = df[df[feature_spec.get_col_str()] != feature_spec.fallback].dropna()  # type: ignore
+        df = df[df[feature_spec.get_output_col_name()] != feature_spec.fallback].dropna()  # type: ignore
 
         # Drop entity and timestamp columns if they exists
         for col in [self.entity_entity_id_col_name, self.timestamp_col_name]:

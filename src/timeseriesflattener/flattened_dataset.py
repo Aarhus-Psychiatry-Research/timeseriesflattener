@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Sequence, Union
 
 import coloredlogs
 import numpy as np
@@ -19,16 +19,16 @@ from pydantic import BaseModel as PydanticBaseModel
 
 from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
-from timeseriesflattener.feature_spec_objects import (
+from timeseriesflattener.feature_specs.single_specs import (
+    AnySpec,
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
     TemporalSpec,
     TextPredictorSpec,
-    _AnySpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
-from timeseriesflattener.utils import print_df_dimensions_diff
+from timeseriesflattener.misc_utils import print_df_dimensions_diff
 
 log = logging.getLogger(__name__)
 
@@ -37,8 +37,11 @@ class SpecCollection(PydanticBaseModel):
     """A collection of specs."""
 
     outcome_specs: List[OutcomeSpec] = []
-    predictor_specs: List[PredictorSpec] = []
-    static_specs: List[_AnySpec] = []
+    predictor_specs: List[Union[PredictorSpec, TextPredictorSpec]] = []
+    static_specs: List[AnySpec] = []
+
+    class Config:
+        arbitrary_types_allowed = True
 
     def __len__(self) -> int:
         """Return number of specs in collection."""
@@ -212,18 +215,18 @@ class TimeseriesFlattener:
         )
 
     @staticmethod
-    def _resolve_multiple_values_within_interval_days(
-        resolve_multiple: Callable,
+    def _aggregate_values_within_interval_days(
+        aggregation: Callable,
         df: DataFrame,
         pred_time_uuid_colname: str,
         val_timestamp_col_name: str,
     ) -> DataFrame:
-        """Apply the resolve_multiple function to prediction_times where there
+        """Apply the aggregation function to prediction_times where there
 
         are multiple values within the interval_days lookahead.
 
         Args:
-            resolve_multiple (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
+            aggregation (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
             df (DataFrame): Source dataframe with all prediction time x val combinations.
             pred_time_uuid_colname (str): Name of uuid column in df.
             val_timestamp_col_name (str): Name of timestamp column in df.
@@ -231,7 +234,7 @@ class TimeseriesFlattener:
         Returns:
             DataFrame: DataFrame with one row pr. prediction time.
         """
-        # Convert timestamp val to numeric that can be used for resolve_multiple functions
+        # Convert timestamp val to numeric that can be used for aggregation functions
         # Numeric value amounts to days passed since 1/1/1970
         try:
             df[val_timestamp_col_name] = (
@@ -240,15 +243,15 @@ class TimeseriesFlattener:
         except TypeError:
             log.info("All values are NaT, returning empty dataframe")
 
-        # Sort by timestamp_pred in case resolve_multiple needs dates
+        # Sort by timestamp_pred in case aggregation needs dates
         grouped_df = df.sort_values(by=val_timestamp_col_name).groupby(
             pred_time_uuid_colname,
         )
 
-        if callable(resolve_multiple):
-            df = resolve_multiple(grouped_df).reset_index()
+        if callable(aggregation):
+            df = aggregation(grouped_df).reset_index()
         else:
-            raise ValueError("resolve_multiple must be or resolve to a Callable")
+            raise ValueError("aggregation must be or resolve to a Callable")
 
         return df
 
@@ -335,7 +338,7 @@ class TimeseriesFlattener:
         # Drop id for faster merge
         df = pd.merge(
             left=prediction_times_with_uuid_df,
-            right=output_spec.values_df,
+            right=output_spec.timeseries_df,
             how="left",
             on=entity_id_col_name,
             suffixes=("_pred", "_val"),
@@ -344,23 +347,21 @@ class TimeseriesFlattener:
 
         timestamp_val_col_name = f"{timestamp_col_name}_val"
         timestamp_pred_col_name = f"{timestamp_col_name}_pred"
-        df = TimeseriesFlattener.rename_input_col_to_value(
-            df=df,
-            output_spec=output_spec,
-        )
 
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
             direction = "ahead"
-        elif isinstance(output_spec, PredictorSpec):
+            interval_days = output_spec.lookahead_days
+        elif isinstance(output_spec, (PredictorSpec, TextPredictorSpec)):
             direction = "behind"
+            interval_days = output_spec.lookbehind_days
         else:
             raise ValueError(f"Unknown output_spec type {type(output_spec)}")
 
         df = TimeseriesFlattener._drop_records_outside_interval_days(
             df,
             direction=direction,
-            interval_days=output_spec.interval_days,  # type: ignore
+            interval_days=interval_days,
             timestamp_pred_colname=timestamp_pred_col_name,
             timestamp_value_colname=timestamp_val_col_name,
         )
@@ -370,8 +371,8 @@ class TimeseriesFlattener:
             inplace=True,  # noqa
         )
 
-        df = TimeseriesFlattener._resolve_multiple_values_within_interval_days(
-            resolve_multiple=output_spec.resolve_multiple_fn,  # type: ignore
+        df = TimeseriesFlattener._aggregate_values_within_interval_days(
+            aggregation=output_spec.aggregation_fn,  # type: ignore
             df=df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
             val_timestamp_col_name=timestamp_val_col_name,
@@ -386,7 +387,7 @@ class TimeseriesFlattener:
                 embedding_fn_kwargs=output_spec.embedding_fn_kwargs,
             )
 
-        # If resolve_multiple generates empty values,
+        # If aggregation generates empty values,
         # e.g. when there is only one prediction_time within look_ahead window for slope calculation,
         # replace with NaN
 
@@ -407,7 +408,7 @@ class TimeseriesFlattener:
         df = ColumnHandler.flatten_multiindex(df)
         if verbose:
             log.info(
-                f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_col_str()}",
+                f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_output_col_name()}",
             )
 
         # Add back prediction times that don't have a value, and fill them with fallback
@@ -420,17 +421,6 @@ class TimeseriesFlattener:
         )
 
         return df[[*value_col_str_name, pred_time_uuid_col_name]]
-
-    @staticmethod
-    def rename_input_col_to_value(
-        df: pd.DataFrame,
-        output_spec: TemporalSpec,
-    ) -> pd.DataFrame:
-        """Checks whether 'value' is a column in df, and if not, renames the
-        input column"""
-        if "value" not in df.columns:
-            df = df.rename(columns={output_spec.input_col_name_override: "value"})
-        return df
 
     def _get_temporal_feature(
         self,
@@ -447,11 +437,13 @@ class TimeseriesFlattener:
         if self.cache:
             if self.cache.feature_exists(feature_spec=feature_spec):
                 log.debug(
-                    f"Cache hit for {feature_spec.get_col_str()}, loading from cache",
+                    f"Cache hit for {feature_spec.get_output_col_name()}, loading from cache",
                 )
                 df = self.cache.read_feature(feature_spec=feature_spec)
                 return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
-            log.debug(f"Cache miss for {feature_spec.get_col_str()}, generating")
+            log.debug(
+                f"Cache miss for {feature_spec.get_output_col_name()}, generating",
+            )
         elif not self.cache:
             log.debug("No cache specified, not attempting load")
 
@@ -588,7 +580,7 @@ class TimeseriesFlattener:
 
     def _add_static_info(
         self,
-        static_spec: _AnySpec,
+        static_spec: AnySpec,
     ):
         """Add static info to each prediction time, e.g. age, sex etc.
 
@@ -599,32 +591,29 @@ class TimeseriesFlattener:
             ValueError: If input_col_name does not match a column in info_df.
         """
         # Try to infer value col name if not provided
-        if static_spec.input_col_name_override is None:
-            possible_value_cols = [
-                col
-                for col in static_spec.values_df.columns  # type: ignore
-                if col not in self.entity_id_col_name
-            ]
+        possible_value_cols = [
+            col
+            for col in static_spec.timeseries_df.columns  # type: ignore
+            if col not in self.entity_id_col_name
+        ]
 
-            if len(possible_value_cols) == 1:
-                value_col_name = possible_value_cols[0]
-            elif len(possible_value_cols) > 1:
-                raise ValueError(
-                    f"Only one value column can be added to static info, found multiple: {possible_value_cols}",
-                )
-            elif len(possible_value_cols) == 0:
-                raise ValueError(
-                    "No value column found in spec.df, please check.",
-                )
-        else:
-            value_col_name = static_spec.input_col_name_override
+        if len(possible_value_cols) == 1:
+            value_col_name = possible_value_cols[0]
+        elif len(possible_value_cols) > 1:
+            raise ValueError(
+                f"Only one value column can be added to static info, found multiple: {possible_value_cols}",
+            )
+        elif len(possible_value_cols) == 0:
+            raise ValueError(
+                "No value column found in spec.df, please check.",
+            )
 
-        output_col_name = static_spec.get_col_str()
+        output_col_name = static_spec.get_output_col_name()
 
         df = pd.DataFrame(
             {
-                self.entity_id_col_name: static_spec.values_df[self.entity_id_col_name],  # type: ignore
-                output_col_name: static_spec.values_df[value_col_name],  # type: ignore
+                self.entity_id_col_name: static_spec.timeseries_df[self.entity_id_col_name],  # type: ignore
+                output_col_name: static_spec.timeseries_df[value_col_name],  # type: ignore
             },
         )
 
@@ -659,7 +648,7 @@ class TimeseriesFlattener:
 
         df = pd.merge(
             self._df,
-            outcome_spec.values_df,
+            outcome_spec.timeseries_df,
             how="left",
             on=self.entity_id_col_name,
             suffixes=("_prediction", "_outcome"),
@@ -675,11 +664,13 @@ class TimeseriesFlattener:
         if outcome_spec.is_dichotomous():
             outcome_is_within_lookahead = (
                 df[prediction_timestamp_col_name]  # type: ignore
-                + timedelta(days=outcome_spec.interval_days)  # type: ignore
+                + timedelta(days=outcome_spec.lookahead_days)
                 > df[outcome_timestamp_col_name]
             )
 
-            df[outcome_spec.get_col_str()] = outcome_is_within_lookahead.astype(int)
+            df[outcome_spec.get_output_col_name()] = outcome_is_within_lookahead.astype(
+                int,
+            )
 
         df = df.rename(
             {prediction_timestamp_col_name: "timestamp"},
@@ -704,11 +695,11 @@ class TimeseriesFlattener:
         """
 
         if isinstance(spec, PredictorSpec):
-            min_val_date = spec.values_df[self.timestamp_col_name].min()  # type: ignore
+            min_val_date = spec.timeseries_df[self.timestamp_col_name].min()  # type: ignore
             return min_val_date + pd.Timedelta(days=spec.lookbehind_days)
 
         if isinstance(spec, OutcomeSpec):
-            max_val_date = spec.values_df[self.timestamp_col_name].max()  # type: ignore
+            max_val_date = spec.timeseries_df[self.timestamp_col_name].max()  # type: ignore
             return max_val_date - pd.Timedelta(days=spec.lookahead_days)
 
         raise ValueError(f"Spec type {type(spec)} not recognised.")
@@ -791,7 +782,7 @@ class TimeseriesFlattener:
         self.unprocessed_specs.outcome_specs = []
         self.unprocessed_specs.predictor_specs = []
 
-    def _check_that_spec_df_has_required_columns(self, spec: _AnySpec):
+    def _check_that_spec_df_has_required_columns(self, spec: AnySpec):
         """Check that df has required columns."""
         # Find all attributes in self that contain col_name
         required_columns = [self.entity_id_col_name]
@@ -800,36 +791,36 @@ class TimeseriesFlattener:
             required_columns += [self.timestamp_col_name]
 
         for col in required_columns:
-            if col not in spec.values_df.columns:  # type: ignore
-                raise ValueError(f"Missing required column: {col}")
+            if col not in spec.timeseries_df.columns:  # type: ignore
+                raise KeyError(f"Missing required column: {col}")
 
     def _check_that_spec_df_timestamp_col_is_correctly_formatted(
         self,
         spec: TemporalSpec,
     ):
         """Check that timestamp column is correctly formatted. Attempt to coerce if possible."""
-        timestamp_col_type = spec.values_df[self.timestamp_col_name].dtype  # type: ignore
+        timestamp_col_type = spec.timeseries_df[self.timestamp_col_name].dtype  # type: ignore
 
         if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
             # Convert column dtype to datetime64[ns] if it isn't already
             log.info(
-                f"{spec.feature_name}: Converting timestamp column to datetime64[ns]",
+                f"{spec.feature_base_name}: Converting timestamp column to datetime64[ns]",
             )
 
-            spec.values_df[self.timestamp_col_name] = pd.to_datetime(  # type: ignore
-                spec.values_df[self.timestamp_col_name],  # type: ignore
+            spec.timeseries_df[self.timestamp_col_name] = pd.to_datetime(  # type: ignore
+                spec.timeseries_df[self.timestamp_col_name],  # type: ignore
             )
 
-            min_timestamp = min(spec.values_df[self.timestamp_col_name])  # type: ignore
+            min_timestamp = min(spec.timeseries_df[self.timestamp_col_name])  # type: ignore
 
             if min_timestamp < pd.Timestamp("1971-01-01"):
                 log.warning(
-                    f"{spec.feature_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?",
+                    f"{spec.feature_base_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?",
                 )
 
     def add_spec(
         self,
-        spec: Union[List[_AnySpec], _AnySpec],
+        spec: Union[Sequence[AnySpec], AnySpec],
     ):
         """Add a specification to the flattened dataset.
 
@@ -840,13 +831,15 @@ class TimeseriesFlattener:
         Most of the complexity lies in the OutcomeSpec and PredictorSpec objects.
         For further documentation, see those objects and the tutorial.
         """
-        if isinstance(spec, _AnySpec):
-            specs_to_process: List[_AnySpec] = [spec]
-        else:
-            specs_to_process = spec
+        specs_to_process = [spec] if not isinstance(spec, Sequence) else spec
 
         for spec_i in specs_to_process:
-            allowed_spec_types = (OutcomeSpec, PredictorSpec, StaticSpec)
+            allowed_spec_types = (
+                OutcomeSpec,
+                PredictorSpec,
+                StaticSpec,
+                TextPredictorSpec,
+            )
 
             if not isinstance(spec_i, allowed_spec_types):
                 raise ValueError(
@@ -855,14 +848,14 @@ class TimeseriesFlattener:
 
             self._check_that_spec_df_has_required_columns(spec=spec_i)
 
-            if isinstance(spec_i, TemporalSpec):
+            if isinstance(spec_i, (PredictorSpec, OutcomeSpec, TextPredictorSpec)):
                 self._check_that_spec_df_timestamp_col_is_correctly_formatted(
-                    spec=spec_i,
+                    spec=spec_i,  # type: ignore
                 )
 
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
-            elif isinstance(spec_i, PredictorSpec):
+            elif isinstance(spec_i, (PredictorSpec, TextPredictorSpec)):
                 self.unprocessed_specs.predictor_specs.append(spec_i)
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)
@@ -870,7 +863,7 @@ class TimeseriesFlattener:
     def add_age(
         self,
         date_of_birth_df: DataFrame,
-        date_of_birth_col_name: Optional[str] = "date_of_birth",
+        date_of_birth_col_name: str = "date_of_birth",
         output_prefix: str = "pred",
     ):
         """Add age at prediction time as predictor.
@@ -898,13 +891,12 @@ class TimeseriesFlattener:
 
         tmp_prefix = "tmp"
         self._add_static_info(
-            static_spec=_AnySpec(
-                values_df=date_of_birth_df,
-                input_col_name_override=date_of_birth_col_name,
+            static_spec=StaticSpec(
+                timeseries_df=date_of_birth_df,
                 prefix=tmp_prefix,
+                feature_base_name=date_of_birth_col_name,
                 # We typically don't want to use date of birth as a predictor,
                 # but might want to use transformations - e.g. "year of birth" or "age at prediction time".
-                feature_name=date_of_birth_col_name,
             ),
         )
 

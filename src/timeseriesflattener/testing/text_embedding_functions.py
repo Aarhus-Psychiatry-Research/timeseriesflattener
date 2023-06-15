@@ -7,12 +7,12 @@ import pandas as pd
 from pandas import DataFrame, Series
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import CountVectorizer
-from timeseriesflattener.utils import PROJECT_ROOT
+from timeseriesflattener.testing.load_synth_data import TEST_DATA_PATH
 
 
 def _load_bow_model() -> CountVectorizer:
     """Loads the bag-of-words model from a pickle file"""
-    filename = PROJECT_ROOT / "tests" / "test_data" / "models" / "synth_bow_model.pkl"
+    filename = TEST_DATA_PATH / "models" / "synth_bow_model.pkl"
 
     with Path(filename).open("rb") as f:
         return pkl.load(f)
@@ -20,7 +20,7 @@ def _load_bow_model() -> CountVectorizer:
 
 def _load_pca_model() -> PCA:
     """Loads the PCA model from a pickle file"""
-    filename = PROJECT_ROOT / "tests" / "test_data" / "models" / "synth_pca_model.pkl"
+    filename = TEST_DATA_PATH / "models" / "synth_pca_model.pkl"
 
     with Path(filename).open("rb") as f:
         return pkl.load(f)

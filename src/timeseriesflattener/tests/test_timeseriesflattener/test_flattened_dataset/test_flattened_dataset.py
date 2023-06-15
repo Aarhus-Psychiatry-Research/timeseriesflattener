@@ -2,15 +2,20 @@
 import numpy as np
 import pandas as pd
 import pytest
-from timeseriesflattener.feature_spec_objects import (
+
+from timeseriesflattener.aggregation_fns import concatenate, latest, mean
+from timeseriesflattener.feature_specs.group_specs import (
+    NamedDataframe,
+    TextPredictorGroupSpec,
+)
+from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
-    TextPredictorGroupSpec,
     TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
-from timeseriesflattener.resolve_multiple_functions import latest, mean
+from timeseriesflattener.testing.load_synth_data import load_synth_text
 from timeseriesflattener.testing.text_embedding_functions import (
     _load_bow_model,
 )
@@ -29,23 +34,23 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
 
     # Create sample specs
     outcome_spec = OutcomeSpec(
-        values_df=synth_outcome,
-        feature_name="outcome",
+        timeseries_df=synth_outcome,
+        feature_base_name="outcome",
         lookahead_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=0,
         incident=False,
     )
     predictor_spec = PredictorSpec(
-        values_df=synth_outcome,
-        feature_name="predictor",
+        timeseries_df=synth_outcome,
+        feature_base_name="predictor",
         lookbehind_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
-        values_df=synth_outcome,
-        feature_name="static",
+        timeseries_df=synth_outcome,
+        feature_base_name="static",
         prefix="pred",
     )
 
@@ -75,33 +80,34 @@ def test_compute_specs(
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
+    synth_text_data["value"] = synth_text_data["text"]
+
     # Create sample specs
     outcome_spec = OutcomeSpec(
-        values_df=synth_outcome,
-        feature_name="outcome",
+        timeseries_df=synth_outcome,
+        feature_base_name="outcome",
         lookahead_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=0,
         incident=False,
     )
     predictor_spec = PredictorSpec(
-        values_df=synth_outcome,
-        feature_name="predictor",
+        timeseries_df=synth_outcome,
+        feature_base_name="predictor",
         lookbehind_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
-        values_df=synth_outcome[["value", "entity_id"]],
-        feature_name="static",
+        timeseries_df=synth_outcome[["value", "entity_id"]],
+        feature_base_name="static",
         prefix="pred",
     )
     text_spec = TextPredictorSpec(  # type: ignore
-        values_df=synth_text_data,
-        feature_name="text",
+        timeseries_df=synth_text_data,
+        feature_base_name="text",
         lookbehind_days=750,
-        input_col_name_override="text",
-        resolve_multiple_fn="concatenate",
+        aggregation_fn=concatenate,
         fallback=np.nan,
         embedding_fn=sentence_transformers_embedding,
         embedding_fn_kwargs={
@@ -143,11 +149,11 @@ def test_drop_pred_time_if_insufficient_look_distance():
 
     # Create a sample set of specs
     predictor_spec = PredictorSpec(
-        values_df=pred_val_df,
+        timeseries_df=pred_val_df,
         lookbehind_days=1,
-        resolve_multiple_fn=latest,
+        aggregation_fn=latest,
         fallback=np.nan,
-        feature_name="test_feature",
+        feature_base_name="test_feature",
     )
 
     out_val_df = pd.DataFrame(
@@ -159,11 +165,11 @@ def test_drop_pred_time_if_insufficient_look_distance():
     )
 
     outcome_spec = OutcomeSpec(
-        values_df=out_val_df,
+        timeseries_df=out_val_df,
         lookahead_days=2,
-        resolve_multiple_fn=latest,
+        aggregation_fn=latest,
         fallback=np.nan,
-        feature_name="test_feature",
+        feature_base_name="test_feature",
         incident=False,
     )
 
@@ -204,12 +210,11 @@ def test_double_compute_doesn_not_duplicate_columns():
     )
 
     predictor_spec = PredictorSpec(
-        values_df=predictor_df,
+        timeseries_df=predictor_df,
         lookbehind_days=15,
         fallback=np.nan,
-        entity_id_col_name="entity_id",
-        resolve_multiple_fn=mean,
-        feature_name="test_feature",
+        aggregation_fn=mean,
+        feature_base_name="test_feature",
     )
 
     ts_flattener = TimeseriesFlattener(
@@ -238,10 +243,10 @@ def test_group_spec_feature_name(
 
     # Create sample specs
     outcome_spec = OutcomeSpec(
-        values_df=synth_outcome,
-        feature_name="outcome",
+        timeseries_df=synth_outcome,
+        feature_base_name="outcome",
         lookahead_days=1,
-        resolve_multiple_fn=mean,
+        aggregation_fn=mean,
         fallback=0,
         incident=False,
     )
@@ -249,15 +254,14 @@ def test_group_spec_feature_name(
     bow_model = _load_bow_model()
 
     predictor_spec = TextPredictorGroupSpec(
-        values_loader=("synth_text",),
+        named_dataframes=[NamedDataframe(df=load_synth_text(), name="synth_text")],
         prefix="test",
-        resolve_multiple_fn=["concatenate"],
+        aggregation_fns=[concatenate],
         fallback=[np.nan],
         lookbehind_days=[100],
-        feature_name="bow",
+        embedding_fn_name="bow",
         embedding_fn=[sklearn_embedding],
         embedding_fn_kwargs=[{"model": bow_model}],
-        input_col_name_override="text",
     ).create_combinations()
 
     dataset.add_spec(outcome_spec)
