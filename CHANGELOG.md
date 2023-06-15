@@ -2,6 +2,23 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2023-06-15)
+
+### Feature
+
+* Specs should be pydantic basemodels ([`04781f6`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/04781f6ace79d8abbddaa92ac57a4877be5f9398))
+
+### Fix
+
+* Incorrect type coercion in pydantic ([`e37eefb`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e37eefb830d77ce46db4e6e18b904556b19ee9df))
+* Types ([`3ed4b59`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3ed4b59f6b00e062ffeb203fedbdfaac52caf33f))
+* Remove unnecessary feature_name from group specs ([`f29d017`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f29d017938b5a54e336352c043aad14bd9ede61f))
+
+### Documentation
+
+* Update tutorials ([`175de3b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/175de3b359c411d2acdb71d63226e7d9fd1aad37))
+* Use PAT for docs ([`3500cdf`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3500cdfdd2878e36c883f49f6ffed63dc9381701))
+
 ## v0.27.0 (2023-05-19)
 ### Feature
 * Add feature_name arg to group specs and make non-optional for non group specs ([`34df7a3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/34df7a3561206d952cb17474f8c1efa097146e6f))
