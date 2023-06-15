@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # Specify how to aggregate the predictors and define the outcome
     from timeseriesflattener.feature_specs.single_specs import OutcomeSpec, PredictorSpec
-    from timeseriesflattener.aggregation_functions import maximum, mean
+    from timeseriesflattener.aggregation_fns import maximum, mean
 
     predictor_spec = PredictorSpec(
         timeseries_df=predictor_df,
