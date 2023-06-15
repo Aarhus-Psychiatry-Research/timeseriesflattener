@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from timeseriesflattener.aggregation_functions import (
+from timeseriesflattener.aggregation_fns import (
     boolean,
     change_per_day,
     concatenate,

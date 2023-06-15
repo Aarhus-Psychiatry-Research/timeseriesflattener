@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.aggregation_functions import concatenate, maximum, minimum
+from timeseriesflattener.aggregation_fns import concatenate, maximum, minimum
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,

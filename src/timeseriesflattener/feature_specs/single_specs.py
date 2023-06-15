@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
 import pandas as pd
-from timeseriesflattener.aggregation_functions import concatenate
+from timeseriesflattener.aggregation_fns import concatenate
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 

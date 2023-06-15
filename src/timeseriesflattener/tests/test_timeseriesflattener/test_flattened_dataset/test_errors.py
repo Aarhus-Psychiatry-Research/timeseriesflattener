@@ -2,7 +2,7 @@
 
 import pytest
 
-from timeseriesflattener.aggregation_functions import maximum
+from timeseriesflattener.aggregation_fns import maximum
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.utils_for_testing import (

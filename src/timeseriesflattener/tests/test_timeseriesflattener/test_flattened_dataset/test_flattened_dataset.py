@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from timeseriesflattener.aggregation_functions import concatenate, latest, mean
+from timeseriesflattener.aggregation_fns import concatenate, latest, mean
 from timeseriesflattener.feature_specs.group_specs import (
     NamedDataframe,
     TextPredictorGroupSpec,

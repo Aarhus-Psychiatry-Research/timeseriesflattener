@@ -4,7 +4,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Union
 
 import pandas as pd
 from pydantic import Field
-from timeseriesflattener.aggregation_functions import concatenate
+from timeseriesflattener.aggregation_fns import concatenate
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,

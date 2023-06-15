@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from timeseriesflattener.aggregation_functions import maximum, mean
+from timeseriesflattener.aggregation_fns import maximum, mean
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_specs.group_specs import (
     NamedDataframe,

@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from timeseriesflattener.aggregation_functions import latest
+from timeseriesflattener.aggregation_fns import latest
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 
