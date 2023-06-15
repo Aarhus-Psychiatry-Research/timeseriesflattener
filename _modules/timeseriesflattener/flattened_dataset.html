@@ -234,7 +234,7 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">coloredlogs</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -245,16 +245,16 @@
 
 <span class="kn">from</span> <span class="nn">timeseriesflattener.column_handler</span> <span class="kn">import</span> <span class="n">ColumnHandler</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_cache.abstract_feature_cache</span> <span class="kn">import</span> <span class="n">FeatureCache</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.feature_spec_objects</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.single_specs</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnySpec</span><span class="p">,</span>
     <span class="n">OutcomeSpec</span><span class="p">,</span>
     <span class="n">PredictorSpec</span><span class="p">,</span>
     <span class="n">StaticSpec</span><span class="p">,</span>
     <span class="n">TemporalSpec</span><span class="p">,</span>
     <span class="n">TextPredictorSpec</span><span class="p">,</span>
-    <span class="n">_AnySpec</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.flattened_ds_validator</span> <span class="kn">import</span> <span class="n">ValidateInitFlattenedDataset</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.utils</span> <span class="kn">import</span> <span class="n">print_df_dimensions_diff</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.misc_utils</span> <span class="kn">import</span> <span class="n">print_df_dimensions_diff</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -263,8 +263,11 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A collection of specs.&quot;&quot;&quot;</span>
 
     <span class="n">outcome_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OutcomeSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">predictor_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">static_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_AnySpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">predictor_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">static_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AnySpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of specs in collection.&quot;&quot;&quot;</span>
@@ -438,18 +441,18 @@
         <span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_resolve_multiple_values_within_interval_days</span><span class="p">(</span>
-        <span class="n">resolve_multiple</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">_aggregate_values_within_interval_days</span><span class="p">(</span>
+        <span class="n">aggregation</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">pred_time_uuid_colname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">val_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the resolve_multiple function to prediction_times where there</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the aggregation function to prediction_times where there</span>
 
 <span class="sd">        are multiple values within the interval_days lookahead.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            resolve_multiple (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).</span>
+<span class="sd">            aggregation (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).</span>
 <span class="sd">            df (DataFrame): Source dataframe with all prediction time x val combinations.</span>
 <span class="sd">            pred_time_uuid_colname (str): Name of uuid column in df.</span>
 <span class="sd">            val_timestamp_col_name (str): Name of timestamp column in df.</span>
@@ -457,7 +460,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            DataFrame: DataFrame with one row pr. prediction time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Convert timestamp val to numeric that can be used for resolve_multiple functions</span>
+        <span class="c1"># Convert timestamp val to numeric that can be used for aggregation functions</span>
         <span class="c1"># Numeric value amounts to days passed since 1/1/1970</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">df</span><span class="p">[</span><span class="n">val_timestamp_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
@@ -466,15 +469,15 @@
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All values are NaT, returning empty dataframe&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Sort by timestamp_pred in case resolve_multiple needs dates</span>
+        <span class="c1"># Sort by timestamp_pred in case aggregation needs dates</span>
         <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">val_timestamp_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
             <span class="n">pred_time_uuid_colname</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">resolve_multiple</span><span class="p">):</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">resolve_multiple</span><span class="p">(</span><span class="n">grouped_df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">aggregation</span><span class="p">):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">aggregation</span><span class="p">(</span><span class="n">grouped_df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;resolve_multiple must be or resolve to a Callable&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;aggregation must be or resolve to a Callable&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">df</span>
 
@@ -561,7 +564,7 @@
         <span class="c1"># Drop id for faster merge</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
             <span class="n">left</span><span class="o">=</span><span class="n">prediction_times_with_uuid_df</span><span class="p">,</span>
-            <span class="n">right</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">,</span>
+            <span class="n">right</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">,</span>
             <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
             <span class="n">on</span><span class="o">=</span><span class="n">entity_id_col_name</span><span class="p">,</span>
             <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;_pred&quot;</span><span class="p">,</span> <span class="s2">&quot;_val&quot;</span><span class="p">),</span>
@@ -570,23 +573,21 @@
 
         <span class="n">timestamp_val_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp_col_name</span><span class="si">}</span><span class="s2">_val&quot;</span>
         <span class="n">timestamp_pred_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp_col_name</span><span class="si">}</span><span class="s2">_pred&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">rename_input_col_to_value</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-            <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
-        <span class="p">)</span>
 
         <span class="c1"># Drop prediction times without event times within interval days</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
             <span class="n">direction</span> <span class="o">=</span> <span class="s2">&quot;ahead&quot;</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">PredictorSpec</span><span class="p">):</span>
+            <span class="n">interval_days</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookahead_days</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">)):</span>
             <span class="n">direction</span> <span class="o">=</span> <span class="s2">&quot;behind&quot;</span>
+            <span class="n">interval_days</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookbehind_days</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown output_spec type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_spec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">_drop_records_outside_interval_days</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span>
             <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span>
-            <span class="n">interval_days</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">interval_days</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">interval_days</span><span class="o">=</span><span class="n">interval_days</span><span class="p">,</span>
             <span class="n">timestamp_pred_colname</span><span class="o">=</span><span class="n">timestamp_pred_col_name</span><span class="p">,</span>
             <span class="n">timestamp_value_colname</span><span class="o">=</span><span class="n">timestamp_val_col_name</span><span class="p">,</span>
         <span class="p">)</span>
@@ -596,8 +597,8 @@
             <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa</span>
         <span class="p">)</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">_resolve_multiple_values_within_interval_days</span><span class="p">(</span>
-            <span class="n">resolve_multiple</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">resolve_multiple_fn</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">_aggregate_values_within_interval_days</span><span class="p">(</span>
+            <span class="n">aggregation</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">aggregation_fn</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
             <span class="n">pred_time_uuid_colname</span><span class="o">=</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span>
             <span class="n">val_timestamp_col_name</span><span class="o">=</span><span class="n">timestamp_val_col_name</span><span class="p">,</span>
@@ -612,7 +613,7 @@
                 <span class="n">embedding_fn_kwargs</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">embedding_fn_kwargs</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="c1"># If resolve_multiple generates empty values,</span>
+        <span class="c1"># If aggregation generates empty values,</span>
         <span class="c1"># e.g. when there is only one prediction_time within look_ahead window for slope calculation,</span>
         <span class="c1"># replace with NaN</span>
 
@@ -633,7 +634,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">ColumnHandler</span><span class="o">.</span><span class="n">flatten_multiindex</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Returning </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> rows of flattened dataframe for </span><span class="si">{</span><span class="n">output_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Returning </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> rows of flattened dataframe for </span><span class="si">{</span><span class="n">output_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># Add back prediction times that don&#39;t have a value, and fill them with fallback</span>
@@ -646,17 +647,6 @@
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="o">*</span><span class="n">value_col_str_name</span><span class="p">,</span> <span class="n">pred_time_uuid_col_name</span><span class="p">]]</span>
-
-<div class="viewcode-block" id="TimeseriesFlattener.rename_input_col_to_value"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.rename_input_col_to_value">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">rename_input_col_to_value</span><span class="p">(</span>
-        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-        <span class="n">output_spec</span><span class="p">:</span> <span class="n">TemporalSpec</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether &#39;value&#39; is a column in df, and if not, renames the</span>
-<span class="sd">        input column&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">output_spec</span><span class="o">.</span><span class="n">input_col_name_override</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">})</span>
-        <span class="k">return</span> <span class="n">df</span></div>
 
     <span class="k">def</span> <span class="nf">_get_temporal_feature</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -673,11 +663,13 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">feature_exists</span><span class="p">(</span><span class="n">feature_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Cache hit for </span><span class="si">{</span><span class="n">feature_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span><span class="si">}</span><span class="s2">, loading from cache&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cache hit for </span><span class="si">{</span><span class="n">feature_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()</span><span class="si">}</span><span class="s2">, loading from cache&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">read_feature</span><span class="p">(</span><span class="n">feature_spec</span><span class="o">=</span><span class="n">feature_spec</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cache miss for </span><span class="si">{</span><span class="n">feature_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span><span class="si">}</span><span class="s2">, generating&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cache miss for </span><span class="si">{</span><span class="n">feature_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()</span><span class="si">}</span><span class="s2">, generating&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No cache specified, not attempting load&quot;</span><span class="p">)</span>
 
@@ -814,7 +806,7 @@
 
     <span class="k">def</span> <span class="nf">_add_static_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">static_spec</span><span class="p">:</span> <span class="n">_AnySpec</span><span class="p">,</span>
+        <span class="n">static_spec</span><span class="p">:</span> <span class="n">AnySpec</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add static info to each prediction time, e.g. age, sex etc.</span>
 
@@ -825,32 +817,29 @@
 <span class="sd">            ValueError: If input_col_name does not match a column in info_df.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Try to infer value col name if not provided</span>
-        <span class="k">if</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">input_col_name_override</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">possible_value_cols</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">col</span>
-                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">values_df</span><span class="o">.</span><span class="n">columns</span>  <span class="c1"># type: ignore</span>
-                <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span>
-            <span class="p">]</span>
+        <span class="n">possible_value_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">col</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="o">.</span><span class="n">columns</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span>
+        <span class="p">]</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_value_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">value_col_name</span> <span class="o">=</span> <span class="n">possible_value_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_value_cols</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Only one value column can be added to static info, found multiple: </span><span class="si">{</span><span class="n">possible_value_cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_value_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;No value column found in spec.df, please check.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">value_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">input_col_name_override</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_value_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">value_col_name</span> <span class="o">=</span> <span class="n">possible_value_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_value_cols</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Only one value column can be added to static info, found multiple: </span><span class="si">{</span><span class="n">possible_value_cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_value_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;No value column found in spec.df, please check.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
-        <span class="n">output_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()</span>
+        <span class="n">output_col_name</span> <span class="o">=</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
-                <span class="n">output_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="n">value_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+                <span class="n">output_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="n">value_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
             <span class="p">},</span>
         <span class="p">)</span>
 
@@ -885,7 +874,7 @@
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">,</span>
-            <span class="n">outcome_spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">,</span>
+            <span class="n">outcome_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">,</span>
             <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
             <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">,</span>
             <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;_prediction&quot;</span><span class="p">,</span> <span class="s2">&quot;_outcome&quot;</span><span class="p">),</span>
@@ -901,11 +890,13 @@
         <span class="k">if</span> <span class="n">outcome_spec</span><span class="o">.</span><span class="n">is_dichotomous</span><span class="p">():</span>
             <span class="n">outcome_is_within_lookahead</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">df</span><span class="p">[</span><span class="n">prediction_timestamp_col_name</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
-                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">interval_days</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">)</span>
                 <span class="o">&gt;</span> <span class="n">df</span><span class="p">[</span><span class="n">outcome_timestamp_col_name</span><span class="p">]</span>
             <span class="p">)</span>
 
-            <span class="n">df</span><span class="p">[</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">get_col_str</span><span class="p">()]</span> <span class="o">=</span> <span class="n">outcome_is_within_lookahead</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">outcome_is_within_lookahead</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
             <span class="p">{</span><span class="n">prediction_timestamp_col_name</span><span class="p">:</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">},</span>
@@ -930,11 +921,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">PredictorSpec</span><span class="p">):</span>
-            <span class="n">min_val_date</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="n">min_val_date</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="k">return</span> <span class="n">min_val_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
-            <span class="n">max_val_date</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="n">max_val_date</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="k">return</span> <span class="n">max_val_date</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spec type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s2"> not recognised.&quot;</span><span class="p">)</span>
@@ -1017,7 +1008,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">predictor_specs</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">_check_that_spec_df_has_required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">_AnySpec</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_check_that_spec_df_has_required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">AnySpec</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that df has required columns.&quot;&quot;&quot;</span>
         <span class="c1"># Find all attributes in self that contain col_name</span>
         <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">]</span>
@@ -1026,36 +1017,36 @@
             <span class="n">required_columns</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">required_columns</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required column: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required column: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_check_that_spec_df_timestamp_col_is_correctly_formatted</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">spec</span><span class="p">:</span> <span class="n">TemporalSpec</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that timestamp column is correctly formatted. Attempt to coerce if possible.&quot;&quot;&quot;</span>
-        <span class="n">timestamp_col_type</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>  <span class="c1"># type: ignore</span>
+        <span class="n">timestamp_col_type</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="n">timestamp_col_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;datetime64[ns]&quot;</span><span class="p">):</span>
             <span class="c1"># Convert column dtype to datetime64[ns] if it isn&#39;t already</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Converting timestamp column to datetime64[ns]&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">feature_base_name</span><span class="si">}</span><span class="s2">: Converting timestamp column to datetime64[ns]&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
-                <span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+            <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+                <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
-            <span class="n">min_timestamp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">values_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+            <span class="n">min_timestamp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
 
             <span class="k">if</span> <span class="n">min_timestamp</span> <span class="o">&lt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;1971-01-01&quot;</span><span class="p">):</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">feature_name</span><span class="si">}</span><span class="s2">: Minimum timestamp is </span><span class="si">{</span><span class="n">min_timestamp</span><span class="si">}</span><span class="s2"> - perhaps ints were coerced to timestamps?&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">feature_base_name</span><span class="si">}</span><span class="s2">: Minimum timestamp is </span><span class="si">{</span><span class="n">min_timestamp</span><span class="si">}</span><span class="s2"> - perhaps ints were coerced to timestamps?&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
 <div class="viewcode-block" id="TimeseriesFlattener.add_spec"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_spec">[docs]</a>    <span class="k">def</span> <span class="nf">add_spec</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">_AnySpec</span><span class="p">],</span> <span class="n">_AnySpec</span><span class="p">],</span>
+        <span class="n">spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AnySpec</span><span class="p">],</span> <span class="n">AnySpec</span><span class="p">],</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a specification to the flattened dataset.</span>
 
@@ -1066,13 +1057,15 @@
 <span class="sd">        Most of the complexity lies in the OutcomeSpec and PredictorSpec objects.</span>
 <span class="sd">        For further documentation, see those objects and the tutorial.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">_AnySpec</span><span class="p">):</span>
-            <span class="n">specs_to_process</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_AnySpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">spec</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">specs_to_process</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="n">specs_to_process</span> <span class="o">=</span> <span class="p">[</span><span class="n">spec</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="k">else</span> <span class="n">spec</span>
 
         <span class="k">for</span> <span class="n">spec_i</span> <span class="ow">in</span> <span class="n">specs_to_process</span><span class="p">:</span>
-            <span class="n">allowed_spec_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">OutcomeSpec</span><span class="p">,</span> <span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">StaticSpec</span><span class="p">)</span>
+            <span class="n">allowed_spec_types</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">OutcomeSpec</span><span class="p">,</span>
+                <span class="n">PredictorSpec</span><span class="p">,</span>
+                <span class="n">StaticSpec</span><span class="p">,</span>
+                <span class="n">TextPredictorSpec</span><span class="p">,</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">allowed_spec_types</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1081,14 +1074,14 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_that_spec_df_has_required_columns</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec_i</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">TemporalSpec</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_check_that_spec_df_timestamp_col_is_correctly_formatted</span><span class="p">(</span>
-                    <span class="n">spec</span><span class="o">=</span><span class="n">spec_i</span><span class="p">,</span>
+                    <span class="n">spec</span><span class="o">=</span><span class="n">spec_i</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_i</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">PredictorSpec</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">predictor_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_i</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">StaticSpec</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">static_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_i</span><span class="p">)</span></div>
@@ -1096,7 +1089,7 @@
 <div class="viewcode-block" id="TimeseriesFlattener.add_age"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.TimeseriesFlattener.add_age">[docs]</a>    <span class="k">def</span> <span class="nf">add_age</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">date_of_birth_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
-        <span class="n">date_of_birth_col_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;date_of_birth&quot;</span><span class="p">,</span>
+        <span class="n">date_of_birth_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;date_of_birth&quot;</span><span class="p">,</span>
         <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add age at prediction time as predictor.</span>
@@ -1124,13 +1117,12 @@
 
         <span class="n">tmp_prefix</span> <span class="o">=</span> <span class="s2">&quot;tmp&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_static_info</span><span class="p">(</span>
-            <span class="n">static_spec</span><span class="o">=</span><span class="n">_AnySpec</span><span class="p">(</span>
-                <span class="n">values_df</span><span class="o">=</span><span class="n">date_of_birth_df</span><span class="p">,</span>
-                <span class="n">input_col_name_override</span><span class="o">=</span><span class="n">date_of_birth_col_name</span><span class="p">,</span>
+            <span class="n">static_spec</span><span class="o">=</span><span class="n">StaticSpec</span><span class="p">(</span>
+                <span class="n">timeseries_df</span><span class="o">=</span><span class="n">date_of_birth_df</span><span class="p">,</span>
                 <span class="n">prefix</span><span class="o">=</span><span class="n">tmp_prefix</span><span class="p">,</span>
+                <span class="n">feature_base_name</span><span class="o">=</span><span class="n">date_of_birth_col_name</span><span class="p">,</span>
                 <span class="c1"># We typically don&#39;t want to use date of birth as a predictor,</span>
                 <span class="c1"># but might want to use transformations - e.g. &quot;year of birth&quot; or &quot;age at prediction time&quot;.</span>
-                <span class="n">feature_name</span><span class="o">=</span><span class="n">date_of_birth_col_name</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span>
 

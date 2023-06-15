@@ -7,12 +7,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="tutorials/02_advanced.html" />
 <meta property="og:site_name" content="timeseriesflattener" />
-<meta property="og:description" content="In the basic tutorial we covered how to add static features, predictors and outcomes. In this tutorial, we’ll expand on that, covering how to effectively add many features by: Utilising data loader..." />
+<meta property="og:description" content="In the basic tutorial we covered how to add static features, predictors and outcomes. In this tutorial, we’ll expand on that, covering how to effectively add many features by: Creating feature comb..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/_images/social_previews/summary_tutorials_02_advanced_537d1dc6.png" />
 <meta property="og:image:alt" content="In the basic tutorial we covered how to add static features, predictors and outcomes. In this tutorial, we’ll expand on that, covering how to effectively add..." />
-<meta name="description" content="In the basic tutorial we covered how to add static features, predictors and outcomes. In this tutorial, we’ll expand on that, covering how to effectively add many features by: Utilising data loader..." />
+<meta name="description" content="In the basic tutorial we covered how to add static features, predictors and outcomes. In this tutorial, we’ll expand on that, covering how to effectively add many features by: Creating feature comb..." />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Adding text features" href="03_text.html" /><link rel="prev" title="Introductory Tutorial" href="01_basic.html" />
 
@@ -249,183 +249,22 @@
 <p>In the basic tutorial we covered how to add static features, predictors and outcomes.
 In this tutorial, we’ll expand on that, covering how to effectively add many features by:</p>
 <ol class="arabic simple">
-<li><p>Utilising data loaders in a data_loaders registry,</p></li>
-<li><p>Populating a dictionary from a long format dataframe,</p></li>
 <li><p>Creating feature combinations from specifications,</p></li>
 <li><p>Using caching, so you can iterate on your datasets without having to complete full computations every time</p></li>
 </ol>
-<section id="using-data-loaders">
-<h2>Using data loaders<a class="headerlink" href="#using-data-loaders" title="Permalink to this heading">#</a></h2>
-<p>Until now, we’ve loaded our data first and then created combinations. But what if your data lies in an SQL database, and you don’t want to save it to disk?</p>
-<p>Time to introduce feature loaders. All feature spec objects (PredictorSpec, OutcomeSpec and StaticSpec) can resolve from a loader function. The only requirement of that loader function is that it should return a values dataframe, which should contain an ID column, a timestamp column and value column. This means you can have loaders that load from REDIS, SQL databases, or just from disk. Whatever you prefer.</p>
-<p>This function is then called when you initialise a feature specification.</p>
-<p>This loader is specified in the values_loader key like so:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimpy</span> <span class="kn">import</span> <span class="n">skim</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_predictor_float</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.resolve_multiple_functions</span> <span class="kn">import</span> <span class="n">mean</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.feature_spec_objects</span> <span class="kn">import</span> <span class="n">PredictorSpec</span>
-<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">skimpy</span> <span class="kn">import</span> <span class="n">skim</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">timeseriesflattener.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_predictor_float</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span> <span class="nn">timeseriesflattener.resolve_multiple_functions</span> <span class="kn">import</span> <span class="n">mean</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;skimpy&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pred_spec_batch</span> <span class="o">=</span> <span class="n">PredictorSpec</span><span class="p">(</span>
-    <span class="n">values_loader</span><span class="o">=</span><span class="n">load_synth_predictor_float</span><span class="p">,</span>
-    <span class="n">lookbehind_days</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span>
-    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-    <span class="n">resolve_multiple_fn</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
-    <span class="n">feature_name</span><span class="o">=</span><span class="s2">&quot;predictor_name&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">pred_spec_batch</span><span class="o">.</span><span class="n">values_df</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>entity_id</th>
-      <th>timestamp</th>
-      <th>value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>9476</td>
-      <td>1969-03-05 08:08:00</td>
-      <td>0.816995</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>4631</td>
-      <td>1967-04-10 22:48:00</td>
-      <td>4.818074</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3890</td>
-      <td>1969-12-15 14:07:00</td>
-      <td>2.503789</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1098</td>
-      <td>1965-11-19 03:53:00</td>
-      <td>3.515041</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1626</td>
-      <td>1966-05-03 14:07:00</td>
-      <td>4.353115</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>99995</th>
-      <td>4542</td>
-      <td>1968-06-01 17:09:00</td>
-      <td>9.616722</td>
-    </tr>
-    <tr>
-      <th>99996</th>
-      <td>4839</td>
-      <td>1966-11-24 01:13:00</td>
-      <td>0.235124</td>
-    </tr>
-    <tr>
-      <th>99997</th>
-      <td>8168</td>
-      <td>1969-07-30 01:45:00</td>
-      <td>0.929738</td>
-    </tr>
-    <tr>
-      <th>99998</th>
-      <td>9328</td>
-      <td>1965-12-22 10:53:00</td>
-      <td>5.124424</td>
-    </tr>
-    <tr>
-      <th>99999</th>
-      <td>6582</td>
-      <td>1965-02-10 09:52:00</td>
-      <td>7.414466</td>
-    </tr>
-  </tbody>
-</table>
-<p>100000 rows × 3 columns</p>
-</div></div></div>
-</div>
-<section id="the-data-loaders-registry">
-<h3>The data loaders registry<a class="headerlink" href="#the-data-loaders-registry" title="Permalink to this heading">#</a></h3>
-<p>If you inspect the source code of load_synth_predictor_float, you’ll see that it is decorated with &#64;data_loaders.register(“synth_predictor_float”).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@data_loaders</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;synth_predictor_float&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">load_synth_predictor_float</span><span class="p">(</span>
-    <span class="n">n_rows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load synth predictor data.&quot;.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        n_rows: Number of rows to return. Defaults to None which returns entire coercion data view.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        pd.DataFrame</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">load_raw_test_csv</span><span class="p">(</span><span class="s2">&quot;synth_raw_float_1.csv&quot;</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This registers it in the data_loaders registry under the “synth_predictor_float” key.</p>
-<p>When you initialise a feature specification, it will look at the type of its <code class="docutils literal notranslate"><span class="pre">values_loader</span></code> attribute. If its type is a string, it will look for that string as a key in the data loaders registry. If it finds it, it’ll resolve it to the value, in this case the <code class="docutils literal notranslate"><span class="pre">load_synth_predictor_float</span></code> function, and call that function.</p>
-<p>The same concept applies for the resolve multiple functions.
-This is super handy if you e.g. want to parse a config file, and therefore prefer to specify your data loaders as strings.</p>
-</section>
-</section>
 <section id="creating-feature-combinations">
 <h2>Creating feature combinations<a class="headerlink" href="#creating-feature-combinations" title="Permalink to this heading">#</a></h2>
 <p>Manually specifying a handful of features one at a time is rather straightforward, but what if you want to generate hundreds of features? Or want to have multiple different lookbehind windows, e.g. a month, 6 months and a year? Then the amount of code you’ll have to write will grow quite substantially and becomes time consuming and hard to navigate.</p>
 <p>To solve this problem, we implemented feature group specifications. They allow you to combinatorially create features. Let’s look at an example:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.feature_spec_objects</span> <span class="kn">import</span> <span class="n">PredictorGroupSpec</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.resolve_multiple_functions</span> <span class="kn">import</span> <span class="n">maximum</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.group_specs</span> <span class="kn">import</span> <span class="n">PredictorGroupSpec</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">maximum</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_predictor_float</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.group_specs</span> <span class="kn">import</span> <span class="n">NamedDataframe</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">mean</span><span class="p">,</span> <span class="n">maximum</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span> <span class="k">as</span> <span class="n">pprint</span>
 </pre></div>
 </div>
 </div>
@@ -433,12 +272,126 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pred_spec_batch</span> <span class="o">=</span> <span class="n">PredictorGroupSpec</span><span class="p">(</span>
-    <span class="n">values_loader</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;synth_predictor_float&quot;</span><span class="p">],</span>
+    <span class="n">named_dataframes</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">NamedDataframe</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">load_synth_predictor_float</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;synth_predictor_float&quot;</span><span class="p">)</span>
+    <span class="p">],</span>
     <span class="n">lookbehind_days</span><span class="o">=</span><span class="p">[</span><span class="mi">365</span><span class="p">,</span> <span class="mi">730</span><span class="p">],</span>
     <span class="n">fallback</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
-    <span class="n">resolve_multiple_fn</span><span class="o">=</span><span class="p">[</span><span class="n">mean</span><span class="p">,</span> <span class="n">maximum</span><span class="p">],</span>
-    <span class="n">feature_name</span><span class="o">=</span><span class="s2">&quot;group_predictors&quot;</span><span class="p">,</span>
+    <span class="n">aggregation_fns</span><span class="o">=</span><span class="p">[</span><span class="n">mean</span><span class="p">,</span> <span class="n">maximum</span><span class="p">],</span>
 <span class="p">)</span><span class="o">.</span><span class="n">create_combinations</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">pred_spec_batch</span> <span class="o">=</span> <span class="n">PredictorGroupSpec</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span>     <span class="n">named_dataframes</span><span class="o">=</span><span class="p">[</span>
+<span class="ne">----&gt; </span><span class="mi">3</span>         <span class="n">NamedDataframe</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">load_synth_predictor_float</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;synth_predictor_float&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="p">],</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">lookbehind_days</span><span class="o">=</span><span class="p">[</span><span class="mi">365</span><span class="p">,</span> <span class="mi">730</span><span class="p">],</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="n">fallback</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>     <span class="n">aggregation_fns</span><span class="o">=</span><span class="p">[</span><span class="n">mean</span><span class="p">,</span> <span class="n">maximum</span><span class="p">],</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="p">)</span><span class="o">.</span><span class="n">create_combinations</span><span class="p">()</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/timeseriesflattener/testing/load_synth_data.py:44,</span> in <span class="ni">load_synth_predictor_float</span><span class="nt">(n_rows)</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="k">def</span> <span class="nf">load_synth_predictor_float</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">34</span>     <span class="n">n_rows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">35</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">36</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Load synth predictor data.&quot;.</span>
+<span class="g g-Whitespace">     </span><span class="mi">37</span><span class="sd"> </span>
+<span class="g g-Whitespace">     </span><span class="mi">38</span><span class="sd">     Args:</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">     </span><span class="mi">42</span><span class="sd">         pd.DataFrame</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">44</span>     <span class="k">return</span> <span class="n">load_raw_test_csv</span><span class="p">(</span><span class="s2">&quot;synth_raw_float_1.csv&quot;</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/timeseriesflattener/testing/load_synth_data.py:21,</span> in <span class="ni">load_raw_test_csv</span><span class="nt">(filename, n_rows)</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="k">def</span> <span class="nf">load_raw_test_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Load raw csv.</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span><span class="sd"> </span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span><span class="sd">     Args:</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span><span class="sd">         filename (str): Name of the file to load.</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span><span class="sd">         n_rows (int, optional): Number of rows to load. Defaults to None.</span>
+<span class="g g-Whitespace">     </span><span class="mi">20</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">21</span>     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span>         <span class="n">TEST_DATA_PATH</span> <span class="o">/</span> <span class="s2">&quot;raw&quot;</span> <span class="o">/</span> <span class="n">filename</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">23</span>         <span class="n">nrows</span><span class="o">=</span><span class="n">n_rows</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">24</span>     <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">26</span>     <span class="c1"># Convert timestamp col to datetime</span>
+<span class="g g-Whitespace">     </span><span class="mi">27</span>     <span class="k">if</span> <span class="s2">&quot;timestamp&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/util/_decorators.py:211,</span> in <span class="ni">deprecate_kwarg.&lt;locals&gt;._deprecate_kwarg.&lt;locals&gt;.wrapper</span><span class="nt">(*args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">209</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">210</span>         <span class="n">kwargs</span><span class="p">[</span><span class="n">new_arg_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_arg_value</span>
+<span class="ne">--&gt; </span><span class="mi">211</span> <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/util/_decorators.py:331,</span> in <span class="ni">deprecate_nonkeyword_arguments.&lt;locals&gt;.decorate.&lt;locals&gt;.wrapper</span><span class="nt">(*args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">325</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">num_allow_args</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">326</span>     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">327</span>         <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arguments</span><span class="o">=</span><span class="n">_format_argument_list</span><span class="p">(</span><span class="n">allow_args</span><span class="p">)),</span>
+<span class="g g-Whitespace">    </span><span class="mi">328</span>         <span class="ne">FutureWarning</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">329</span>         <span class="n">stacklevel</span><span class="o">=</span><span class="n">find_stack_level</span><span class="p">(),</span>
+<span class="g g-Whitespace">    </span><span class="mi">330</span>     <span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">331</span> <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/io/parsers/readers.py:950,</span> in <span class="ni">read_csv</span><span class="nt">(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, squeeze, prefix, mangle_dupe_cols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, error_bad_lines, warn_bad_lines, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">935</span> <span class="n">kwds_defaults</span> <span class="o">=</span> <span class="n">_refine_defaults_read</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">936</span>     <span class="n">dialect</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">937</span>     <span class="n">delimiter</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">946</span>     <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="p">},</span>
+<span class="g g-Whitespace">    </span><span class="mi">947</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">948</span> <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwds_defaults</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">950</span> <span class="k">return</span> <span class="n">_read</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/io/parsers/readers.py:605,</span> in <span class="ni">_read</span><span class="nt">(filepath_or_buffer, kwds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">602</span> <span class="n">_validate_names</span><span class="p">(</span><span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="g g-Whitespace">    </span><span class="mi">604</span> <span class="c1"># Create the parser.</span>
+<span class="ne">--&gt; </span><span class="mi">605</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">TextFileReader</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">607</span> <span class="k">if</span> <span class="n">chunksize</span> <span class="ow">or</span> <span class="n">iterator</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">608</span>     <span class="k">return</span> <span class="n">parser</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1442,</span> in <span class="ni">TextFileReader.__init__</span><span class="nt">(self, f, engine, **kwds)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1439</span>     <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">   </span><span class="mi">1441</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="p">:</span> <span class="n">IOHandles</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="ne">-&gt; </span><span class="mi">1442</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_engine</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/io/parsers/readers.py:1735,</span> in <span class="ni">TextFileReader._make_engine</span><span class="nt">(self, f, engine)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1733</span>     <span class="k">if</span> <span class="s2">&quot;b&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mode</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1734</span>         <span class="n">mode</span> <span class="o">+=</span> <span class="s2">&quot;b&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">1735</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="o">=</span> <span class="n">get_handle</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1736</span>     <span class="n">f</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1737</span>     <span class="n">mode</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1738</span>     <span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encoding&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1739</span>     <span class="n">compression</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;compression&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1740</span>     <span class="n">memory_map</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memory_map&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1741</span>     <span class="n">is_text</span><span class="o">=</span><span class="n">is_text</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1742</span>     <span class="n">errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encoding_errors&quot;</span><span class="p">,</span> <span class="s2">&quot;strict&quot;</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1743</span>     <span class="n">storage_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_options&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1744</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1745</span> <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">1746</span> <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handles</span><span class="o">.</span><span class="n">handle</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/io/common.py:856,</span> in <span class="ni">get_handle</span><span class="nt">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">851</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">852</span>     <span class="c1"># Check whether the filename is to be opened in binary mode.</span>
+<span class="g g-Whitespace">    </span><span class="mi">853</span>     <span class="c1"># Binary mode does not support &#39;encoding&#39; and &#39;newline&#39;.</span>
+<span class="g g-Whitespace">    </span><span class="mi">854</span>     <span class="k">if</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">encoding</span> <span class="ow">and</span> <span class="s2">&quot;b&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">mode</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">855</span>         <span class="c1"># Encoding</span>
+<span class="ne">--&gt; </span><span class="mi">856</span>         <span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">857</span>             <span class="n">handle</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">858</span>             <span class="n">ioargs</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">859</span>             <span class="n">encoding</span><span class="o">=</span><span class="n">ioargs</span><span class="o">.</span><span class="n">encoding</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">860</span>             <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">861</span>             <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">862</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">863</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">864</span>         <span class="c1"># Binary mode</span>
+<span class="g g-Whitespace">    </span><span class="mi">865</span>         <span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+
+<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;/home/runner/.local/lib/python3.10/src/timeseriesflattener/testing/test_data/raw/synth_raw_float_1.csv&#39;
 </pre></div>
 </div>
 </div>
@@ -446,7 +399,7 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 <p>You’ll note that:</p>
 <ol class="arabic simple">
 <li><p>All attributes are now required to be lists. This makes iteration easier when creating the combinations.</p></li>
-<li><p>We require values_loaders to be strings that can be resolved from the registry. This string is also used when creating the column names - otherwise we wouldn’t know what to call the columns.</p></li>
+<li><p>We require a named_dataframes sequence. A namedataframe is exactly that; a dataframe and a name. This is used when we create the features in the output, e.g. for a predictor, the output feature using load_synth_predictor_flaot will be called pred_synth_predictor_float_<metadata> because that’s the name attributed in the NamedDataframe.</p></li>
 </ol>
 <p>Let’s check that the results look good.</p>
 <div class="cell docutils container">
@@ -454,9 +407,9 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a small summary to highlight the generated predictors</span>
 <span class="n">pred_spec_batch_summary</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="n">pred_spec</span><span class="o">.</span><span class="n">feature_name</span><span class="p">,</span>
+        <span class="s2">&quot;feature_name&quot;</span><span class="p">:</span> <span class="n">pred_spec</span><span class="o">.</span><span class="n">feature_base_name</span><span class="p">,</span>
         <span class="s2">&quot;lookbehind_days&quot;</span><span class="p">:</span> <span class="n">pred_spec</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">,</span>
-        <span class="s2">&quot;resolve_multiple_fn&quot;</span><span class="p">:</span> <span class="n">pred_spec</span><span class="o">.</span><span class="n">key_for_resolve_multiple</span><span class="p">,</span>
+        <span class="s2">&quot;aggregation_fn&quot;</span><span class="p">:</span> <span class="n">pred_spec</span><span class="o">.</span><span class="n">aggregation_fn</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">for</span> <span class="n">pred_spec</span> <span class="ow">in</span> <span class="n">pred_spec_batch</span>
 <span class="p">]</span>
@@ -469,18 +422,18 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>––––––––– We created 4 combinations of predictors. ––––––––––
-[{&#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
-  &#39;lookbehind_days&#39;: 365,
-  &#39;resolve_multiple_fn&#39;: &#39;mean&#39;},
- {&#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
-  &#39;lookbehind_days&#39;: 730,
-  &#39;resolve_multiple_fn&#39;: &#39;mean&#39;},
- {&#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
-  &#39;lookbehind_days&#39;: 365,
-  &#39;resolve_multiple_fn&#39;: &#39;maximum&#39;},
- {&#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
-  &#39;lookbehind_days&#39;: 730,
-  &#39;resolve_multiple_fn&#39;: &#39;maximum&#39;}]
+[{&#39;aggregation_fn&#39;: &#39;mean&#39;,
+  &#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
+  &#39;lookbehind_days&#39;: 365.0},
+ {&#39;aggregation_fn&#39;: &#39;maximum&#39;,
+  &#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
+  &#39;lookbehind_days&#39;: 365.0},
+ {&#39;aggregation_fn&#39;: &#39;mean&#39;,
+  &#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
+  &#39;lookbehind_days&#39;: 730.0},
+ {&#39;aggregation_fn&#39;: &#39;maximum&#39;,
+  &#39;feature_name&#39;: &#39;synth_predictor_float&#39;,
+  &#39;lookbehind_days&#39;: 730.0}]
 </pre></div>
 </div>
 </div>
@@ -516,6 +469,11 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-06-14 16:19:04 [INFO] Overriding pred_time_uuid_col_name in cache with pred_time_uuid_col_name passed to init of flattened dataset
+</pre></div>
+</div>
+</div>
 </div>
 <p>All we need to specify is that we use the DiskCache class, and which directory to save the feature cache to.</p>
 <p>The first time we create features, this will just save them to disk and won’t make any difference to performance. But say we want to add two more features - then it’ll load the features that it has already computed from disk, and then only compute the two new features.</p>
@@ -534,100 +492,14 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-04-19 15:30:57 [INFO] There were unprocessed specs, computing...
-2023-04-19 15:30:57 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 4038 (40.38%) rows
-2023-04-19 15:30:57 [INFO] Processing 4 temporal features in parallel with 4 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
-  0%|          | 0/4 [00:01&lt;?, ?it/s]
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">RemoteTraceback</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
-<span class="ne">Remote</span>Traceback: 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Traceback (most recent call last):</span>
-<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/pandas/core/indexes/base.py&quot;, line 3802, in get_loc</span>
-<span class="sd">    return self._engine.get_loc(casted_key)</span>
-<span class="sd">  File &quot;pandas/_libs/index.pyx&quot;, line 138, in pandas._libs.index.IndexEngine.get_loc</span>
-<span class="sd">  File &quot;pandas/_libs/index.pyx&quot;, line 165, in pandas._libs.index.IndexEngine.get_loc</span>
-<span class="sd">  File &quot;pandas/_libs/hashtable_class_helper.pxi&quot;, line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item</span>
-<span class="sd">  File &quot;pandas/_libs/hashtable_class_helper.pxi&quot;, line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item</span>
-<span class="ne">KeyError</span>: &#39;prediction_time_uuid&#39;
-
-<span class="sd">The above exception was the direct cause of the following exception:</span>
-
-<span class="sd">Traceback (most recent call last):</span>
-<span class="sd">  File &quot;/opt/homebrew/Cellar/python@3.9/3.9.16/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/pool.py&quot;, line 125, in worker</span>
-<span class="sd">    result = (True, func(*args, **kwds))</span>
-<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py&quot;, line 452, in _get_temporal_feature</span>
-<span class="sd">    df = self.cache.read_feature(feature_spec=feature_spec)</span>
-<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/src/timeseriesflattener/feature_cache/cache_to_disk.py&quot;, line 124, in read_feature</span>
-<span class="sd">    left=self.prediction_times_df[self.pred_time_uuid_col_name],</span>
-<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/pandas/core/frame.py&quot;, line 3807, in __getitem__</span>
-<span class="sd">    indexer = self.columns.get_loc(key)</span>
-<span class="sd">  File &quot;/Users/au484925/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/pandas/core/indexes/base.py&quot;, line 3804, in get_loc</span>
-<span class="sd">    raise KeyError(key) from err</span>
-<span class="ne">KeyError</span>: &#39;prediction_time_uuid&#39;
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="n">The</span> <span class="n">above</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">the</span> <span class="n">direct</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">exception</span><span class="p">:</span>
-
-<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">df</span> <span class="o">=</span> <span class="n">ts_flattener</span><span class="o">.</span><span class="n">get_df</span><span class="p">()</span>
-
-<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:940,</span> in <span class="ni">TimeseriesFlattener.get_df</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">938</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">939</span>     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;There were unprocessed specs, computing...&quot;</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">940</span>     <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">942</span> <span class="c1"># Process</span>
-<span class="g g-Whitespace">    </span><span class="mi">943</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
-
-<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:929,</span> in <span class="ni">TimeseriesFlattener.compute</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">926</span>     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No unprocessed specs, skipping&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">927</span>     <span class="k">return</span>
-<span class="ne">--&gt; </span><span class="mi">929</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_temporal_specs</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">930</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_static_specs</span><span class="p">()</span>
-
-<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:788,</span> in <span class="ni">TimeseriesFlattener._process_temporal_specs</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">785</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drop_pred_time_if_insufficient_look_distance</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">787</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">788</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_add_temporal_batch</span><span class="p">(</span><span class="n">temporal_batch</span><span class="o">=</span><span class="n">temporal_batch</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">790</span> <span class="c1"># Remove the processed specs</span>
-<span class="g g-Whitespace">    </span><span class="mi">791</span> <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="nn">File ~/Desktop/Git/timeseriesflattener/src/timeseriesflattener/flattened_dataset.py:574,</span> in <span class="ni">TimeseriesFlattener._add_temporal_batch</span><span class="nt">(self, temporal_batch)</span>
-<span class="g g-Whitespace">    </span><span class="mi">569</span> <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">570</span>     <span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> temporal features in parallel with </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers. Chunksize is </span><span class="si">{</span><span class="n">chunksize</span><span class="si">}</span><span class="s2">. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.&quot;</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">571</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">573</span> <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">574</span>     <span class="n">flattened_predictor_dfs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">575</span>         <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">576</span>             <span class="n">p</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">577</span>                 <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_temporal_feature</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">578</span>                 <span class="n">iterable</span><span class="o">=</span><span class="n">temporal_batch</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">579</span>                 <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">580</span>             <span class="p">),</span>
-<span class="g g-Whitespace">    </span><span class="mi">581</span>             <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">temporal_batch</span><span class="p">),</span>
-<span class="g g-Whitespace">    </span><span class="mi">582</span>         <span class="p">),</span>
-<span class="g g-Whitespace">    </span><span class="mi">583</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">585</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concatenate_flattened_timeseries</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">586</span>     <span class="n">flattened_predictor_dfs</span><span class="o">=</span><span class="n">flattened_predictor_dfs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">587</span> <span class="p">)</span>
-
-<span class="nn">File ~/Desktop/Git/timeseriesflattener/.venv39/lib/python3.9/site-packages/tqdm/std.py:1178,</span> in <span class="ni">tqdm.__iter__</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1175</span> <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span>
-<span class="g g-Whitespace">   </span><span class="mi">1177</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1178</span>     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1179</span>         <span class="k">yield</span> <span class="n">obj</span>
-<span class="g g-Whitespace">   </span><span class="mi">1180</span>         <span class="c1"># Update and possibly print the progressbar.</span>
-<span class="g g-Whitespace">   </span><span class="mi">1181</span>         <span class="c1"># Note: does not call self.update(1) for speed optimisation.</span>
-
-<span class="nn">File /opt/homebrew/Cellar/python@3.9/3.9.16/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/pool.py:870,</span> in <span class="ni">IMapIterator.next</span><span class="nt">(self, timeout)</span>
-<span class="g g-Whitespace">    </span><span class="mi">868</span> <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">869</span>     <span class="k">return</span> <span class="n">value</span>
-<span class="ne">--&gt; </span><span class="mi">870</span> <span class="k">raise</span> <span class="n">value</span>
-
-<span class="ne">KeyError</span>: &#39;prediction_time_uuid&#39;
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-06-14 16:19:04 [INFO] There were unprocessed specs, computing...
+2023-06-14 16:19:04 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 4038 (40.38%) rows
+2023-06-14 16:19:04 [INFO] Processing 4 temporal features in parallel with 4 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+100%|██████████| 4/4 [00:01&lt;00:00,  2.75it/s]
+2023-06-14 16:19:05 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+2023-06-14 16:19:05 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+2023-06-14 16:19:05 [INFO] Concatenation took 0.007 seconds
+2023-06-14 16:19:05 [INFO] Merging with original df
 </pre></div>
 </div>
 </div>
@@ -656,10 +528,10 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 │ ┃<span style="font-weight: bold"> column_name               </span>┃<span style="font-weight: bold"> NA    </span>┃<span style="font-weight: bold"> NA %   </span>┃<span style="font-weight: bold"> mean   </span>┃<span style="font-weight: bold"> sd    </span>┃<span style="font-weight: bold"> p0        </span>┃<span style="font-weight: bold"> p25   </span>┃<span style="font-weight: bold"> p75   </span>┃<span style="font-weight: bold"> p100   </span>┃<span style="font-weight: bold"> hist    </span>┃  │
 │ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id                </span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">  5000</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2900</span> │ <span style="color: #008080; text-decoration-color: #008080">        0</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2500</span> │ <span style="color: #008080; text-decoration-color: #008080"> 7400</span> │ <span style="color: #008080; text-decoration-color: #008080"> 10000</span> │ <span style="color: #008000; text-decoration-color: #008000">█▇███▇ </span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  820</span> │ <span style="color: #008080; text-decoration-color: #008080">    14</span> │ <span style="color: #008080; text-decoration-color: #008080">   6.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.00039</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.8</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▂▃▄▆█ </span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  820</span> │ <span style="color: #008080; text-decoration-color: #008080">    14</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.1</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.00039</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.5</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.4</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000">▂▄██▄▂ </span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  110</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.7</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.058</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.1</span> │ <span style="color: #008080; text-decoration-color: #008080">   9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃██▃▁ </span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  110</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">   7.7</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.1</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.058</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.7</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.3</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000"> ▁▁▂▄█ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  820</span> │ <span style="color: #008080; text-decoration-color: #008080">    14</span> │ <span style="color: #008080; text-decoration-color: #008080">   6.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.00039</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.8</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▂▃▄▆█ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  110</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.7</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.058</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.1</span> │ <span style="color: #008080; text-decoration-color: #008080">   9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃██▃▁ </span> │  │
 │ └───────────────────────────┴───────┴────────┴────────┴───────┴───────────┴───────┴───────┴────────┴─────────┘  │
 │ <span style="font-style: italic">                                                   datetime                                                   </span>  │
 │ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
@@ -678,10 +550,10 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;entity_id&#39;,
  &#39;timestamp&#39;,
  &#39;prediction_time_uuid&#39;,
- &#39;pred_synth_predictor_float_within_365_days_maximum_fallback_nan&#39;,
  &#39;pred_synth_predictor_float_within_365_days_mean_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_730_days_mean_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_730_days_maximum_fallback_nan&#39;]
+ &#39;pred_synth_predictor_float_within_730_days_maximum_fallback_nan&#39;,
+ &#39;pred_synth_predictor_float_within_365_days_maximum_fallback_nan&#39;,
+ &#39;pred_synth_predictor_float_within_730_days_mean_fallback_nan&#39;]
 </pre></div>
 </div>
 </div>
@@ -706,119 +578,119 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
 <div class="cell_output docutils container">
 <div class="output text_html"><style type="text/css">
 </style>
-<table id="T_25e34" style="font-size: 14px">
+<table id="T_f5435" style="font-size: 14px">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_25e34_level0_col0" class="col_heading level0 col0" >entity_id</th>
-      <th id="T_25e34_level0_col1" class="col_heading level0 col1" >timestamp</th>
-      <th id="T_25e34_level0_col2" class="col_heading level0 col2" >prediction_time_uuid</th>
-      <th id="T_25e34_level0_col3" class="col_heading level0 col3" >pred_1</th>
-      <th id="T_25e34_level0_col4" class="col_heading level0 col4" >pred_2</th>
-      <th id="T_25e34_level0_col5" class="col_heading level0 col5" >pred_3</th>
-      <th id="T_25e34_level0_col6" class="col_heading level0 col6" >pred_4</th>
+      <th id="T_f5435_level0_col0" class="col_heading level0 col0" >entity_id</th>
+      <th id="T_f5435_level0_col1" class="col_heading level0 col1" >timestamp</th>
+      <th id="T_f5435_level0_col2" class="col_heading level0 col2" >prediction_time_uuid</th>
+      <th id="T_f5435_level0_col3" class="col_heading level0 col3" >pred_1</th>
+      <th id="T_f5435_level0_col4" class="col_heading level0 col4" >pred_2</th>
+      <th id="T_f5435_level0_col5" class="col_heading level0 col5" >pred_3</th>
+      <th id="T_f5435_level0_col6" class="col_heading level0 col6" >pred_4</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_25e34_level0_row0" class="row_heading level0 row0" >0</th>
-      <td id="T_25e34_row0_col0" class="data row0 col0" >9903</td>
-      <td id="T_25e34_row0_col1" class="data row0 col1" >1968-05-09 21:24:00</td>
-      <td id="T_25e34_row0_col2" class="data row0 col2" >9903-1968-05-09-21-24-00</td>
-      <td id="T_25e34_row0_col3" class="data row0 col3" >0.154981</td>
-      <td id="T_25e34_row0_col4" class="data row0 col4" >0.154981</td>
-      <td id="T_25e34_row0_col5" class="data row0 col5" >0.990763</td>
-      <td id="T_25e34_row0_col6" class="data row0 col6" >2.194319</td>
+      <th id="T_f5435_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_f5435_row0_col0" class="data row0 col0" >9903</td>
+      <td id="T_f5435_row0_col1" class="data row0 col1" >1968-05-09 21:24:00</td>
+      <td id="T_f5435_row0_col2" class="data row0 col2" >9903-1968-05-09-21-24-00</td>
+      <td id="T_f5435_row0_col3" class="data row0 col3" >0.154981</td>
+      <td id="T_f5435_row0_col4" class="data row0 col4" >2.194319</td>
+      <td id="T_f5435_row0_col5" class="data row0 col5" >0.154981</td>
+      <td id="T_f5435_row0_col6" class="data row0 col6" >0.990763</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row1" class="row_heading level0 row1" >1</th>
-      <td id="T_25e34_row1_col0" class="data row1 col0" >6447</td>
-      <td id="T_25e34_row1_col1" class="data row1 col1" >1967-09-25 18:08:00</td>
-      <td id="T_25e34_row1_col2" class="data row1 col2" >6447-1967-09-25-18-08-00</td>
-      <td id="T_25e34_row1_col3" class="data row1 col3" >8.930256</td>
-      <td id="T_25e34_row1_col4" class="data row1 col4" >5.396017</td>
-      <td id="T_25e34_row1_col5" class="data row1 col5" >5.582745</td>
-      <td id="T_25e34_row1_col6" class="data row1 col6" >9.774050</td>
+      <th id="T_f5435_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_f5435_row1_col0" class="data row1 col0" >6447</td>
+      <td id="T_f5435_row1_col1" class="data row1 col1" >1967-09-25 18:08:00</td>
+      <td id="T_f5435_row1_col2" class="data row1 col2" >6447-1967-09-25-18-08-00</td>
+      <td id="T_f5435_row1_col3" class="data row1 col3" >5.396017</td>
+      <td id="T_f5435_row1_col4" class="data row1 col4" >9.774050</td>
+      <td id="T_f5435_row1_col5" class="data row1 col5" >8.930256</td>
+      <td id="T_f5435_row1_col6" class="data row1 col6" >5.582745</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row2" class="row_heading level0 row2" >2</th>
-      <td id="T_25e34_row2_col0" class="data row2 col0" >4927</td>
-      <td id="T_25e34_row2_col1" class="data row2 col1" >1968-06-30 12:13:00</td>
-      <td id="T_25e34_row2_col2" class="data row2 col2" >4927-1968-06-30-12-13-00</td>
-      <td id="T_25e34_row2_col3" class="data row2 col3" >6.730694</td>
-      <td id="T_25e34_row2_col4" class="data row2 col4" >4.957251</td>
-      <td id="T_25e34_row2_col5" class="data row2 col5" >4.957251</td>
-      <td id="T_25e34_row2_col6" class="data row2 col6" >6.730694</td>
+      <th id="T_f5435_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_f5435_row2_col0" class="data row2 col0" >4927</td>
+      <td id="T_f5435_row2_col1" class="data row2 col1" >1968-06-30 12:13:00</td>
+      <td id="T_f5435_row2_col2" class="data row2 col2" >4927-1968-06-30-12-13-00</td>
+      <td id="T_f5435_row2_col3" class="data row2 col3" >4.957251</td>
+      <td id="T_f5435_row2_col4" class="data row2 col4" >6.730694</td>
+      <td id="T_f5435_row2_col5" class="data row2 col5" >6.730694</td>
+      <td id="T_f5435_row2_col6" class="data row2 col6" >4.957251</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row3" class="row_heading level0 row3" >3</th>
-      <td id="T_25e34_row3_col0" class="data row3 col0" >5475</td>
-      <td id="T_25e34_row3_col1" class="data row3 col1" >1967-01-09 03:09:00</td>
-      <td id="T_25e34_row3_col2" class="data row3 col2" >5475-1967-01-09-03-09-00</td>
-      <td id="T_25e34_row3_col3" class="data row3 col3" >9.497229</td>
-      <td id="T_25e34_row3_col4" class="data row3 col4" >6.081539</td>
-      <td id="T_25e34_row3_col5" class="data row3 col5" >5.999336</td>
-      <td id="T_25e34_row3_col6" class="data row3 col6" >9.497229</td>
+      <th id="T_f5435_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_f5435_row3_col0" class="data row3 col0" >5475</td>
+      <td id="T_f5435_row3_col1" class="data row3 col1" >1967-01-09 03:09:00</td>
+      <td id="T_f5435_row3_col2" class="data row3 col2" >5475-1967-01-09-03-09-00</td>
+      <td id="T_f5435_row3_col3" class="data row3 col3" >6.081539</td>
+      <td id="T_f5435_row3_col4" class="data row3 col4" >9.497229</td>
+      <td id="T_f5435_row3_col5" class="data row3 col5" >9.497229</td>
+      <td id="T_f5435_row3_col6" class="data row3 col6" >5.999336</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row4" class="row_heading level0 row4" >4</th>
-      <td id="T_25e34_row4_col0" class="data row4 col0" >3157</td>
-      <td id="T_25e34_row4_col1" class="data row4 col1" >1969-10-07 05:01:00</td>
-      <td id="T_25e34_row4_col2" class="data row4 col2" >3157-1969-10-07-05-01-00</td>
-      <td id="T_25e34_row4_col3" class="data row4 col3" >5.243176</td>
-      <td id="T_25e34_row4_col4" class="data row4 col4" >5.068323</td>
-      <td id="T_25e34_row4_col5" class="data row4 col5" >5.068323</td>
-      <td id="T_25e34_row4_col6" class="data row4 col6" >5.243176</td>
+      <th id="T_f5435_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_f5435_row4_col0" class="data row4 col0" >3157</td>
+      <td id="T_f5435_row4_col1" class="data row4 col1" >1969-10-07 05:01:00</td>
+      <td id="T_f5435_row4_col2" class="data row4 col2" >3157-1969-10-07-05-01-00</td>
+      <td id="T_f5435_row4_col3" class="data row4 col3" >5.068323</td>
+      <td id="T_f5435_row4_col4" class="data row4 col4" >5.243176</td>
+      <td id="T_f5435_row4_col5" class="data row4 col5" >5.243176</td>
+      <td id="T_f5435_row4_col6" class="data row4 col6" >5.068323</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row5" class="row_heading level0 row5" >5</th>
-      <td id="T_25e34_row5_col0" class="data row5 col0" >9793</td>
-      <td id="T_25e34_row5_col1" class="data row5 col1" >1968-12-15 12:59:00</td>
-      <td id="T_25e34_row5_col2" class="data row5 col2" >9793-1968-12-15-12-59-00</td>
-      <td id="T_25e34_row5_col3" class="data row5 col3" >9.708976</td>
-      <td id="T_25e34_row5_col4" class="data row5 col4" >8.091755</td>
-      <td id="T_25e34_row5_col5" class="data row5 col5" >7.294038</td>
-      <td id="T_25e34_row5_col6" class="data row5 col6" >9.708976</td>
+      <th id="T_f5435_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_f5435_row5_col0" class="data row5 col0" >9793</td>
+      <td id="T_f5435_row5_col1" class="data row5 col1" >1968-12-15 12:59:00</td>
+      <td id="T_f5435_row5_col2" class="data row5 col2" >9793-1968-12-15-12-59-00</td>
+      <td id="T_f5435_row5_col3" class="data row5 col3" >8.091755</td>
+      <td id="T_f5435_row5_col4" class="data row5 col4" >9.708976</td>
+      <td id="T_f5435_row5_col5" class="data row5 col5" >9.708976</td>
+      <td id="T_f5435_row5_col6" class="data row5 col6" >7.294038</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row6" class="row_heading level0 row6" >6</th>
-      <td id="T_25e34_row6_col0" class="data row6 col0" >9768</td>
-      <td id="T_25e34_row6_col1" class="data row6 col1" >1967-07-04 23:09:00</td>
-      <td id="T_25e34_row6_col2" class="data row6 col2" >9768-1967-07-04-23-09-00</td>
-      <td id="T_25e34_row6_col3" class="data row6 col3" >5.729441</td>
-      <td id="T_25e34_row6_col4" class="data row6 col4" >4.959419</td>
-      <td id="T_25e34_row6_col5" class="data row6 col5" >4.326286</td>
-      <td id="T_25e34_row6_col6" class="data row6 col6" >5.729441</td>
+      <th id="T_f5435_level0_row6" class="row_heading level0 row6" >6</th>
+      <td id="T_f5435_row6_col0" class="data row6 col0" >9768</td>
+      <td id="T_f5435_row6_col1" class="data row6 col1" >1967-07-04 23:09:00</td>
+      <td id="T_f5435_row6_col2" class="data row6 col2" >9768-1967-07-04-23-09-00</td>
+      <td id="T_f5435_row6_col3" class="data row6 col3" >4.959419</td>
+      <td id="T_f5435_row6_col4" class="data row6 col4" >5.729441</td>
+      <td id="T_f5435_row6_col5" class="data row6 col5" >5.729441</td>
+      <td id="T_f5435_row6_col6" class="data row6 col6" >4.326286</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row7" class="row_heading level0 row7" >7</th>
-      <td id="T_25e34_row7_col0" class="data row7 col0" >9861</td>
-      <td id="T_25e34_row7_col1" class="data row7 col1" >1969-01-22 17:34:00</td>
-      <td id="T_25e34_row7_col2" class="data row7 col2" >9861-1969-01-22-17-34-00</td>
-      <td id="T_25e34_row7_col3" class="data row7 col3" >3.130283</td>
-      <td id="T_25e34_row7_col4" class="data row7 col4" >3.130283</td>
-      <td id="T_25e34_row7_col5" class="data row7 col5" >3.279378</td>
-      <td id="T_25e34_row7_col6" class="data row7 col6" >5.491415</td>
+      <th id="T_f5435_level0_row7" class="row_heading level0 row7" >7</th>
+      <td id="T_f5435_row7_col0" class="data row7 col0" >9861</td>
+      <td id="T_f5435_row7_col1" class="data row7 col1" >1969-01-22 17:34:00</td>
+      <td id="T_f5435_row7_col2" class="data row7 col2" >9861-1969-01-22-17-34-00</td>
+      <td id="T_f5435_row7_col3" class="data row7 col3" >3.130283</td>
+      <td id="T_f5435_row7_col4" class="data row7 col4" >5.491415</td>
+      <td id="T_f5435_row7_col5" class="data row7 col5" >3.130283</td>
+      <td id="T_f5435_row7_col6" class="data row7 col6" >3.279378</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row8" class="row_heading level0 row8" >8</th>
-      <td id="T_25e34_row8_col0" class="data row8 col0" >657</td>
-      <td id="T_25e34_row8_col1" class="data row8 col1" >1969-04-14 15:47:00</td>
-      <td id="T_25e34_row8_col2" class="data row8 col2" >657-1969-04-14-15-47-00</td>
-      <td id="T_25e34_row8_col3" class="data row8 col3" >nan</td>
-      <td id="T_25e34_row8_col4" class="data row8 col4" >nan</td>
-      <td id="T_25e34_row8_col5" class="data row8 col5" >7.903614</td>
-      <td id="T_25e34_row8_col6" class="data row8 col6" >7.903614</td>
+      <th id="T_f5435_level0_row8" class="row_heading level0 row8" >8</th>
+      <td id="T_f5435_row8_col0" class="data row8 col0" >657</td>
+      <td id="T_f5435_row8_col1" class="data row8 col1" >1969-04-14 15:47:00</td>
+      <td id="T_f5435_row8_col2" class="data row8 col2" >657-1969-04-14-15-47-00</td>
+      <td id="T_f5435_row8_col3" class="data row8 col3" >nan</td>
+      <td id="T_f5435_row8_col4" class="data row8 col4" >7.903614</td>
+      <td id="T_f5435_row8_col5" class="data row8 col5" >nan</td>
+      <td id="T_f5435_row8_col6" class="data row8 col6" >7.903614</td>
     </tr>
     <tr>
-      <th id="T_25e34_level0_row9" class="row_heading level0 row9" >9</th>
-      <td id="T_25e34_row9_col0" class="data row9 col0" >7916</td>
-      <td id="T_25e34_row9_col1" class="data row9 col1" >1968-12-20 03:38:00</td>
-      <td id="T_25e34_row9_col2" class="data row9 col2" >7916-1968-12-20-03-38-00</td>
-      <td id="T_25e34_row9_col3" class="data row9 col3" >4.318586</td>
-      <td id="T_25e34_row9_col4" class="data row9 col4" >3.901992</td>
-      <td id="T_25e34_row9_col5" class="data row9 col5" >4.629502</td>
-      <td id="T_25e34_row9_col6" class="data row9 col6" >6.084523</td>
+      <th id="T_f5435_level0_row9" class="row_heading level0 row9" >9</th>
+      <td id="T_f5435_row9_col0" class="data row9 col0" >7916</td>
+      <td id="T_f5435_row9_col1" class="data row9 col1" >1968-12-20 03:38:00</td>
+      <td id="T_f5435_row9_col2" class="data row9 col2" >7916-1968-12-20-03-38-00</td>
+      <td id="T_f5435_row9_col3" class="data row9 col3" >3.901992</td>
+      <td id="T_f5435_row9_col4" class="data row9 col4" >6.084523</td>
+      <td id="T_f5435_row9_col5" class="data row9 col5" >4.318586</td>
+      <td id="T_f5435_row9_col6" class="data row9 col6" >4.629502</td>
     </tr>
   </tbody>
 </table>
@@ -890,10 +762,6 @@ This is super handy if you e.g. want to parse a config file, and therefore prefe
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Advanced Tutorial</a><ul>
-<li><a class="reference internal" href="#using-data-loaders">Using data loaders</a><ul>
-<li><a class="reference internal" href="#the-data-loaders-registry">The data loaders registry</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#creating-feature-combinations">Creating feature combinations</a></li>
 <li><a class="reference internal" href="#caching">Caching</a></li>
 </ul>

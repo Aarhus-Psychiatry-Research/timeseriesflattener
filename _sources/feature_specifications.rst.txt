@@ -4,10 +4,10 @@ Feature specifications
 .. FlattenedDataset
 
 
-timeseriesflattener.feature_spec_objects
+timeseriesflattener.feature_specs.single_specs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: timeseriesflattener.feature_spec_objects
+.. automodule:: timeseriesflattener.feature_specs.single_specs
    :members:
    :undoc-members:
    :show-inheritance:
