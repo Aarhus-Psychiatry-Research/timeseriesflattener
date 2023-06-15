@@ -36,7 +36,7 @@ def test_predictor_after_prediction_time():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
         output_spec=PredictorSpec(
-            base_values_df=predictor_df,
+            timeseries_df=predictor_df,
             lookbehind_days=2,
             aggregation_fn=maximum,
             fallback=np.NaN,
@@ -57,7 +57,7 @@ def test_predictor_before_prediction():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
         output_spec=PredictorSpec(
-            base_values_df=str_to_df(predictor_df_str),
+            timeseries_df=str_to_df(predictor_df_str),
             lookbehind_days=2,
             aggregation_fn=maximum,
             fallback=np.NaN,
@@ -78,7 +78,7 @@ def test_text_predictor():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df,
         output_spec=TextPredictorSpec(
-            base_values_df=str_to_df(predictor_df_str),
+            timeseries_df=str_to_df(predictor_df_str),
             embedding_fn=bow_test_embedding,
             lookbehind_days=1,
             aggregation_fn=concatenate,
@@ -108,7 +108,7 @@ def test_multiple_citizens_predictor():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=PredictorSpec(
-            base_values_df=str_to_df(predictor_df_str),
+            timeseries_df=str_to_df(predictor_df_str),
             lookbehind_days=2,
             fallback=np.NaN,
             feature_base_name="value",
@@ -130,7 +130,7 @@ def test_event_after_prediction_time():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            base_values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
             aggregation_fn=maximum,
             incident=True,
@@ -152,7 +152,7 @@ def test_event_before_prediction():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            base_values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
             aggregation_fn=maximum,
             incident=False,
@@ -180,7 +180,7 @@ def test_multiple_citizens_outcome():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            base_values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
             aggregation_fn=maximum,
             incident=False,
@@ -202,7 +202,7 @@ def test_citizen_without_outcome():
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
         output_spec=OutcomeSpec(
-            base_values_df=str_to_df(outcome_df_str),
+            timeseries_df=str_to_df(outcome_df_str),
             lookahead_days=2,
             aggregation_fn=maximum,
             incident=False,
@@ -234,7 +234,7 @@ def test_static_predictor():
 
     dataset.add_spec(
         StaticSpec(  # type: ignore
-            base_values_df=str_to_df(static_predictor),
+            timeseries_df=str_to_df(static_predictor),
             feature_base_name=feature_name,
             prefix=prefix,
         ),
@@ -353,7 +353,7 @@ def test_incident_outcome_removing_prediction_times():
 
     flattened_dataset.add_spec(
         spec=OutcomeSpec(
-            base_values_df=event_times_df,
+            timeseries_df=event_times_df,
             lookahead_days=2,
             incident=True,
             fallback=np.NaN,
@@ -417,7 +417,7 @@ def test_add_multiple_static_predictors():
     )
 
     output_spec = OutcomeSpec(
-        base_values_df=event_times_df,
+        timeseries_df=event_times_df,
         lookahead_days=2,
         aggregation_fn=maximum,
         fallback=0,
@@ -429,7 +429,7 @@ def test_add_multiple_static_predictors():
         spec=[
             output_spec,
             StaticSpec(  # type: ignore
-                base_values_df=male_df,
+                timeseries_df=male_df,
                 feature_base_name="male",
                 prefix="pred",
             ),
@@ -495,14 +495,14 @@ def test_add_temporal_predictors_then_temporal_outcome():
     flattened_dataset.add_spec(
         spec=[
             PredictorSpec(
-                base_values_df=predictors_df,
+                timeseries_df=predictors_df,
                 lookbehind_days=365,
                 aggregation_fn=minimum,
                 fallback=np.nan,
                 feature_base_name="value",
             ),
             OutcomeSpec(
-                base_values_df=event_times_df,
+                timeseries_df=event_times_df,
                 lookahead_days=2,
                 aggregation_fn=maximum,
                 fallback=0,
@@ -553,7 +553,7 @@ def test_add_temporal_incident_binary_outcome():
 
     flattened_dataset.add_spec(
         spec=OutcomeSpec(
-            base_values_df=event_times_df,
+            timeseries_df=event_times_df,
             lookahead_days=2,
             incident=True,
             fallback=np.NaN,

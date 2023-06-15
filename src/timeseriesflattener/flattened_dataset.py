@@ -215,18 +215,18 @@ class TimeseriesFlattener:
         )
 
     @staticmethod
-    def _resolve_multiple_values_within_interval_days(
-        resolve_multiple: Callable,
+    def _aggregate_values_within_interval_days(
+        aggregation: Callable,
         df: DataFrame,
         pred_time_uuid_colname: str,
         val_timestamp_col_name: str,
     ) -> DataFrame:
-        """Apply the resolve_multiple function to prediction_times where there
+        """Apply the aggregation function to prediction_times where there
 
         are multiple values within the interval_days lookahead.
 
         Args:
-            resolve_multiple (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
+            aggregation (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
             df (DataFrame): Source dataframe with all prediction time x val combinations.
             pred_time_uuid_colname (str): Name of uuid column in df.
             val_timestamp_col_name (str): Name of timestamp column in df.
@@ -234,7 +234,7 @@ class TimeseriesFlattener:
         Returns:
             DataFrame: DataFrame with one row pr. prediction time.
         """
-        # Convert timestamp val to numeric that can be used for resolve_multiple functions
+        # Convert timestamp val to numeric that can be used for aggregation functions
         # Numeric value amounts to days passed since 1/1/1970
         try:
             df[val_timestamp_col_name] = (
@@ -243,15 +243,15 @@ class TimeseriesFlattener:
         except TypeError:
             log.info("All values are NaT, returning empty dataframe")
 
-        # Sort by timestamp_pred in case resolve_multiple needs dates
+        # Sort by timestamp_pred in case aggregation needs dates
         grouped_df = df.sort_values(by=val_timestamp_col_name).groupby(
             pred_time_uuid_colname,
         )
 
-        if callable(resolve_multiple):
-            df = resolve_multiple(grouped_df).reset_index()
+        if callable(aggregation):
+            df = aggregation(grouped_df).reset_index()
         else:
-            raise ValueError("resolve_multiple must be or resolve to a Callable")
+            raise ValueError("aggregation must be or resolve to a Callable")
 
         return df
 
@@ -338,7 +338,7 @@ class TimeseriesFlattener:
         # Drop id for faster merge
         df = pd.merge(
             left=prediction_times_with_uuid_df,
-            right=output_spec.base_values_df,
+            right=output_spec.timeseries_df,
             how="left",
             on=entity_id_col_name,
             suffixes=("_pred", "_val"),
@@ -371,8 +371,8 @@ class TimeseriesFlattener:
             inplace=True,  # noqa
         )
 
-        df = TimeseriesFlattener._resolve_multiple_values_within_interval_days(
-            resolve_multiple=output_spec.aggregation_fn,  # type: ignore
+        df = TimeseriesFlattener._aggregate_values_within_interval_days(
+            aggregation=output_spec.aggregation_fn,  # type: ignore
             df=df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
             val_timestamp_col_name=timestamp_val_col_name,
@@ -387,7 +387,7 @@ class TimeseriesFlattener:
                 embedding_fn_kwargs=output_spec.embedding_fn_kwargs,
             )
 
-        # If resolve_multiple generates empty values,
+        # If aggregation generates empty values,
         # e.g. when there is only one prediction_time within look_ahead window for slope calculation,
         # replace with NaN
 
@@ -593,7 +593,7 @@ class TimeseriesFlattener:
         # Try to infer value col name if not provided
         possible_value_cols = [
             col
-            for col in static_spec.base_values_df.columns  # type: ignore
+            for col in static_spec.timeseries_df.columns  # type: ignore
             if col not in self.entity_id_col_name
         ]
 
@@ -612,8 +612,8 @@ class TimeseriesFlattener:
 
         df = pd.DataFrame(
             {
-                self.entity_id_col_name: static_spec.base_values_df[self.entity_id_col_name],  # type: ignore
-                output_col_name: static_spec.base_values_df[value_col_name],  # type: ignore
+                self.entity_id_col_name: static_spec.timeseries_df[self.entity_id_col_name],  # type: ignore
+                output_col_name: static_spec.timeseries_df[value_col_name],  # type: ignore
             },
         )
 
@@ -648,7 +648,7 @@ class TimeseriesFlattener:
 
         df = pd.merge(
             self._df,
-            outcome_spec.base_values_df,
+            outcome_spec.timeseries_df,
             how="left",
             on=self.entity_id_col_name,
             suffixes=("_prediction", "_outcome"),
@@ -695,11 +695,11 @@ class TimeseriesFlattener:
         """
 
         if isinstance(spec, PredictorSpec):
-            min_val_date = spec.base_values_df[self.timestamp_col_name].min()  # type: ignore
+            min_val_date = spec.timeseries_df[self.timestamp_col_name].min()  # type: ignore
             return min_val_date + pd.Timedelta(days=spec.lookbehind_days)
 
         if isinstance(spec, OutcomeSpec):
-            max_val_date = spec.base_values_df[self.timestamp_col_name].max()  # type: ignore
+            max_val_date = spec.timeseries_df[self.timestamp_col_name].max()  # type: ignore
             return max_val_date - pd.Timedelta(days=spec.lookahead_days)
 
         raise ValueError(f"Spec type {type(spec)} not recognised.")
@@ -791,7 +791,7 @@ class TimeseriesFlattener:
             required_columns += [self.timestamp_col_name]
 
         for col in required_columns:
-            if col not in spec.base_values_df.columns:  # type: ignore
+            if col not in spec.timeseries_df.columns:  # type: ignore
                 raise KeyError(f"Missing required column: {col}")
 
     def _check_that_spec_df_timestamp_col_is_correctly_formatted(
@@ -799,7 +799,7 @@ class TimeseriesFlattener:
         spec: TemporalSpec,
     ):
         """Check that timestamp column is correctly formatted. Attempt to coerce if possible."""
-        timestamp_col_type = spec.base_values_df[self.timestamp_col_name].dtype  # type: ignore
+        timestamp_col_type = spec.timeseries_df[self.timestamp_col_name].dtype  # type: ignore
 
         if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
             # Convert column dtype to datetime64[ns] if it isn't already
@@ -807,11 +807,11 @@ class TimeseriesFlattener:
                 f"{spec.feature_base_name}: Converting timestamp column to datetime64[ns]",
             )
 
-            spec.base_values_df[self.timestamp_col_name] = pd.to_datetime(  # type: ignore
-                spec.base_values_df[self.timestamp_col_name],  # type: ignore
+            spec.timeseries_df[self.timestamp_col_name] = pd.to_datetime(  # type: ignore
+                spec.timeseries_df[self.timestamp_col_name],  # type: ignore
             )
 
-            min_timestamp = min(spec.base_values_df[self.timestamp_col_name])  # type: ignore
+            min_timestamp = min(spec.timeseries_df[self.timestamp_col_name])  # type: ignore
 
             if min_timestamp < pd.Timestamp("1971-01-01"):
                 log.warning(
@@ -892,7 +892,7 @@ class TimeseriesFlattener:
         tmp_prefix = "tmp"
         self._add_static_info(
             static_spec=StaticSpec(
-                base_values_df=date_of_birth_df,
+                timeseries_df=date_of_birth_df,
                 prefix=tmp_prefix,
                 feature_base_name=date_of_birth_col_name,
                 # We typically don't want to use date of birth as a predictor,

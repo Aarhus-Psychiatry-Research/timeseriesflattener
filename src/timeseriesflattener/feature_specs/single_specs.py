@@ -24,14 +24,18 @@ class StaticSpec(BaseModel):
     """Specification for a static feature.
 
     Args:
-        base_values_df: Dataframe with the values. Should contain columns named "entity_id", "value" and "timestamp".
+        timeseries_df: Dataframe with the values. Should contain columns:
+            entity_id (int, float, str): ID of the entity each time series belongs to
+            value (int, float, str): The values in the timeseries.
+            timestamp (datetime): Timestamps
+            NOTE: Column names can be overridden when initialising TimeSeriesFlattener.
         feature_base_name: The name of the feature. Used for column name generation, e.g.
             <prefix>_<feature_baase_name>_<metadata>.
         prefix: The prefix used for column name generation, e.g.
             <prefix>_<feature_name>_<metadata>. Defaults to "pred".
     """
 
-    base_values_df: pd.DataFrame
+    timeseries_df: pd.DataFrame
     feature_base_name: str
     prefix: str = "pred"
 
@@ -53,10 +57,14 @@ def get_temporal_col_name(
 
 
 class OutcomeSpec(BaseModel):
-    """Specification for a static feature.
+    """Specification for an outcome feature.
 
     Args:
-        base_values_df: Dataframe with the values. Should contain columns named "entity_id", "value" and "timestamp".
+        timeseries_df: Dataframe with the values. Should contain columns:
+            entity_id (int, float, str): ID of the entity each time series belongs to
+            value (int, float, str): The values in the timeseries.
+            timestamp (datetime): Timestamps
+            NOTE: Column names can be overridden when initialising TimeSeriesFlattener.
         feature_base_name: The name of the feature. Used for column name generation, e.g.
             <prefix>_<feature_baase_name>_<metadata>.
         lookahead_days: How far ahead from the prediction time to look for outcome values.
@@ -64,25 +72,18 @@ class OutcomeSpec(BaseModel):
         fallback: Value to return if no values is found within window.
         incident: Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.
             Incident outcomes can be handled in a vectorised way during resolution, which is faster than non-incident outcomes.
-            Requires that each entity only occurs once in the base_values_df.
+            Requires that each entity only occurs once in the timeseries_df.
         prefix: The prefix used for column name generation, e.g.
             <prefix>_<feature_name>_<metadata>. Defaults to "pred".
     """
 
-    base_values_df: pd.DataFrame
+    timeseries_df: pd.DataFrame
     feature_base_name: str
     lookahead_days: float
     aggregation_fn: Callable
     fallback: Union[float, int]
     incident: bool
     prefix: str = "outc"
-
-    Field(
-        description="""Whether the outcome is incident or not.
-            I.e., incident outcomes are outcomes you can only experience once.
-            For example, type 2 diabetes is incident. Incident outcomes can be handled
-            in a vectorised way during resolution, which is faster than non-incident outcomes.""",
-    )
 
     def get_output_col_name(self) -> str:
         """Get the column name for the output column."""
@@ -101,27 +102,31 @@ class OutcomeSpec(BaseModel):
 
     def is_dichotomous(self) -> bool:
         """Check if the outcome is dichotomous."""
-        return len(self.base_values_df["value"].unique()) <= 2
+        return len(self.timeseries_df["value"].unique()) <= 2
 
 
 class PredictorSpec(BaseModel):
-    """Specification for a static feature.
+    """Specification for predictor feature.
 
     Args:
-        base_values_df: Dataframe with the values. Should contain columns named "entity_id", "value" and "timestamp".
+        timeseries_df: Dataframe with the values. Should contain columns:
+            entity_id (int, float, str): ID of the entity each time series belongs to
+            value (int, float, str): The values in the timeseries.
+            timestamp (datetime): Timestamps
+            NOTE: Column names can be overridden when initialising TimeSeriesFlattener.
         feature_base_name: The name of the feature. Used for column name generation, e.g.
             <prefix>_<feature_baase_name>_<metadata>.
-        lookahead_days: How far ahead from the prediction time to look for outcome values.
+        lookbehind_days: How far behind from the prediction time to look for predictor values.
         aggregation_fn: How to aggregate multiple values within lookahead days. Should take a grouped dataframe as input and return a single value.
         fallback: Value to return if no values is found within window.
         incident: Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.
             Incident outcomes can be handled in a vectorised way during resolution, which is faster than non-incident outcomes.
-            Requires that each entity only occurs once in the base_values_df.
+            Requires that each entity only occurs once in the timeseries_df.
         prefix: The prefix used for column name generation, e.g.
             <prefix>_<feature_name>_<metadata>. Defaults to "pred".
     """
 
-    base_values_df: pd.DataFrame
+    timeseries_df: pd.DataFrame
     feature_base_name: str
     aggregation_fn: Callable
     fallback: Union[float, int]
@@ -143,25 +148,24 @@ class TextPredictorSpec(BaseModel):
     """Specification for a text predictor, where the df has been resolved.
 
     Args:
-        base_values_df: Dataframe with the values.
+        timeseries_df: Dataframe with the values.
         feature_base_name: The name of the feature. Used for column name generation, e.g.
             <prefix>_<feature_baase_name>_<metadata>.
         aggregation_fn: How to aggregate multiple values within a window. Can be a string, a function, or a list of functions.
         fallback: Value to return if no values is found within window.
-        lookbehind_days: How far behind to look for values. Defaults to LOOKBEHIND_DAYS_DEF.
+        lookbehind_days: How far behind to look for values.
         prefix: The prefix used for column name generation, e.g.
             <prefix>_<feature_name>_<metadata>. Defaults to "pred".
         embedding_fn: A function used for embedding the text. Should take a
             pandas series of strings and return a pandas dataframe of embeddings.
-            Defaults to None.
         embedding_fn_kwargs: Optional kwargs passed onto the embedding_fn.
             Defaults to None.
-        resolve_multiple_fn: A function used for resolving multiple
+        aggregation_fn: A function used for resolving multiple
             values within a window. Defaults to concatenate.
 
     """
 
-    base_values_df: pd.DataFrame
+    timeseries_df: pd.DataFrame
     feature_base_name: str
     fallback: Union[float, int]
     embedding_fn: Callable

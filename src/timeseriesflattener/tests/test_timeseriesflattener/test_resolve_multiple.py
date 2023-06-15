@@ -1,4 +1,4 @@
-"""Tests of resolve_multiple strategies."""
+"""Tests of aggregation strategies."""
 
 
 import numpy as np
@@ -28,7 +28,7 @@ from timeseriesflattener.testing.utils_for_testing import (
 )
 
 
-def test_resolve_multiple_max():
+def test_aggregation_max():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
@@ -41,7 +41,7 @@ def test_resolve_multiple_max():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=maximum,
             lookahead_days=2,
             fallback=0,
@@ -51,7 +51,7 @@ def test_resolve_multiple_max():
     )
 
 
-def test_resolve_multiple_min():
+def test_aggregation_min():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
@@ -64,7 +64,7 @@ def test_resolve_multiple_min():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=minimum,
             lookahead_days=2,
             fallback=0,
@@ -74,7 +74,7 @@ def test_resolve_multiple_min():
     )
 
 
-def test_resolve_multiple_avg():
+def test_aggregation_avg():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 08:00:00
                             """
@@ -87,7 +87,7 @@ def test_resolve_multiple_avg():
         prediction_times_df=prediction_times_str,
         output_spec=PredictorSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(predictor_df_str),
+            timeseries_df=str_to_df(predictor_df_str),
             aggregation_fn=mean,
             lookbehind_days=2,
             fallback=0,
@@ -96,7 +96,7 @@ def test_resolve_multiple_avg():
     )
 
 
-def test_resolve_multiple_latest():
+def test_aggregation_latest():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -114,7 +114,7 @@ def test_resolve_multiple_latest():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=latest,
             lookahead_days=2,
             fallback=0,
@@ -124,7 +124,7 @@ def test_resolve_multiple_latest():
     )
 
 
-def test_resolve_multiple_latest_no_values():
+def test_aggregation_latest_no_values():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -138,7 +138,7 @@ def test_resolve_multiple_latest_no_values():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=latest,
             lookahead_days=2,
             fallback=np.nan,
@@ -148,7 +148,7 @@ def test_resolve_multiple_latest_no_values():
     )
 
 
-def test_resolve_multiple_latest_one_vlaue():
+def test_aggregation_latest_one_vlaue():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
@@ -160,7 +160,7 @@ def test_resolve_multiple_latest_one_vlaue():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=latest,
             lookahead_days=2,
             fallback=0,
@@ -170,7 +170,7 @@ def test_resolve_multiple_latest_one_vlaue():
     )
 
 
-def test_resolve_multiple_earliest():
+def test_aggregation_earliest():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -188,7 +188,7 @@ def test_resolve_multiple_earliest():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=earliest,
             lookahead_days=2,
             fallback=0,
@@ -198,7 +198,7 @@ def test_resolve_multiple_earliest():
     )
 
 
-def test_resolve_multiple_sum():
+def test_aggregation_sum():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
@@ -211,7 +211,7 @@ def test_resolve_multiple_sum():
         prediction_times_df=prediction_times_str,
         output_spec=PredictorSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(predictor_df_str),
+            timeseries_df=str_to_df(predictor_df_str),
             aggregation_fn=summed,
             lookbehind_days=2,
             fallback=0,
@@ -220,7 +220,7 @@ def test_resolve_multiple_sum():
     )
 
 
-def test_resolve_multiple_count():
+def test_aggregation_count():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
@@ -233,7 +233,7 @@ def test_resolve_multiple_count():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=count,
             lookahead_days=2,
             fallback=0,
@@ -243,7 +243,7 @@ def test_resolve_multiple_count():
     )
 
 
-def test_resolve_multiple_bool():
+def test_aggregation_bool():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -257,7 +257,7 @@ def test_resolve_multiple_bool():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=boolean,
             lookahead_days=2,
             fallback=0,
@@ -267,7 +267,7 @@ def test_resolve_multiple_bool():
     )
 
 
-def test_resolve_multiple_change_per_day():
+def test_aggregation_change_per_day():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -283,7 +283,7 @@ def test_resolve_multiple_change_per_day():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=change_per_day,
             lookahead_days=4,
             fallback=np.NaN,
@@ -293,7 +293,7 @@ def test_resolve_multiple_change_per_day():
     )
 
 
-def test_resolve_multiple_change_per_day_unordered():
+def test_aggregation_change_per_day_unordered():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -309,7 +309,7 @@ def test_resolve_multiple_change_per_day_unordered():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=change_per_day,
             lookahead_days=4,
             fallback=np.NaN,
@@ -319,7 +319,7 @@ def test_resolve_multiple_change_per_day_unordered():
     )
 
 
-def test_resolve_multiple_change_per_day_negative():
+def test_aggregation_change_per_day_negative():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -335,7 +335,7 @@ def test_resolve_multiple_change_per_day_negative():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=change_per_day,
             lookahead_days=4,
             fallback=np.NaN,
@@ -345,7 +345,7 @@ def test_resolve_multiple_change_per_day_negative():
     )
 
 
-def test_resolve_multiple_change_per_day_too_few_datapoints():
+def test_aggregation_change_per_day_too_few_datapoints():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -361,7 +361,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=change_per_day,
             lookahead_days=4,
             fallback=99999,
@@ -371,7 +371,7 @@ def test_resolve_multiple_change_per_day_too_few_datapoints():
     )
 
 
-def test_resolve_multiple_change_per_day_only_one_observation():
+def test_aggregation_change_per_day_only_one_observation():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -386,7 +386,7 @@ def test_resolve_multiple_change_per_day_only_one_observation():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=change_per_day,
             lookahead_days=4,
             fallback=0,
@@ -396,7 +396,7 @@ def test_resolve_multiple_change_per_day_only_one_observation():
     )
 
 
-def test_resolve_multiple_variance():
+def test_aggregation_variance():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -412,7 +412,7 @@ def test_resolve_multiple_variance():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=variance,
             lookahead_days=4,
             fallback=np.NaN,
@@ -422,7 +422,7 @@ def test_resolve_multiple_variance():
     )
 
 
-def test_resolve_multiple_concatenate():
+def test_aggregation_concatenate():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
@@ -435,7 +435,7 @@ def test_resolve_multiple_concatenate():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=concatenate,
             lookahead_days=4,
             fallback=np.NaN,
@@ -445,7 +445,7 @@ def test_resolve_multiple_concatenate():
     )
 
 
-def test_resolve_multiple_mean_len():
+def test_aggregation_mean_len():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             """
@@ -458,7 +458,7 @@ def test_resolve_multiple_mean_len():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=mean_number_of_characters,
             lookahead_days=4,
             fallback=np.NaN,
@@ -468,7 +468,7 @@ def test_resolve_multiple_mean_len():
     )
 
 
-def test_resolve_multiple_type_token_ratio():
+def test_aggregation_type_token_ratio():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
                             2,2021-12-31 00:00:00
@@ -484,7 +484,7 @@ def test_resolve_multiple_type_token_ratio():
         prediction_times_df=prediction_times_str,
         output_spec=OutcomeSpec(
             feature_base_name="value",
-            base_values_df=str_to_df(event_times_str),
+            timeseries_df=str_to_df(event_times_str),
             aggregation_fn=type_token_ratio,
             lookahead_days=4,
             fallback=np.NaN,

@@ -59,14 +59,14 @@ if __name__ == "__main__":
     from timeseriesflattener.aggregation_functions import maximum, mean
 
     predictor_spec = PredictorSpec(
-        base_values_df=predictor_df,
+        timeseries_df=predictor_df,
         lookbehind_days=30,
         fallback=np.nan,
         aggregation_fn=mean,
         feature_base_name="test_feature",
     )
     outcome_spec = OutcomeSpec(
-        base_values_df=outcome_df,
+        timeseries_df=outcome_df,
         lookahead_days=31,
         fallback=0,
         aggregation_fn=maximum,

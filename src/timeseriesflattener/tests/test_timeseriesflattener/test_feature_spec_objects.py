@@ -39,8 +39,8 @@ def test_skip_one_if_no_need_to_process(empty_named_df: NamedDataframe):
     assert len(created_combinations) == 2
 
 
-def test_resolve_multiple_fn_to_str(empty_named_df: NamedDataframe):
-    """Test that resolve_multiple_fn is converted to str correctly."""
+def test_aggregation_fn_to_str(empty_named_df: NamedDataframe):
+    """Test that aggregation_fn is converted to str correctly."""
     pred_spec_batch = PredictorGroupSpec(
         named_dataframes=[empty_named_df],
         lookbehind_days=[365, 730],

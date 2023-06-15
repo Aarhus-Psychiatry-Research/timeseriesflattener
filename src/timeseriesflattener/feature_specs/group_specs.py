@@ -49,7 +49,7 @@ class PredictorGroupSpec(BaseModel):
         return [
             PredictorSpec(
                 prefix=d["prefix"],  # type: ignore
-                base_values_df=d["named_dataframes"].df,  # type: ignore
+                timeseries_df=d["named_dataframes"].df,  # type: ignore
                 feature_base_name=d["named_dataframes"].name,  # type: ignore
                 lookbehind_days=d["lookbehind_days"],  # type: ignore
                 aggregation_fn=d["aggregation_fns"],  # type: ignore
@@ -68,7 +68,9 @@ class OutcomeGroupSpec(BaseModel):
         aggregation_fns: How to handle multiple values within the lookahead window.
         fallback: A list of fallback values to use if the aggregation fails.
         lookahead_days: The number of days to look ahead from the prediction time for outcome values.
-        incident: Whether the outcome is incident or not, i.e. whether you can experience it more than once.
+        incident: "Whether the outcome is incident or not, i.e. whether you can experience it more than once.
+            For example, type 2 diabetes is incident. Incident outcomes can be handled in a vectorised way
+            during resolution, which is faster than non-incident outcomes.
 
     """
 
@@ -80,12 +82,7 @@ class OutcomeGroupSpec(BaseModel):
 
     # Individual attributes
     lookahead_days: List[float]
-    incident: Sequence[bool] = Field(
-        description="""Whether the outcome is incident or not, i.e. whether you
-            can experience it more than once. For example, type 2 diabetes is incident.
-            Incident outcomes can be handled in a vectorised way during resolution,
-             which is faster than non-incident outcomes.""",
-    )
+    incident: Sequence[bool]
 
     def create_combinations(self) -> List[OutcomeSpec]:
         """Create all combinations from the group spec."""
@@ -96,7 +93,7 @@ class OutcomeGroupSpec(BaseModel):
         return [
             OutcomeSpec(
                 prefix=d["prefix"],  # type: ignore
-                base_values_df=d["values_pairs"].df,  # type: ignore
+                timeseries_df=d["values_pairs"].df,  # type: ignore
                 feature_base_name=d["values_pairs"].base_feature_name,  # type: ignore
                 lookahead_days=d["lookahead_days"],  # type: ignore
                 aggregation_fn=d["aggregation_fns"],  # type: ignore
@@ -147,7 +144,7 @@ class TextPredictorGroupSpec(BaseModel):
         return [
             TextPredictorSpec(
                 prefix=d["prefix"],  # type: ignore
-                base_values_df=d["named_dataframes"].df,  # type: ignore
+                timeseries_df=d["named_dataframes"].df,  # type: ignore
                 feature_base_name=d["embedding_fn_name"],  # type: ignore
                 lookbehind_days=d["lookbehind_days"],  # type: ignore
                 aggregation_fn=d["aggregation_fns"],  # type: ignore

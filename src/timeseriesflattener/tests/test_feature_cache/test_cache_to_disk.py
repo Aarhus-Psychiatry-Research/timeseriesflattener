@@ -36,7 +36,7 @@ def test_write_and_check_feature(
 
     test_spec = PredictorSpec(
         feature_base_name="test_feature",
-        base_values_df=values_df,
+        timeseries_df=values_df,
         lookbehind_days=5,
         aggregation_fn=latest,
         fallback=np.nan,
@@ -89,7 +89,7 @@ def test_read_feature(tmp_path: Path):
     )
 
     test_spec = PredictorSpec(
-        base_values_df=values_df,
+        timeseries_df=values_df,
         lookbehind_days=5,
         aggregation_fn=latest,
         fallback=np.NaN,

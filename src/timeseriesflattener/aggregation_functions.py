@@ -6,7 +6,7 @@ import catalogue
 from pandas import DataFrame, Series
 from scipy import stats
 
-resolve_multiple_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
+aggregation_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 
 
 def latest(grouped_df: DataFrame) -> Series:

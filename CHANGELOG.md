@@ -12,7 +12,7 @@
 
 ### Fix
 * Update type hints ([`887bc06`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/887bc062bf970690077fea105b5ca77018049e6d))
-* Incorrect naming of resolve_multiple_fn ([`0a4607e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0a4607ee48e9dd6227205bca09ab123b6d30504a))
+* Incorrect naming of aggregation_fn ([`0a4607e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0a4607ee48e9dd6227205bca09ab123b6d30504a))
 
 ## v0.25.1 (2023-05-02)
 ### Fix
@@ -114,7 +114,7 @@
 * Example text embedding functions ([`f4ce9a2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f4ce9a2e08dfaf93b5cf1fa30e28cdffb2dc1867))
 * Handle text features and features with multiple columns ([`a3cafe9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a3cafe9ce1a9aae3db1ae6f7f2b9c394323409d5))
 * TextSpec and option for additional feature name .get_col_str ([`2986203`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2986203e3d595c5bb387db8feee34bb1fa6a5ddf))
-* Added concatenate resolve_multiple_fn ([`5dc8c9f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5dc8c9f7025099bf0186881af5ecc158af0aadda))
+* Added concatenate aggregation_fn ([`5dc8c9f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5dc8c9f7025099bf0186881af5ecc158af0aadda))
 
 ### Fix
 * Fix semantic release ([`7e993e3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7e993e34c2b670a3239a452703213cd368261d18))
@@ -239,14 +239,14 @@
 ## v0.17.0 (2022-12-08)
 ### Feature
 * More appropriate logging level ([`7122e79`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7122e79606ec2d2fd5802361ecda8ebde318de12))
-* Infer resolve_multiple_fn str rep for groups ([`8058d65`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8058d65fdf6e65c534adab87861dcaaeafdd03b8))
-* Infer resolve_multiple_fn str repr from __name__ ([`55be07d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/55be07df7947b5a7baafafcae7955c4b426a45d0))
+* Infer aggregation_fn str rep for groups ([`8058d65`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8058d65fdf6e65c534adab87861dcaaeafdd03b8))
+* Infer aggregation_fn str repr from __name__ ([`55be07d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/55be07df7947b5a7baafafcae7955c4b426a45d0))
 * Add lookahead and lookbehind days to feature group specs ([`318591b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/318591b7edda233897e11af0a79fdd97a5f12716))
 
 ### Fix
 * Guard against incident attribute not existing ([`3b1329b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3b1329b35c11477d09555287a904a9f895e99964))
-* Re-add resolve_multiple str resolution ([`18983a7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/18983a7988473352f2e994f1ef18ab7e1c8caa80))
-* Only infer resolve_multiple_str if not specified manually ([`f2648f8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f2648f8afc692812f490e019db0bbb44391d96e2))
+* Re-add aggregation str resolution ([`18983a7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/18983a7988473352f2e994f1ef18ab7e1c8caa80))
+* Only infer aggregation_str if not specified manually ([`f2648f8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f2648f8afc692812f490e019db0bbb44391d96e2))
 * Create dir for diskcache if it doesn't exist ([`0e32436`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0e32436a0c9ee2d59b916158e7f46f0081661fa2))
 * Create dir if it doesn't exist ([`c32f3c7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c32f3c702c0d473b59c506cd2e855def65764b24))
 
@@ -299,7 +299,7 @@
 * Unify file naming in cache module ([`f155217`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f155217edc860cbde68e60f6d102dc1fc2191347))
 * Use correct suffix ([`6e737b8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6e737b8010c06f62ef320c868fc3821d524ec117))
 * Remove seconds from diskcache to avoid ([`f9ac05c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f9ac05c46ca13649c248588470f000aa70ec6650))
-* Key_for_resolve_multiple should be optional ([`c569b74`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c569b749e9c47a60d0e66eae8c0633519ed0e0de))
+* Key_for_aggregation should be optional ([`c569b74`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c569b749e9c47a60d0e66eae8c0633519ed0e0de))
 
 ### Documentation
 * Add basic tutorial ([`8136a1b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8136a1b3db20f30df7898363dfa68e584a6cfe8d))
@@ -389,7 +389,7 @@
 ## v0.7.0 (2022-11-16)
 ### Feature
 * Full run ([`142212f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/142212fc63a59662048b6569dc874def92dfe62f))
-* Rename resolve_multiple registry keys to their previous one ([`3fd3f35`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3fd3f3566a8a9312ef9a8326a700b162ed9815c3))
+* Rename aggregation registry keys to their previous one ([`3fd3f35`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3fd3f3566a8a9312ef9a8326a700b162ed9815c3))
 * Reimplement ([`c99585f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c99585fdf9f9f407a69e0ead05f935d34ed86a63))
 * Use lru cache decorator for values_df loading ([`4006818`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/40068187da20854fcca980872bc42b8a3a096cc9))
 * Add support for loader kwargs ([`127f821`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/127f8215c35b792390595b890210baa0e8cf3591))
@@ -416,7 +416,7 @@
 * Correctly resolve values_df ([`def67cd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/def67cd954440df76f1570acf7e48f68ae636d6c))
 * MinGroupSpec should take a sequence of name to permute over ([`f0c8140`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f0c814017b6f355d5916ba15fe26d9f3350a3a7b))
 * Typo ([`61c7241`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/61c7241d11f7bff3bad11e98cfea38600e239167))
-* Remove resolve_multiple_fn_name ([`617d386`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/617d386095139bc3445a5f4d14ffebce1e5ffa24))
+* Remove aggregation_fn_name ([`617d386`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/617d386095139bc3445a5f4d14ffebce1e5ffa24))
 * Old concat resulted in wrong ordering of rrows. ([`3759f71`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3759f719070175c8be4184a0bdc5fc07db2c492c))
 * Set hba1c as eval ([`89fe6d2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/89fe6d209b93d345d9a0d8cd562e90ec395dfa8d))
 * Typos ([`6eac440`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6eac4408d8f0a58bb4cc66ac948bae5519a2c8cd))
@@ -431,7 +431,7 @@
 * Misc. errors after introducing feature specs ([`0308eca`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/0308ecae8032ff309725b0917fd3901fadf102f9))
 * Correctly merge dataframes ([`a907885`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a907885f592ba345cdf68ce5299699aacdc97b49))
 * Cache error because of loss off UUID ([`89d7f6f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/89d7f6f0ce557c7c3126116864ba75d0ddb0037e))
-* New bugs in resolve_multiple ([`5714a39`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5714a39c9e84081f6429dd0b8119873a9610e804))
+* New bugs in aggregation ([`5714a39`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5714a39c9e84081f6429dd0b8119873a9610e804))
 * Rename outcomespec appropriately ([`41fa220`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/41fa22069453ac6df7dae824d49944775cf12ecc))
 * Lookbehind_days must be iterable ([`cc879e9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cc879e9d6b0f806a2a604ff71cb3febbd625c2aa))
 

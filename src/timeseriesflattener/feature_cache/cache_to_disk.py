@@ -88,7 +88,7 @@ class DiskCache(FeatureCache):
         Returns:
             str: File name
         """
-        n_rows = feature_spec.base_values_df.shape[0]  # type: ignore
+        n_rows = feature_spec.timeseries_df.shape[0]  # type: ignore
 
         return f"{feature_spec.get_output_col_name()}_{n_rows}_rows_in_values_df"
 

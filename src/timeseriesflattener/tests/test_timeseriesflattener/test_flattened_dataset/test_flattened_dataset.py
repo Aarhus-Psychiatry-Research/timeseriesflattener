@@ -34,7 +34,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
 
     # Create sample specs
     outcome_spec = OutcomeSpec(
-        base_values_df=synth_outcome,
+        timeseries_df=synth_outcome,
         feature_base_name="outcome",
         lookahead_days=1,
         aggregation_fn=mean,
@@ -42,14 +42,14 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         incident=False,
     )
     predictor_spec = PredictorSpec(
-        base_values_df=synth_outcome,
+        timeseries_df=synth_outcome,
         feature_base_name="predictor",
         lookbehind_days=1,
         aggregation_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
-        base_values_df=synth_outcome,
+        timeseries_df=synth_outcome,
         feature_base_name="static",
         prefix="pred",
     )
@@ -84,7 +84,7 @@ def test_compute_specs(
 
     # Create sample specs
     outcome_spec = OutcomeSpec(
-        base_values_df=synth_outcome,
+        timeseries_df=synth_outcome,
         feature_base_name="outcome",
         lookahead_days=1,
         aggregation_fn=mean,
@@ -92,19 +92,19 @@ def test_compute_specs(
         incident=False,
     )
     predictor_spec = PredictorSpec(
-        base_values_df=synth_outcome,
+        timeseries_df=synth_outcome,
         feature_base_name="predictor",
         lookbehind_days=1,
         aggregation_fn=mean,
         fallback=np.nan,
     )
     static_spec = StaticSpec(
-        base_values_df=synth_outcome[["value", "entity_id"]],
+        timeseries_df=synth_outcome[["value", "entity_id"]],
         feature_base_name="static",
         prefix="pred",
     )
     text_spec = TextPredictorSpec(  # type: ignore
-        base_values_df=synth_text_data,
+        timeseries_df=synth_text_data,
         feature_base_name="text",
         lookbehind_days=750,
         aggregation_fn=concatenate,
@@ -149,7 +149,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
 
     # Create a sample set of specs
     predictor_spec = PredictorSpec(
-        base_values_df=pred_val_df,
+        timeseries_df=pred_val_df,
         lookbehind_days=1,
         aggregation_fn=latest,
         fallback=np.nan,
@@ -165,7 +165,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
     )
 
     outcome_spec = OutcomeSpec(
-        base_values_df=out_val_df,
+        timeseries_df=out_val_df,
         lookahead_days=2,
         aggregation_fn=latest,
         fallback=np.nan,
@@ -210,7 +210,7 @@ def test_double_compute_doesn_not_duplicate_columns():
     )
 
     predictor_spec = PredictorSpec(
-        base_values_df=predictor_df,
+        timeseries_df=predictor_df,
         lookbehind_days=15,
         fallback=np.nan,
         aggregation_fn=mean,
@@ -243,7 +243,7 @@ def test_group_spec_feature_name(
 
     # Create sample specs
     outcome_spec = OutcomeSpec(
-        base_values_df=synth_outcome,
+        timeseries_df=synth_outcome,
         feature_base_name="outcome",
         lookahead_days=1,
         aggregation_fn=mean,
