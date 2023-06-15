@@ -313,7 +313,7 @@ def lint(c: Context, auto_fix: bool = False):
 @task
 def test_tutorials(c: Context):
     c.run(
-        "find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs jupyter nbconvert --to notebook --execute"
+        "find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs jupyter nbconvert --to notebook --execute",
     )
 
 
