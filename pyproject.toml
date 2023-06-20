@@ -24,8 +24,8 @@ dependencies = [
     "pandas>=1.4.0",
     "catalogue>=2.0.0",
     "numpy>=1.23.3",
-    "pyarrow>=9.0.0",
-    "protobuf<=4.22.3", # Other versions give errors with pytest, super weird!
+    "pyarrow>=8.0.0",
+    "protobuf<=4.23.3", # Other versions give errors with pytest, super weird!
     "frozendict>=2.3.4",
     "coloredlogs>14.0.0",
     "psycopmlutils>=0.5.0",
@@ -38,7 +38,7 @@ name = "MIT"
 dev = [
   "cruft",
   "pyright==1.1.305",  
-  "pre-commit==2.20.0,<2.21.0",
+  "pre-commit==3.3.3",
   "ruff==0.0.272", # important that these match the pre-commit hooks
   "black[jupyter]==22.8.0", # important that these match the pre-commit hooks
   "pandas-stubs", # type stubs for pandas
