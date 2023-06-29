@@ -228,7 +228,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">concatenate</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">AggregationFunType</span><span class="p">,</span> <span class="n">concatenate</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.utils.pydantic_basemodel</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
 
@@ -272,7 +272,7 @@
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">feature_base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">lookwindow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span><span class="p">,</span>
     <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the column name for the temporal feature.&quot;&quot;&quot;</span>
@@ -305,7 +305,7 @@
     <span class="n">timeseries_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
     <span class="n">feature_base_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">lookahead_days</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span>
     <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="n">incident</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;outc&quot;</span>
@@ -353,7 +353,7 @@
 
     <span class="n">timeseries_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
     <span class="n">feature_base_name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span>
     <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="n">lookbehind_days</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span>
@@ -398,7 +398,7 @@
     <span class="n">lookbehind_days</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span>
 
-    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">concatenate</span>
+    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span> <span class="o">=</span> <span class="n">concatenate</span>
 
 <div class="viewcode-block" id="TextPredictorSpec.get_output_col_name"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.get_output_col_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_output_col_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">additional_feature_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the column name for the output column.</span>
