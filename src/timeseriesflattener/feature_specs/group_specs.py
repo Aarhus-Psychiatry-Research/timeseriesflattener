@@ -3,8 +3,9 @@ from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Sequence, Union
 
 import pandas as pd
+from pandas.core.groupby.generic import DataFrameGroupBy
 from pydantic import Field
-from timeseriesflattener.aggregation_fns import concatenate
+from timeseriesflattener.aggregation_fns import AggregationFunType, concatenate
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,
@@ -37,7 +38,7 @@ class PredictorGroupSpec(BaseModel):
     prefix: str = "pred"
     lookbehind_days: List[float]
     named_dataframes: Sequence[NamedDataframe]
-    aggregation_fns: Sequence[Callable]
+    aggregation_fns: Sequence[AggregationFunType]
     fallback: Sequence[Union[int, float, str]]
 
     def create_combinations(self) -> List[PredictorSpec]:
@@ -77,7 +78,7 @@ class OutcomeGroupSpec(BaseModel):
     # Shared attributes from GroupSpec
     prefix: str = "outc"
     named_dataframes: Sequence[NamedDataframe]
-    aggregation_fns: Sequence[Callable]
+    aggregation_fns: Sequence[AggregationFunType]
     fallback: Sequence[Union[int, float, str]]
 
     # Individual attributes
@@ -109,7 +110,7 @@ class TextPredictorGroupSpec(BaseModel):
     # Shared attributes from GroupSpec
     lookbehind_days: List[float]
     named_dataframes: Sequence[NamedDataframe]
-    aggregation_fns: Sequence[Callable]
+    aggregation_fns: Sequence[AggregationFunType]
     fallback: Sequence[Union[int, float, str]]
 
     embedding_fn_name: str
@@ -126,13 +127,6 @@ class TextPredictorGroupSpec(BaseModel):
     embedding_fn_kwargs: Optional[List[dict]] = Field(
         default=None,
         description="""Optional kwargs passed onto the embedding_fn.""",
-    )
-    aggregation_fn: Sequence[Callable] = Field(
-        default=[concatenate],
-        description="""A function used for resolving multiple values within the
-        interval_days, i.e. how to combine texts within the lookbehind window.
-        Defaults to: concatenate. Other possible options are "latest" and
-        "earliest".""",
     )
 
     def create_combinations(self) -> List[TextPredictorSpec]:

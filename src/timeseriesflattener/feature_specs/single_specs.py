@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
 import pandas as pd
-from timeseriesflattener.aggregation_fns import concatenate
+from timeseriesflattener.aggregation_fns import AggregationFunType, concatenate
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
@@ -46,7 +46,7 @@ def get_temporal_col_name(
     prefix: str,
     feature_base_name: str,
     lookwindow: Union[float, int],
-    aggregation_fn: Callable,
+    aggregation_fn: AggregationFunType,
     fallback: Union[float, int],
 ) -> str:
     """Get the column name for the temporal feature."""
@@ -79,7 +79,7 @@ class OutcomeSpec(BaseModel):
     timeseries_df: pd.DataFrame
     feature_base_name: str
     lookahead_days: float
-    aggregation_fn: Callable
+    aggregation_fn: AggregationFunType
     fallback: Union[float, int]
     incident: bool
     prefix: str = "outc"
@@ -127,7 +127,7 @@ class PredictorSpec(BaseModel):
 
     timeseries_df: pd.DataFrame
     feature_base_name: str
-    aggregation_fn: Callable
+    aggregation_fn: AggregationFunType
     fallback: Union[float, int]
     lookbehind_days: float
     prefix: str = "pred"
@@ -172,7 +172,7 @@ class TextPredictorSpec(BaseModel):
     lookbehind_days: float
     prefix: str = "pred"
 
-    aggregation_fn: Callable = concatenate
+    aggregation_fn: AggregationFunType = concatenate
 
     def get_output_col_name(self, additional_feature_name: Optional[str] = None) -> str:
         """Generate the column name for the output column.
