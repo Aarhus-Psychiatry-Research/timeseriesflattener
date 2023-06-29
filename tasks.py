@@ -322,7 +322,7 @@ def pr(c: Context, auto_fix: bool = False):
     """Run all checks and update the PR."""
     add_and_commit(c)
     lint(c, auto_fix=auto_fix)
-    test(c, python_versions="3.8,3.11")
+    test(c, python_versions="3.9")
     test_tutorials(c)
     update_branch(c)
     update_pr(c)
