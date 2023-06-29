@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-
 from psycop.common.global_utils.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )

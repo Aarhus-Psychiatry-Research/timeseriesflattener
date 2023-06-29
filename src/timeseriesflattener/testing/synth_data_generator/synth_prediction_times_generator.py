@@ -4,7 +4,6 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-
 from psycop.common.global_utils.synth_data_generator.synth_col_generators import (
     create_outcome_values,
     generate_data_columns,

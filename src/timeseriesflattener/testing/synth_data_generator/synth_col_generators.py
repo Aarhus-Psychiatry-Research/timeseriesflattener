@@ -4,9 +4,8 @@ from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
-from scipy import stats  # type: ignore
-
 from psycop.common.global_utils.paths import PSYCOP_PKG_ROOT
+from scipy import stats  # type: ignore
 
 
 def create_outcome_values(
