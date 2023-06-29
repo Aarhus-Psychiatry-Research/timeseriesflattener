@@ -4,7 +4,6 @@ from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
-from psycop.common.global_utils.paths import PSYCOP_PKG_ROOT
 from scipy import stats  # type: ignore
 
 
@@ -250,5 +249,3 @@ if __name__ == "__main__":
         predictors=column_specs,
         n_samples=10_000,
     )
-
-    df.to_csv(PSYCOP_PKG_ROOT / "tests" / "test_data" / "synth_raw.csv", index=False)

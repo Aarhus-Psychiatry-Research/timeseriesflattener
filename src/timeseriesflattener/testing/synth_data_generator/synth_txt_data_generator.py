@@ -7,10 +7,10 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from psycop.common.global_utils.synth_data_generator.synth_col_generators import (
+from timeseriesflattener.testing.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )
-from psycop.common.global_utils.synth_data_generator.utils import replace_vals_with_na
+from timeseriesflattener.testing.synth_data_generator.utils import replace_vals_with_na
 
 
 def generate_synth_txt_data(

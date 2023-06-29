@@ -4,11 +4,13 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-from psycop.common.global_utils.synth_data_generator.synth_col_generators import (
+from timeseriesflattener.testing.synth_data_generator.synth_col_generators import (
     create_outcome_values,
     generate_data_columns,
 )
-from psycop.common.global_utils.synth_data_generator.utils import replace_vals_with_na
+from timeseriesflattener.testing.synth_data_generator.utils import (
+    replace_vals_with_na,
+)
 
 
 def generate_synth_data(
