@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.0 (2023-06-29)
+
+### Feature
+
+* Add types to aggregation functions ([`560539f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/560539f2d1871043024539f863fc755cb101c28e))
+
 ## v1.2.1 (2023-06-20)
 
 
