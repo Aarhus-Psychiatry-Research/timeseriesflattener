@@ -15,7 +15,6 @@ import pandas as pd
 AggregationFunType = Callable[[DataFrameGroupBy], pd.DataFrame]
 
 
-
 def latest(grouped_df: DataFrameGroupBy) -> DataFrame:
     """Get the latest value.
 
@@ -181,4 +180,3 @@ def type_token_ratio(grouped_df: DataFrameGroupBy) -> DataFrame:
             },
         ),
     )
-    

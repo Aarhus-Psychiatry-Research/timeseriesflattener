@@ -318,7 +318,7 @@ def test_tutorials(c: Context):
 
 
 @task
-def pr(c: Context, auto_fix: bool = False):
+def pr(c: Context, auto_fix: bool = True):
     """Run all checks and update the PR."""
     add_and_commit(c)
     lint(c, auto_fix=auto_fix)
