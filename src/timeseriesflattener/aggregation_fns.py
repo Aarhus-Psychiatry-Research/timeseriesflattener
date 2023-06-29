@@ -25,7 +25,7 @@ def latest(grouped_df: DataFrameGroupBy) -> DataFrame:
     Returns:
         DataFrame: Dataframe with only the latest value.
     """
-    return grouped_df.last() 
+    return grouped_df.last()
 
 
 def earliest(grouped_df: DataFrameGroupBy) -> DataFrame:
@@ -37,7 +37,7 @@ def earliest(grouped_df: DataFrameGroupBy) -> DataFrame:
     Returns:
         DataFrame: Dataframe with only the earliest value in each group.
     """
-    return grouped_df.first()  
+    return grouped_df.first()
 
 
 def maximum(grouped_df: DataFrameGroupBy) -> DataFrame:
@@ -181,4 +181,4 @@ def type_token_ratio(grouped_df: DataFrameGroupBy) -> DataFrame:
             },
         ),
     )
-    )
+    

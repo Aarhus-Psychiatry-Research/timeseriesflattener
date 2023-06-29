@@ -3,9 +3,8 @@ from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Sequence, Union
 
 import pandas as pd
-from pandas.core.groupby.generic import DataFrameGroupBy
 from pydantic import Field
-from timeseriesflattener.aggregation_fns import AggregationFunType, concatenate
+from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,
