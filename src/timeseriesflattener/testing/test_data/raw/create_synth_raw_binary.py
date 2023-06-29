@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from psycop_ml_utils.synth_data_generator.synth_col_generators import (
+from timeseriesflattener.testing.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )
 

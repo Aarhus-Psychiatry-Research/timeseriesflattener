@@ -1,9 +1,9 @@
 """Generate raw float dataframe."""
 
-from psycop_ml_utils.synth_data_generator.synth_col_generators import (
+from timeseriesflattener.misc_utils import PROJECT_ROOT
+from timeseriesflattener.testing.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )
-from timeseriesflattener.misc_utils import PROJECT_ROOT
 
 if __name__ == "__main__":
     # Get project root directory
