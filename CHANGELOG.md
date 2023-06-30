@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.1 (2023-06-30)
+
+### Fix
+
+* Create combinations not working for ([`8c3c343`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8c3c34314cf4f6e304d8f64c7118f57fa1ca1498))
+
 ## v1.3.0 (2023-06-29)
 
 ### Feature
