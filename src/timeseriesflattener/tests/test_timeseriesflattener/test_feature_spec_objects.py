@@ -8,6 +8,7 @@ import numpy as np
 from timeseriesflattener.aggregation_fns import maximum
 from timeseriesflattener.feature_specs.group_specs import (
     NamedDataframe,
+    OutcomeGroupSpec,
     PredictorGroupSpec,
 )
 
@@ -72,3 +73,17 @@ def get_lines_with_diff(text1: str, text2: str) -> List[str]:
     lines1 = text_1.splitlines()
     lines2 = text_2.splitlines()
     return [line for line in lines1 if line not in lines2]
+
+
+def test_create_combinations_outcome_specs(empty_named_df: NamedDataframe):
+    """Test that create_combinations() creates the correct outcome_specs."""
+    outc_spec_batch = OutcomeGroupSpec(
+        named_dataframes=[empty_named_df],
+        lookahead_days=[1, 2],
+        aggregation_fns=[maximum],
+        fallback=[0],
+        incident=[True],
+    ).create_combinations()
+    assert len(outc_spec_batch) == 2
+    assert outc_spec_batch[0].lookahead_days == 1
+    assert outc_spec_batch[1].lookahead_days == 2
