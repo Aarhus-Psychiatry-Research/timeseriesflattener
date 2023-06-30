@@ -1,11 +1,15 @@
 """Tests for adding values to a flattened dataset."""
 
 
+import datetime
+import random
+
 import numpy as np
 import pandas as pd
+import polars as pl
 import pytest
 
-from timeseriesflattener import TimeseriesFlattener
+from timeseriesflattener import TimeseriesFlattener, flattened_dataset
 from timeseriesflattener.aggregation_fns import concatenate, maximum, minimum
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
@@ -18,6 +22,26 @@ from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
 )
+
+
+def create_random_timestamps_series(
+    n_rows: int,
+    start_datetime: datetime.datetime,
+    end_datetime: datetime.datetime,
+    name: str = "timestamp",
+) -> pl.Series:
+    start_timestamp_int = int(start_datetime.timestamp())
+    end_timestamp_int = int(end_datetime.timestamp())
+
+    return pl.Series(
+        name=name,
+        values=[
+            datetime.datetime.fromtimestamp(
+                random.uniform(start_timestamp_int, end_timestamp_int),
+            )
+            for _ in range(n_rows)
+        ],
+    )
 
 
 # Predictors
@@ -44,6 +68,75 @@ def test_predictor_after_prediction_time():
         ),
         expected_values=[np.NaN],
     )
+
+
+def test_speed():
+    for n_patients in (1_000, 5_000, 10_000, 20_000):
+        prediction_times_df = (
+            pl.DataFrame(
+                {
+                    "entity_id": list(range(n_patients)),
+                }
+            )
+            .with_columns(
+                create_random_timestamps_series(
+                    n_rows=n_patients,
+                    start_datetime=datetime.datetime(2021, 1, 1),
+                    end_datetime=datetime.datetime(2022, 1, 1),
+                )
+            )
+            .lazy()
+        )
+
+        n_events_per_patient = 50
+        n_event_types = 50
+
+        predictor_df = pl.concat(
+            [prediction_times_df] * n_events_per_patient
+        ).with_columns(
+            pl.Series(
+                [random.random() for _ in range(n_events_per_patient * n_patients)]
+            ).alias(
+                "value",
+            ),
+        )
+
+        flattened_ds = TimeseriesFlattener(
+            prediction_times_df=prediction_times_df.collect().to_pandas(),
+            n_workers=8,
+            drop_pred_times_with_insufficient_look_distance=False,
+        )
+
+        flattened_ds.add_spec(
+            [
+                PredictorSpec(
+                    timeseries_df=predictor_df.collect().to_pandas(),
+                    feature_base_name="value",
+                    aggregation_fn=maximum,
+                    fallback=np.NaN,
+                    lookbehind_days=1,
+                )
+                for _ in range(n_event_types)
+            ]
+        )
+
+        start_time = datetime.datetime.now()
+        finished_dataset = flattened_ds.get_df()
+        end_time = datetime.datetime.now()
+
+        duration_seconds = (end_time - start_time).total_seconds()
+        print(
+            f"""Took {duration_seconds} seconds for 
+    Patients: {n_patients}
+    Prediction times per patient: 1
+    Events per patient: {n_events_per_patient}
+    Predictors: {n_event_types}
+    
+---------------------------------
+
+Final df had {len(finished_dataset)} rows and {len(finished_dataset.columns)} columns.    
+"""
+        )
 
 
 def test_predictor_before_prediction():
