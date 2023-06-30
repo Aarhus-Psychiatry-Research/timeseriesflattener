@@ -85,4 +85,3 @@ def test_create_combinations_outcome_specs(empty_named_df: NamedDataframe):
         incident=[True],
     ).create_combinations()
     assert len(outc_spec_batch) == 2
-
