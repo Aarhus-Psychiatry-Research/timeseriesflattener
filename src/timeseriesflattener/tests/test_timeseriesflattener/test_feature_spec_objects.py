@@ -5,12 +5,14 @@ from typing import List
 
 import numpy as np
 
-from timeseriesflattener.aggregation_fns import maximum
+from timeseriesflattener.aggregation_fns import concatenate, maximum
 from timeseriesflattener.feature_specs.group_specs import (
     NamedDataframe,
     OutcomeGroupSpec,
     PredictorGroupSpec,
+    TextPredictorGroupSpec,
 )
+from timeseriesflattener.text_embedding_functions import sklearn_embedding
 
 
 def test_skip_all_if_no_need_to_process(empty_named_df: NamedDataframe):
@@ -85,3 +87,17 @@ def test_create_combinations_outcome_specs(empty_named_df: NamedDataframe):
         incident=[True],
     ).create_combinations()
     assert len(outc_spec_batch) == 2
+
+
+def test_create_combinations_textpredictor_specs(empty_named_df: NamedDataframe):
+    """Test that create_combinations() creates the correct textpredictor_specs."""
+    textpred_spec_batch = TextPredictorGroupSpec(
+        named_dataframes=[empty_named_df],
+        embedding_fn_name="test",
+        lookbehind_days=[1, 2],
+        fallback=[0],
+        aggregation_fns=[concatenate],
+        embedding_fn=[sklearn_embedding],
+        embedding_fn_kwargs=[{"model": "model1"}, {"model": "model2"}],
+    ).create_combinations()
+    assert len(textpred_spec_batch) == 4
