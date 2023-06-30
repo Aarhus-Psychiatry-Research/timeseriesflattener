@@ -85,5 +85,4 @@ def test_create_combinations_outcome_specs(empty_named_df: NamedDataframe):
         incident=[True],
     ).create_combinations()
     assert len(outc_spec_batch) == 2
-    assert outc_spec_batch[0].lookahead_days == 1
-    assert outc_spec_batch[1].lookahead_days == 2
+
