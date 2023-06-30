@@ -93,11 +93,12 @@ class OutcomeGroupSpec(BaseModel):
         return [
             OutcomeSpec(
                 prefix=d["prefix"],  # type: ignore
-                timeseries_df=d["values_pairs"].df,  # type: ignore
-                feature_base_name=d["values_pairs"].base_feature_name,  # type: ignore
+                timeseries_df=d["named_dataframes"].df,  # type: ignore
+                feature_base_name=d["named_dataframes"].name,  # type: ignore
                 lookahead_days=d["lookahead_days"],  # type: ignore
                 aggregation_fn=d["aggregation_fns"],  # type: ignore
                 fallback=d["fallback"],  # type: ignore
+                incident=d["incident"],  # type: ignore
             )
             for d in combination_dict
         ]
