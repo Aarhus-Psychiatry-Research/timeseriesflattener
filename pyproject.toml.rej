@@ -1,0 +1,107 @@
+diff a/pyproject.toml b/pyproject.toml	(rejected hunks)
+@@ -13,7 +13,6 @@ classifiers = [
+   "Operating System :: POSIX :: Linux",
+   "Operating System :: MacOS :: MacOS X",
+   "Operating System :: Microsoft :: Windows",
+-  "Programming Language :: Python :: 3",
+   "Programming Language :: Python :: 3.9",
+   "Programming Language :: Python :: 3.10"
+ ]
+@@ -27,31 +26,34 @@ file = "LICENSE"
+ name = "MIT"
+ [project.optional-dependencies]
+ dev = [
+-  "cruft",
+-  "pyright",  
+-  "pre-commit==2.20.0,<2.21.0",
+-  "ruff==0.0.254", # important that these match the pre-commit hooks
+-  "black[jupyter]==22.8.0", # important that these match the pre-commit hooks
+-  "pandas-stubs", # type stubs for pandas
+-  "invoke",
++  "cruft>=2.0.0",
++  "pyright==1.1.305",
++  "pyright-polite>=0.0.1",
++  "pre-commit>=2.20.0",
++  "ruff>=0.0.254",
++  "black[jupyter]>=22.8.0",
++  "pandas-stubs>=0.0.0", # type stubs for pandas
++  "invoke==2.1.1",
+ ]
+ tests = [
+-  "pytest>=7.1.3,<7.3.0",
+-  "pytest-cov>=3.0.0,<3.1.0",
+-  "pytest-xdist>=3.0.0,<3.2.0",
+-  "pytest-sugar>=0.9.4,<0.10.0",
++  "pytest>=7.1.3",
++  "pytest-cov>=3.0.0",
++  "pytest-xdist>=3.0.0",
++  "pytest-sugar>=0.9.4",
++  "tox>=4.5.0",
+ ]
+ docs = [
+-  "sphinx>=5.3.0,<5.4.0",
+-  "furo>=2022.12.7,<2022.12.8",  # theme
+-  "sphinx-copybutton>=0.5.1,<0.5.2",
+-  "sphinxext-opengraph>=0.7.3,<0.7.4",
+-  "sphinx_design>=0.3.0,<0.3.1",
+-  "sphinx_togglebutton>=0.2.3,<0.4.0",
+-  "myst-nb>=0.6.0,<1.17.0",  # for rendering notebooks
+-  "jupyter>=1.0.0,<1.1.0",  # for tutorials
++  "sphinx>=5.3.0",
++  "furo>=2022.12.7",  # theme
++  "sphinx-copybutton>=0.5.1",
++  "sphinxext-opengraph>=0.7.3",
++  "sphinx_design>=0.3.0",
++  "sphinx_togglebutton>=0.2.3",
++  "myst-nb>=0.6.0",  # for rendering notebooks
++  "jupyter>=1.0.0",  # for tutorials
+ ]
+ 
++
+ [project.readme]
+ file = "README.md"
+ content-type = "text/markdown"
+@@ -62,7 +64,8 @@ repository = "https://github.com/MartinBernstorff/timeseriesflattener"
+ documentation = "https://MartinBernstorff.github.io/timeseriesflattener/"
+ 
+ [tool.pyright]
+-exclude = [".*venv*"]
++exclude = [".*venv*", ".tox"]
++pythonPlatform = "Darwin"
+ 
+ [tool.ruff]
+ # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+@@ -157,3 +159,33 @@ build_command = "python -m pip install build; python -m build"
+ 
+ [tool.setuptools]
+ include-package-data = true
++
++
++[tool.tox]
++legacy_tox_ini = """
++[tox]
++envlist = py{39,310}
++
++[testenv]
++description: run unit tests
++extras = tests
++use_develop = true
++commands =
++  pytest -n auto {posargs:test}
++
++[testenv:type]
++description: run type checks
++extras = tests, dev
++basepython = py39 # Setting these explicitly avoid recreating env if your shell is set to a different version
++use_develop = true
++commands =
++  pyright .
++
++[testenv:docs]
++description: build docs
++extras = docs
++basepython = py39 # Setting these explicitly avoid recreating env if your shell is set to a different version
++use_develop = true
++commands =
++  sphinx-build -b html docs docs/_build/html
++"""
