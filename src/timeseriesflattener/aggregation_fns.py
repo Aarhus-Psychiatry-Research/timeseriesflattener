@@ -11,59 +11,61 @@ from scipy import stats
 
 aggregation_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
 import pandas as pd
+import polars as pl
+from polars.lazyframe.groupby import LazyGroupBy
 
-AggregationFunType = Callable[[DataFrameGroupBy], pd.DataFrame]
+AggregationFunType = Callable[[LazyGroupBy], pl.LazyFrame]
 
 
-def latest(grouped_df: DataFrameGroupBy) -> DataFrame:
+def latest(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     """Get the latest value.
 
     Args:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
 
     Returns:
-        DataFrame: Dataframe with only the latest value.
+        pl.LazyFrame: Dataframe with only the latest value.
     """
     return grouped_df.last()
 
 
-def earliest(grouped_df: DataFrameGroupBy) -> DataFrame:
+def earliest(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     """Get the earliest value.
 
     Args:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
 
     Returns:
-        DataFrame: Dataframe with only the earliest value in each group.
+        pl.LazyFrame: Dataframe with only the earliest value in each group.
     """
     return grouped_df.first()
 
 
-def maximum(grouped_df: DataFrameGroupBy) -> DataFrame:
+def maximum(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     return grouped_df.max()
 
 
-def minimum(grouped_df: DataFrameGroupBy) -> DataFrame:
+def minimum(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     return grouped_df.min()
 
 
-def mean(grouped_df: DataFrameGroupBy) -> DataFrame:
-    return grouped_df.mean(numeric_only=True)
+def mean(grouped_df: LazyGroupBy) -> pl.LazyFrame:
+    return grouped_df.mean()
 
 
-def summed(grouped_df: DataFrameGroupBy) -> DataFrame:
+def summed(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     return grouped_df.sum()
 
 
-def count(grouped_df: DataFrameGroupBy) -> DataFrame:
+def count(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     return grouped_df.count()
 
 
-def variance(grouped_df: DataFrameGroupBy) -> DataFrame:
+def variance(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     return grouped_df.var()
 
 
-def boolean(grouped_df: DataFrameGroupBy) -> DataFrame:
+def boolean(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     """Returns a boolean value indicating whether or not event has occurred in
     look ahead/behind window.
 
@@ -71,7 +73,7 @@ def boolean(grouped_df: DataFrameGroupBy) -> DataFrame:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
 
     Returns:
-        DataFrame: Dataframe with value column containing only 0 or 1s.
+        pl.LazyFrame: Dataframe with value column containing only 0 or 1s.
     """
     df = (
         grouped_df["timestamp_val"]
@@ -84,14 +86,14 @@ def boolean(grouped_df: DataFrameGroupBy) -> DataFrame:
     return df
 
 
-def change_per_day(grouped_df: DataFrameGroupBy) -> DataFrame:
+def change_per_day(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     """Returns the change in value per day.
 
     Args:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
 
     Returns:
-        DataFrame: Dataframe with value column containing the change in value per day.
+        pl.LazyFrame: Dataframe with value column containing the change in value per day.
     """
 
     # Check if some patients have multiple values but only one timestamp
@@ -111,14 +113,14 @@ def change_per_day(grouped_df: DataFrameGroupBy) -> DataFrame:
     )
 
 
-def concatenate(grouped_df: DataFrameGroupBy) -> DataFrame:
+def concatenate(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     """Returns the concatenated values. This is useful for text data.
 
     Args:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
 
     Returns:
-        DataFrame: Dataframe with value column containing the concatenated values.
+        pl.LazyFrame: Dataframe with value column containing the concatenated values.
     """
 
     return grouped_df.apply(
@@ -128,14 +130,14 @@ def concatenate(grouped_df: DataFrameGroupBy) -> DataFrame:
     )
 
 
-def mean_number_of_characters(grouped_df: DataFrameGroupBy) -> DataFrame:
+def mean_number_of_characters(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     """Returns the mean length of values. This is useful for text data.
 
     Args:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
 
     Returns:
-        DataFrame: Dataframe with value column containing the concatenated values.
+        pl.LazyFrame: Dataframe with value column containing the concatenated values.
     """
     return grouped_df.apply(
         lambda x: Series(
@@ -144,14 +146,14 @@ def mean_number_of_characters(grouped_df: DataFrameGroupBy) -> DataFrame:
     )
 
 
-def type_token_ratio(grouped_df: DataFrameGroupBy) -> DataFrame:
+def type_token_ratio(grouped_df: LazyGroupBy) -> pl.LazyFrame:
     """Returns the type-token ratio. This is useful for text data.
 
     Args:
         grouped_df (DataFrame): A dataframe sorted by descending timestamp, grouped by citizen.
 
     Returns:
-        DataFrame: Dataframe with value column containing the concatenated values.
+        pl.LazyFrame: Dataframe with value column containing the concatenated values.
     """
 
     return grouped_df.apply(

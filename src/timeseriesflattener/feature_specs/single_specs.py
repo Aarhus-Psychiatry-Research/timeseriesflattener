@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
 import pandas as pd
+import polars as pl
 from timeseriesflattener.aggregation_fns import AggregationFunType, concatenate
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
@@ -9,12 +10,17 @@ from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 @dataclass(frozen=True)
 class CoercedFloats:
     lookwindow: Union[float, int]
-    fallback: Union[float, int]
+    fallback: Union[float, int, None]
 
 
-def coerce_floats(lookwindow: float, fallback: float) -> CoercedFloats:
+def coerce_floats(lookwindow: float, fallback: Union[float, None]) -> CoercedFloats:
     lookwindow = lookwindow if not lookwindow.is_integer() else int(lookwindow)
-    fallback = fallback if not fallback.is_integer() else int(fallback)
+    if fallback is None:
+        fallback = None
+    elif not fallback.is_integer():
+        fallback = fallback
+    else:
+        fallback = int(fallback)
 
     return CoercedFloats(lookwindow=lookwindow, fallback=fallback)
 
@@ -34,7 +40,7 @@ class StaticSpec(BaseModel):
             <prefix>_<feature_name>_<metadata>. Defaults to "pred".
     """
 
-    timeseries_df: pd.DataFrame
+    timeseries_df: pl.LazyFrame
     feature_base_name: str
     prefix: str = "pred"
 
@@ -76,7 +82,7 @@ class OutcomeSpec(BaseModel):
             <prefix>_<feature_name>_<metadata>. Defaults to "pred".
     """
 
-    timeseries_df: pd.DataFrame
+    timeseries_df: pl.LazyFrame
     feature_base_name: str
     lookahead_days: float
     aggregation_fn: AggregationFunType
@@ -125,10 +131,10 @@ class PredictorSpec(BaseModel):
             <prefix>_<feature_name>_<metadata>. Defaults to "pred".
     """
 
-    timeseries_df: pd.DataFrame
+    timeseries_df: pl.LazyFrame
     feature_base_name: str
     aggregation_fn: AggregationFunType
-    fallback: Union[float, int]
+    fallback: Union[float, int, None]
     lookbehind_days: float
     prefix: str = "pred"
 
@@ -164,7 +170,7 @@ class TextPredictorSpec(BaseModel):
 
     """
 
-    timeseries_df: pd.DataFrame
+    timeseries_df: pl.LazyFrame
     feature_base_name: str
     fallback: Union[float, int]
     embedding_fn: Callable

@@ -2,6 +2,7 @@
 
 Takes a time-series and flattens it into a set of prediction times describing values.
 """
+import datetime
 import datetime as dt
 import logging
 import random
@@ -13,10 +14,12 @@ from typing import Callable, List, Optional, Sequence, Union
 import coloredlogs
 import numpy as np
 import pandas as pd
+import polars as pl
 import tqdm
-from pandas import DataFrame
+from pyarrow import timestamp
 from pydantic import BaseModel as PydanticBaseModel
 
+from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_specs.single_specs import (
@@ -53,53 +56,13 @@ class SpecCollection(PydanticBaseModel):
 class TimeseriesFlattener:
     """Turn a set of time-series into tabular prediction-time data."""
 
-    def _override_cache_attributes_with_self_attributes(
-        self,
-        prediction_times_df: DataFrame,
-    ):
-        """Make cache inherit attributes from flattened dataset.
-
-        Avoids duplicate specification.
-        """
-        if self.cache is None:
-            raise ValueError("Cache is None, cannot override attributes")
-
-        if (
-            not hasattr(self.cache, "prediction_times_df")
-            or self.cache.prediction_times_df is None
-        ):
-            self.cache.prediction_times_df = prediction_times_df
-        elif not self.cache.prediction_times_df.equals(prediction_times_df):
-            log.info(
-                "Overriding prediction_times_df cache with the one passed to init",
-            )
-            self.cache.prediction_times_df = prediction_times_df
-
-        for attr in (
-            "pred_time_uuid_col_name",
-            "timestamp_col_name",
-            "entity_id_col_name",
-        ):
-            if (
-                hasattr(self.cache, attr)
-                and getattr(self.cache, attr) is not None
-                and getattr(self.cache, attr) != getattr(self, attr)
-            ):
-                log.info(
-                    f"Overriding {attr} in cache with {attr} passed to init of flattened dataset",
-                )
-                setattr(self.cache, attr, getattr(self, attr))
-
     def __init__(
         self,
-        prediction_times_df: DataFrame,
-        drop_pred_times_with_insufficient_look_distance: bool,
-        cache: Optional[FeatureCache] = None,
+        prediction_times_df: pl.DataFrame,
         entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
         predictor_col_name_prefix: str = "pred",
         outcome_col_name_prefix: str = "outc",
-        n_workers: int = 60,
         log_to_stdout: bool = True,
     ):
         """Class containing a time-series, flattened.
@@ -126,7 +89,7 @@ class TimeseriesFlattener:
         1           | 2022-01-15         | 140
 
         Args:
-            prediction_times_df (DataFrame): Dataframe with prediction times, required cols: patient_id, .
+            prediction_times_df (DataFrame): pl.LazyFrame with prediction times, required cols: patient_id, .
             cache (Optional[FeatureCache], optional): Object for feature caching. Should be initialised when passed to init. Defaults to None.
             entity_id_col_name (str, optional): Column namn name for patients ids. Is used across outcome and predictors. Defaults to "entity_id".
             timestamp_col_name (str, optional): Column name name for timestamps. Is used across outcomes and predictors. Defaults to "timestamp".
@@ -143,23 +106,13 @@ class TimeseriesFlattener:
             ValueError: If timestamp_col_name or entity_id_col_name is not in prediction_times_df
             ValueError: If timestamp_col_name is not and could not be converted to datetime
         """
-        self.n_workers = n_workers
 
         self.timestamp_col_name = timestamp_col_name
         self.entity_id_col_name = entity_id_col_name
         self.predictor_col_name_prefix = predictor_col_name_prefix
         self.outcome_col_name_prefix = outcome_col_name_prefix
         self.pred_time_uuid_col_name = "prediction_time_uuid"
-        self.cache = cache
         self.unprocessed_specs: SpecCollection = SpecCollection()
-        self.drop_pred_times_with_insufficient_look_distance = (
-            drop_pred_times_with_insufficient_look_distance
-        )
-
-        if self.cache:
-            self._override_cache_attributes_with_self_attributes(prediction_times_df)
-
-        self.n_uuids = prediction_times_df.shape[0]
 
         if "value" in prediction_times_df.columns:
             raise ValueError(
@@ -168,17 +121,14 @@ class TimeseriesFlattener:
 
         self._df = prediction_times_df
 
-        ValidateInitFlattenedDataset(
-            df=self._df,
-            timestamp_col_name=self.timestamp_col_name,
-            entity_id_col_name=self.entity_id_col_name,
-        ).validate_dataset()
-
-        # Create pred_time_uuid_columne
-        self._df[self.pred_time_uuid_col_name] = self._df[
-            self.entity_id_col_name
-        ].astype(str) + self._df[self.timestamp_col_name].dt.strftime(
-            "-%Y-%m-%d-%H-%M-%S",
+        # Create pred_time_uuid_column
+        self._df = self._df.with_columns(
+            pl.concat_str(
+                [
+                    pl.col(self.entity_id_col_name).cast(str),
+                    pl.col(self.timestamp_col_name).dt.strftime("-%Y-%m-%d-%H-%M-%S"),
+                ]
+            ).alias(self.pred_time_uuid_col_name)
         )
 
         if log_to_stdout:
@@ -190,79 +140,68 @@ class TimeseriesFlattener:
 
     @staticmethod
     def _add_back_prediction_times_without_value(
-        df: DataFrame,
-        pred_times_with_uuid: DataFrame,
+        df: pl.LazyFrame,
+        pred_times_with_uuid: pl.LazyFrame,
         pred_time_uuid_colname: str,
-    ) -> DataFrame:
+    ) -> pl.LazyFrame:
         """Ensure all prediction times are represented in the returned
 
         dataframe.
 
         Args:
-            df (DataFrame): Dataframe with prediction times but without uuid.
-            pred_times_with_uuid (DataFrame): Dataframe with prediction times and uuid.
+            df (DataFrame): pl.LazyFrame with prediction times but without uuid.
+            pred_times_with_uuid (DataFrame): pl.LazyFrame with prediction times and uuid.
             pred_time_uuid_colname (str): Name of uuid column in both df and pred_times_with_uuid.
 
         Returns:
-            DataFrame: A merged dataframe with all prediction times.
+            pl.LazyFrame: A merged dataframe with all prediction times.
         """
-        return pd.merge(
-            pred_times_with_uuid,
+        return pred_times_with_uuid.join(
             df,
             how="left",
             on=pred_time_uuid_colname,
-            suffixes=("", "_temp"),
+            suffix="_temp",
         )
 
     @staticmethod
     def _aggregate_values_within_interval_days(
-        aggregation: Callable,
-        df: DataFrame,
+        aggregation_fn: AggregationFunType,
+        df: pl.LazyFrame,
         pred_time_uuid_colname: str,
         val_timestamp_col_name: str,
-    ) -> DataFrame:
+    ) -> pl.LazyFrame:
         """Apply the aggregation function to prediction_times where there
 
         are multiple values within the interval_days lookahead.
 
         Args:
-            aggregation (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
+            aggregation_fn (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
             df (DataFrame): Source dataframe with all prediction time x val combinations.
             pred_time_uuid_colname (str): Name of uuid column in df.
             val_timestamp_col_name (str): Name of timestamp column in df.
 
         Returns:
-            DataFrame: DataFrame with one row pr. prediction time.
+            pl.LazyFrame: pl.LazyFrame with one row pr. prediction time.
         """
         # Convert timestamp val to numeric that can be used for aggregation functions
         # Numeric value amounts to days passed since 1/1/1970
-        try:
-            df[val_timestamp_col_name] = (
-                df[val_timestamp_col_name] - dt.datetime(1970, 1, 1)
-            ).dt.total_seconds() / 86400
-        except TypeError:
-            log.info("All values are NaT, returning empty dataframe")
-
         # Sort by timestamp_pred in case aggregation needs dates
-        grouped_df = df.sort_values(by=val_timestamp_col_name).groupby(
+        grouped_df = df.sort(by=val_timestamp_col_name).groupby(
             pred_time_uuid_colname,
         )
 
-        if callable(aggregation):
-            df = aggregation(grouped_df).reset_index()
-        else:
-            raise ValueError("aggregation must be or resolve to a Callable")
+        df = aggregation_fn(grouped_df)
 
         return df
 
     @staticmethod
     def _drop_records_outside_interval_days(
-        df: DataFrame,
+        df: pl.LazyFrame,
         direction: str,
         interval_days: float,
         timestamp_pred_colname: str,
         timestamp_value_colname: str,
-    ) -> DataFrame:
+    ) -> pl.LazyFrame:
         """Filter by time from from predictions to values.
 
         Drop if distance from timestamp_pred to timestamp_value is outside interval_days. Looks in `direction`.
@@ -280,44 +219,51 @@ class TimeseriesFlattener:
         Returns:
             DataFrame
         """
-        df["time_from_pred_to_val_in_days"] = (
-            (df[timestamp_value_colname] - df[timestamp_pred_colname])  # type: ignore
-            / (np.timedelta64(1, "s"))
-            / 86_400
+        df = df.with_columns(
+            (
+                (
+                    pl.col(timestamp_value_colname) - pl.col(timestamp_pred_colname)
+                ).dt.seconds()
+                / 86_400  # Divide by 86.400 seconds/day
+            ).alias("time_from_pred_to_val_in_days")
         )
-        # Divide by 86.400 seconds/day
 
         if direction == "ahead":
-            df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] <= interval_days
-            ) & (df["time_from_pred_to_val_in_days"] > 0)
+            df = df.with_columns(
+                (
+                    (pl.col("time_from_pred_to_val_in_days") <= interval_days)
+                    & (pl.col("time_from_pred_to_val_in_days") > 0)
+                ).alias("is_in_interval")
+            )
+
         elif direction == "behind":
-            df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] >= -interval_days
-            ) & (df["time_from_pred_to_val_in_days"] < 0)
+            df = df.with_columns(
+                (
+                    (pl.col("time_from_pred_to_val_in_days") <= -interval_days)
+                    & (pl.col("time_from_pred_to_val_in_days") > 0)
+                ).alias("is_in_interval")
+            )
         else:
             raise ValueError("direction can only be 'ahead' or 'behind'")
 
-        return df[df["is_in_interval"]].drop(
-            ["is_in_interval", "time_from_pred_to_val_in_days"],
-            axis=1,
+        return df.filter(pl.col("is_in_interval")).drop(
+            ["is_in_interval", "time_from_pred_to_val_in_days"]
         )
 
     @staticmethod
     def _flatten_temporal_values_to_df(
-        prediction_times_with_uuid_df: DataFrame,
+        prediction_times_with_uuid_df: pl.LazyFrame,
         output_spec: TemporalSpec,
         entity_id_col_name: str,
         pred_time_uuid_col_name: str,
         timestamp_col_name: str,
-        verbose: bool = False,
-    ) -> DataFrame:
+    ) -> pl.LazyFrame:
         """Create a dataframe with flattened values (either predictor or
 
         outcome depending on the value of "direction").
 
         Args:
-            prediction_times_with_uuid_df (DataFrame): Dataframe with id_col and
+            prediction_times_with_uuid_df (DataFrame): pl.LazyFrame with id_col and
                 timestamps for each prediction time.
             output_spec (TemporalSpec): Specification of the output column.
             entity_id_col_name (str): Name of id_column in prediction_times_with_uuid_df and
@@ -336,14 +282,17 @@ class TimeseriesFlattener:
         """
         # Generate df with one row for each prediction time x event time combination
         # Drop id for faster merge
-        df = pd.merge(
-            left=prediction_times_with_uuid_df,
-            right=output_spec.timeseries_df,
-            how="left",
-            on=entity_id_col_name,
-            suffixes=("_pred", "_val"),
-            validate="m:m",
-        ).drop(entity_id_col_name, axis=1)
+        df = (
+            prediction_times_with_uuid_df.with_columns(pl.all().suffix("_pred"))
+            .join(
+                output_spec.timeseries_df,
+                how="left",
+                on=entity_id_col_name,
+                suffix="_val",
+                validate="m:m",
+            )
+            .drop(entity_id_col_name)
+        )
 
         timestamp_val_col_name = f"{timestamp_col_name}_val"
         timestamp_pred_col_name = f"{timestamp_col_name}_pred"
@@ -366,217 +315,87 @@ class TimeseriesFlattener:
             timestamp_value_colname=timestamp_val_col_name,
         )
 
-        df[timestamp_val_col_name].replace(
-            {output_spec.fallback: pd.NaT},
-            inplace=True,  # noqa
-        )
-
         df = TimeseriesFlattener._aggregate_values_within_interval_days(
-            aggregation=output_spec.aggregation_fn,  # type: ignore
+            aggregation_fn=output_spec.aggregation_fn,
             df=df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
             val_timestamp_col_name=timestamp_val_col_name,
         )
 
-        # handle embedding and dimensionality reduction if text predictor
-        if isinstance(output_spec, TextPredictorSpec):
-            df = ColumnHandler.embed_text_column(
-                df=df,
-                text_col_name="value",
-                embedding_fn=output_spec.embedding_fn,
-                embedding_fn_kwargs=output_spec.embedding_fn_kwargs,
-            )
-
         # If aggregation generates empty values,
         # e.g. when there is only one prediction_time within look_ahead window for slope calculation,
         # replace with NaN
 
-        # Rename column
-        df = ColumnHandler.rename_value_column(df=df, output_spec=output_spec)
+        output_col_name = output_spec.get_output_col_name()
 
         # Find value_cols and add fallback to them
-        value_col_str_name = ColumnHandler.get_value_col_str_name(
-            df=df,
-            output_spec=output_spec,
+        df = df.rename({"value": output_col_name}).with_columns(
+            pl.col(output_col_name).fill_null(pl.lit(output_spec.fallback))
         )
-        df = ColumnHandler.replace_na_in_spec_col_with_fallback(
-            df=df,
-            output_spec=output_spec,
-        )
-
-        # check if multiindex and flatten
-        df = ColumnHandler.flatten_multiindex(df)
-        if verbose:
-            log.info(
-                f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_output_col_name()}",
-            )
 
         # Add back prediction times that don't have a value, and fill them with fallback
         df = TimeseriesFlattener._add_back_prediction_times_without_value(
             df=df,
             pred_times_with_uuid=prediction_times_with_uuid_df,
             pred_time_uuid_colname=pred_time_uuid_col_name,
-        ).fillna(
-            output_spec.fallback,  # type: ignore
         )
 
-        return df[[*value_col_str_name, pred_time_uuid_col_name]]
+        if output_spec.fallback is not None:
+            df = df.fill_null(
+                value=output_spec.fallback,
+            )
+
+        return df.select([output_col_name, pred_time_uuid_col_name])
 
     def _get_temporal_feature(
         self,
         feature_spec: TemporalSpec,
-    ) -> pd.DataFrame:
+    ) -> pl.LazyFrame:
         """Get feature. Either load from cache, or generate if necessary.
 
         Args:
             feature_spec (TemporalSpec): Specification of the feature.
 
         Returns:
-            pd.DataFrame: Feature
+            pd.pl.LazyFrame: Feature
         """
-        if self.cache:
-            if self.cache.feature_exists(feature_spec=feature_spec):
-                log.debug(
-                    f"Cache hit for {feature_spec.get_output_col_name()}, loading from cache",
-                )
-                df = self.cache.read_feature(feature_spec=feature_spec)
-                return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
-            log.debug(
-                f"Cache miss for {feature_spec.get_output_col_name()}, generating",
-            )
-        elif not self.cache:
-            log.debug("No cache specified, not attempting load")
+        prediction_times_with_uuid_df = self._df.select(
+            [
+                self.pred_time_uuid_col_name,
+                self.entity_id_col_name,
+                self.timestamp_col_name,
+            ],
+        )
 
         df = self._flatten_temporal_values_to_df(
-            prediction_times_with_uuid_df=self._df[
-                [
-                    self.pred_time_uuid_col_name,
-                    self.entity_id_col_name,
-                    self.timestamp_col_name,
-                ]
-            ],
+            prediction_times_with_uuid_df=prediction_times_with_uuid_df.lazy(),
             entity_id_col_name=self.entity_id_col_name,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             output_spec=feature_spec,
             timestamp_col_name=self.timestamp_col_name,
         )
 
-        # Write df to cache if exists
-        if self.cache:
-            self.cache.write_feature(
-                feature_spec=feature_spec,
-                df=df,
-            )
+        return df
 
-        return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+    # TODO: Add checking of alignment of dataframes
 
-    @staticmethod
-    def _check_dfs_are_ready_for_concat(dfs: List[pd.DataFrame]):
-        """Sample each df and check for identical indices.
-
-        This checks that all the dataframes are aligned before
-        concatenation.
-        """
-        base_df = dfs[0]
-        base_length = len(dfs[0])
-        n_dfs = len(dfs)
-
-        log.info(
-            "Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).",
-        )
-
-        log.debug(
-            "Checking that dataframes are ready for concatenation - namely that their indices are aligned. This is a sanity check, and should not be necessary if the dataframes were correctly aligned before concatenation. However, any errors here will completely break predictions, so rather safe than sorry. Can take a while for a large number of dataframes, e.g. 2 minutes for 1_000 dataframes with 2_000_000 rows.",
-        )
-
-        for i, feature_df in enumerate(dfs[1:]):
-            log.debug(f"Checking df {i+2} of {n_dfs}")
-
-            errors = []
-
-            # Check that dataframes are of equal length
-            log.debug("Checking that dataframes are of equal length")
-            if len(feature_df) != base_length:
-                errors.append(
-                    "Dataframes are not of equal length. ",
-                )
-
-            log.debug("Checking that indices are aligned")
-            if not all(
-                feature_df.index == base_df.index,
-            ):
-                errors.append(
-                    "Dataframes are not aligned. ",
-                )
-
-            if errors:
-                debug_info = f"Columns in dataframes: 0_df: {dfs[0].columns}, feature_df: {feature_df.columns}. Were they correctly aligned before concatenation?"
-                raise ValueError(
-                    f"Dataframes are not ready for concatenation. {errors}, {debug_info}",
-                )
-
-    def _concatenate_flattened_timeseries(
-        self,
-        flattened_predictor_dfs: List[pd.DataFrame],
-    ) -> None:
-        """Concatenate flattened predictor dfs."""
-
-        start_time = time.time()
-
-        # Check that dfs are ready for concatenation. Concatenation doesn't merge on IDs, but is **much** faster.
-        # We thus require that a) the dfs are sorted so each row matches the same ID and b) that each df has a row
-        # for each id.
-        self._check_dfs_are_ready_for_concat(dfs=flattened_predictor_dfs)
-
-        # If so, ready for concatenation. Reset index to be ready for the merge at the end.
-        log.info(
-            "Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.",
-        )
-        new_features = pd.concat(
-            objs=flattened_predictor_dfs,
-            axis=1,
-        ).reset_index()
-
-        end_time = time.time()
-
-        log.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
-
-        log.info("Merging with original df")
-        self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
-
-    def _add_temporal_batch(
+    def _collect_temporal_batch(
         self,
         temporal_batch: List[TemporalSpec],
-    ):
+    ) -> pl.DataFrame:
         """Add predictors to the flattened dataframe from a list."""
         # Shuffle predictor specs to avoid IO contention
         random.shuffle(temporal_batch)
 
-        n_workers = min(self.n_workers, len(temporal_batch))
+        flattened_predictor_dfs = [
+            self._get_temporal_feature(feature_spec) for feature_spec in temporal_batch
+        ]
 
-        # Chunksize is the number of predictors to process in each worker.
-        # If we don't set chunksize, imap uses the default of 1, which means a bunch of IO overhead.
-        chunksize = max(1, round(len(temporal_batch) / (n_workers)))
+        combined_predictor_dfs = pl.concat(
+            flattened_predictor_dfs, how="align"
+        ).profile()
 
-        log.info(
-            f"Processing {len(temporal_batch)} temporal features in parallel with {n_workers} workers. Chunksize is {chunksize}. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.",
-        )
-
-        with Pool(n_workers) as p:
-            flattened_predictor_dfs = list(
-                tqdm.tqdm(
-                    p.imap(
-                        func=self._get_temporal_feature,
-                        iterable=temporal_batch,
-                        chunksize=chunksize,
-                    ),
-                    total=len(temporal_batch),
-                ),
-            )
-
-        self._concatenate_flattened_timeseries(
-            flattened_predictor_dfs=flattened_predictor_dfs,
-        )
+        return pl.concat([self._df, combined_predictor_dfs], how="horizontal")
 
     def _add_static_info(
         self,
@@ -593,7 +412,7 @@ class TimeseriesFlattener:
         # Try to infer value col name if not provided
         possible_value_cols = [
             col
-            for col in static_spec.timeseries_df.columns  # type: ignore
+            for col in static_spec.timeseries_df.columns
             if col not in self.entity_id_col_name
         ]
 
@@ -610,20 +429,21 @@ class TimeseriesFlattener:
 
         output_col_name = static_spec.get_output_col_name()
 
-        df = pd.DataFrame(
+        df = pl.LazyFrame(
             {
-                self.entity_id_col_name: static_spec.timeseries_df[self.entity_id_col_name],  # type: ignore
-                output_col_name: static_spec.timeseries_df[value_col_name],  # type: ignore
+                self.entity_id_col_name: static_spec.timeseries_df.select(
+                    self.entity_id_col_name
+                ),
+                output_col_name: static_spec.timeseries_df.select(value_col_name),
             },
         )
 
-        self._df = pd.merge(
-            self._df,
-            df,
+        self._df = self._df.join(
+            df.collect(),
             how="left",
             on=self.entity_id_col_name,
-            suffixes=("", ""),
             validate="m:1",
+            suffix="",
         )
 
     def _process_static_specs(self):
@@ -646,43 +466,37 @@ class TimeseriesFlattener:
         prediction_timestamp_col_name = f"{self.timestamp_col_name}_prediction"
         outcome_timestamp_col_name = f"{self.timestamp_col_name}_outcome"
 
-        df = pd.merge(
-            self._df,
-            outcome_spec.timeseries_df,
+        df = self._df.with_columns(pl.all().suffix("_prediction")).join(
+            outcome_spec.timeseries_df.collect(),
             how="left",
             on=self.entity_id_col_name,
-            suffixes=("_prediction", "_outcome"),
+            suffix="_outcome",
             validate="m:1",
         )
 
-        df = df.drop(
-            df[
-                df[outcome_timestamp_col_name] < df[prediction_timestamp_col_name]
-            ].index,
+        df = df.filter(
+            pl.col(outcome_timestamp_col_name) > pl.col(prediction_timestamp_col_name)
         )
 
         if outcome_spec.is_dichotomous():
-            outcome_is_within_lookahead = (
-                df[prediction_timestamp_col_name]  # type: ignore
-                + timedelta(days=outcome_spec.lookahead_days)
-                > df[outcome_timestamp_col_name]
-            )
-
-            df[outcome_spec.get_output_col_name()] = outcome_is_within_lookahead.astype(
-                int,
+            df = df.with_columns(
+                (
+                    pl.col(outcome_timestamp_col_name)
+                    + timedelta(days=outcome_spec.lookahead_days)
+                    > pl.col(prediction_timestamp_col_name)
+                )
+                .cast(int)
+                .alias(outcome_spec.get_output_col_name())
             )
 
         df = df.rename(
             {prediction_timestamp_col_name: "timestamp"},
-            axis=1,
         )
-        df = df.drop([outcome_timestamp_col_name], axis=1)
-
-        df = df.drop(["value"], axis=1)
+        df = df.drop([outcome_timestamp_col_name, "value"])
 
         self._df = df
 
-    def _get_cutoff_date_from_spec(self, spec: TemporalSpec) -> pd.Timestamp:
+    def _get_cutoff_date_from_spec(self, spec: TemporalSpec) -> datetime.datetime:
         """Get the cutoff date from a spec.
 
         A cutoff date is the earliest date that a prediction time can get data from the values_df.
@@ -694,21 +508,25 @@ class TimeseriesFlattener:
             pd.Timestamp: A cutoff date.
         """
 
+        timestamp_series = spec.timeseries_df.collect().get_column(
+            self.timestamp_col_name
+        )
+
         if isinstance(spec, PredictorSpec):
-            min_val_date = spec.timeseries_df[self.timestamp_col_name].min()  # type: ignore
-            return min_val_date + pd.Timedelta(days=spec.lookbehind_days)
+            min_val_date: datetime.datetime = timestamp_series.min()  # type: ignore
+            return min_val_date + datetime.timedelta(days=spec.lookbehind_days)
 
         if isinstance(spec, OutcomeSpec):
-            max_val_date = spec.timeseries_df[self.timestamp_col_name].max()  # type: ignore
-            return max_val_date - pd.Timedelta(days=spec.lookahead_days)
+            max_val_date: datetime.datetime = timestamp_series.max()  # type: ignore
+            return max_val_date - datetime.timedelta(days=spec.lookahead_days)
 
         raise ValueError(f"Spec type {type(spec)} not recognised.")
 
     @print_df_dimensions_diff
     def _drop_pred_time_if_insufficient_look_distance(
         self,
-        df: pd.DataFrame,
-    ) -> pd.DataFrame:
+        df: pl.LazyFrame,
+    ) -> pl.LazyFrame:
         """Drop prediction times if there is insufficient look distance.
 
         A prediction time has insufficient look distance if the feature spec
@@ -739,19 +557,14 @@ class TimeseriesFlattener:
                 cutoff_date_behind = max(cutoff_date_behind, spec_cutoff_date)
 
         # Drop all prediction times that are outside the cutoffs window
-        output_df = df[
-            (df[self.timestamp_col_name] >= cutoff_date_behind)
-            & (df[self.timestamp_col_name] <= cutoff_date_ahead)
-        ]
-
-        if output_df.shape[0] == 0:
-            raise ValueError(
-                "No records left after dropping records outside look distance",
-            )
+        output_df = df.filter(
+            (pl.col(self.timestamp_col_name) <= cutoff_date_behind)
+            & (pl.col(self.timestamp_col_name) >= cutoff_date_ahead)
+        )
 
         return output_df
 
-    def _process_temporal_specs(self):
+    def _process_temporal_specs(self, batch_size: int = 1):
         """Process outcome specs."""
 
         for spec in self.unprocessed_specs.outcome_specs:
@@ -769,54 +582,19 @@ class TimeseriesFlattener:
             if hasattr(s, "incident") and not s.incident
         ]
 
-        temporal_batch: List[TemporalSpec] = self.unprocessed_specs.outcome_specs  # type: ignore
+        temporal_batch = self.unprocessed_specs.outcome_specs
         temporal_batch += self.unprocessed_specs.predictor_specs
 
-        if self.drop_pred_times_with_insufficient_look_distance:
-            self._df = self._drop_pred_time_if_insufficient_look_distance(df=self._df)
-
-        if len(temporal_batch) > 0:
-            self._add_temporal_batch(temporal_batch=temporal_batch)
+        while len(temporal_batch) > 0:
+            # Pop batch_size specs from the batch
+            log.info(f"Processing {len(temporal_batch)} specs.")
+            popped_specs = [temporal_batch.pop() for _ in range(batch_size)]
+            log.info(f"{len(temporal_batch)} specs remaining")
+            self._df = self._collect_temporal_batch(temporal_batch=popped_specs)
 
         # Remove the processed specs
         self.unprocessed_specs.outcome_specs = []
         self.unprocessed_specs.predictor_specs = []
-
-    def _check_that_spec_df_has_required_columns(self, spec: AnySpec):
-        """Check that df has required columns."""
-        # Find all attributes in self that contain col_name
-        required_columns = [self.entity_id_col_name]
-
-        if not isinstance(spec, StaticSpec):
-            required_columns += [self.timestamp_col_name]
-
-        for col in required_columns:
-            if col not in spec.timeseries_df.columns:  # type: ignore
-                raise KeyError(f"Missing required column: {col}")
-
-    def _check_that_spec_df_timestamp_col_is_correctly_formatted(
-        self,
-        spec: TemporalSpec,
-    ):
-        """Check that timestamp column is correctly formatted. Attempt to coerce if possible."""
-        timestamp_col_type = spec.timeseries_df[self.timestamp_col_name].dtype  # type: ignore
-
-        if timestamp_col_type not in ("Timestamp", "datetime64[ns]"):
-            # Convert column dtype to datetime64[ns] if it isn't already
-            log.info(
-                f"{spec.feature_base_name}: Converting timestamp column to datetime64[ns]",
-            )
-
-            spec.timeseries_df[self.timestamp_col_name] = pd.to_datetime(  # type: ignore
-                spec.timeseries_df[self.timestamp_col_name],  # type: ignore
-            )
-
-            min_timestamp = min(spec.timeseries_df[self.timestamp_col_name])  # type: ignore
-
-            if min_timestamp < pd.Timestamp("1971-01-01"):
-                log.warning(
-                    f"{spec.feature_base_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?",
-                )
 
     def add_spec(
         self,
@@ -846,13 +624,6 @@ class TimeseriesFlattener:
                     f"Input is not allowed. Must be one of: {allowed_spec_types}",
                 )
 
-            self._check_that_spec_df_has_required_columns(spec=spec_i)
-
-            if isinstance(spec_i, (PredictorSpec, OutcomeSpec, TextPredictorSpec)):
-                self._check_that_spec_df_timestamp_col_is_correctly_formatted(
-                    spec=spec_i,  # type: ignore
-                )
-
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
             elif isinstance(spec_i, (PredictorSpec, TextPredictorSpec)):
@@ -862,7 +633,7 @@ class TimeseriesFlattener:
 
     def add_age(
         self,
-        date_of_birth_df: DataFrame,
+        date_of_birth_df: pl.LazyFrame,
         date_of_birth_col_name: str = "date_of_birth",
         output_prefix: str = "pred",
     ):
@@ -876,17 +647,6 @@ class TimeseriesFlattener:
                 Defaults to "date_of_birth".
             output_prefix (str, optional): Prefix for the output column. Defaults to "pred".
         """
-        if date_of_birth_df[date_of_birth_col_name].dtype != "<M8[ns]":
-            try:
-                date_of_birth_df[date_of_birth_col_name] = pd.to_datetime(
-                    date_of_birth_df[date_of_birth_col_name],
-                    format="%Y-%m-%d",
-                )
-            except ValueError as e:
-                raise ValueError(
-                    f"Conversion of {date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
-                ) from e
-
         output_age_col_name = f"{output_prefix}_age_in_years"
 
         tmp_prefix = "tmp"
@@ -902,15 +662,14 @@ class TimeseriesFlattener:
 
         tmp_date_of_birth_col_name = f"{tmp_prefix}_{date_of_birth_col_name}"
 
-        self._df[output_age_col_name] = (
+        self._df = self._df.with_columns(
             (
-                self._df[self.timestamp_col_name] - self._df[tmp_date_of_birth_col_name]
-            ).dt.days
-            / (365.25)
-        ).round(2)
-
-        # Remove date of birth column
-        self._df.drop(columns=tmp_date_of_birth_col_name, inplace=True)  # noqa
+                (
+                    pl.col(self.timestamp_col_name) - pl.col(tmp_date_of_birth_col_name)
+                ).dt.days()
+                / 365.25
+            ).alias(output_age_col_name)
+        ).drop(columns=tmp_date_of_birth_col_name)
 
     def compute(self):
         """Compute the flattened dataset."""
@@ -921,11 +680,11 @@ class TimeseriesFlattener:
         self._process_temporal_specs()
         self._process_static_specs()
 
-    def get_df(self) -> DataFrame:
+    def get_df(self) -> pl.DataFrame:
         """Get the flattened dataframe. Computes if any unprocessed specs are present.
 
         Returns:
-            DataFrame: Flattened dataframe.
+            pl.LazyFrame: Flattened dataframe.
         """
         if len(self.unprocessed_specs) > 0:
             log.info("There were unprocessed specs, computing...")
