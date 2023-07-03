@@ -6,25 +6,8 @@ import random
 from dataclasses import dataclass
 from typing import Union
 
-import numpy as np
-import pandas as pd
 import polars as pl
-import pytest
 from wasabi import Printer
-
-from timeseriesflattener import TimeseriesFlattener, flattened_dataset
-from timeseriesflattener.aggregation_fns import concatenate, maximum, minimum
-from timeseriesflattener.feature_specs.single_specs import (
-    OutcomeSpec,
-    PredictorSpec,
-    StaticSpec,
-    TextPredictorSpec,
-)
-from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
-from timeseriesflattener.testing.utils_for_testing import (
-    assert_flattened_data_as_expected,
-    str_to_df,
-)
 
 msg = Printer(timestamp=True)
 
@@ -72,13 +55,13 @@ def test_unpacking_speed():
         prediction_times_df = pl.DataFrame(
             {
                 "entity_id": list(range(n_patients)) * n_prediction_times_per_patient,
-            }
+            },
         ).with_columns(
             create_random_timestamps_series(
                 n_rows=n_patients * n_prediction_times_per_patient,
                 start_datetime=datetime.datetime(2021, 1, 1),
                 end_datetime=datetime.datetime(2022, 1, 1),
-            )
+            ),
         )
 
         msg.info("Creating predictor dataframes")
@@ -90,9 +73,9 @@ def test_unpacking_speed():
                     ).alias(
                         "value",
                     ),
-                )
+                ),
             ]
-            * n_events_per_patient
+            * n_events_per_patient,
         )
 
         predictor_dicts = predictor_df.sort("entity_id").collect().to_dicts()
@@ -116,18 +99,18 @@ def test_unpacking_speed():
                             timestamp=d["timestamp"],
                             value=d["value"],
                             event_type="test",
-                        )
+                        ),
                     ],
                 )
             else:
                 cur_entity.events.append(
                     Event(
-                        timestamp=d["timestamp"], value=d["value"], event_type="test"
+                        timestamp=d["timestamp"], value=d["value"], event_type="test",
                     ),
                 )
 
         timestamp_end = datetime.datetime.now()
         msg.info("Finished unpacking")
-        unpack_duration_seconds = (timestamp_end - timestamp_start).total_seconds()
+        (timestamp_end - timestamp_start).total_seconds()
 
         pass

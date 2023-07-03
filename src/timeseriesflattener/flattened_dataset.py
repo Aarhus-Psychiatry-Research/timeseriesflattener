@@ -3,25 +3,17 @@
 Takes a time-series and flattens it into a set of prediction times describing values.
 """
 import datetime
-import datetime as dt
 import logging
 import random
-import time
 from datetime import timedelta
-from multiprocessing import Pool
-from typing import Callable, List, Optional, Sequence, Union
+from typing import List, Sequence, Union
 
 import coloredlogs
-import numpy as np
 import pandas as pd
 import polars as pl
-import tqdm
-from pyarrow import timestamp
 from pydantic import BaseModel as PydanticBaseModel
 
 from timeseriesflattener.aggregation_fns import AggregationFunType
-from timeseriesflattener.column_handler import ColumnHandler
-from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,
@@ -30,7 +22,6 @@ from timeseriesflattener.feature_specs.single_specs import (
     TemporalSpec,
     TextPredictorSpec,
 )
-from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.misc_utils import print_df_dimensions_diff
 
 log = logging.getLogger(__name__)
@@ -127,8 +118,8 @@ class TimeseriesFlattener:
                 [
                     pl.col(self.entity_id_col_name).cast(str),
                     pl.col(self.timestamp_col_name).dt.strftime("-%Y-%m-%d-%H-%M-%S"),
-                ]
-            ).alias(self.pred_time_uuid_col_name)
+                ],
+            ).alias(self.pred_time_uuid_col_name),
         )
 
         if log_to_stdout:
@@ -225,7 +216,7 @@ class TimeseriesFlattener:
                     pl.col(timestamp_value_colname) - pl.col(timestamp_pred_colname)
                 ).dt.seconds()
                 / 86_400  # Divide by 86.400 seconds/day
-            ).alias("time_from_pred_to_val_in_days")
+            ).alias("time_from_pred_to_val_in_days"),
         )
 
         if direction == "ahead":
@@ -233,7 +224,7 @@ class TimeseriesFlattener:
                 (
                     (pl.col("time_from_pred_to_val_in_days") <= interval_days)
                     & (pl.col("time_from_pred_to_val_in_days") > 0)
-                ).alias("is_in_interval")
+                ).alias("is_in_interval"),
             )
 
         elif direction == "behind":
@@ -241,13 +232,13 @@ class TimeseriesFlattener:
                 (
                     (pl.col("time_from_pred_to_val_in_days") <= -interval_days)
                     & (pl.col("time_from_pred_to_val_in_days") > 0)
-                ).alias("is_in_interval")
+                ).alias("is_in_interval"),
             )
         else:
             raise ValueError("direction can only be 'ahead' or 'behind'")
 
         return df.filter(pl.col("is_in_interval")).drop(
-            ["is_in_interval", "time_from_pred_to_val_in_days"]
+            ["is_in_interval", "time_from_pred_to_val_in_days"],
         )
 
     @staticmethod
@@ -330,7 +321,7 @@ class TimeseriesFlattener:
 
         # Find value_cols and add fallback to them
         df = df.rename({"value": output_col_name}).with_columns(
-            pl.col(output_col_name).fill_null(pl.lit(output_spec.fallback))
+            pl.col(output_col_name).fill_null(pl.lit(output_spec.fallback)),
         )
 
         # Add back prediction times that don't have a value, and fill them with fallback
@@ -392,7 +383,7 @@ class TimeseriesFlattener:
         ]
 
         combined_predictor_dfs = pl.concat(
-            flattened_predictor_dfs, how="align"
+            flattened_predictor_dfs, how="align",
         ).profile()
 
         return pl.concat([self._df, combined_predictor_dfs], how="horizontal")
@@ -432,7 +423,7 @@ class TimeseriesFlattener:
         df = pl.LazyFrame(
             {
                 self.entity_id_col_name: static_spec.timeseries_df.select(
-                    self.entity_id_col_name
+                    self.entity_id_col_name,
                 ),
                 output_col_name: static_spec.timeseries_df.select(value_col_name),
             },
@@ -475,7 +466,7 @@ class TimeseriesFlattener:
         )
 
         df = df.filter(
-            pl.col(outcome_timestamp_col_name) > pl.col(prediction_timestamp_col_name)
+            pl.col(outcome_timestamp_col_name) > pl.col(prediction_timestamp_col_name),
         )
 
         if outcome_spec.is_dichotomous():
@@ -486,7 +477,7 @@ class TimeseriesFlattener:
                     > pl.col(prediction_timestamp_col_name)
                 )
                 .cast(int)
-                .alias(outcome_spec.get_output_col_name())
+                .alias(outcome_spec.get_output_col_name()),
             )
 
         df = df.rename(
@@ -509,7 +500,7 @@ class TimeseriesFlattener:
         """
 
         timestamp_series = spec.timeseries_df.collect().get_column(
-            self.timestamp_col_name
+            self.timestamp_col_name,
         )
 
         if isinstance(spec, PredictorSpec):
@@ -559,7 +550,7 @@ class TimeseriesFlattener:
         # Drop all prediction times that are outside the cutoffs window
         output_df = df.filter(
             (pl.col(self.timestamp_col_name) <= cutoff_date_behind)
-            & (pl.col(self.timestamp_col_name) >= cutoff_date_ahead)
+            & (pl.col(self.timestamp_col_name) >= cutoff_date_ahead),
         )
 
         return output_df
@@ -668,7 +659,7 @@ class TimeseriesFlattener:
                     pl.col(self.timestamp_col_name) - pl.col(tmp_date_of_birth_col_name)
                 ).dt.days()
                 / 365.25
-            ).alias(output_age_col_name)
+            ).alias(output_age_col_name),
         ).drop(columns=tmp_date_of_birth_col_name)
 
     def compute(self):

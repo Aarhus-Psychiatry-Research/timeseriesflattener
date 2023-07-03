@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Callable, Optional, Union
 
-import pandas as pd
 import polars as pl
 from timeseriesflattener.aggregation_fns import AggregationFunType, concatenate
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel

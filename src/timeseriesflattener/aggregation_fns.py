@@ -5,12 +5,10 @@ value."""
 from typing import Callable
 
 import catalogue
-from pandas import DataFrame, Series
-from pandas.core.groupby.generic import DataFrameGroupBy
+from pandas import Series
 from scipy import stats
 
 aggregation_fns = catalogue.create("timeseriesflattener", "resolve_strategies")
-import pandas as pd
 import polars as pl
 from polars.lazyframe.groupby import LazyGroupBy
 
