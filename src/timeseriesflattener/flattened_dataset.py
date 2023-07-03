@@ -383,7 +383,8 @@ class TimeseriesFlattener:
         ]
 
         combined_predictor_dfs = pl.concat(
-            flattened_predictor_dfs, how="align",
+            flattened_predictor_dfs,
+            how="align",
         ).profile()
 
         return pl.concat([self._df, combined_predictor_dfs], how="horizontal")

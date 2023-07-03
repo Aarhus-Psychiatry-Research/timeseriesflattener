@@ -105,7 +105,9 @@ def test_unpacking_speed():
             else:
                 cur_entity.events.append(
                     Event(
-                        timestamp=d["timestamp"], value=d["value"], event_type="test",
+                        timestamp=d["timestamp"],
+                        value=d["value"],
+                        event_type="test",
                     ),
                 )
 
