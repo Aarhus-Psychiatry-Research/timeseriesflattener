@@ -57,7 +57,7 @@ docs = [
     "sphinxext-opengraph>=0.7.3,<0.8.3",
     "myst-nb>=0.6.0,<1.17.0",
     "sphinx_design>=0.3.0,<0.3.1",
-    "autodoc_pydantic>=1.1.0,<1.9.0",
+    "autodoc_pydantic>=1.1.0,<1.10.0",
 ]
 tutorials = [
     "jupyter>=1.0.0,<1.1.0",
