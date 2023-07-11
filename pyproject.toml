@@ -74,9 +74,9 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.urls]
-homepage = "https://github.com/MartinBernstorff/timeseriesflattener"
-repository = "https://github.com/MartinBernstorff/timeseriesflattener"
-documentation = "https://MartinBernstorff.github.io/timeseriesflattener/"
+homepage = "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
+repository = "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
+documentation = "https://aarhus-psychiatry-research.github.io/timeseriesflattener/"
 
 [tool.pyright]
 exclude = [
