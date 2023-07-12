@@ -57,7 +57,6 @@ docs = [
     "sphinxext-opengraph>=0.7.3,<0.8.3",
     "myst-nb>=0.6.0,<1.17.0",
     "sphinx_design>=0.3.0,<0.3.1",
-    "autodoc_pydantic>=1.1.0,<1.9.0",
 ]
 tutorials = [
     "jupyter>=1.0.0,<1.1.0",
@@ -74,9 +73,9 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.urls]
-homepage = "https://github.com/MartinBernstorff/timeseriesflattener"
-repository = "https://github.com/MartinBernstorff/timeseriesflattener"
-documentation = "https://MartinBernstorff.github.io/timeseriesflattener/"
+homepage = "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
+repository = "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
+documentation = "https://aarhus-psychiatry-research.github.io/timeseriesflattener/"
 
 [tool.pyright]
 exclude = [
