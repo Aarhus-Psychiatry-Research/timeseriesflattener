@@ -13,8 +13,11 @@ class CoercedFloats:
 
 
 def can_be_coerced_losslessly_to_int(value: float) -> bool:
-    int_version = int(value)
-    return (int_version - value) == 0
+    try:
+        int_version = int(value)
+        return (int_version - value) == 0
+    except ValueError:
+        return False
 
 
 def coerce_floats(lookwindow: float, fallback: float) -> CoercedFloats:
