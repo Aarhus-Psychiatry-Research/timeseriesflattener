@@ -39,7 +39,6 @@ extensions = [
     "sphinx.ext.githubpages",
     "myst_nb",
     "sphinx_design",  # for design feature such as tabs
-    "sphinxcontrib.autodoc_pydantic",
 ]
 
 add_module_names = False
