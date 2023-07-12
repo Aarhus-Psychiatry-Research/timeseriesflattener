@@ -2,6 +2,18 @@
 
 <!--next-version-placeholder-->
 
+## v1.4.0 (2023-07-12)
+
+### Feature
+
+* Change int detection for new version of pydantic ([`752d3bf`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/752d3bfd1702525bb30f285e4f3b8b0f4edf9a6d))
+
+### Fix
+
+* Remove autodoc pydantic requirements for docs ([`34ae391`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/34ae391303afc1ce57bb8f9fa60a78640d144314))
+* Handle non-coerceable values ([`557371f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/557371f19a5102795c8b87775468bb73448c9449))
+* Toml urls ([`385706d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/385706dcc2b0d64623841fc0047b1303880f4b22))
+
 ## v1.3.1 (2023-06-30)
 
 ### Fix
