@@ -22,7 +22,6 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -264,9 +263,9 @@
 
 </dd></dl>
 
-<dl class="py class pydantic_model">
+<dl class="py class">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec">
-<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OutcomeSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#OutcomeSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OutcomeSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeseries_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_base_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookahead_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incident</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'outc'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#OutcomeSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Specification for an outcome feature.</p>
 <dl class="field-list simple">
@@ -290,107 +289,19 @@ Requires that each entity only occurs once in the timeseries_df.</p></li>
 </ul>
 </dd>
 </dl>
-<p><details  class="autodoc_pydantic_collapsable_json">
-<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OutcomeSpec&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for an outcome feature.\n\nArgs:\n    timeseries_df: Dataframe with the values. Should contain columns:\n        entity_id (int, float, str): ID of the entity each time series belongs to\n        value (int, float, str): The values in the timeseries.\n        timestamp (datetime): Timestamps\n        NOTE: Column names can be overridden when initialising TimeSeriesFlattener.\n    feature_base_name: The name of the feature. Used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_baase_name&gt;_&lt;metadata&gt;.\n    lookahead_days: How far ahead from the prediction time to look for outcome values.\n    aggregation_fn: How to aggregate multiple values within lookahead days. Should take a grouped dataframe as input and return a single value.\n    fallback: Value to return if no values is found within window.\n    incident: Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.\n        Incident outcomes can be handled in a vectorised way during resolution, which is faster than non-incident outcomes.\n        Requires that each entity only occurs once in the timeseries_df.\n    prefix: The prefix used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_name&gt;_&lt;metadata&gt;. Defaults to \&quot;pred\&quot;.&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;timeseries_df&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timeseries Df&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;feature_base_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feature Base Name&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;lookahead_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lookahead Days&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;fallback&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fallback&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">         </span><span class="p">]</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;incident&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Incident&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;outc&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="p">},</span>
-<span class="w">   </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">&quot;feature_base_name&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;lookahead_days&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;fallback&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;incident&quot;</span>
-<span class="w">   </span><span class="p">],</span>
-<span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</details></p><dl class="field-list simple">
-<dt class="field-odd">Config<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>allow_mutation</strong>: <em>bool = False</em></p></li>
-<li><p><strong>arbitrary_types_allowed</strong>: <em>bool = True</em></p></li>
-<li><p><strong>extra</strong>: <em>Extra = forbid</em></p></li>
-</ul>
-</dd>
-<dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.aggregation_fn" title="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.aggregation_fn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregation_fn</span> <span class="pre">(Callable[[pandas.core.groupby.generic.DataFrameGroupBy],</span> <span class="pre">pandas.core.frame.DataFrame])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.fallback" title="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.fallback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback</span> <span class="pre">(float</span> <span class="pre">|</span> <span class="pre">int)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.feature_base_name" title="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.feature_base_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_base_name</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.incident" title="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.incident"><code class="xref py py-obj docutils literal notranslate"><span class="pre">incident</span> <span class="pre">(bool)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days" title="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookahead_days</span> <span class="pre">(float)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix" title="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.timeseries_df" title="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.timeseries_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeseries_df</span> <span class="pre">(pandas.core.frame.DataFrame)</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.aggregation_fn">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">aggregation_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.aggregation_fn" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">aggregation_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.aggregation_fn" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.fallback">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.fallback" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.fallback" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.feature_base_name">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.incident">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incident</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.incident" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lookahead_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'outc'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.timeseries_df">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -399,17 +310,47 @@ Requires that each entity only occurs once in the timeseries_df.</p></li>
 <dd><p>Get the column name for the output column.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.incident">
+<span class="sig-name descname"><span class="pre">incident</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.incident" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.is_dichotomous">
 <span class="sig-name descname"><span class="pre">is_dichotomous</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#OutcomeSpec.is_dichotomous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.is_dichotomous" title="Permalink to this definition">#</a></dt>
 <dd><p>Check if the outcome is dichotomous.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days">
+<span class="sig-name descname"><span class="pre">lookahead_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aggregation_fn':</span> <span class="pre">FieldInfo(annotation=Callable[list,</span> <span class="pre">DataFrame],</span> <span class="pre">required=True),</span> <span class="pre">'fallback':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">int],</span> <span class="pre">required=True),</span> <span class="pre">'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'incident':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=True),</span> <span class="pre">'lookahead_days':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='outc'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_fields" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.timeseries_df">
+<span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="py class pydantic_model">
+<dl class="py class">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec">
-<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PredictorSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#PredictorSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PredictorSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeseries_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_base_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookbehind_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#PredictorSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Specification for predictor feature.</p>
 <dl class="field-list simple">
@@ -433,96 +374,19 @@ Requires that each entity only occurs once in the timeseries_df.</p></li>
 </ul>
 </dd>
 </dl>
-<p><details  class="autodoc_pydantic_collapsable_json">
-<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PredictorSpec&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for predictor feature.\n\nArgs:\n    timeseries_df: Dataframe with the values. Should contain columns:\n        entity_id (int, float, str): ID of the entity each time series belongs to\n        value (int, float, str): The values in the timeseries.\n        timestamp (datetime): Timestamps\n        NOTE: Column names can be overridden when initialising TimeSeriesFlattener.\n    feature_base_name: The name of the feature. Used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_baase_name&gt;_&lt;metadata&gt;.\n    lookbehind_days: How far behind from the prediction time to look for predictor values.\n    aggregation_fn: How to aggregate multiple values within lookahead days. Should take a grouped dataframe as input and return a single value.\n    fallback: Value to return if no values is found within window.\n    incident: Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.\n        Incident outcomes can be handled in a vectorised way during resolution, which is faster than non-incident outcomes.\n        Requires that each entity only occurs once in the timeseries_df.\n    prefix: The prefix used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_name&gt;_&lt;metadata&gt;. Defaults to \&quot;pred\&quot;.&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;timeseries_df&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timeseries Df&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;feature_base_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feature Base Name&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;fallback&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fallback&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">         </span><span class="p">]</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;lookbehind_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lookbehind Days&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pred&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="p">},</span>
-<span class="w">   </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">&quot;feature_base_name&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;fallback&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;lookbehind_days&quot;</span>
-<span class="w">   </span><span class="p">],</span>
-<span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</details></p><dl class="field-list simple">
-<dt class="field-odd">Config<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>allow_mutation</strong>: <em>bool = False</em></p></li>
-<li><p><strong>arbitrary_types_allowed</strong>: <em>bool = True</em></p></li>
-<li><p><strong>extra</strong>: <em>Extra = forbid</em></p></li>
-</ul>
-</dd>
-<dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.aggregation_fn" title="timeseriesflattener.feature_specs.single_specs.PredictorSpec.aggregation_fn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregation_fn</span> <span class="pre">(Callable[[pandas.core.groupby.generic.DataFrameGroupBy],</span> <span class="pre">pandas.core.frame.DataFrame])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.fallback" title="timeseriesflattener.feature_specs.single_specs.PredictorSpec.fallback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback</span> <span class="pre">(float</span> <span class="pre">|</span> <span class="pre">int)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.feature_base_name" title="timeseriesflattener.feature_specs.single_specs.PredictorSpec.feature_base_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_base_name</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days" title="timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookbehind_days</span> <span class="pre">(float)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix" title="timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.timeseries_df" title="timeseriesflattener.feature_specs.single_specs.PredictorSpec.timeseries_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeseries_df</span> <span class="pre">(pandas.core.frame.DataFrame)</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.aggregation_fn">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">aggregation_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.aggregation_fn" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">aggregation_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.aggregation_fn" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.fallback">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.fallback" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.fallback" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.feature_base_name">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lookbehind_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.timeseries_df">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -531,11 +395,36 @@ Requires that each entity only occurs once in the timeseries_df.</p></li>
 <dd><p>Generate the column name for the output column.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days">
+<span class="sig-name descname"><span class="pre">lookbehind_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aggregation_fn':</span> <span class="pre">FieldInfo(annotation=Callable[list,</span> <span class="pre">DataFrame],</span> <span class="pre">required=True),</span> <span class="pre">'fallback':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">int],</span> <span class="pre">required=True),</span> <span class="pre">'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'lookbehind_days':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='pred'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_fields" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.timeseries_df">
+<span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="py class pydantic_model">
+<dl class="py class">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec">
-<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StaticSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#StaticSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StaticSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeseries_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_base_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#StaticSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Specification for a static feature.</p>
 <dl class="field-list simple">
@@ -553,61 +442,9 @@ NOTE: Column names can be overridden when initialising TimeSeriesFlattener.</p><
 </ul>
 </dd>
 </dl>
-<p><details  class="autodoc_pydantic_collapsable_json">
-<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StaticSpec&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for a static feature.\n\nArgs:\n    timeseries_df: Dataframe with the values. Should contain columns:\n        entity_id (int, float, str): ID of the entity each time series belongs to\n        value (int, float, str): The values in the timeseries.\n        timestamp (datetime): Timestamps\n        NOTE: Column names can be overridden when initialising TimeSeriesFlattener.\n    feature_base_name: The name of the feature. Used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_baase_name&gt;_&lt;metadata&gt;.\n    prefix: The prefix used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_name&gt;_&lt;metadata&gt;. Defaults to \&quot;pred\&quot;.&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;timeseries_df&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timeseries Df&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;feature_base_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feature Base Name&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pred&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="p">},</span>
-<span class="w">   </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">&quot;feature_base_name&quot;</span>
-<span class="w">   </span><span class="p">],</span>
-<span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</details></p><dl class="field-list simple">
-<dt class="field-odd">Config<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>allow_mutation</strong>: <em>bool = False</em></p></li>
-<li><p><strong>arbitrary_types_allowed</strong>: <em>bool = True</em></p></li>
-<li><p><strong>extra</strong>: <em>Extra = forbid</em></p></li>
-</ul>
-</dd>
-<dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.feature_base_name" title="timeseriesflattener.feature_specs.single_specs.StaticSpec.feature_base_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_base_name</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix" title="timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.timeseries_df" title="timeseriesflattener.feature_specs.single_specs.StaticSpec.timeseries_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeseries_df</span> <span class="pre">(pandas.core.frame.DataFrame)</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.feature_base_name">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.timeseries_df">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -615,11 +452,31 @@ NOTE: Column names can be overridden when initialising TimeSeriesFlattener.</p><
 <span class="sig-name descname"><span class="pre">get_output_col_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#StaticSpec.get_output_col_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.get_output_col_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_config" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='pred'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_fields" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.timeseries_df">
+<span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="py class pydantic_model">
+<dl class="py class">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec">
-<em class="property"><span class="pre">pydantic</span> <span class="pre">model</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TextPredictorSpec</span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#TextPredictorSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TextPredictorSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">timeseries_df:</span> <span class="pre">~pandas.core.frame.DataFrame,</span> <span class="pre">feature_base_name:</span> <span class="pre">str,</span> <span class="pre">fallback:</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">int,</span> <span class="pre">embedding_fn:</span> <span class="pre">~typing.Callable,</span> <span class="pre">embedding_fn_kwargs:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">lookbehind_days:</span> <span class="pre">float,</span> <span class="pre">prefix:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'pred',</span> <span class="pre">aggregation_fn:</span> <span class="pre">~typing.Callable[[~pandas.core.groupby.generic.DataFrameGroupBy],</span> <span class="pre">~pandas.core.frame.DataFrame]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">concatenate&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#TextPredictorSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>Specification for a text predictor, where the df has been resolved.</p>
 <dl class="field-list simple">
@@ -642,112 +499,29 @@ values within a window. Defaults to concatenate.</p></li>
 </ul>
 </dd>
 </dl>
-<p><details  class="autodoc_pydantic_collapsable_json">
-<summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TextPredictorSpec&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Specification for a text predictor, where the df has been resolved.\n\nArgs:\n    timeseries_df: Dataframe with the values.\n    feature_base_name: The name of the feature. Used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_baase_name&gt;_&lt;metadata&gt;.\n    aggregation_fn: How to aggregate multiple values within a window. Can be a string, a function, or a list of functions.\n    fallback: Value to return if no values is found within window.\n    lookbehind_days: How far behind to look for values.\n    prefix: The prefix used for column name generation, e.g.\n        &lt;prefix&gt;_&lt;feature_name&gt;_&lt;metadata&gt;. Defaults to \&quot;pred\&quot;.\n    embedding_fn: A function used for embedding the text. Should take a\n        pandas series of strings and return a pandas dataframe of embeddings.\n    embedding_fn_kwargs: Optional kwargs passed onto the embedding_fn.\n        Defaults to None.\n    aggregation_fn: A function used for resolving multiple\n        values within a window. Defaults to concatenate.&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;timeseries_df&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timeseries Df&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;feature_base_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feature Base Name&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;fallback&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fallback&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">         </span><span class="p">]</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;embedding_fn_kwargs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Embedding Fn Kwargs&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;lookbehind_days&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lookbehind Days&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;prefix&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Prefix&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pred&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">   </span><span class="p">},</span>
-<span class="w">   </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">      </span><span class="s2">&quot;feature_base_name&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;fallback&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="s2">&quot;lookbehind_days&quot;</span>
-<span class="w">   </span><span class="p">],</span>
-<span class="w">   </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</details></p><dl class="field-list simple">
-<dt class="field-odd">Config<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>allow_mutation</strong>: <em>bool = False</em></p></li>
-<li><p><strong>arbitrary_types_allowed</strong>: <em>bool = True</em></p></li>
-<li><p><strong>extra</strong>: <em>Extra = forbid</em></p></li>
-</ul>
-</dd>
-<dt class="field-even">Fields<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.aggregation_fn" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.aggregation_fn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregation_fn</span> <span class="pre">(Callable[[pandas.core.groupby.generic.DataFrameGroupBy],</span> <span class="pre">pandas.core.frame.DataFrame])</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">embedding_fn</span> <span class="pre">(Callable)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn_kwargs" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn_kwargs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">embedding_fn_kwargs</span> <span class="pre">(dict</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.fallback" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.fallback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback</span> <span class="pre">(float</span> <span class="pre">|</span> <span class="pre">int)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.feature_base_name" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.feature_base_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_base_name</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.lookbehind_days" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.lookbehind_days"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookbehind_days</span> <span class="pre">(float)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span> <span class="pre">(str)</span></code></a></p></li>
-<li><p><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.timeseries_df" title="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.timeseries_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeseries_df</span> <span class="pre">(pandas.core.frame.DataFrame)</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.aggregation_fn">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">aggregation_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;function</span> <span class="pre">concatenate&gt;</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.aggregation_fn" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">aggregation_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrameGroupBy</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.aggregation_fn" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embedding_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">embedding_fn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn_kwargs">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embedding_fn_kwargs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn_kwargs" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">embedding_fn_kwargs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn_kwargs" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.fallback">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.fallback" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.fallback" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute pydantic_field">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.feature_base_name">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.lookbehind_days">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lookbehind_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.lookbehind_days" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.timeseries_df">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">feature_base_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.feature_base_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -763,7 +537,37 @@ append to the column name.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.lookbehind_days">
+<span class="sig-name descname"><span class="pre">lookbehind_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.lookbehind_days" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_config" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aggregation_fn':</span> <span class="pre">FieldInfo(annotation=Callable[list,</span> <span class="pre">DataFrame],</span> <span class="pre">required=False,</span> <span class="pre">default=&lt;function</span> <span class="pre">concatenate&gt;),</span> <span class="pre">'embedding_fn':</span> <span class="pre">FieldInfo(annotation=Callable,</span> <span class="pre">required=True),</span> <span class="pre">'embedding_fn_kwargs':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'fallback':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">int],</span> <span class="pre">required=True),</span> <span class="pre">'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'lookbehind_days':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='pred'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_fields" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix">
+<span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.timeseries_df">
+<span class="sig-name descname"><span class="pre">timeseries_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.timeseries_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.can_be_coerced_losslessly_to_int">
+<span class="sig-name descname"><span class="pre">can_be_coerced_losslessly_to_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#can_be_coerced_losslessly_to_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.can_be_coerced_losslessly_to_int" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.coerce_floats">
@@ -852,29 +656,35 @@ append to the column name.</p>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.aggregation_fn"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.aggregation_fn</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.fallback"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.fallback</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.feature_base_name"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.feature_base_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.get_output_col_name()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.incident"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.incident</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.is_dichotomous"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.is_dichotomous()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.lookahead_days</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.model_config</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_fields"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.model_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.prefix</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.timeseries_df"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.timeseries_df</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.get_output_col_name()</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.is_dichotomous"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.is_dichotomous()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec"><code class="docutils literal notranslate"><span class="pre">PredictorSpec</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.aggregation_fn"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.aggregation_fn</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.fallback"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.fallback</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.feature_base_name"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.feature_base_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.get_output_col_name()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.lookbehind_days</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.model_config</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_fields"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.model_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.prefix</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.timeseries_df"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.timeseries_df</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.get_output_col_name()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec"><code class="docutils literal notranslate"><span class="pre">StaticSpec</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.feature_base_name"><code class="docutils literal notranslate"><span class="pre">StaticSpec.feature_base_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">StaticSpec.get_output_col_name()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_config"><code class="docutils literal notranslate"><span class="pre">StaticSpec.model_config</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_fields"><code class="docutils literal notranslate"><span class="pre">StaticSpec.model_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix"><code class="docutils literal notranslate"><span class="pre">StaticSpec.prefix</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.timeseries_df"><code class="docutils literal notranslate"><span class="pre">StaticSpec.timeseries_df</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">StaticSpec.get_output_col_name()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec</span></code></a><ul>
@@ -883,12 +693,15 @@ append to the column name.</p>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.embedding_fn_kwargs"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.embedding_fn_kwargs</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.fallback"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.fallback</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.feature_base_name"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.feature_base_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.get_output_col_name()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.lookbehind_days"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.lookbehind_days</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_config"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.model_config</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_fields"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.model_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.prefix</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.timeseries_df"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.timeseries_df</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">TextPredictorSpec.get_output_col_name()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.can_be_coerced_losslessly_to_int"><code class="docutils literal notranslate"><span class="pre">can_be_coerced_losslessly_to_int()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.coerce_floats"><code class="docutils literal notranslate"><span class="pre">coerce_floats()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.get_temporal_col_name"><code class="docutils literal notranslate"><span class="pre">get_temporal_col_name()</span></code></a></li>
 </ul>
