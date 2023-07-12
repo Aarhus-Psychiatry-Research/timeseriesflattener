@@ -12,9 +12,20 @@ class CoercedFloats:
     fallback: Union[float, int]
 
 
+def can_be_coerced_losslessly_to_int(value: float) -> bool:
+    int_version = int(value)
+    return (int_version - value) == 0
+
+
 def coerce_floats(lookwindow: float, fallback: float) -> CoercedFloats:
-    lookwindow = lookwindow if not lookwindow.is_integer() else int(lookwindow)
-    fallback = fallback if not fallback.is_integer() else int(fallback)
+    lookwindow = (
+        lookwindow
+        if not can_be_coerced_losslessly_to_int(lookwindow)
+        else int(lookwindow)
+    )
+    fallback = (
+        fallback if not can_be_coerced_losslessly_to_int(fallback) else int(fallback)
+    )
 
     return CoercedFloats(lookwindow=lookwindow, fallback=fallback)
 
@@ -51,7 +62,7 @@ def get_temporal_col_name(
 ) -> str:
     """Get the column name for the temporal feature."""
     coerced = coerce_floats(lookwindow=lookwindow, fallback=fallback)
-    col_str = f"{prefix}_{feature_base_name}_within_{str(coerced.lookwindow)}_days_{aggregation_fn.__name__}_fallback_{coerced.fallback}"
+    col_str = f"{prefix}_{feature_base_name}_within_{coerced.lookwindow!s}_days_{aggregation_fn.__name__}_fallback_{coerced.fallback}"
     return col_str
 
 
