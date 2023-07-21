@@ -19,7 +19,7 @@ def test_df_with_multiple_values_to_named_dataframes(
     df_with_multiple_values: DataFrame,
 ) -> None:
     dfs = df_with_multiple_values_to_named_dataframes(
-        df_with_multiple_values,
+        df=df_with_multiple_values,
         entity_id_col_name="entity_id",
         timestamp_col_name="timestamp",
         name_prefix="test_",
