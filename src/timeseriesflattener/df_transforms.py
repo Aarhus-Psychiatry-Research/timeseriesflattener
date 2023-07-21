@@ -24,7 +24,7 @@ def df_with_multiple_values_to_named_dataframes(
             df=df[[*mandatory_columns, value_col_name]].rename(
                 columns={value_col_name: "value"},
             ),
-            name=name_prefix + value_col_name,
+            name=name_prefix + str(value_col_name),
         )
         for value_col_name in value_cols
     ]
