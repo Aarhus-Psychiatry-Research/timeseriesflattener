@@ -80,8 +80,6 @@ def test_compute_specs(
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    synth_text_data["value"] = synth_text_data["text"]
-
     # Create sample specs
     outcome_spec = OutcomeSpec(
         timeseries_df=synth_outcome,
