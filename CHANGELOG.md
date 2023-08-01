@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.5.1 (2023-08-01)
+
+### Fix
+
+* Make docs render properly ([`990020d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/990020decc75527bff80432cfe25096ba90cbc48))
+
 ## v1.5.0 (2023-08-01)
 
 ### Feature
