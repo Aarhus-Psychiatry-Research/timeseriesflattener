@@ -21,7 +21,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --upgrade pip
-          pip install ".[docs, text]"
+          pip install -e ".[docs,tutorials,text]"
 
       - name: Build and Commit
         uses: sphinx-notes/pages@2.1

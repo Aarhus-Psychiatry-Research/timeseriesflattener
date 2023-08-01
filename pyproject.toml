@@ -28,6 +28,7 @@ dependencies = [
     "protobuf<=4.23.3", # Other versions give errors with pytest, super weird!
     "frozendict>=2.3.4",
     "coloredlogs>14.0.0",
+    "tqdm>4.1.0"
 ]
 
 [project.license]
