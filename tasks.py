@@ -215,7 +215,7 @@ def static_type_checks(c: Context):
 def install(c: Context):
     """Install the project in editable mode using pip install"""
     echo_header(f"{Emo.DO} Installing project")
-    c.run("pip install -e '.[dev,tests,docs]'")
+    c.run("pip install -e '.[dev,test,docs,tutorials,text]'")
 
 
 @task
