@@ -16,13 +16,13 @@
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Timeseriesflattener" href="timeseriesflattener.html" /><link rel="prev" title="Frequently Asked Questions" href="faq.html" />
 
-    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.03.27 -->
+    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.03.27 -->
         <title>Feature specifications - Timeseriesflattener</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css?v=6ad1a40c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -329,12 +329,16 @@ Requires that each entity only occurs once in the timeseries_df.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_fields">
 <span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aggregation_fn':</span> <span class="pre">FieldInfo(annotation=Callable[list,</span> <span class="pre">DataFrame],</span> <span class="pre">required=True),</span> <span class="pre">'fallback':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">int],</span> <span class="pre">required=True),</span> <span class="pre">'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'incident':</span> <span class="pre">FieldInfo(annotation=bool,</span> <span class="pre">required=True),</span> <span class="pre">'lookahead_days':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='outc'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_fields" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix">
@@ -403,12 +407,16 @@ Requires that each entity only occurs once in the timeseries_df.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_fields">
 <span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aggregation_fn':</span> <span class="pre">FieldInfo(annotation=Callable[list,</span> <span class="pre">DataFrame],</span> <span class="pre">required=True),</span> <span class="pre">'fallback':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">int],</span> <span class="pre">required=True),</span> <span class="pre">'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'lookbehind_days':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='pred'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_fields" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix">
@@ -455,12 +463,16 @@ NOTE: Column names can be overridden when initialising TimeSeriesFlattener.</p><
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_config" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.model_fields">
 <span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='pred'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_fields" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix">
@@ -545,12 +557,16 @@ append to the column name.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'allow_mutation':</span> <span class="pre">False,</span> <span class="pre">'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid'}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_config" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_fields">
 <span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aggregation_fn':</span> <span class="pre">FieldInfo(annotation=Callable[list,</span> <span class="pre">DataFrame],</span> <span class="pre">required=False,</span> <span class="pre">default=&lt;function</span> <span class="pre">concatenate&gt;),</span> <span class="pre">'embedding_fn':</span> <span class="pre">FieldInfo(annotation=Callable,</span> <span class="pre">required=True),</span> <span class="pre">'embedding_fn_kwargs':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False),</span> <span class="pre">'fallback':</span> <span class="pre">FieldInfo(annotation=Union[float,</span> <span class="pre">int],</span> <span class="pre">required=True),</span> <span class="pre">'feature_base_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'lookbehind_days':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'prefix':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=False,</span> <span class="pre">default='pred'),</span> <span class="pre">'timeseries_df':</span> <span class="pre">FieldInfo(annotation=DataFrame,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.model_fields" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Metadata about the fields defined on the model,
+mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
+<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.prefix">
@@ -717,12 +733,12 @@ append to the column name.</p>
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
-    <script src="_static/scripts/furo.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script src="_static/design-tabs.js"></script>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3be93e3"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/scripts/furo.js?v=2c7c1115"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
     </body>
 </html>
