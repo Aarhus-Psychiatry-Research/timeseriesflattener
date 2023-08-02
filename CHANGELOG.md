@@ -2,6 +2,27 @@
 
 <!--next-version-placeholder-->
 
+## v1.5.1 (2023-08-01)
+
+### Fix
+
+* Make docs render properly ([`990020d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/990020decc75527bff80432cfe25096ba90cbc48))
+
+## v1.5.0 (2023-08-01)
+
+### Feature
+
+* Convert df with multiple values to named dataframes ([`ca797e6`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ca797e66288eb011d58579814b84c858243f71f8))
+
+### Fix
+
+* Update name of column in synth text ([`bd58c4d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bd58c4dce341d1acddd59ee958027ce755c1b934))
+* Handle int column names ([`00c6a91`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/00c6a91696aa3e0258e9cdf591556b4d0c2941df))
+
+### Documentation
+
+* Add how to use pre-embedded text to text tutorial ([`c0f994c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c0f994c34c6c2623d719116cebe35761ffdf6782))
+
 ## v1.4.0 (2023-07-12)
 
 ### Feature
