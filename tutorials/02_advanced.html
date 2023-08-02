@@ -380,37 +380,34 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:37 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:21:54 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:37 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 4038 (40.38%) rows
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:21:54 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 4038 (40.38%) rows
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:37 [INFO] Processing 4 temporal features in parallel with 4 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:21:54 [INFO] Processing 4 temporal features in parallel with 4 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/4 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 25%|██▌       | 1/4 [00:00&lt;00:00,  4.67it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 25%|██▌       | 1/4 [00:00&lt;00:00,  3.64it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 50%|█████     | 2/4 [00:00&lt;00:00,  6.70it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 4/4 [00:00&lt;00:00, 14.02it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 4/4 [00:00&lt;00:00, 12.52it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:21:54 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:38 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:21:54 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:38 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:21:54 [INFO] Concatenation took 0.012 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:38 [INFO] Concatenation took 0.018 seconds
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:38 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:21:54 [INFO] Merging with original df
 </pre></div>
 </div>
 </div>
@@ -439,10 +436,10 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
 │ ┃<span style="font-weight: bold"> column_name               </span>┃<span style="font-weight: bold"> NA    </span>┃<span style="font-weight: bold"> NA %   </span>┃<span style="font-weight: bold"> mean   </span>┃<span style="font-weight: bold"> sd    </span>┃<span style="font-weight: bold"> p0        </span>┃<span style="font-weight: bold"> p25   </span>┃<span style="font-weight: bold"> p75   </span>┃<span style="font-weight: bold"> p100   </span>┃<span style="font-weight: bold"> hist    </span>┃  │
 │ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id                </span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">  5000</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2900</span> │ <span style="color: #008080; text-decoration-color: #008080">        0</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2500</span> │ <span style="color: #008080; text-decoration-color: #008080"> 7400</span> │ <span style="color: #008080; text-decoration-color: #008080"> 10000</span> │ <span style="color: #008000; text-decoration-color: #008000">█▇███▇ </span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  110</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">   7.7</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.1</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.058</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.7</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.3</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000"> ▁▁▂▄█ </span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  820</span> │ <span style="color: #008080; text-decoration-color: #008080">    14</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.1</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.00039</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.5</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.4</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000">▂▄██▄▂ </span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  820</span> │ <span style="color: #008080; text-decoration-color: #008080">    14</span> │ <span style="color: #008080; text-decoration-color: #008080">   6.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.00039</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.8</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▂▃▄▆█ </span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  110</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.7</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.058</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.1</span> │ <span style="color: #008080; text-decoration-color: #008080">   9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃██▃▁ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  820</span> │ <span style="color: #008080; text-decoration-color: #008080">    14</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.1</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.00039</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.5</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.4</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000">▂▄██▄▂ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor     </span> │ <span style="color: #008080; text-decoration-color: #008080">  110</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">   7.7</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.1</span> │ <span style="color: #008080; text-decoration-color: #008080">    0.058</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.7</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.3</span> │ <span style="color: #008080; text-decoration-color: #008080">    10</span> │ <span style="color: #008000; text-decoration-color: #008000"> ▁▁▂▄█ </span> │  │
 │ └───────────────────────────┴───────┴────────┴────────┴───────┴───────────┴───────┴───────┴────────┴─────────┘  │
 │ <span style="font-style: italic">                                                   datetime                                                   </span>  │
 │ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
@@ -461,10 +458,10 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
 </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;entity_id&#39;,
  &#39;timestamp&#39;,
  &#39;prediction_time_uuid&#39;,
- &#39;pred_synth_predictor_float_within_730_days_maximum_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_365_days_mean_fallback_nan&#39;,
  &#39;pred_synth_predictor_float_within_365_days_maximum_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_730_days_mean_fallback_nan&#39;]
+ &#39;pred_synth_predictor_float_within_730_days_mean_fallback_nan&#39;,
+ &#39;pred_synth_predictor_float_within_365_days_mean_fallback_nan&#39;,
+ &#39;pred_synth_predictor_float_within_730_days_maximum_fallback_nan&#39;]
 </pre></div>
 </div>
 </div>
@@ -489,119 +486,119 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
 <div class="cell_output docutils container">
 <div class="output text_html"><style type="text/css">
 </style>
-<table id="T_0781f" style="font-size: 14px">
+<table id="T_936f2" style="font-size: 14px">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_0781f_level0_col0" class="col_heading level0 col0" >entity_id</th>
-      <th id="T_0781f_level0_col1" class="col_heading level0 col1" >timestamp</th>
-      <th id="T_0781f_level0_col2" class="col_heading level0 col2" >prediction_time_uuid</th>
-      <th id="T_0781f_level0_col3" class="col_heading level0 col3" >pred_1</th>
-      <th id="T_0781f_level0_col4" class="col_heading level0 col4" >pred_2</th>
-      <th id="T_0781f_level0_col5" class="col_heading level0 col5" >pred_3</th>
-      <th id="T_0781f_level0_col6" class="col_heading level0 col6" >pred_4</th>
+      <th id="T_936f2_level0_col0" class="col_heading level0 col0" >entity_id</th>
+      <th id="T_936f2_level0_col1" class="col_heading level0 col1" >timestamp</th>
+      <th id="T_936f2_level0_col2" class="col_heading level0 col2" >prediction_time_uuid</th>
+      <th id="T_936f2_level0_col3" class="col_heading level0 col3" >pred_1</th>
+      <th id="T_936f2_level0_col4" class="col_heading level0 col4" >pred_2</th>
+      <th id="T_936f2_level0_col5" class="col_heading level0 col5" >pred_3</th>
+      <th id="T_936f2_level0_col6" class="col_heading level0 col6" >pred_4</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_0781f_level0_row0" class="row_heading level0 row0" >0</th>
-      <td id="T_0781f_row0_col0" class="data row0 col0" >9903</td>
-      <td id="T_0781f_row0_col1" class="data row0 col1" >1968-05-09 21:24:00</td>
-      <td id="T_0781f_row0_col2" class="data row0 col2" >9903-1968-05-09-21-24-00</td>
-      <td id="T_0781f_row0_col3" class="data row0 col3" >2.194319</td>
-      <td id="T_0781f_row0_col4" class="data row0 col4" >0.154981</td>
-      <td id="T_0781f_row0_col5" class="data row0 col5" >0.154981</td>
-      <td id="T_0781f_row0_col6" class="data row0 col6" >0.990763</td>
+      <th id="T_936f2_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_936f2_row0_col0" class="data row0 col0" >9903</td>
+      <td id="T_936f2_row0_col1" class="data row0 col1" >1968-05-09 21:24:00</td>
+      <td id="T_936f2_row0_col2" class="data row0 col2" >9903-1968-05-09-21-24-00</td>
+      <td id="T_936f2_row0_col3" class="data row0 col3" >0.154981</td>
+      <td id="T_936f2_row0_col4" class="data row0 col4" >0.990763</td>
+      <td id="T_936f2_row0_col5" class="data row0 col5" >0.154981</td>
+      <td id="T_936f2_row0_col6" class="data row0 col6" >2.194319</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row1" class="row_heading level0 row1" >1</th>
-      <td id="T_0781f_row1_col0" class="data row1 col0" >6447</td>
-      <td id="T_0781f_row1_col1" class="data row1 col1" >1967-09-25 18:08:00</td>
-      <td id="T_0781f_row1_col2" class="data row1 col2" >6447-1967-09-25-18-08-00</td>
-      <td id="T_0781f_row1_col3" class="data row1 col3" >9.774050</td>
-      <td id="T_0781f_row1_col4" class="data row1 col4" >5.396017</td>
-      <td id="T_0781f_row1_col5" class="data row1 col5" >8.930256</td>
-      <td id="T_0781f_row1_col6" class="data row1 col6" >5.582745</td>
+      <th id="T_936f2_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_936f2_row1_col0" class="data row1 col0" >6447</td>
+      <td id="T_936f2_row1_col1" class="data row1 col1" >1967-09-25 18:08:00</td>
+      <td id="T_936f2_row1_col2" class="data row1 col2" >6447-1967-09-25-18-08-00</td>
+      <td id="T_936f2_row1_col3" class="data row1 col3" >8.930256</td>
+      <td id="T_936f2_row1_col4" class="data row1 col4" >5.582745</td>
+      <td id="T_936f2_row1_col5" class="data row1 col5" >5.396017</td>
+      <td id="T_936f2_row1_col6" class="data row1 col6" >9.774050</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row2" class="row_heading level0 row2" >2</th>
-      <td id="T_0781f_row2_col0" class="data row2 col0" >4927</td>
-      <td id="T_0781f_row2_col1" class="data row2 col1" >1968-06-30 12:13:00</td>
-      <td id="T_0781f_row2_col2" class="data row2 col2" >4927-1968-06-30-12-13-00</td>
-      <td id="T_0781f_row2_col3" class="data row2 col3" >6.730694</td>
-      <td id="T_0781f_row2_col4" class="data row2 col4" >4.957251</td>
-      <td id="T_0781f_row2_col5" class="data row2 col5" >6.730694</td>
-      <td id="T_0781f_row2_col6" class="data row2 col6" >4.957251</td>
+      <th id="T_936f2_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_936f2_row2_col0" class="data row2 col0" >4927</td>
+      <td id="T_936f2_row2_col1" class="data row2 col1" >1968-06-30 12:13:00</td>
+      <td id="T_936f2_row2_col2" class="data row2 col2" >4927-1968-06-30-12-13-00</td>
+      <td id="T_936f2_row2_col3" class="data row2 col3" >6.730694</td>
+      <td id="T_936f2_row2_col4" class="data row2 col4" >4.957251</td>
+      <td id="T_936f2_row2_col5" class="data row2 col5" >4.957251</td>
+      <td id="T_936f2_row2_col6" class="data row2 col6" >6.730694</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row3" class="row_heading level0 row3" >3</th>
-      <td id="T_0781f_row3_col0" class="data row3 col0" >5475</td>
-      <td id="T_0781f_row3_col1" class="data row3 col1" >1967-01-09 03:09:00</td>
-      <td id="T_0781f_row3_col2" class="data row3 col2" >5475-1967-01-09-03-09-00</td>
-      <td id="T_0781f_row3_col3" class="data row3 col3" >9.497229</td>
-      <td id="T_0781f_row3_col4" class="data row3 col4" >6.081539</td>
-      <td id="T_0781f_row3_col5" class="data row3 col5" >9.497229</td>
-      <td id="T_0781f_row3_col6" class="data row3 col6" >5.999336</td>
+      <th id="T_936f2_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_936f2_row3_col0" class="data row3 col0" >5475</td>
+      <td id="T_936f2_row3_col1" class="data row3 col1" >1967-01-09 03:09:00</td>
+      <td id="T_936f2_row3_col2" class="data row3 col2" >5475-1967-01-09-03-09-00</td>
+      <td id="T_936f2_row3_col3" class="data row3 col3" >9.497229</td>
+      <td id="T_936f2_row3_col4" class="data row3 col4" >5.999336</td>
+      <td id="T_936f2_row3_col5" class="data row3 col5" >6.081539</td>
+      <td id="T_936f2_row3_col6" class="data row3 col6" >9.497229</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row4" class="row_heading level0 row4" >4</th>
-      <td id="T_0781f_row4_col0" class="data row4 col0" >3157</td>
-      <td id="T_0781f_row4_col1" class="data row4 col1" >1969-10-07 05:01:00</td>
-      <td id="T_0781f_row4_col2" class="data row4 col2" >3157-1969-10-07-05-01-00</td>
-      <td id="T_0781f_row4_col3" class="data row4 col3" >5.243176</td>
-      <td id="T_0781f_row4_col4" class="data row4 col4" >5.068323</td>
-      <td id="T_0781f_row4_col5" class="data row4 col5" >5.243176</td>
-      <td id="T_0781f_row4_col6" class="data row4 col6" >5.068323</td>
+      <th id="T_936f2_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_936f2_row4_col0" class="data row4 col0" >3157</td>
+      <td id="T_936f2_row4_col1" class="data row4 col1" >1969-10-07 05:01:00</td>
+      <td id="T_936f2_row4_col2" class="data row4 col2" >3157-1969-10-07-05-01-00</td>
+      <td id="T_936f2_row4_col3" class="data row4 col3" >5.243176</td>
+      <td id="T_936f2_row4_col4" class="data row4 col4" >5.068323</td>
+      <td id="T_936f2_row4_col5" class="data row4 col5" >5.068323</td>
+      <td id="T_936f2_row4_col6" class="data row4 col6" >5.243176</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row5" class="row_heading level0 row5" >5</th>
-      <td id="T_0781f_row5_col0" class="data row5 col0" >9793</td>
-      <td id="T_0781f_row5_col1" class="data row5 col1" >1968-12-15 12:59:00</td>
-      <td id="T_0781f_row5_col2" class="data row5 col2" >9793-1968-12-15-12-59-00</td>
-      <td id="T_0781f_row5_col3" class="data row5 col3" >9.708976</td>
-      <td id="T_0781f_row5_col4" class="data row5 col4" >8.091755</td>
-      <td id="T_0781f_row5_col5" class="data row5 col5" >9.708976</td>
-      <td id="T_0781f_row5_col6" class="data row5 col6" >7.294038</td>
+      <th id="T_936f2_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_936f2_row5_col0" class="data row5 col0" >9793</td>
+      <td id="T_936f2_row5_col1" class="data row5 col1" >1968-12-15 12:59:00</td>
+      <td id="T_936f2_row5_col2" class="data row5 col2" >9793-1968-12-15-12-59-00</td>
+      <td id="T_936f2_row5_col3" class="data row5 col3" >9.708976</td>
+      <td id="T_936f2_row5_col4" class="data row5 col4" >7.294038</td>
+      <td id="T_936f2_row5_col5" class="data row5 col5" >8.091755</td>
+      <td id="T_936f2_row5_col6" class="data row5 col6" >9.708976</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row6" class="row_heading level0 row6" >6</th>
-      <td id="T_0781f_row6_col0" class="data row6 col0" >9768</td>
-      <td id="T_0781f_row6_col1" class="data row6 col1" >1967-07-04 23:09:00</td>
-      <td id="T_0781f_row6_col2" class="data row6 col2" >9768-1967-07-04-23-09-00</td>
-      <td id="T_0781f_row6_col3" class="data row6 col3" >5.729441</td>
-      <td id="T_0781f_row6_col4" class="data row6 col4" >4.959419</td>
-      <td id="T_0781f_row6_col5" class="data row6 col5" >5.729441</td>
-      <td id="T_0781f_row6_col6" class="data row6 col6" >4.326286</td>
+      <th id="T_936f2_level0_row6" class="row_heading level0 row6" >6</th>
+      <td id="T_936f2_row6_col0" class="data row6 col0" >9768</td>
+      <td id="T_936f2_row6_col1" class="data row6 col1" >1967-07-04 23:09:00</td>
+      <td id="T_936f2_row6_col2" class="data row6 col2" >9768-1967-07-04-23-09-00</td>
+      <td id="T_936f2_row6_col3" class="data row6 col3" >5.729441</td>
+      <td id="T_936f2_row6_col4" class="data row6 col4" >4.326286</td>
+      <td id="T_936f2_row6_col5" class="data row6 col5" >4.959419</td>
+      <td id="T_936f2_row6_col6" class="data row6 col6" >5.729441</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row7" class="row_heading level0 row7" >7</th>
-      <td id="T_0781f_row7_col0" class="data row7 col0" >9861</td>
-      <td id="T_0781f_row7_col1" class="data row7 col1" >1969-01-22 17:34:00</td>
-      <td id="T_0781f_row7_col2" class="data row7 col2" >9861-1969-01-22-17-34-00</td>
-      <td id="T_0781f_row7_col3" class="data row7 col3" >5.491415</td>
-      <td id="T_0781f_row7_col4" class="data row7 col4" >3.130283</td>
-      <td id="T_0781f_row7_col5" class="data row7 col5" >3.130283</td>
-      <td id="T_0781f_row7_col6" class="data row7 col6" >3.279378</td>
+      <th id="T_936f2_level0_row7" class="row_heading level0 row7" >7</th>
+      <td id="T_936f2_row7_col0" class="data row7 col0" >9861</td>
+      <td id="T_936f2_row7_col1" class="data row7 col1" >1969-01-22 17:34:00</td>
+      <td id="T_936f2_row7_col2" class="data row7 col2" >9861-1969-01-22-17-34-00</td>
+      <td id="T_936f2_row7_col3" class="data row7 col3" >3.130283</td>
+      <td id="T_936f2_row7_col4" class="data row7 col4" >3.279378</td>
+      <td id="T_936f2_row7_col5" class="data row7 col5" >3.130283</td>
+      <td id="T_936f2_row7_col6" class="data row7 col6" >5.491415</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row8" class="row_heading level0 row8" >8</th>
-      <td id="T_0781f_row8_col0" class="data row8 col0" >657</td>
-      <td id="T_0781f_row8_col1" class="data row8 col1" >1969-04-14 15:47:00</td>
-      <td id="T_0781f_row8_col2" class="data row8 col2" >657-1969-04-14-15-47-00</td>
-      <td id="T_0781f_row8_col3" class="data row8 col3" >7.903614</td>
-      <td id="T_0781f_row8_col4" class="data row8 col4" >nan</td>
-      <td id="T_0781f_row8_col5" class="data row8 col5" >nan</td>
-      <td id="T_0781f_row8_col6" class="data row8 col6" >7.903614</td>
+      <th id="T_936f2_level0_row8" class="row_heading level0 row8" >8</th>
+      <td id="T_936f2_row8_col0" class="data row8 col0" >657</td>
+      <td id="T_936f2_row8_col1" class="data row8 col1" >1969-04-14 15:47:00</td>
+      <td id="T_936f2_row8_col2" class="data row8 col2" >657-1969-04-14-15-47-00</td>
+      <td id="T_936f2_row8_col3" class="data row8 col3" >nan</td>
+      <td id="T_936f2_row8_col4" class="data row8 col4" >7.903614</td>
+      <td id="T_936f2_row8_col5" class="data row8 col5" >nan</td>
+      <td id="T_936f2_row8_col6" class="data row8 col6" >7.903614</td>
     </tr>
     <tr>
-      <th id="T_0781f_level0_row9" class="row_heading level0 row9" >9</th>
-      <td id="T_0781f_row9_col0" class="data row9 col0" >7916</td>
-      <td id="T_0781f_row9_col1" class="data row9 col1" >1968-12-20 03:38:00</td>
-      <td id="T_0781f_row9_col2" class="data row9 col2" >7916-1968-12-20-03-38-00</td>
-      <td id="T_0781f_row9_col3" class="data row9 col3" >6.084523</td>
-      <td id="T_0781f_row9_col4" class="data row9 col4" >3.901992</td>
-      <td id="T_0781f_row9_col5" class="data row9 col5" >4.318586</td>
-      <td id="T_0781f_row9_col6" class="data row9 col6" >4.629502</td>
+      <th id="T_936f2_level0_row9" class="row_heading level0 row9" >9</th>
+      <td id="T_936f2_row9_col0" class="data row9 col0" >7916</td>
+      <td id="T_936f2_row9_col1" class="data row9 col1" >1968-12-20 03:38:00</td>
+      <td id="T_936f2_row9_col2" class="data row9 col2" >7916-1968-12-20-03-38-00</td>
+      <td id="T_936f2_row9_col3" class="data row9 col3" >4.318586</td>
+      <td id="T_936f2_row9_col4" class="data row9 col4" >4.629502</td>
+      <td id="T_936f2_row9_col5" class="data row9 col5" >3.901992</td>
+      <td id="T_936f2_row9_col6" class="data row9 col6" >6.084523</td>
     </tr>
   </tbody>
 </table>
@@ -686,7 +683,7 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3be93e3"></script>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=930f0908"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../_static/scripts/furo.js?v=2c7c1115"></script>

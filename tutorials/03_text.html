@@ -698,10 +698,10 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:54 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:10 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:16:54 [INFO] Processing 768 temporal features in parallel with 1 workers. Chunksize is 768. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:10 [INFO] Processing 768 temporal features in parallel with 1 workers. Chunksize is 768. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
@@ -713,22 +713,22 @@ To disable this warning, you can either:
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/768 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 1/768 [00:25&lt;5:26:48, 25.57s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 1/768 [00:25&lt;5:26:58, 25.58s/it]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 768/768 [00:25&lt;00:00, 30.04it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 768/768 [00:25&lt;00:00, 30.02it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:17:20 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:36 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:17:20 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:37 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:17:21 [INFO] Concatenation took 1.714 seconds
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Concatenation took 1.769 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:17:21 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Merging with original df
 </pre></div>
 </div>
 </div>
@@ -763,24 +763,24 @@ To disable this warning, you can either:
       <th>entity_id</th>
       <th>timestamp</th>
       <th>prediction_time_uuid</th>
-      <th>pred_sent_emb_25_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_344_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_368_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_125_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_193_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_308_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_113_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_24_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_321_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_14_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_169_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_97_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_93_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_331_within_365_days_mean_fallback_nan</th>
       <th>...</th>
-      <th>pred_sent_emb_14_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_265_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_77_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_144_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_101_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_0_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_233_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_142_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_354_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_120_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_85_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_107_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_289_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_298_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_350_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_217_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_349_within_365_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_361_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_332_within_730_days_mean_fallback_nan</th>
+      <th>pred_sent_emb_240_within_730_days_mean_fallback_nan</th>
     </tr>
   </thead>
   <tbody>
@@ -789,120 +789,120 @@ To disable this warning, you can either:
       <td>4977</td>
       <td>1968-11-28 16:05:00</td>
       <td>4977-1968-11-28-16-05-00</td>
-      <td>0.017894</td>
-      <td>-0.029661</td>
-      <td>-0.021868</td>
-      <td>-0.006170</td>
-      <td>-0.051786</td>
-      <td>-0.053086</td>
-      <td>-0.040660</td>
-      <td>...</td>
+      <td>-0.004275</td>
+      <td>-0.041136</td>
       <td>-0.012076</td>
-      <td>0.029114</td>
-      <td>-0.052350</td>
-      <td>-0.081266</td>
-      <td>0.037202</td>
-      <td>0.029870</td>
-      <td>-0.044642</td>
-      <td>-0.094985</td>
-      <td>0.058408</td>
-      <td>0.052193</td>
+      <td>0.031586</td>
+      <td>-0.032001</td>
+      <td>0.002852</td>
+      <td>-0.004810</td>
+      <td>...</td>
+      <td>-0.002154</td>
+      <td>-0.090041</td>
+      <td>0.011419</td>
+      <td>0.077712</td>
+      <td>-0.128852</td>
+      <td>-0.036499</td>
+      <td>-0.028012</td>
+      <td>-0.004727</td>
+      <td>-0.068918</td>
+      <td>-0.093912</td>
     </tr>
     <tr>
       <th>2463</th>
       <td>6840</td>
       <td>1965-11-02 07:17:00</td>
       <td>6840-1965-11-02-07-17-00</td>
-      <td>0.032056</td>
-      <td>-0.017802</td>
-      <td>-0.020317</td>
-      <td>-0.003878</td>
-      <td>-0.068410</td>
-      <td>-0.024626</td>
-      <td>0.002075</td>
-      <td>...</td>
+      <td>-0.057314</td>
+      <td>-0.115878</td>
       <td>-0.058417</td>
-      <td>0.095710</td>
-      <td>0.014129</td>
-      <td>-0.002630</td>
-      <td>-0.008826</td>
-      <td>0.090487</td>
-      <td>-0.004694</td>
-      <td>-0.046674</td>
-      <td>-0.006335</td>
-      <td>-0.028022</td>
+      <td>0.030843</td>
+      <td>-0.075833</td>
+      <td>-0.047961</td>
+      <td>0.055927</td>
+      <td>...</td>
+      <td>0.021332</td>
+      <td>-0.128797</td>
+      <td>-0.081053</td>
+      <td>-0.039674</td>
+      <td>0.081146</td>
+      <td>0.031768</td>
+      <td>-0.012586</td>
+      <td>0.038362</td>
+      <td>-0.010240</td>
+      <td>-0.054964</td>
     </tr>
     <tr>
       <th>2580</th>
       <td>18</td>
       <td>1968-08-26 15:19:00</td>
       <td>18-1968-08-26-15-19-00</td>
-      <td>0.006431</td>
-      <td>0.004501</td>
-      <td>-0.006279</td>
-      <td>-0.015985</td>
-      <td>-0.069001</td>
-      <td>-0.055356</td>
-      <td>-0.000762</td>
-      <td>...</td>
+      <td>-0.062703</td>
+      <td>0.012403</td>
       <td>0.021304</td>
-      <td>-0.057196</td>
-      <td>-0.022070</td>
-      <td>-0.050446</td>
-      <td>-0.001568</td>
-      <td>-0.002633</td>
-      <td>0.025319</td>
-      <td>-0.110229</td>
-      <td>-0.031532</td>
-      <td>0.004718</td>
+      <td>0.031082</td>
+      <td>-0.034527</td>
+      <td>-0.017803</td>
+      <td>0.061890</td>
+      <td>...</td>
+      <td>-0.037733</td>
+      <td>-0.012207</td>
+      <td>0.006167</td>
+      <td>0.083227</td>
+      <td>0.041067</td>
+      <td>-0.013668</td>
+      <td>-0.003673</td>
+      <td>0.079086</td>
+      <td>0.000093</td>
+      <td>-0.001807</td>
     </tr>
     <tr>
       <th>2741</th>
       <td>9832</td>
       <td>1969-06-03 04:36:00</td>
       <td>9832-1969-06-03-04-36-00</td>
-      <td>0.094799</td>
-      <td>0.013455</td>
-      <td>0.070465</td>
-      <td>0.066168</td>
-      <td>-0.012171</td>
-      <td>-0.033816</td>
-      <td>-0.024770</td>
-      <td>...</td>
+      <td>-0.025492</td>
+      <td>-0.099415</td>
       <td>-0.078805</td>
-      <td>-0.036647</td>
-      <td>-0.022788</td>
-      <td>0.020711</td>
-      <td>0.066916</td>
-      <td>-0.020382</td>
-      <td>-0.071360</td>
-      <td>-0.112359</td>
-      <td>-0.020004</td>
-      <td>-0.033745</td>
+      <td>0.074481</td>
+      <td>0.010988</td>
+      <td>-0.079041</td>
+      <td>0.088452</td>
+      <td>...</td>
+      <td>0.029777</td>
+      <td>-0.087880</td>
+      <td>-0.025982</td>
+      <td>0.026552</td>
+      <td>-0.078722</td>
+      <td>-0.015452</td>
+      <td>-0.002739</td>
+      <td>0.023960</td>
+      <td>0.018140</td>
+      <td>0.029266</td>
     </tr>
     <tr>
       <th>2931</th>
       <td>7281</td>
       <td>1967-06-05 00:41:00</td>
       <td>7281-1967-06-05-00-41-00</td>
-      <td>0.030327</td>
-      <td>0.055882</td>
-      <td>0.024312</td>
-      <td>-0.014444</td>
-      <td>-0.055627</td>
-      <td>-0.016736</td>
-      <td>-0.072137</td>
-      <td>...</td>
+      <td>-0.019136</td>
+      <td>-0.112605</td>
       <td>-0.050149</td>
-      <td>-0.009907</td>
-      <td>-0.031844</td>
-      <td>0.037615</td>
-      <td>-0.030904</td>
-      <td>0.002086</td>
-      <td>0.009941</td>
-      <td>-0.085689</td>
-      <td>-0.013160</td>
-      <td>0.010426</td>
+      <td>0.023507</td>
+      <td>-0.035965</td>
+      <td>0.001202</td>
+      <td>0.012729</td>
+      <td>...</td>
+      <td>0.010743</td>
+      <td>-0.053010</td>
+      <td>0.010873</td>
+      <td>0.093886</td>
+      <td>-0.006740</td>
+      <td>-0.038409</td>
+      <td>-0.014330</td>
+      <td>-0.077321</td>
+      <td>-0.048969</td>
+      <td>-0.038417</td>
     </tr>
   </tbody>
 </table>
@@ -972,10 +972,10 @@ To disable this warning, you can either:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:17:22 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:17:22 [INFO] Processing 1 temporal features in parallel with 1 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Processing 1 temporal features in parallel with 1 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
@@ -987,7 +987,7 @@ To disable this warning, you can either:
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:17:22 [INFO] Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1 [00:29&lt;?, ?it/s]
@@ -1863,7 +1863,7 @@ To disable this warning, you can either:
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3be93e3"></script>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=930f0908"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../_static/scripts/furo.js?v=2c7c1115"></script>
