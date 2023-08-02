@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.5.2 (2023-08-02)
+
+### Fix
+
+* Hopeful ci docs fix ([`cd78f98`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cd78f98287664e4116515509b18be86aade08c9e))
+
 ## v1.5.1 (2023-08-01)
 
 ### Fix
