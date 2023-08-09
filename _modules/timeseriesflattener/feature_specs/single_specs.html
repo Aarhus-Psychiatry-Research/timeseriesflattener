@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.03.27 -->
         <title>timeseriesflattener.feature_specs.single_specs - Timeseriesflattener</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=362ab14a" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -224,10 +224,10 @@
         <article role="main">
           <h1>Source code for timeseriesflattener.feature_specs.single_specs</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">AggregationFunType</span><span class="p">,</span> <span class="n">concatenate</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">AggregationFunType</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.utils.pydantic_basemodel</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
 
@@ -382,61 +382,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="TextPredictorSpec"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec">[docs]</a><span class="k">class</span> <span class="nc">TextPredictorSpec</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a text predictor, where the df has been resolved.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        timeseries_df: Dataframe with the values.</span>
-<span class="sd">        feature_base_name: The name of the feature. Used for column name generation, e.g.</span>
-<span class="sd">            &lt;prefix&gt;_&lt;feature_baase_name&gt;_&lt;metadata&gt;.</span>
-<span class="sd">        aggregation_fn: How to aggregate multiple values within a window. Can be a string, a function, or a list of functions.</span>
-<span class="sd">        fallback: Value to return if no values is found within window.</span>
-<span class="sd">        lookbehind_days: How far behind to look for values.</span>
-<span class="sd">        prefix: The prefix used for column name generation, e.g.</span>
-<span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;_&lt;metadata&gt;. Defaults to &quot;pred&quot;.</span>
-<span class="sd">        embedding_fn: A function used for embedding the text. Should take a</span>
-<span class="sd">            pandas series of strings and return a pandas dataframe of embeddings.</span>
-<span class="sd">        embedding_fn_kwargs: Optional kwargs passed onto the embedding_fn.</span>
-<span class="sd">            Defaults to None.</span>
-<span class="sd">        aggregation_fn: A function used for resolving multiple</span>
-<span class="sd">            values within a window. Defaults to concatenate.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">timeseries_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
-    <span class="n">feature_base_name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
-    <span class="n">embedding_fn</span><span class="p">:</span> <span class="n">Callable</span>
-    <span class="n">embedding_fn_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">lookbehind_days</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span>
-
-    <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span> <span class="o">=</span> <span class="n">concatenate</span>
-
-<div class="viewcode-block" id="TextPredictorSpec.get_output_col_name"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.TextPredictorSpec.get_output_col_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_output_col_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">additional_feature_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the column name for the output column.</span>
-<span class="sd">        If interval days is a float, the decimal point is changed to an underscore.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            additional_feature_name (Optional[str]): additional feature name to</span>
-<span class="sd">                append to the column name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">feature_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_base_name</span>
-        <span class="k">if</span> <span class="n">additional_feature_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">feature_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{</span><span class="n">additional_feature_name</span><span class="si">}</span><span class="s2">&quot;</span>
-
-        <span class="n">col_str</span> <span class="o">=</span> <span class="n">col_str</span> <span class="o">=</span> <span class="n">get_temporal_col_name</span><span class="p">(</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">feature_base_name</span><span class="o">=</span><span class="n">feature_name</span><span class="p">,</span>
-            <span class="n">lookwindow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">,</span>
-            <span class="n">aggregation_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregation_fn</span><span class="p">,</span>
-            <span class="n">fallback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">col_str</span></div></div>
-
-
-<span class="n">TemporalSpec</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">]</span>
+<span class="n">TemporalSpec</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">]</span>
 <span class="n">AnySpec</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">StaticSpec</span><span class="p">,</span> <span class="n">TemporalSpec</span><span class="p">]</span>
 </pre></div>
         </article>

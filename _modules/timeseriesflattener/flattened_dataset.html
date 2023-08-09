@@ -6,7 +6,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.03.27 -->
         <title>timeseriesflattener.flattened_dataset - Timeseriesflattener</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=362ab14a" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -242,7 +242,6 @@
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
 
-<span class="kn">from</span> <span class="nn">timeseriesflattener.column_handler</span> <span class="kn">import</span> <span class="n">ColumnHandler</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_cache.abstract_feature_cache</span> <span class="kn">import</span> <span class="n">FeatureCache</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.single_specs</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnySpec</span><span class="p">,</span>
@@ -250,7 +249,6 @@
     <span class="n">PredictorSpec</span><span class="p">,</span>
     <span class="n">StaticSpec</span><span class="p">,</span>
     <span class="n">TemporalSpec</span><span class="p">,</span>
-    <span class="n">TextPredictorSpec</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.flattened_ds_validator</span> <span class="kn">import</span> <span class="n">ValidateInitFlattenedDataset</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.misc_utils</span> <span class="kn">import</span> <span class="n">print_df_dimensions_diff</span>
@@ -262,7 +260,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A collection of specs.&quot;&quot;&quot;</span>
 
     <span class="n">outcome_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OutcomeSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">predictor_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">predictor_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">static_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AnySpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="SpecCollection.Config"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.SpecCollection.Config">[docs]</a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
@@ -577,7 +575,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
             <span class="n">direction</span> <span class="o">=</span> <span class="s2">&quot;ahead&quot;</span>
             <span class="n">interval_days</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookahead_days</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">PredictorSpec</span><span class="p">):</span>
             <span class="n">direction</span> <span class="o">=</span> <span class="s2">&quot;behind&quot;</span>
             <span class="n">interval_days</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookbehind_days</span>
         <span class="k">else</span><span class="p">:</span>
@@ -602,35 +600,21 @@
             <span class="n">pred_time_uuid_colname</span><span class="o">=</span><span class="n">pred_time_uuid_col_name</span><span class="p">,</span>
             <span class="n">val_timestamp_col_name</span><span class="o">=</span><span class="n">timestamp_val_col_name</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="c1"># handle embedding and dimensionality reduction if text predictor</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">):</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">ColumnHandler</span><span class="o">.</span><span class="n">embed_text_column</span><span class="p">(</span>
-                <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-                <span class="n">text_col_name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
-                <span class="n">embedding_fn</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">embedding_fn</span><span class="p">,</span>
-                <span class="n">embedding_fn_kwargs</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">embedding_fn_kwargs</span><span class="p">,</span>
-            <span class="p">)</span>
-
         <span class="c1"># If aggregation generates empty values,</span>
         <span class="c1"># e.g. when there is only one prediction_time within look_ahead window for slope calculation,</span>
         <span class="c1"># replace with NaN</span>
 
         <span class="c1"># Rename column</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">ColumnHandler</span><span class="o">.</span><span class="n">rename_value_column</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()})</span>
 
         <span class="c1"># Find value_cols and add fallback to them</span>
-        <span class="n">value_col_str_name</span> <span class="o">=</span> <span class="n">ColumnHandler</span><span class="o">.</span><span class="n">get_value_col_str_name</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-            <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">ColumnHandler</span><span class="o">.</span><span class="n">replace_na_in_spec_col_with_fallback</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-            <span class="n">output_spec</span><span class="o">=</span><span class="n">output_spec</span><span class="p">,</span>
+        <span class="n">value_col_str_name</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">output_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+            <span class="n">output_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+            <span class="n">output_spec</span><span class="o">.</span><span class="n">fallback</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># check if multiindex and flatten</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">ColumnHandler</span><span class="o">.</span><span class="n">flatten_multiindex</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Returning </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> rows of flattened dataframe for </span><span class="si">{</span><span class="n">output_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -645,7 +629,7 @@
             <span class="n">output_spec</span><span class="o">.</span><span class="n">fallback</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="o">*</span><span class="n">value_col_str_name</span><span class="p">,</span> <span class="n">pred_time_uuid_col_name</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="n">value_col_str_name</span><span class="p">,</span> <span class="n">pred_time_uuid_col_name</span><span class="p">]]</span>
 
     <span class="k">def</span> <span class="nf">_get_temporal_feature</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1038,7 +1022,7 @@
 
             <span class="n">min_timestamp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
 
-            <span class="k">if</span> <span class="n">min_timestamp</span> <span class="o">&lt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;1971-01-01&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">min_timestamp</span> <span class="o">&lt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;1971-01-01&quot;</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">feature_base_name</span><span class="si">}</span><span class="s2">: Minimum timestamp is </span><span class="si">{</span><span class="n">min_timestamp</span><span class="si">}</span><span class="s2"> - perhaps ints were coerced to timestamps?&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -1063,7 +1047,6 @@
                 <span class="n">OutcomeSpec</span><span class="p">,</span>
                 <span class="n">PredictorSpec</span><span class="p">,</span>
                 <span class="n">StaticSpec</span><span class="p">,</span>
-                <span class="n">TextPredictorSpec</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">allowed_spec_types</span><span class="p">):</span>
@@ -1073,14 +1056,14 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_that_spec_df_has_required_columns</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">spec_i</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_check_that_spec_df_timestamp_col_is_correctly_formatted</span><span class="p">(</span>
                     <span class="n">spec</span><span class="o">=</span><span class="n">spec_i</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">outcome_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_i</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">TextPredictorSpec</span><span class="p">)):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="p">(</span><span class="n">PredictorSpec</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">predictor_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_i</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_i</span><span class="p">,</span> <span class="n">StaticSpec</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unprocessed_specs</span><span class="o">.</span><span class="n">static_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_i</span><span class="p">)</span></div>

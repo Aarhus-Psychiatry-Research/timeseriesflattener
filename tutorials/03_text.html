@@ -18,7 +18,7 @@
 
     <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.03.27 -->
         <title>Adding text features - Timeseriesflattener</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -246,20 +246,7 @@
           <section id="adding-text-features">
 <h1>Adding text features<a class="headerlink" href="#adding-text-features" title="Permalink to this heading">#</a></h1>
 <p>So far, the tutorials have dealt with <em>tabular</em> data only. This tutorial will show you to make predictors out of text features, such as clinical notes, within <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code>.</p>
-<p>Specifically, this tutorial will cover:</p>
-<ol class="arabic simple">
-<li><p>How to generate flattened predictors from already embedded text.</p></li>
-<li><p>How to featurize text using Huggingface or sci-kit learn models.</p></li>
-<li><p>How to use write your own text embedding function in <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code>.</p></li>
-</ol>
-<p>To use the features in this tutorial you’ll need to install some extra dependencies. These can be installed by running:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pytorch</span> <span class="n">transformers</span> <span class="n">sentence</span><span class="o">-</span><span class="n">transformer</span>
-</pre></div>
-</div>
-<p>or by installing <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code> with the text dependencies.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">timeseriesflattener</span><span class="s2">&quot;[text]&quot;</span>
-</pre></div>
-</div>
+<p>Specifically, this tutorial will cover <em>how to generate flattened predictors from already embedded text.</em></p>
 <section id="the-dataset">
 <h2>The dataset<a class="headerlink" href="#the-dataset" title="Permalink to this heading">#</a></h2>
 <p>To start out, let’s load a synthetic dataset containing text. As with all other features, each row in the dataset needs an ID, a timestamp, and the feature value.</p>
@@ -346,24 +333,24 @@
 </section>
 <section id="generating-predictors-from-embedded-text">
 <h2>Generating predictors from embedded text<a class="headerlink" href="#generating-predictors-from-embedded-text" title="Permalink to this heading">#</a></h2>
-<p>As generating text embeddings can often take a while, it can be an advantageous to embed the text before using <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code> to speed up the computation if you’re generating multiple datasets. This first block will show how to convert a dataframe with embeddings into a format that can be passed to <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code>. Skip to <span class="xref myst">TextPredictorSpec</span> if you want to perform the embedding step directly in <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code>.</p>
-<p>To start, let’s embed the synthetic text data using a sentence-transformer. You can use any form of text-embedding you want - the only constraint is that the result of the embedding function should be a dataframe with an <code class="docutils literal notranslate"><span class="pre">entitiy_id_col</span></code>, <code class="docutils literal notranslate"><span class="pre">timestamp_col</span></code> and any number of <code class="docutils literal notranslate"><span class="pre">value_cols</span></code>.</p>
+<p>As generating text embeddings can often take a while, it can be an advantageous to embed the text before using <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code> to speed up the computation if you’re generating multiple datasets. This first block will show how to convert a dataframe with embeddings into a format that can be passed to <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code>.</p>
+<p>To start, let’s embed the synthetic text data using TF-IDF. You can use any form of text-embedding you want - the only constraint is that the result of the embedding function should be a dataframe with an <code class="docutils literal notranslate"><span class="pre">entitiy_id_col</span></code>, <code class="docutils literal notranslate"><span class="pre">timestamp_col</span></code> and any number of <code class="docutils literal notranslate"><span class="pre">value_cols</span></code>.</p>
+<p>For purposes of demonstration, we will fit a small TF-IDF model to the data and use it to embed the text.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
-<span class="kn">from</span> <span class="nn">sentence_transformers</span> <span class="kn">import</span> <span class="n">SentenceTransformer</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="c1"># load fast model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span><span class="s2">&quot;all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
 
 <span class="c1"># define function to embed text and return a dataframe</span>
-<span class="k">def</span> <span class="nf">embed_text_to_df</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">SentenceTransformer</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">embed_text_to_df</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="n">tfidf_model</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">max_features</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">tfidf_model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">embeddings</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">tfidf_model</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
 
 <span class="c1"># embed text</span>
-<span class="n">embedded_text</span> <span class="o">=</span> <span class="n">embed_text_to_df</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">synth_text</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="n">embedded_text</span> <span class="o">=</span> <span class="n">embed_text_to_df</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">synth_text</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 <span class="c1"># drop the text column from the original dataframe</span>
 <span class="n">metadata_only</span> <span class="o">=</span> <span class="n">synth_text</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
 <span class="c1"># concatenate the metadata and the embedded text</span>
@@ -399,25 +386,16 @@
       <th></th>
       <th>entity_id</th>
       <th>timestamp</th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>...</th>
-      <th>374</th>
-      <th>375</th>
-      <th>376</th>
-      <th>377</th>
-      <th>378</th>
-      <th>379</th>
-      <th>380</th>
-      <th>381</th>
-      <th>382</th>
-      <th>383</th>
+      <th>and</th>
+      <th>for</th>
+      <th>in</th>
+      <th>of</th>
+      <th>or</th>
+      <th>patient</th>
+      <th>that</th>
+      <th>the</th>
+      <th>to</th>
+      <th>was</th>
     </tr>
   </thead>
   <tbody>
@@ -425,125 +403,79 @@
       <th>0</th>
       <td>4647</td>
       <td>1967-07-19 00:22:00</td>
-      <td>-0.020159</td>
-      <td>0.006134</td>
-      <td>-0.006454</td>
-      <td>0.005938</td>
-      <td>0.038562</td>
-      <td>0.005949</td>
-      <td>-0.056681</td>
-      <td>0.029464</td>
-      <td>...</td>
-      <td>0.021432</td>
-      <td>0.061494</td>
-      <td>0.011665</td>
-      <td>0.018157</td>
-      <td>-0.035946</td>
-      <td>0.101041</td>
-      <td>-0.002912</td>
-      <td>0.014489</td>
-      <td>-0.033684</td>
-      <td>-0.085988</td>
+      <td>0.175872</td>
+      <td>0.182066</td>
+      <td>0.249848</td>
+      <td>0.158430</td>
+      <td>0.000000</td>
+      <td>0.023042</td>
+      <td>0.311389</td>
+      <td>0.529966</td>
+      <td>0.490203</td>
+      <td>0.479312</td>
     </tr>
     <tr>
       <th>1</th>
       <td>2007</td>
       <td>1966-11-25 02:02:00</td>
-      <td>-0.065502</td>
-      <td>0.026975</td>
-      <td>-0.042235</td>
-      <td>-0.012499</td>
-      <td>-0.012820</td>
-      <td>-0.003107</td>
-      <td>0.025823</td>
-      <td>0.115787</td>
-      <td>...</td>
-      <td>-0.013681</td>
-      <td>-0.008509</td>
-      <td>-0.005801</td>
-      <td>-0.019228</td>
-      <td>-0.029137</td>
-      <td>0.107618</td>
-      <td>0.027575</td>
-      <td>0.061189</td>
-      <td>-0.036197</td>
-      <td>-0.023715</td>
+      <td>0.244870</td>
+      <td>0.000000</td>
+      <td>0.135282</td>
+      <td>0.064337</td>
+      <td>0.465084</td>
+      <td>0.336859</td>
+      <td>0.151743</td>
+      <td>0.729861</td>
+      <td>0.179161</td>
+      <td>0.000000</td>
     </tr>
     <tr>
       <th>2</th>
       <td>5799</td>
       <td>1967-09-19 12:31:00</td>
-      <td>-0.015965</td>
-      <td>0.030239</td>
-      <td>-0.025726</td>
-      <td>0.011575</td>
-      <td>-0.056353</td>
-      <td>0.024950</td>
-      <td>0.005075</td>
-      <td>0.158615</td>
-      <td>...</td>
-      <td>0.021345</td>
-      <td>0.019185</td>
-      <td>0.046376</td>
-      <td>0.008546</td>
-      <td>-0.017712</td>
-      <td>0.014252</td>
-      <td>-0.090198</td>
-      <td>0.036281</td>
-      <td>0.119648</td>
-      <td>-0.031743</td>
+      <td>0.192367</td>
+      <td>0.232332</td>
+      <td>0.283402</td>
+      <td>0.336952</td>
+      <td>0.000000</td>
+      <td>0.176422</td>
+      <td>0.238416</td>
+      <td>0.646879</td>
+      <td>0.250217</td>
+      <td>0.382277</td>
     </tr>
     <tr>
       <th>3</th>
       <td>1319</td>
       <td>1969-07-21 23:16:00</td>
-      <td>0.049595</td>
-      <td>0.124481</td>
-      <td>-0.050134</td>
-      <td>0.036343</td>
-      <td>0.040793</td>
-      <td>0.067932</td>
-      <td>0.108808</td>
-      <td>0.068143</td>
-      <td>...</td>
-      <td>0.041999</td>
-      <td>-0.011297</td>
-      <td>0.013209</td>
-      <td>0.002157</td>
-      <td>-0.032716</td>
-      <td>-0.001036</td>
-      <td>-0.013384</td>
-      <td>-0.025948</td>
-      <td>-0.033742</td>
-      <td>-0.013560</td>
+      <td>0.165635</td>
+      <td>0.200046</td>
+      <td>0.183015</td>
+      <td>0.261115</td>
+      <td>0.125837</td>
+      <td>0.151906</td>
+      <td>0.205285</td>
+      <td>0.759528</td>
+      <td>0.403961</td>
+      <td>0.098747</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4234</td>
       <td>1966-04-14 22:04:00</td>
-      <td>-0.062923</td>
-      <td>0.062385</td>
-      <td>-0.048646</td>
-      <td>0.081368</td>
-      <td>0.115612</td>
-      <td>-0.036585</td>
-      <td>0.105179</td>
-      <td>0.034068</td>
-      <td>...</td>
-      <td>0.015677</td>
-      <td>-0.009112</td>
-      <td>-0.032549</td>
-      <td>0.021608</td>
-      <td>-0.043334</td>
-      <td>0.057872</td>
-      <td>-0.044645</td>
-      <td>0.024808</td>
-      <td>0.002562</td>
-      <td>0.030407</td>
+      <td>0.493461</td>
+      <td>0.119196</td>
+      <td>0.272619</td>
+      <td>0.207444</td>
+      <td>0.000000</td>
+      <td>0.045256</td>
+      <td>0.183475</td>
+      <td>0.588324</td>
+      <td>0.433253</td>
+      <td>0.235349</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 386 columns</p>
 </div></div></div>
 </div>
 <p>Now that we have our embeddings, we can use the <code class="docutils literal notranslate"><span class="pre">df_with_multiple_values_to_named_dataframes</span></code> function to turn the embeddings into a format that can be readily supplied to <code class="docutils literal notranslate"><span class="pre">PredictorGroupSpec</span></code>.</p>
@@ -558,7 +490,7 @@
     <span class="n">df</span><span class="o">=</span><span class="n">embedded_text_with_metadata</span><span class="p">,</span>
     <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
     <span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
-    <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;sent_emb_&quot;</span><span class="p">,</span>
+    <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;tfidf_&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># check the first dataframe</span>
@@ -595,31 +527,31 @@
       <th>0</th>
       <td>4647</td>
       <td>1967-07-19 00:22:00</td>
-      <td>-0.020159</td>
+      <td>0.175872</td>
     </tr>
     <tr>
       <th>1</th>
       <td>2007</td>
       <td>1966-11-25 02:02:00</td>
-      <td>-0.065502</td>
+      <td>0.244870</td>
     </tr>
     <tr>
       <th>2</th>
       <td>5799</td>
       <td>1967-09-19 12:31:00</td>
-      <td>-0.015965</td>
+      <td>0.192367</td>
     </tr>
     <tr>
       <th>3</th>
       <td>1319</td>
       <td>1969-07-21 23:16:00</td>
-      <td>0.049595</td>
+      <td>0.165635</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4234</td>
       <td>1966-04-14 22:04:00</td>
-      <td>-0.062923</td>
+      <td>0.493461</td>
     </tr>
   </tbody>
 </table>
@@ -633,7 +565,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>384
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10
 </pre></div>
 </div>
 </div>
@@ -646,7 +578,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;sent_emb_0&#39;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;tfidf_and&#39;
 </pre></div>
 </div>
 </div>
@@ -673,12 +605,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>768
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>20
 </pre></div>
 </div>
 </div>
 </div>
-<p>We are creating 384*2=768 features: 1 for each embedding for each lookbehind (365 and 730 days).</p>
+<p>We are creating 10*2=20 features: 1 for each embedding for each lookbehind (365 and 730 days).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># make features how you would normally</span>
@@ -698,37 +630,31 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:10 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:00:46 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:10 [INFO] Processing 768 temporal features in parallel with 1 workers. Chunksize is 768. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:00:46 [INFO] Processing 20 temporal features in parallel with 1 workers. Chunksize is 20. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
-To disable this warning, you can either:
-	- Avoid using `tokenizers` before the fork if possible
-	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/20 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/768 [00:00&lt;?, ?it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 1/20 [00:00&lt;00:12,  1.50it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 1/768 [00:25&lt;5:26:58, 25.58s/it]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 20/20 [00:00&lt;00:00, 30.01it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 768/768 [00:25&lt;00:00, 30.02it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:00:47 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:36 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:00:47 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:37 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:00:47 [INFO] Concatenation took 0.05 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Concatenation took 1.769 seconds
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:00:47 [INFO] Merging with original df
 </pre></div>
 </div>
 </div>
@@ -763,24 +689,24 @@ To disable this warning, you can either:
       <th>entity_id</th>
       <th>timestamp</th>
       <th>prediction_time_uuid</th>
-      <th>pred_sent_emb_24_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_321_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_14_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_169_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_97_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_93_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_331_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_for_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_in_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_in_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_the_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_for_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_of_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_and_within_365_days_mean_fallback_nan</th>
       <th>...</th>
-      <th>pred_sent_emb_85_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_107_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_289_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_298_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_350_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_217_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_349_within_365_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_361_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_332_within_730_days_mean_fallback_nan</th>
-      <th>pred_sent_emb_240_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_or_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_patient_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_of_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_that_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_to_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_to_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_was_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_and_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_or_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_that_within_730_days_mean_fallback_nan</th>
     </tr>
   </thead>
   <tbody>
@@ -789,994 +715,125 @@ To disable this warning, you can either:
       <td>4977</td>
       <td>1968-11-28 16:05:00</td>
       <td>4977-1968-11-28-16-05-00</td>
-      <td>-0.004275</td>
-      <td>-0.041136</td>
-      <td>-0.012076</td>
-      <td>0.031586</td>
-      <td>-0.032001</td>
-      <td>0.002852</td>
-      <td>-0.004810</td>
+      <td>0.088050</td>
+      <td>0.483324</td>
+      <td>0.483324</td>
+      <td>0.534890</td>
+      <td>0.088050</td>
+      <td>0.536339</td>
+      <td>0.145809</td>
       <td>...</td>
-      <td>-0.002154</td>
-      <td>-0.090041</td>
-      <td>0.011419</td>
-      <td>0.077712</td>
-      <td>-0.128852</td>
-      <td>-0.036499</td>
-      <td>-0.028012</td>
-      <td>-0.004727</td>
-      <td>-0.068918</td>
-      <td>-0.093912</td>
+      <td>0.221549</td>
+      <td>0.133722</td>
+      <td>0.536339</td>
+      <td>0.090356</td>
+      <td>0.284485</td>
+      <td>0.284485</td>
+      <td>0.086927</td>
+      <td>0.145809</td>
+      <td>0.221549</td>
+      <td>0.090356</td>
     </tr>
     <tr>
       <th>2463</th>
       <td>6840</td>
       <td>1965-11-02 07:17:00</td>
       <td>6840-1965-11-02-07-17-00</td>
-      <td>-0.057314</td>
-      <td>-0.115878</td>
-      <td>-0.058417</td>
-      <td>0.030843</td>
-      <td>-0.075833</td>
-      <td>-0.047961</td>
-      <td>0.055927</td>
+      <td>0.376386</td>
+      <td>0.258256</td>
+      <td>0.258256</td>
+      <td>0.285810</td>
+      <td>0.376386</td>
+      <td>0.573168</td>
+      <td>0.155821</td>
       <td>...</td>
-      <td>0.021332</td>
-      <td>-0.128797</td>
-      <td>-0.081053</td>
-      <td>-0.039674</td>
-      <td>0.081146</td>
-      <td>0.031768</td>
-      <td>-0.012586</td>
-      <td>0.038362</td>
-      <td>-0.010240</td>
-      <td>-0.054964</td>
+      <td>0.355142</td>
+      <td>0.071452</td>
+      <td>0.573168</td>
+      <td>0.096561</td>
+      <td>0.456030</td>
+      <td>0.456030</td>
+      <td>0.092896</td>
+      <td>0.155821</td>
+      <td>0.355142</td>
+      <td>0.096561</td>
     </tr>
     <tr>
       <th>2580</th>
       <td>18</td>
       <td>1968-08-26 15:19:00</td>
       <td>18-1968-08-26-15-19-00</td>
-      <td>-0.062703</td>
-      <td>0.012403</td>
-      <td>0.021304</td>
-      <td>0.031082</td>
-      <td>-0.034527</td>
-      <td>-0.017803</td>
-      <td>0.061890</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.601521</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
       <td>...</td>
-      <td>-0.037733</td>
-      <td>-0.012207</td>
-      <td>0.006167</td>
-      <td>0.083227</td>
-      <td>0.041067</td>
-      <td>-0.013668</td>
-      <td>-0.003673</td>
-      <td>0.079086</td>
-      <td>0.000093</td>
-      <td>-0.001807</td>
+      <td>0.000000</td>
+      <td>0.401014</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.639848</td>
+      <td>0.639848</td>
+      <td>0.260680</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
     </tr>
     <tr>
       <th>2741</th>
       <td>9832</td>
       <td>1969-06-03 04:36:00</td>
       <td>9832-1969-06-03-04-36-00</td>
-      <td>-0.025492</td>
-      <td>-0.099415</td>
-      <td>-0.078805</td>
-      <td>0.074481</td>
-      <td>0.010988</td>
-      <td>-0.079041</td>
-      <td>0.088452</td>
+      <td>0.101924</td>
+      <td>0.186493</td>
+      <td>0.186493</td>
+      <td>0.825558</td>
+      <td>0.101924</td>
+      <td>0.236513</td>
+      <td>0.225044</td>
       <td>...</td>
-      <td>0.029777</td>
-      <td>-0.087880</td>
-      <td>-0.025982</td>
-      <td>0.026552</td>
-      <td>-0.078722</td>
-      <td>-0.015452</td>
-      <td>-0.002739</td>
-      <td>0.023960</td>
-      <td>0.018140</td>
-      <td>0.029266</td>
+      <td>0.128228</td>
+      <td>0.103195</td>
+      <td>0.236513</td>
+      <td>0.000000</td>
+      <td>0.164655</td>
+      <td>0.164655</td>
+      <td>0.335410</td>
+      <td>0.225044</td>
+      <td>0.128228</td>
+      <td>0.000000</td>
     </tr>
     <tr>
       <th>2931</th>
       <td>7281</td>
       <td>1967-06-05 00:41:00</td>
       <td>7281-1967-06-05-00-41-00</td>
-      <td>-0.019136</td>
-      <td>-0.112605</td>
-      <td>-0.050149</td>
-      <td>0.023507</td>
-      <td>-0.035965</td>
-      <td>0.001202</td>
-      <td>0.012729</td>
+      <td>0.043730</td>
+      <td>0.280049</td>
+      <td>0.280049</td>
+      <td>0.464891</td>
+      <td>0.043730</td>
+      <td>0.304425</td>
+      <td>0.289663</td>
       <td>...</td>
-      <td>0.010743</td>
-      <td>-0.053010</td>
-      <td>0.010873</td>
-      <td>0.093886</td>
-      <td>-0.006740</td>
-      <td>-0.038409</td>
-      <td>-0.014330</td>
-      <td>-0.077321</td>
-      <td>-0.048969</td>
-      <td>-0.038417</td>
+      <td>0.385111</td>
+      <td>0.332065</td>
+      <td>0.304425</td>
+      <td>0.269251</td>
+      <td>0.211934</td>
+      <td>0.211934</td>
+      <td>0.388547</td>
+      <td>0.289663</td>
+      <td>0.385111</td>
+      <td>0.269251</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 771 columns</p>
+<p>5 rows × 23 columns</p>
 </div></div></div>
-</div>
-</section>
-<section id="textpredictorspec">
-<h2>TextPredictorSpec<a class="headerlink" href="#textpredictorspec" title="Permalink to this heading">#</a></h2>
-<p>The main difference when specifying text predictors compared to tabular predictors is the <code class="docutils literal notranslate"><span class="pre">Spec</span></code> you define. When working directly with text, we need to specify a <code class="docutils literal notranslate"><span class="pre">TextPredictorSpec</span></code> which is entirely similar to the <code class="docutils literal notranslate"><span class="pre">PredictorSpec</span></code> except for two additional attributes: <code class="docutils literal notranslate"><span class="pre">embedding_fn</span></code> and <code class="docutils literal notranslate"><span class="pre">embedding_fn_kwargs</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">embedding_fn</span></code> should be a callable that takes a pandas Series containing text and converts it to a pandas DataFrame with a column for each feature. <code class="docutils literal notranslate"><span class="pre">embedding_fn_kwargs</span></code> are simply optional keyword arguments that will be passed to the embedding function, such as a Huggingface model name.</p>
-<p>Not all <code class="docutils literal notranslate"><span class="pre">resolve_multiple_fn</span></code> are meaningful for text, as we can’t do numerical operations on text. Instead, <code class="docutils literal notranslate"><span class="pre">TextPredictorSpec</span></code> defaults to the “concatenate” option, which simply concatenates all texts within the lookbehind within. Other options that work for text are “latest” and “earliest”.</p>
-<section id="featurization-using-sentence-transformers">
-<h3>Featurization using sentence-transformers<a class="headerlink" href="#featurization-using-sentence-transformers" title="Permalink to this heading">#</a></h3>
-<p>Let’s specify a <code class="docutils literal notranslate"><span class="pre">TextPredictorSpec</span></code> using a <a class="reference external" href="https://www.sbert.net/">sentence-transformers</a> model. <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code> includes functions that make it easy to featurize text using either sentence-transformers or any text model from the <a class="reference external" href="https://huggingface.co/">Huggingface Hub</a>.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">sentence_transformers_embedding</span></code> function is recommended for sentence-transformers. If you want to another type of model from the Huggingface Hub we recommend using the <code class="docutils literal notranslate"><span class="pre">huggingface_embedding</span></code> function which has the same interface as <code class="docutils literal notranslate"><span class="pre">sentence_transformers_embedding</span></code>.</p>
-<p>Notice, both <code class="docutils literal notranslate"><span class="pre">huggingface_embedding</span></code> and <code class="docutils literal notranslate"><span class="pre">sentence_transformers_embedding</span></code> will truncate the input to the maximum sequence length allowed by the model. If you want to use Huggingface embeddings for larger blocks of text, either use the <code class="docutils literal notranslate"><span class="pre">sklearn_embedding</span></code> function or write your own embedding function (see below).</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.text_embedding_functions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">sentence_transformers_embedding</span><span class="p">,</span>
-    <span class="n">huggingface_embedding</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener</span> <span class="kn">import</span> <span class="n">TextPredictorSpec</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">concatenate</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">text_spec</span> <span class="o">=</span> <span class="n">TextPredictorSpec</span><span class="p">(</span>
-    <span class="n">timeseries_df</span><span class="o">=</span><span class="n">load_synth_text</span><span class="p">(),</span>
-    <span class="n">lookbehind_days</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span>
-    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-    <span class="n">aggregation_fn</span><span class="o">=</span><span class="n">concatenate</span><span class="p">,</span>
-    <span class="n">feature_base_name</span><span class="o">=</span><span class="s2">&quot;text-st&quot;</span><span class="p">,</span>
-    <span class="n">embedding_fn</span><span class="o">=</span><span class="n">sentence_transformers_embedding</span><span class="p">,</span>
-    <span class="n">embedding_fn_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;sentence-transformers/all-MiniLM-L6-v2&quot;</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>That’s it. Let’s make our features in the usual way.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ts_flattener</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="p">(</span>
-    <span class="n">prediction_times_df</span><span class="o">=</span><span class="n">load_synth_prediction_times</span><span class="p">(),</span>
-    <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
-    <span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
-    <span class="n">n_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">drop_pred_times_with_insufficient_look_distance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">ts_flattener</span><span class="o">.</span><span class="n">add_spec</span><span class="p">(</span><span class="n">text_spec</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">ts_flattener</span><span class="o">.</span><span class="n">get_df</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] There were unprocessed specs, computing...
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Processing 1 temporal features in parallel with 1 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
-To disable this warning, you can either:
-	- Avoid using `tokenizers` before the fork if possible
-	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1 [00:00&lt;?, ?it/s]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-02 09:22:38 [INFO] Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1 [00:29&lt;?, ?it/s]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Let’s check the features.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>entity_id</th>
-      <th>timestamp</th>
-      <th>prediction_time_uuid</th>
-      <th>pred_text-st-0_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-1_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-2_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-3_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-4_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-5_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-6_within_730_days_concatenate_fallback_nan</th>
-      <th>...</th>
-      <th>pred_text-st-374_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-375_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-376_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-377_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-378_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-379_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-380_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-381_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-382_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-383_within_730_days_concatenate_fallback_nan</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>9903</td>
-      <td>1968-05-09 21:24:00</td>
-      <td>9903-1968-05-09-21-24-00</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>7465</td>
-      <td>1966-05-24 01:23:00</td>
-      <td>7465-1966-05-24-01-23-00</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>6447</td>
-      <td>1967-09-25 18:08:00</td>
-      <td>6447-1967-09-25-18-08-00</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2121</td>
-      <td>1966-05-05 20:52:00</td>
-      <td>2121-1966-05-05-20-52-00</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>4927</td>
-      <td>1968-06-30 12:13:00</td>
-      <td>4927-1968-06-30-12-13-00</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 387 columns</p>
-</div></div></div>
-</div>
-<p>Because the synthetic text data is much smaller than the prediction times data, there are a lot of NaNs. Let’s subset to only see the prediction times that actually include text.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_pred_times_with_text</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-    <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;pred_text-st-1_within_730_days_concatenate_fallback_nan&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
-<span class="p">]</span>
-<span class="n">df_pred_times_with_text</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>entity_id</th>
-      <th>timestamp</th>
-      <th>prediction_time_uuid</th>
-      <th>pred_text-st-0_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-1_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-2_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-3_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-4_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-5_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-6_within_730_days_concatenate_fallback_nan</th>
-      <th>...</th>
-      <th>pred_text-st-374_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-375_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-376_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-377_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-378_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-379_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-380_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-381_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-382_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-383_within_730_days_concatenate_fallback_nan</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>244</th>
-      <td>7337</td>
-      <td>1966-06-28 10:34:00</td>
-      <td>7337-1966-06-28-10-34-00</td>
-      <td>-0.032579</td>
-      <td>0.117177</td>
-      <td>-0.049458</td>
-      <td>0.009333</td>
-      <td>0.013606</td>
-      <td>0.021374</td>
-      <td>0.001354</td>
-      <td>...</td>
-      <td>-0.017522</td>
-      <td>0.099060</td>
-      <td>0.049743</td>
-      <td>0.015571</td>
-      <td>-0.019073</td>
-      <td>0.109147</td>
-      <td>0.047269</td>
-      <td>-0.043760</td>
-      <td>0.020477</td>
-      <td>-0.007479</td>
-    </tr>
-    <tr>
-      <th>755</th>
-      <td>8951</td>
-      <td>1969-12-22 16:32:00</td>
-      <td>8951-1969-12-22-16-32-00</td>
-      <td>-0.011282</td>
-      <td>0.002961</td>
-      <td>0.025957</td>
-      <td>-0.015063</td>
-      <td>-0.050311</td>
-      <td>0.048773</td>
-      <td>-0.002749</td>
-      <td>...</td>
-      <td>-0.067139</td>
-      <td>0.049532</td>
-      <td>-0.030149</td>
-      <td>-0.009194</td>
-      <td>-0.051574</td>
-      <td>0.013600</td>
-      <td>-0.100028</td>
-      <td>-0.116557</td>
-      <td>0.033871</td>
-      <td>0.008424</td>
-    </tr>
-    <tr>
-      <th>896</th>
-      <td>2007</td>
-      <td>1968-10-15 14:12:00</td>
-      <td>2007-1968-10-15-14-12-00</td>
-      <td>-0.065502</td>
-      <td>0.026975</td>
-      <td>-0.042235</td>
-      <td>-0.012499</td>
-      <td>-0.012820</td>
-      <td>-0.003107</td>
-      <td>0.025823</td>
-      <td>...</td>
-      <td>-0.013681</td>
-      <td>-0.008509</td>
-      <td>-0.005801</td>
-      <td>-0.019228</td>
-      <td>-0.029137</td>
-      <td>0.107618</td>
-      <td>0.027575</td>
-      <td>0.061189</td>
-      <td>-0.036197</td>
-      <td>-0.023715</td>
-    </tr>
-    <tr>
-      <th>1517</th>
-      <td>1728</td>
-      <td>1968-05-29 12:27:00</td>
-      <td>1728-1968-05-29-12-27-00</td>
-      <td>0.003414</td>
-      <td>-0.022889</td>
-      <td>0.003017</td>
-      <td>0.036401</td>
-      <td>0.021559</td>
-      <td>-0.004627</td>
-      <td>0.070992</td>
-      <td>...</td>
-      <td>-0.010578</td>
-      <td>0.028139</td>
-      <td>-0.013348</td>
-      <td>-0.062894</td>
-      <td>-0.059819</td>
-      <td>-0.064517</td>
-      <td>0.013139</td>
-      <td>-0.030818</td>
-      <td>0.088636</td>
-      <td>0.012063</td>
-    </tr>
-    <tr>
-      <th>1917</th>
-      <td>4977</td>
-      <td>1968-11-28 16:05:00</td>
-      <td>4977-1968-11-28-16-05-00</td>
-      <td>0.029870</td>
-      <td>0.059029</td>
-      <td>0.025774</td>
-      <td>0.065304</td>
-      <td>0.001232</td>
-      <td>0.097216</td>
-      <td>0.005217</td>
-      <td>...</td>
-      <td>-0.078040</td>
-      <td>0.121744</td>
-      <td>-0.002166</td>
-      <td>0.040929</td>
-      <td>-0.075126</td>
-      <td>-0.069748</td>
-      <td>0.009481</td>
-      <td>0.039800</td>
-      <td>0.010281</td>
-      <td>0.028113</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 387 columns</p>
-</div></div></div>
-</div>
-</section>
-<section id="featurization-using-sklearn-models">
-<h3>Featurization using sklearn models<a class="headerlink" href="#featurization-using-sklearn-models" title="Permalink to this heading">#</a></h3>
-<p>If you want to embed your model using an sklearn model using e.g. TF-IDF, this can also be easily accomplished. First, you should train the sklearn model (e.g. <code class="docutils literal notranslate"><span class="pre">TfidfVectorizer</span></code>) on your dataset (using the <code class="docutils literal notranslate"><span class="pre">.fit</span></code> method).</p>
-<p>Now, to use your trained model in <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code>, simply use the <code class="docutils literal notranslate"><span class="pre">sklearn_embedding</span></code> function and supply the model as an embedding function keyword argument.</p>
-<p>In the following example we will use a simple CountVectorizer model, which has been pretrained on the synthetic data, to create the predictors.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.text_embedding_functions</span> <span class="kn">import</span> <span class="n">sklearn_embedding</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.testing.text_embedding_functions</span> <span class="kn">import</span> <span class="n">_load_bow_model</span>
-
-<span class="n">tfidf_model</span> <span class="o">=</span> <span class="n">_load_bow_model</span><span class="p">()</span>
-<span class="n">tfidf_model</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/au554730/Desktop/Projects/timeseriesflattener/.venv/lib/python3.10/site-packages/sklearn/base.py:299: UserWarning: Trying to unpickle estimator CountVectorizer from version 1.1.2 when using version 1.2.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
-https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
-  warnings.warn(
-</pre></div>
-</div>
-<div class="output text_html"><style>#sk-container-id-1 {color: black;background-color: white;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>CountVectorizer(max_features=10)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">CountVectorizer</label><div class="sk-toggleable__content"><pre>CountVectorizer(max_features=10)</pre></div></div></div></div></div></div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">count_vectorizer_text_spec</span> <span class="o">=</span> <span class="n">TextPredictorSpec</span><span class="p">(</span>
-    <span class="n">timeseries_df</span><span class="o">=</span><span class="n">load_synth_text</span><span class="p">(),</span>
-    <span class="n">lookbehind_days</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span>
-    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-    <span class="n">aggregation_fn</span><span class="o">=</span><span class="n">concatenate</span><span class="p">,</span>
-    <span class="n">feature_base_name</span><span class="o">=</span><span class="s2">&quot;text-cv&quot;</span><span class="p">,</span>
-    <span class="n">embedding_fn</span><span class="o">=</span><span class="n">sklearn_embedding</span><span class="p">,</span>
-    <span class="n">embedding_fn_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">tfidf_model</span><span class="p">},</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Let’s add the feature to the dataset:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ts_flattener</span><span class="o">.</span><span class="n">add_spec</span><span class="p">(</span><span class="n">count_vectorizer_text_spec</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">ts_flattener</span><span class="o">.</span><span class="n">get_df</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-07-21 14:58:40 [INFO] There were unprocessed specs, computing...
-2023-07-21 14:58:40 [INFO] Processing 1 temporal features in parallel with 1 workers. Chunksize is 1. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
-To disable this warning, you can either:
-	- Avoid using `tokenizers` before the fork if possible
-	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 1/1 [00:02&lt;00:00,  2.89s/it]
-2023-07-21 14:58:43 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
-2023-07-21 14:58:43 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
-2023-07-21 14:58:43 [INFO] Concatenation took 0.005 seconds
-2023-07-21 14:58:43 [INFO] Merging with original df
-</pre></div>
-</div>
-</div>
-</div>
-<p>Let’s subset to only see the prediction times that include text again.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_pred_times_with_text</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-    <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;pred_text-st-1_within_730_days_concatenate_fallback_nan&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
-<span class="p">]</span>
-<span class="n">df_pred_times_with_text</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>entity_id</th>
-      <th>timestamp</th>
-      <th>prediction_time_uuid</th>
-      <th>pred_text-st-0_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-1_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-2_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-3_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-4_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-5_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-st-6_within_730_days_concatenate_fallback_nan</th>
-      <th>...</th>
-      <th>pred_text-cv-and_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-for_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-in_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-of_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-or_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-patient_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-that_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-the_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-to_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-was_within_730_days_concatenate_fallback_nan</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>244</th>
-      <td>7337</td>
-      <td>1966-06-28 10:34:00</td>
-      <td>7337-1966-06-28-10-34-00</td>
-      <td>-0.032579</td>
-      <td>0.117177</td>
-      <td>-0.049458</td>
-      <td>0.009333</td>
-      <td>0.013606</td>
-      <td>0.021374</td>
-      <td>0.001354</td>
-      <td>...</td>
-      <td>4.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>5.0</td>
-      <td>0.0</td>
-      <td>3.0</td>
-      <td>1.0</td>
-      <td>16.0</td>
-      <td>4.0</td>
-      <td>2.0</td>
-    </tr>
-    <tr>
-      <th>755</th>
-      <td>8951</td>
-      <td>1969-12-22 16:32:00</td>
-      <td>8951-1969-12-22-16-32-00</td>
-      <td>-0.011282</td>
-      <td>0.002961</td>
-      <td>0.025957</td>
-      <td>-0.015063</td>
-      <td>-0.050311</td>
-      <td>0.048773</td>
-      <td>-0.002749</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>5.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>8.0</td>
-      <td>2.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>896</th>
-      <td>2007</td>
-      <td>1968-10-15 14:12:00</td>
-      <td>2007-1968-10-15-14-12-00</td>
-      <td>-0.065502</td>
-      <td>0.026975</td>
-      <td>-0.042235</td>
-      <td>-0.012499</td>
-      <td>-0.012820</td>
-      <td>-0.003107</td>
-      <td>0.025823</td>
-      <td>...</td>
-      <td>4.0</td>
-      <td>0.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>5.0</td>
-      <td>6.0</td>
-      <td>2.0</td>
-      <td>13.0</td>
-      <td>3.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>1517</th>
-      <td>1728</td>
-      <td>1968-05-29 12:27:00</td>
-      <td>1728-1968-05-29-12-27-00</td>
-      <td>0.003414</td>
-      <td>-0.022889</td>
-      <td>0.003017</td>
-      <td>0.036401</td>
-      <td>0.021559</td>
-      <td>-0.004627</td>
-      <td>0.070992</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>8.0</td>
-      <td>11.0</td>
-      <td>0.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>11.0</td>
-      <td>5.0</td>
-      <td>2.0</td>
-    </tr>
-    <tr>
-      <th>1917</th>
-      <td>4977</td>
-      <td>1968-11-28 16:05:00</td>
-      <td>4977-1968-11-28-16-05-00</td>
-      <td>0.029870</td>
-      <td>0.059029</td>
-      <td>0.025774</td>
-      <td>0.065304</td>
-      <td>0.001232</td>
-      <td>0.097216</td>
-      <td>0.005217</td>
-      <td>...</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>6.0</td>
-      <td>7.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>8.0</td>
-      <td>4.0</td>
-      <td>1.0</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 397 columns</p>
-</div></div></div>
-</div>
-<p>We can subset further to only include the features we created with the count vectorizer by subsetting to only include columns starting with the feature name (“text-cv”).</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_cv_pred_times_with_text</span> <span class="o">=</span> <span class="n">df_pred_times_with_text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-    <span class="p">:,</span> <span class="n">df_pred_times_with_text</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pred_text-cv&quot;</span><span class="p">)</span>
-<span class="p">]</span>
-<span class="n">df_cv_pred_times_with_text</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>pred_text-cv-and_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-for_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-in_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-of_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-or_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-patient_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-that_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-the_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-to_within_730_days_concatenate_fallback_nan</th>
-      <th>pred_text-cv-was_within_730_days_concatenate_fallback_nan</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>244</th>
-      <td>4.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>5.0</td>
-      <td>0.0</td>
-      <td>3.0</td>
-      <td>1.0</td>
-      <td>16.0</td>
-      <td>4.0</td>
-      <td>2.0</td>
-    </tr>
-    <tr>
-      <th>755</th>
-      <td>1.0</td>
-      <td>5.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>8.0</td>
-      <td>2.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>896</th>
-      <td>4.0</td>
-      <td>0.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>5.0</td>
-      <td>6.0</td>
-      <td>2.0</td>
-      <td>13.0</td>
-      <td>3.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>1517</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>8.0</td>
-      <td>11.0</td>
-      <td>0.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>11.0</td>
-      <td>5.0</td>
-      <td>2.0</td>
-    </tr>
-    <tr>
-      <th>1917</th>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>6.0</td>
-      <td>7.0</td>
-      <td>2.0</td>
-      <td>2.0</td>
-      <td>1.0</td>
-      <td>8.0</td>
-      <td>4.0</td>
-      <td>1.0</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
-</div>
-<p>Notice that the text column names are informative wrt. the word they count (e.g. and, for, in, etc.). This is because <code class="docutils literal notranslate"><span class="pre">sklearn_embedding</span></code> uses the <code class="docutils literal notranslate"><span class="pre">.get_feature_names</span></code> method of the sklearn model to set the column names.</p>
-</section>
-</section>
-<section id="writing-your-own-text-embedding-function">
-<h2>Writing your own text embedding function<a class="headerlink" href="#writing-your-own-text-embedding-function" title="Permalink to this heading">#</a></h2>
-<p>If you want to write your own embedding function, you simply need to write a function that takes a pd.Series of text as the first input and any number of optional keyword arguments. Let’s write a small function to embed long texts using a Huggingface model. Note that this implementation will likely be quite slow. In most cases, the best thing to do would be to embed your data before passing to <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code> and following the procedure outlined in <span class="xref myst">Generating predictors from embedded text</span>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModel</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">huggingface_long_text_embedding</span><span class="p">(</span>
-    <span class="n">text_series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chunk_length</span><span class="p">:</span> <span class="nb">int</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Embeds text using a HuggingFace model, splitting the text into chunks of a</span>
-<span class="sd">    specified number of characters.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        text_series: A pandas Series containing the text to be embedded.</span>
-<span class="sd">        model_name: The name of the HuggingFace model to use.</span>
-<span class="sd">        chunk_length: The number of characters to use in each chunk.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A pandas DataFrame containing the embeddings.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-    <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">text_series</span><span class="p">:</span>
-        <span class="n">text_chunks</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">chunk_length</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">chunk_length</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
-            <span class="n">text_chunks</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span>
-        <span class="p">)</span>
-        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">tokenized</span><span class="p">)</span>
-        <span class="c1"># take mean of all tokens in each chunk, then mean of all chunks</span>
-        <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The function can now be used as an embedding function in a <code class="docutils literal notranslate"><span class="pre">TextPredictorSpec</span></code> and used in the same manner as usual.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">huggingface_long_text_spec</span> <span class="o">=</span> <span class="n">TextPredictorSpec</span><span class="p">(</span>
-    <span class="n">timeseries_df</span><span class="o">=</span><span class="n">load_synth_text</span><span class="p">(),</span>
-    <span class="n">lookbehind_days</span><span class="o">=</span><span class="mi">730</span><span class="p">,</span>
-    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-    <span class="n">aggregation_fn</span><span class="o">=</span><span class="n">concatenate</span><span class="p">,</span>
-    <span class="n">feature_base_name</span><span class="o">=</span><span class="s2">&quot;text-hf-long&quot;</span><span class="p">,</span>
-    <span class="n">embedding_fn</span><span class="o">=</span><span class="n">huggingface_long_text_embedding</span><span class="p">,</span>
-    <span class="n">embedding_fn_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;chunk_length&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
 </div>
 </section>
 </section>
@@ -1846,12 +903,6 @@ To disable this warning, you can either:
 <li><a class="reference internal" href="#">Adding text features</a><ul>
 <li><a class="reference internal" href="#the-dataset">The dataset</a></li>
 <li><a class="reference internal" href="#generating-predictors-from-embedded-text">Generating predictors from embedded text</a></li>
-<li><a class="reference internal" href="#textpredictorspec">TextPredictorSpec</a><ul>
-<li><a class="reference internal" href="#featurization-using-sentence-transformers">Featurization using sentence-transformers</a></li>
-<li><a class="reference internal" href="#featurization-using-sklearn-models">Featurization using sklearn models</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#writing-your-own-text-embedding-function">Writing your own text embedding function</a></li>
 </ul>
 </li>
 </ul>
