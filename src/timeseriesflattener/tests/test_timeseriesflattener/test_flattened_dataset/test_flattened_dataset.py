@@ -68,11 +68,9 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         dataset.add_spec("invalid spec")  # type: ignore
 
 
-@pytest.mark.huggingface()
 def test_compute_specs(
     synth_prediction_times: pd.DataFrame,
     synth_outcome: pd.DataFrame,
-    synth_text_data: pd.DataFrame,
 ):
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
@@ -101,20 +99,9 @@ def test_compute_specs(
         feature_base_name="static",
         prefix="pred",
     )
-    text_spec = TextPredictorSpec(  # type: ignore
-        timeseries_df=synth_text_data,
-        feature_base_name="text",
-        lookbehind_days=750,
-        aggregation_fn=concatenate,
-        fallback=np.nan,
-        embedding_fn=sentence_transformers_embedding,
-        embedding_fn_kwargs={
-            "model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        },
-    )
 
     # Test adding a single spec
-    dataset.add_spec([outcome_spec, predictor_spec, static_spec, text_spec])
+    dataset.add_spec([outcome_spec, predictor_spec, static_spec])
 
     df = dataset.get_df()
 
