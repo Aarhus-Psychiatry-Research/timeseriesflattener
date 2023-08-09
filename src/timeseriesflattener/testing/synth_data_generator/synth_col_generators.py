@@ -1,6 +1,5 @@
 """Column generators for synthetic data."""
 from collections.abc import Iterable
-from typing import Optional
 
 import numpy as np
 import pandas as pd
