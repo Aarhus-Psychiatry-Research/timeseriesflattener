@@ -58,7 +58,6 @@ if __name__ == "__main__":
     out_df = generate_synth_txt_data(
         predictors=column_specifications,
         n_samples=100,
-        text_prompt="The patient",
     )
 
     save_path = Path(__file__).parent.parent.parent.parent
