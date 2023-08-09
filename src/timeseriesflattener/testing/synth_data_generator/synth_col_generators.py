@@ -153,7 +153,6 @@ def generate_data_columns(
             df[col_name] = generate_col_from_specs(
                 column_type=column_type,
                 n_samples=n_samples,
-                sequence=sequence,
                 col_specs=col_props,
             )
 
