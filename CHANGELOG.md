@@ -2,6 +2,22 @@
 
 <!--next-version-placeholder-->
 
+## v1.6.0 (2023-08-09)
+
+### Feature
+
+* Remove unneeded tests ([`8babaf7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8babaf726dccf4c1b15c03cbcba7079febc4c7d9))
+* Remove column_handler ([`f3ce8b7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f3ce8b7a679d3ec782bb515ddda26a9c980df746))
+* Remove text utility functions ([`dcc3f9b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/dcc3f9b0962f37eaf9ef1fc5591ba0da98e143f3))
+
+### Fix
+
+* Do not unpack col names ([`6c4c236`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6c4c236ac7728dd886ec1a2299e2a6de76bfd654))
+
+### Documentation
+
+* Remove sklearn/sentence transformer from text tutorial ([`6bc467a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6bc467a9109105474e4cfaa16da4175c0499e605))
+
 ## v1.5.2 (2023-08-02)
 
 ### Fix
