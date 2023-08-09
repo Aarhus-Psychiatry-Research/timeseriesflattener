@@ -51,6 +51,9 @@ def generate_col_from_specs(
     column_type: str,
     n_samples: int,
     col_specs: dict,
+    sequence: Optional[str],
+    tokenizer: Optional[Any] = None,
+    model: Optional[Any] = None,
 ) -> Iterable:
     """Generate a column of data.
 
@@ -58,6 +61,9 @@ def generate_col_from_specs(
         column_type (str): Type of column to generate. Either uniform_int, text, id or datetime_uniform.
         n_samples (int): Number of rows to generate.
         col_specs (dict): A dict representing each column. Key is col_name (str), values is a dict with column_type (str), min (int) and max(int).
+        sequence (str): Text prompt to use for generating text data. Defaults to "The quick brown fox jumps over the lazy dog".
+        tokenizer (Optional[Any]): Huggingface tokenizer.
+        model (Optional[Any]): Huggingface model.
 
     Raises:
         ValueError: If column_type isn't either uniform_int, text, or datetime_uniform.
@@ -67,6 +73,18 @@ def generate_col_from_specs(
     """
     if column_type == "id":
         return -np.arange(n_samples)
+
+    if column_type == "text":
+        if sequence is None:
+            raise ValueError("If column_type is text, sequence must be specified.")
+        generated_texts = generate_text_data(
+            n_samples=n_samples,
+            sequence=sequence,
+            tokenizer=tokenizer,
+            model=model,
+        )
+
+        return generated_texts
 
     if column_type == "uniform_int":
         return np.random.randint(
@@ -124,9 +142,9 @@ def generate_text_data(
     tokenizer = (
         GPT2Tokenizer.from_pretrained("gpt2") if tokenizer is None else tokenizer  # type: ignore
     )
-    model = GPT2LMHeadModel.from_pretrained("gpt2") if model is None else model
+    model = GPT2LMHeadModel.from_pretrained("gpt2") if model is None else model  # type: ignore
 
-    inputs = tokenizer.encode(sequence, return_tensors="pt")
+    inputs = tokenizer.encode(sequence, return_tensors="pt")  # type: ignore
 
     generated_texts = []
     for _ in range(n_samples):
@@ -144,7 +162,7 @@ def generate_text_data(
             pad_token_id=tokenizer.eos_token_id,
         )
 
-        text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        text = tokenizer.decode(outputs[0], skip_special_tokens=True)  # type: ignore
         generated_texts.append(text)
 
     return generated_texts
@@ -153,12 +171,14 @@ def generate_text_data(
 def generate_data_columns(
     predictors: Iterable[dict],
     n_samples: int,
+    sequence: Optional[str],
     df: pd.DataFrame = pd.DataFrame(),  # noqa: B008
 ) -> pd.DataFrame:
     """Generate a dataframe with columns from the predictors iterable.
 
     Args:
         predictors (iter[dict]): A dict representing each column. Key is col_name (str), values is a dict with column_type (str), min (int) and max(int).
+        sequence (str): Text prompt to use for generating text data.
         n_samples (int): Number of rows to generate.
         df (pd.DataFrame): Dataframe to append to.
         text_prompt (str): Text prompt to use for generating text data. Defaults to "The quick brown fox jumps over the lazy dog".
@@ -198,6 +218,7 @@ def generate_data_columns(
                 column_type=column_type,
                 n_samples=n_samples,
                 col_specs=col_props,
+                sequence=sequence,
             )
 
             # If column has min and/or max, floor and ceil appropriately
