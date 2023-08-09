@@ -17,7 +17,6 @@ import tqdm
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
 
-from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
@@ -381,16 +380,14 @@ class TimeseriesFlattener:
         # replace with NaN
 
         # Rename column
-        df = ColumnHandler.rename_value_column(df=df, output_spec=output_spec)
+        df = df.rename(columns={"value": output_spec.get_output_col_name()})
 
         # Find value_cols and add fallback to them
-        value_col_str_name = ColumnHandler.get_value_col_str_name(
-            df=df,
-            output_spec=output_spec,
-        )
-        df = ColumnHandler.replace_na_in_spec_col_with_fallback(
-            df=df,
-            output_spec=output_spec,
+        value_col_str_name = output_spec.get_output_col_name()
+        df[output_spec.get_output_col_name()] = df[
+            output_spec.get_output_col_name()
+        ].fillna(
+            output_spec.fallback,
         )
 
         if verbose:
