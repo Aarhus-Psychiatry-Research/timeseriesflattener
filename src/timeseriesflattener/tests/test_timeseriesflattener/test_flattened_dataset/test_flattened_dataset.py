@@ -6,7 +6,6 @@ import pytest
 from timeseriesflattener.aggregation_fns import concatenate, latest, mean
 from timeseriesflattener.feature_specs.group_specs import (
     NamedDataframe,
-    TextPredictorGroupSpec,
 )
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
@@ -17,9 +16,6 @@ from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.load_synth_data import load_synth_text
 from timeseriesflattener.testing.text_embedding_functions import (
     _load_bow_model,
-)
-from timeseriesflattener.text_embedding_functions import (
-    sklearn_embedding,
 )
 
 

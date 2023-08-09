@@ -41,7 +41,6 @@ def generate_synth_txt_data(
         predictors=predictors,
         n_samples=n_samples,
         df=df,
-        text_prompt=text_prompt,
     )
 
     # randomly replace predictors with NAs
