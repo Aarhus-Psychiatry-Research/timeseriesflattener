@@ -6,16 +6,13 @@ import numpy as np
 from timeseriesflattener.aggregation_fns import (
     boolean,
     change_per_day,
-    concatenate,
     count,
     earliest,
     latest,
     maximum,
     mean,
-    mean_number_of_characters,
     minimum,
     summed,
-    type_token_ratio,
     variance,
 )
 from timeseriesflattener.feature_specs.single_specs import (
@@ -419,76 +416,4 @@ def test_aggregation_variance():
             incident=False,
         ),
         expected_values=[0.5, np.NaN],
-    )
-
-
-def test_aggregation_concatenate():
-    prediction_times_str = """entity_id,timestamp,
-                            1,2021-12-31 00:00:00
-                            """
-    event_times_str = """entity_id,timestamp,value,
-                        1,2022-01-01 00:00:00,the patient
-                        1,2022-01-02 00:00:00,is feeling ill
-                        """
-
-    assert_flattened_data_as_expected(
-        prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            feature_base_name="value",
-            timeseries_df=str_to_df(event_times_str),
-            aggregation_fn=concatenate,
-            lookahead_days=4,
-            fallback=np.NaN,
-            incident=False,
-        ),
-        expected_values=["the patient is feeling ill"],
-    )
-
-
-def test_aggregation_mean_len():
-    prediction_times_str = """entity_id,timestamp,
-                            1,2021-12-31 00:00:00
-                            """
-    event_times_str = """entity_id,timestamp,value,
-                        1,2022-01-01 00:00:00,the patient
-                        1,2022-01-02 00:00:00,is feeling ill
-                        """
-
-    assert_flattened_data_as_expected(
-        prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            feature_base_name="value",
-            timeseries_df=str_to_df(event_times_str),
-            aggregation_fn=mean_number_of_characters,
-            lookahead_days=4,
-            fallback=np.NaN,
-            incident=False,
-        ),
-        expected_values=[12.5],
-    )
-
-
-def test_aggregation_type_token_ratio():
-    prediction_times_str = """entity_id,timestamp,
-                            1,2021-12-31 00:00:00
-                            2,2021-12-31 00:00:00
-                            """
-    event_times_str = """entity_id,timestamp,value,
-                        1,2022-01-01 00:00:00,The patient feels very tired!
-                        1,2022-01-02 00:00:00,The patient is tired tired.
-                        2,2022-01-01 00:00:00,The patient feels very happy!
-                        2,2022-01-02 00:00:00,The patient is feeling tired.
-                        """
-
-    assert_flattened_data_as_expected(
-        prediction_times_df=prediction_times_str,
-        output_spec=OutcomeSpec(
-            feature_base_name="value",
-            timeseries_df=str_to_df(event_times_str),
-            aggregation_fn=type_token_ratio,
-            lookahead_days=4,
-            fallback=np.NaN,
-            incident=False,
-        ),
-        expected_values=[0.6, 0.8],
     )
