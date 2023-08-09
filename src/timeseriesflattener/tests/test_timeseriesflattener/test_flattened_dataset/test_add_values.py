@@ -6,13 +6,12 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.aggregation_fns import concatenate, maximum, minimum
+from timeseriesflattener.aggregation_fns import maximum, minimum
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
 )
-from timeseriesflattener.testing.text_embedding_functions import bow_test_embedding
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,

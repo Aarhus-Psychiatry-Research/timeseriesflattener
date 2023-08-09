@@ -1,5 +1,5 @@
 """This module contains functions for handling dataframes with multiindex columns."""
-from typing import Callable, List, Optional
+from typing import List, Optional
 
 import pandas as pd
 

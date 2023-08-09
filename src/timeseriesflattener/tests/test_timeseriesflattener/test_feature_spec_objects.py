@@ -5,7 +5,7 @@ from typing import List
 
 import numpy as np
 
-from timeseriesflattener.aggregation_fns import concatenate, maximum
+from timeseriesflattener.aggregation_fns import maximum
 from timeseriesflattener.feature_specs.group_specs import (
     NamedDataframe,
     OutcomeGroupSpec,
