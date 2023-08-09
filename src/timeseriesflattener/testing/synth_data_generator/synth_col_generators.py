@@ -108,7 +108,6 @@ def generate_data_columns(
     predictors: Iterable[dict],
     n_samples: int,
     df: pd.DataFrame = pd.DataFrame(),  # noqa: B008
-    text_prompt: Optional[str] = None,
 ) -> pd.DataFrame:
     """Generate a dataframe with columns from the predictors iterable.
 
@@ -138,7 +137,6 @@ def generate_data_columns(
         >>>     text_prompt="The patient",
         >>> )
     """
-    sequence = text_prompt if text_prompt else None
 
     for predictor_spec in predictors:
         for col_name, col_props in predictor_spec.items():
