@@ -3,20 +3,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from timeseriesflattener.aggregation_fns import concatenate, latest, mean
-from timeseriesflattener.feature_specs.group_specs import (
-    NamedDataframe,
-)
+from timeseriesflattener.aggregation_fns import latest, mean
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
-from timeseriesflattener.testing.load_synth_data import load_synth_text
-from timeseriesflattener.testing.text_embedding_functions import (
-    _load_bow_model,
-)
 
 
 def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame):
