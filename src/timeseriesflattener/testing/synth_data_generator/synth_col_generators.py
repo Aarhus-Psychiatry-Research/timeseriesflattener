@@ -171,7 +171,7 @@ def generate_text_data(
 def generate_data_columns(
     predictors: Iterable[dict],
     n_samples: int,
-    sequence: Optional[str],
+    sequence: Optional[str] = None,
     df: pd.DataFrame = pd.DataFrame(),  # noqa: B008
 ) -> pd.DataFrame:
     """Generate a dataframe with columns from the predictors iterable.
