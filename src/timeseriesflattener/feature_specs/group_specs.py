@@ -1,15 +1,13 @@
 import itertools
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional, Sequence, Union
+from typing import Dict, List, Sequence, Union
 
 import pandas as pd
-from pydantic import Field
 from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
     OutcomeSpec,
     PredictorSpec,
-    TextPredictorSpec,
 )
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
@@ -104,53 +102,7 @@ class OutcomeGroupSpec(BaseModel):
         ]
 
 
-class TextPredictorGroupSpec(BaseModel):
-    """A group of text predictor specifications. See PredictorGroupSpec and TextPredictorSpec for more details."""
-
-    # Shared attributes from GroupSpec
-    lookbehind_days: List[float]
-    named_dataframes: Sequence[NamedDataframe]
-    aggregation_fns: Sequence[AggregationFunType]
-    fallback: Sequence[Union[int, float, str]]
-
-    embedding_fn_name: str
-
-    prefix: str = "pred"
-
-    # Individual attributes
-
-    embedding_fn: Sequence[Callable] = Field(
-        description="""A function used for embedding the text. Should take a
-        pandas series of strings and return a pandas dataframe of embeddings.
-        Defaults to: None.""",
-    )
-    embedding_fn_kwargs: Optional[List[dict]] = Field(
-        default=None,
-        description="""Optional kwargs passed onto the embedding_fn.""",
-    )
-
-    def create_combinations(self) -> List[TextPredictorSpec]:
-        """Create all combinations from the group spec."""
-        combination_dict = create_feature_combinations_from_dict(
-            dictionary=self.__dict__,
-        )
-
-        return [
-            TextPredictorSpec(
-                prefix=d["prefix"],  # type: ignore
-                timeseries_df=d["named_dataframes"].df,  # type: ignore
-                feature_base_name=d["embedding_fn_name"],  # type: ignore
-                lookbehind_days=d["lookbehind_days"],  # type: ignore
-                aggregation_fn=d["aggregation_fns"],  # type: ignore
-                fallback=d["fallback"],  # type: ignore
-                embedding_fn=d["embedding_fn"],  # type: ignore
-                embedding_fn_kwargs=d["embedding_fn_kwargs"],  # type: ignore
-            )
-            for d in combination_dict
-        ]
-
-
-GroupSpec = Union[PredictorGroupSpec, OutcomeGroupSpec, TextPredictorGroupSpec]
+GroupSpec = Union[PredictorGroupSpec, OutcomeGroupSpec]
 
 
 def create_feature_combinations_from_dict(
