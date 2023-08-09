@@ -3,26 +3,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from timeseriesflattener.aggregation_fns import concatenate, latest, mean
-from timeseriesflattener.feature_specs.group_specs import (
-    NamedDataframe,
-    TextPredictorGroupSpec,
-)
+from timeseriesflattener.aggregation_fns import latest, mean
 from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
-    TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
-from timeseriesflattener.testing.load_synth_data import load_synth_text
-from timeseriesflattener.testing.text_embedding_functions import (
-    _load_bow_model,
-)
-from timeseriesflattener.text_embedding_functions import (
-    sentence_transformers_embedding,
-    sklearn_embedding,
-)
 
 
 def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame):
@@ -68,11 +55,9 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         dataset.add_spec("invalid spec")  # type: ignore
 
 
-@pytest.mark.huggingface()
 def test_compute_specs(
     synth_prediction_times: pd.DataFrame,
     synth_outcome: pd.DataFrame,
-    synth_text_data: pd.DataFrame,
 ):
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
@@ -101,20 +86,9 @@ def test_compute_specs(
         feature_base_name="static",
         prefix="pred",
     )
-    text_spec = TextPredictorSpec(  # type: ignore
-        timeseries_df=synth_text_data,
-        feature_base_name="text",
-        lookbehind_days=750,
-        aggregation_fn=concatenate,
-        fallback=np.nan,
-        embedding_fn=sentence_transformers_embedding,
-        embedding_fn_kwargs={
-            "model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        },
-    )
 
     # Test adding a single spec
-    dataset.add_spec([outcome_spec, predictor_spec, static_spec, text_spec])
+    dataset.add_spec([outcome_spec, predictor_spec, static_spec])
 
     df = dataset.get_df()
 
@@ -227,45 +201,3 @@ def test_double_compute_doesn_not_duplicate_columns():
     df = ts_flattener.get_df()
 
     assert df.shape[0] == 4
-
-
-def test_group_spec_feature_name(
-    synth_prediction_times: pd.DataFrame,
-    synth_outcome: pd.DataFrame,
-):
-    # Create an instance of the class that contains the `add_spec` method
-    dataset = TimeseriesFlattener(
-        prediction_times_df=synth_prediction_times,
-        drop_pred_times_with_insufficient_look_distance=False,
-    )
-
-    # Create sample specs
-    outcome_spec = OutcomeSpec(
-        timeseries_df=synth_outcome,
-        feature_base_name="outcome",
-        lookahead_days=1,
-        aggregation_fn=mean,
-        fallback=0,
-        incident=False,
-    )
-
-    bow_model = _load_bow_model()
-
-    predictor_spec = TextPredictorGroupSpec(
-        named_dataframes=[NamedDataframe(df=load_synth_text(), name="synth_text")],
-        prefix="test",
-        aggregation_fns=[concatenate],
-        fallback=[np.nan],
-        lookbehind_days=[100],
-        embedding_fn_name="bow",
-        embedding_fn=[sklearn_embedding],
-        embedding_fn_kwargs=[{"model": bow_model}],
-    ).create_combinations()
-
-    dataset.add_spec(outcome_spec)
-    dataset.add_spec(predictor_spec)  # type: ignore
-
-    df = dataset.get_df()
-
-    # assert correct feature names
-    assert "test_bow-for_within_100_days_concatenate_fallback_nan" in df.columns

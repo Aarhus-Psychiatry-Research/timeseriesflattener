@@ -17,7 +17,6 @@ import tqdm
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
 
-from timeseriesflattener.column_handler import ColumnHandler
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
@@ -25,7 +24,6 @@ from timeseriesflattener.feature_specs.single_specs import (
     PredictorSpec,
     StaticSpec,
     TemporalSpec,
-    TextPredictorSpec,
 )
 from timeseriesflattener.flattened_ds_validator import ValidateInitFlattenedDataset
 from timeseriesflattener.misc_utils import print_df_dimensions_diff
@@ -37,7 +35,7 @@ class SpecCollection(PydanticBaseModel):
     """A collection of specs."""
 
     outcome_specs: List[OutcomeSpec] = []
-    predictor_specs: List[Union[PredictorSpec, TextPredictorSpec]] = []
+    predictor_specs: List[PredictorSpec] = []
     static_specs: List[AnySpec] = []
 
     class Config:
@@ -352,7 +350,7 @@ class TimeseriesFlattener:
         if isinstance(output_spec, OutcomeSpec):
             direction = "ahead"
             interval_days = output_spec.lookahead_days
-        elif isinstance(output_spec, (PredictorSpec, TextPredictorSpec)):
+        elif isinstance(output_spec, PredictorSpec):
             direction = "behind"
             interval_days = output_spec.lookbehind_days
         else:
@@ -377,35 +375,21 @@ class TimeseriesFlattener:
             pred_time_uuid_colname=pred_time_uuid_col_name,
             val_timestamp_col_name=timestamp_val_col_name,
         )
-
-        # handle embedding and dimensionality reduction if text predictor
-        if isinstance(output_spec, TextPredictorSpec):
-            df = ColumnHandler.embed_text_column(
-                df=df,
-                text_col_name="value",
-                embedding_fn=output_spec.embedding_fn,
-                embedding_fn_kwargs=output_spec.embedding_fn_kwargs,
-            )
-
         # If aggregation generates empty values,
         # e.g. when there is only one prediction_time within look_ahead window for slope calculation,
         # replace with NaN
 
         # Rename column
-        df = ColumnHandler.rename_value_column(df=df, output_spec=output_spec)
+        df = df.rename(columns={"value": output_spec.get_output_col_name()})
 
         # Find value_cols and add fallback to them
-        value_col_str_name = ColumnHandler.get_value_col_str_name(
-            df=df,
-            output_spec=output_spec,
-        )
-        df = ColumnHandler.replace_na_in_spec_col_with_fallback(
-            df=df,
-            output_spec=output_spec,
+        value_col_str_name = output_spec.get_output_col_name()
+        df[output_spec.get_output_col_name()] = df[
+            output_spec.get_output_col_name()
+        ].fillna(
+            output_spec.fallback,
         )
 
-        # check if multiindex and flatten
-        df = ColumnHandler.flatten_multiindex(df)
         if verbose:
             log.info(
                 f"Returning {df.shape[0]} rows of flattened dataframe for {output_spec.get_output_col_name()}",
@@ -420,7 +404,7 @@ class TimeseriesFlattener:
             output_spec.fallback,  # type: ignore
         )
 
-        return df[[*value_col_str_name, pred_time_uuid_col_name]]
+        return df[[value_col_str_name, pred_time_uuid_col_name]]
 
     def _get_temporal_feature(
         self,
@@ -813,7 +797,7 @@ class TimeseriesFlattener:
 
             min_timestamp = min(spec.timeseries_df[self.timestamp_col_name])  # type: ignore
 
-            if min_timestamp < pd.Timestamp("1971-01-01"):
+            if min_timestamp < pd.Timestamp("1971-01-01"):  # type: ignore
                 log.warning(
                     f"{spec.feature_base_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?",
                 )
@@ -838,7 +822,6 @@ class TimeseriesFlattener:
                 OutcomeSpec,
                 PredictorSpec,
                 StaticSpec,
-                TextPredictorSpec,
             )
 
             if not isinstance(spec_i, allowed_spec_types):
@@ -848,14 +831,14 @@ class TimeseriesFlattener:
 
             self._check_that_spec_df_has_required_columns(spec=spec_i)
 
-            if isinstance(spec_i, (PredictorSpec, OutcomeSpec, TextPredictorSpec)):
+            if isinstance(spec_i, (PredictorSpec, OutcomeSpec)):
                 self._check_that_spec_df_timestamp_col_is_correctly_formatted(
                     spec=spec_i,  # type: ignore
                 )
 
             if isinstance(spec_i, OutcomeSpec):
                 self.unprocessed_specs.outcome_specs.append(spec_i)
-            elif isinstance(spec_i, (PredictorSpec, TextPredictorSpec)):
+            elif isinstance(spec_i, (PredictorSpec)):
                 self.unprocessed_specs.predictor_specs.append(spec_i)
             elif isinstance(spec_i, StaticSpec):
                 self.unprocessed_specs.static_specs.append(spec_i)

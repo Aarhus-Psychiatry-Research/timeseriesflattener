@@ -3,7 +3,6 @@ from .feature_specs.group_specs import PredictorGroupSpec
 from .feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
-    TextPredictorSpec,
 )
 from .feature_specs.group_specs import (
     OutcomeGroupSpec,

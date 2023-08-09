@@ -1,6 +1,5 @@
 """Column generators for synthetic data."""
 from collections.abc import Iterable
-from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -47,61 +46,10 @@ def create_outcome_values(
     return out  # type: ignore
 
 
-def generate_text_data(
-    n_samples: int,
-    sequence: str,
-    tokenizer: Optional[Any] = None,
-    model: Optional[Any] = None,
-) -> list[str]:
-    """Generate text data.
-
-    Args:
-        n_samples (int): Number of rows to generate.
-        sequence (str): Text prompt to use for generating text data. Defaults to "The quick brown fox jumps over the lazy dog".
-        tokenizer (Optional[Any]): Huggingface tokenizer
-        model (Optional[Any]): Huggingface model
-
-    Returns:
-        list[str]: list of generated text data.
-    """
-    from transformers import GPT2LMHeadModel, GPT2Tokenizer  # type: ignore
-
-    tokenizer = (
-        GPT2Tokenizer.from_pretrained("gpt2") if tokenizer is None else tokenizer
-    )
-    model = GPT2LMHeadModel.from_pretrained("gpt2") if model is None else model
-
-    inputs = tokenizer.encode(sequence, return_tensors="pt")
-
-    generated_texts = []
-    for _ in range(n_samples):
-        max_tokens = np.random.randint(
-            low=0,
-            high=500,
-            size=1,
-        )[0]
-
-        outputs = model.generate(  # type: ignore
-            inputs,
-            min_length=0,
-            max_length=max_tokens,
-            do_sample=True,
-            pad_token_id=tokenizer.eos_token_id,
-        )
-
-        text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        generated_texts.append(text)
-
-    return generated_texts
-
-
 def generate_col_from_specs(
     column_type: str,
     n_samples: int,
     col_specs: dict,
-    sequence: Optional[str],
-    tokenizer: Optional[Any] = None,
-    model: Optional[Any] = None,
 ) -> Iterable:
     """Generate a column of data.
 
@@ -109,9 +57,6 @@ def generate_col_from_specs(
         column_type (str): Type of column to generate. Either uniform_int, text, id or datetime_uniform.
         n_samples (int): Number of rows to generate.
         col_specs (dict): A dict representing each column. Key is col_name (str), values is a dict with column_type (str), min (int) and max(int).
-        sequence (str): Text prompt to use for generating text data. Defaults to "The quick brown fox jumps over the lazy dog".
-        tokenizer (Optional[Any]): Huggingface tokenizer.
-        model (Optional[Any]): Huggingface model.
 
     Raises:
         ValueError: If column_type isn't either uniform_int, text, or datetime_uniform.
@@ -119,19 +64,6 @@ def generate_col_from_specs(
     Returns:
         Iterable: The generated column.
     """
-
-    if column_type == "text":
-        if sequence is None:
-            raise ValueError("If column_type is text, sequence must be specified.")
-        generated_texts = generate_text_data(
-            n_samples=n_samples,
-            sequence=sequence,
-            tokenizer=tokenizer,
-            model=model,
-        )
-
-        return generated_texts
-
     if column_type == "id":
         return -np.arange(n_samples)
 
@@ -175,7 +107,6 @@ def generate_data_columns(
     predictors: Iterable[dict],
     n_samples: int,
     df: pd.DataFrame = pd.DataFrame(),  # noqa: B008
-    text_prompt: Optional[str] = None,
 ) -> pd.DataFrame:
     """Generate a dataframe with columns from the predictors iterable.
 
@@ -205,7 +136,6 @@ def generate_data_columns(
         >>>     text_prompt="The patient",
         >>> )
     """
-    sequence = text_prompt if text_prompt else None
 
     for predictor_spec in predictors:
         for col_name, col_props in predictor_spec.items():
@@ -220,7 +150,6 @@ def generate_data_columns(
             df[col_name] = generate_col_from_specs(
                 column_type=column_type,
                 n_samples=n_samples,
-                sequence=sequence,
                 col_specs=col_props,
             )
 
