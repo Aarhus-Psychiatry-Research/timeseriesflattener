@@ -12,7 +12,6 @@ from timeseriesflattener.feature_specs.single_specs import (
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
-    TextPredictorSpec,
 )
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 from timeseriesflattener.testing.load_synth_data import load_synth_text
@@ -20,7 +19,6 @@ from timeseriesflattener.testing.text_embedding_functions import (
     _load_bow_model,
 )
 from timeseriesflattener.text_embedding_functions import (
-    sentence_transformers_embedding,
     sklearn_embedding,
 )
 

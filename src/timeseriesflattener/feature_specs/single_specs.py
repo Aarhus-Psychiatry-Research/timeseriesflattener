@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from typing import Callable, Optional, Union
+from typing import Union
 
 import pandas as pd
-from timeseriesflattener.aggregation_fns import AggregationFunType, concatenate
+from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 

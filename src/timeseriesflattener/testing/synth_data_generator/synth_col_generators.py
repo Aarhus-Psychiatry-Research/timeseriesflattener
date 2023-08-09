@@ -51,9 +51,6 @@ def generate_col_from_specs(
     column_type: str,
     n_samples: int,
     col_specs: dict,
-    sequence: Optional[str],
-    tokenizer: Optional[Any] = None,
-    model: Optional[Any] = None,
 ) -> Iterable:
     """Generate a column of data.
 
@@ -61,9 +58,6 @@ def generate_col_from_specs(
         column_type (str): Type of column to generate. Either uniform_int, text, id or datetime_uniform.
         n_samples (int): Number of rows to generate.
         col_specs (dict): A dict representing each column. Key is col_name (str), values is a dict with column_type (str), min (int) and max(int).
-        sequence (str): Text prompt to use for generating text data. Defaults to "The quick brown fox jumps over the lazy dog".
-        tokenizer (Optional[Any]): Huggingface tokenizer.
-        model (Optional[Any]): Huggingface model.
 
     Raises:
         ValueError: If column_type isn't either uniform_int, text, or datetime_uniform.
@@ -71,19 +65,6 @@ def generate_col_from_specs(
     Returns:
         Iterable: The generated column.
     """
-
-    if column_type == "text":
-        if sequence is None:
-            raise ValueError("If column_type is text, sequence must be specified.")
-        generated_texts = generate_text_data(
-            n_samples=n_samples,
-            sequence=sequence,
-            tokenizer=tokenizer,
-            model=model,
-        )
-
-        return generated_texts
-
     if column_type == "id":
         return -np.arange(n_samples)
 
