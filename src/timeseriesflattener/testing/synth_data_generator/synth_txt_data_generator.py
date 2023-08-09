@@ -16,7 +16,6 @@ from timeseriesflattener.testing.synth_data_generator.utils import replace_vals_
 def generate_synth_txt_data(
     predictors: dict,
     n_samples: int,
-    text_prompt: str = "The quick brown fox jumps over the lazy dog",
     na_prob: Optional[float] = 0.1,
     na_ignore_cols: Optional[list[str]] = None,
 ) -> pd.DataFrame:
@@ -25,7 +24,6 @@ def generate_synth_txt_data(
     Args:
         predictors (dict): A dict representing each column. Key is col_name (str), values are column_type (str), output_type (float|int), min (int), max(int).
         n_samples (int): Number of samples (rows) to generate.
-        text_prompt (str): Text prompt to use for generating text data. Defaults to "The quick brown fox jumps over the lazy dog".
         na_prob (float): Probability of changing a value in a predictor column to NA.
         na_ignore_cols (list[str]): Columns to ignore when creating NAs
 
