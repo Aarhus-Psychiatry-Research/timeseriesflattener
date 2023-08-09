@@ -404,7 +404,7 @@ class TimeseriesFlattener:
             output_spec.fallback,  # type: ignore
         )
 
-        return df[[*value_col_str_name, pred_time_uuid_col_name]]
+        return df[[value_col_str_name, pred_time_uuid_col_name]]
 
     def _get_temporal_feature(
         self,
