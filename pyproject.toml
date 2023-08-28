@@ -57,7 +57,7 @@ test = [
   "pytest-sugar>=0.9.4,<0.10.0",
 ]
 docs = [
-  "sphinx==7.2.2",
+  "sphinx==7.2.4",
   "furo==2023.8.19",
   "sphinx-copybutton==0.5.2",
   "sphinxext-opengraph==0.8.2",
