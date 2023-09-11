@@ -42,7 +42,7 @@ name = "MIT"
 [project.optional-dependencies]
 dev = [
   "cruft",
-  "pyright==1.1.325",
+  "pyright==1.1.326",
   "pre-commit==3.4.0",
   "ruff==0.0.287",          # important that these match the pre-commit hooks
   "black[jupyter]==23.9.1", # important that these match the pre-commit hooks
