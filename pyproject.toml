@@ -58,7 +58,7 @@ test = [
 ]
 docs = [
   "sphinx==7.2.5",
-  "furo==2023.8.19",
+  "furo==2023.9.10",
   "sphinx-copybutton==0.5.2",
   "sphinxext-opengraph==0.8.2",
   "myst-nb==0.17.2",
