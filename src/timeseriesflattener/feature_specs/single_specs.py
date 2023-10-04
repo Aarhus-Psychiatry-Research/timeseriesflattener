@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Union
 
 import pandas as pd
+
 from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
@@ -108,7 +109,7 @@ class OutcomeSpec(BaseModel):
             fallback=self.fallback,
         )
 
-        if self.is_dichotomous:
+        if self.is_dichotomous():
             col_str += "_dichotomous"
 
         return col_str
