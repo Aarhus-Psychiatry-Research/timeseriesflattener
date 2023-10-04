@@ -1,6 +1,5 @@
 """Tests for adding values to a flattened dataset."""
 
-import datetime as dt
 
 import numpy as np
 import pandas as pd
@@ -500,6 +499,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
             check_dtype=False,
         )
 
+
 def test_add_temporal_incident_binary_outcome():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-11-05 00:00:00
@@ -571,7 +571,11 @@ def test_add_outcome_timestamps():
     prediction_times_df = str_to_df(prediction_times_str)
     event_times_df = str_to_df(event_times_str)
     expected_df = str_to_df(expected_df_str)
-    expected_df['outc_timestamp_within_10_days_latest_fallback_nan_dichotomous'] = expected_df['outc_timestamp_within_10_days_latest_fallback_nan_dichotomous'].astype(str).replace('NaT', np.NaN)
+    expected_df["outc_timestamp_within_10_days_latest_fallback_nan_dichotomous"] = (
+        expected_df["outc_timestamp_within_10_days_latest_fallback_nan_dichotomous"]
+        .astype(str)
+        .replace("NaT", np.NaN)
+    )
 
     flattened_dataset = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
