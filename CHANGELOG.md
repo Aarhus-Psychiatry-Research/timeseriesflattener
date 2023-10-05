@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.6.1 (2023-10-05)
+
+### Fix
+
+* Call function properly ([`df13140`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/df13140b4cce7274e875c8baefe5548bc45b7219))
+
 ## v1.6.0 (2023-08-09)
 
 ### Feature
