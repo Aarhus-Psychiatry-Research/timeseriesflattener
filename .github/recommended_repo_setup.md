@@ -30,8 +30,11 @@
      * Require status checks to pass before merging
        * Require branches to be up to date before merging
        * Status checks that are required:
-         * mypy (type hinting)
+         * static_type_checks (type hinting)
          * pre-commit (formatting)
          * pytest (tests)
          * check_for_rej (check for residual cruft updates)
      * Require conversation resolution before merging
+
+### Publishing to PyPI
+If do not wish to pypi, you can just delete the `release.yml` file. If you do wish to publish, you need to setup trusted publishing [here](https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/).
