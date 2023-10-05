@@ -108,7 +108,7 @@ class OutcomeSpec(BaseModel):
             fallback=self.fallback,
         )
 
-        if self.is_dichotomous:
+        if self.is_dichotomous():
             col_str += "_dichotomous"
 
         return col_str
