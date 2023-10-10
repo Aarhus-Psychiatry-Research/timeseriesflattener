@@ -16,13 +16,13 @@
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Frequently Asked Questions" href="../faq.html" /><link rel="prev" title="Advanced Tutorial" href="02_advanced.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.03.27 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
         <title>Adding text features - Timeseriesflattener</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css?v=6ad1a40c" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -257,7 +257,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/.local/lib/python3.10/site-packages/pydantic/_internal/_config.py:269: UserWarning: Valid config keys have changed in V2:
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/.local/lib/python3.10/site-packages/pydantic/_internal/_config.py:317: UserWarning: Valid config keys have changed in V2:
 * &#39;allow_mutation&#39; has been removed
   warnings.warn(message, UserWarning)
 </pre></div>
@@ -630,31 +630,31 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:03:53 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:48:52 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:03:53 [INFO] Processing 20 temporal features in parallel with 1 workers. Chunksize is 20. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:48:52 [INFO] Processing 20 temporal features in parallel with 1 workers. Chunksize is 20. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/20 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 1/20 [00:00&lt;00:13,  1.40it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 1/20 [00:00&lt;00:10,  1.89it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 20/20 [00:00&lt;00:00, 27.99it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 20/20 [00:00&lt;00:00, 37.72it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:03:53 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:48:52 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:03:53 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:48:52 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:03:53 [INFO] Concatenation took 0.048 seconds
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:48:52 [INFO] Concatenation took 0.037 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-09 14:03:53 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:48:52 [INFO] Merging with original df
 </pre></div>
 </div>
 </div>
@@ -689,24 +689,24 @@
       <th>entity_id</th>
       <th>timestamp</th>
       <th>prediction_time_uuid</th>
-      <th>pred_tfidf_in_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_the_within_365_days_mean_fallback_nan</th>
       <th>pred_tfidf_of_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_to_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_for_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_patient_within_365_days_mean_fallback_nan</th>
       <th>pred_tfidf_was_within_730_days_mean_fallback_nan</th>
-      <th>...</th>
-      <th>pred_tfidf_for_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_patient_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_and_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_was_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_that_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_and_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_to_within_365_days_mean_fallback_nan</th>
       <th>pred_tfidf_or_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_in_within_730_days_mean_fallback_nan</th>
       <th>pred_tfidf_the_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_patient_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_was_within_365_days_mean_fallback_nan</th>
+      <th>...</th>
+      <th>pred_tfidf_and_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_of_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_and_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_in_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_for_within_730_days_mean_fallback_nan</th>
       <th>pred_tfidf_that_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_that_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_or_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_patient_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_the_within_365_days_mean_fallback_nan</th>
     </tr>
   </thead>
   <tbody>
@@ -715,48 +715,48 @@
       <td>4977</td>
       <td>1968-11-28 16:05:00</td>
       <td>4977-1968-11-28-16-05-00</td>
-      <td>0.483324</td>
-      <td>0.534890</td>
       <td>0.536339</td>
+      <td>0.086927</td>
       <td>0.284485</td>
-      <td>0.088050</td>
+      <td>0.221549</td>
+      <td>0.534890</td>
       <td>0.133722</td>
       <td>0.086927</td>
       <td>...</td>
-      <td>0.088050</td>
-      <td>0.133722</td>
       <td>0.145809</td>
-      <td>0.086927</td>
-      <td>0.090356</td>
+      <td>0.536339</td>
       <td>0.145809</td>
-      <td>0.221549</td>
       <td>0.483324</td>
-      <td>0.534890</td>
+      <td>0.088050</td>
       <td>0.090356</td>
+      <td>0.090356</td>
+      <td>0.221549</td>
+      <td>0.133722</td>
+      <td>0.534890</td>
     </tr>
     <tr>
       <th>2463</th>
       <td>6840</td>
       <td>1965-11-02 07:17:00</td>
       <td>6840-1965-11-02-07-17-00</td>
-      <td>0.258256</td>
-      <td>0.285810</td>
       <td>0.573168</td>
+      <td>0.092896</td>
       <td>0.456030</td>
-      <td>0.376386</td>
+      <td>0.355142</td>
+      <td>0.285810</td>
       <td>0.071452</td>
       <td>0.092896</td>
       <td>...</td>
-      <td>0.376386</td>
-      <td>0.071452</td>
       <td>0.155821</td>
-      <td>0.092896</td>
-      <td>0.096561</td>
+      <td>0.573168</td>
       <td>0.155821</td>
-      <td>0.355142</td>
       <td>0.258256</td>
-      <td>0.285810</td>
+      <td>0.376386</td>
       <td>0.096561</td>
+      <td>0.096561</td>
+      <td>0.355142</td>
+      <td>0.071452</td>
+      <td>0.285810</td>
     </tr>
     <tr>
       <th>2580</th>
@@ -764,71 +764,71 @@
       <td>1968-08-26 15:19:00</td>
       <td>18-1968-08-26-15-19-00</td>
       <td>0.000000</td>
-      <td>0.601521</td>
-      <td>0.000000</td>
+      <td>0.260680</td>
       <td>0.639848</td>
       <td>0.000000</td>
+      <td>0.601521</td>
       <td>0.401014</td>
       <td>0.260680</td>
       <td>...</td>
       <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
       <td>0.401014</td>
-      <td>0.000000</td>
-      <td>0.260680</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
       <td>0.601521</td>
-      <td>0.000000</td>
     </tr>
     <tr>
       <th>2741</th>
       <td>9832</td>
       <td>1969-06-03 04:36:00</td>
       <td>9832-1969-06-03-04-36-00</td>
-      <td>0.186493</td>
-      <td>0.825558</td>
       <td>0.236513</td>
+      <td>0.335410</td>
       <td>0.164655</td>
-      <td>0.101924</td>
+      <td>0.128228</td>
+      <td>0.825558</td>
       <td>0.103195</td>
       <td>0.335410</td>
       <td>...</td>
-      <td>0.101924</td>
-      <td>0.103195</td>
       <td>0.225044</td>
-      <td>0.335410</td>
-      <td>0.000000</td>
+      <td>0.236513</td>
       <td>0.225044</td>
-      <td>0.128228</td>
       <td>0.186493</td>
-      <td>0.825558</td>
+      <td>0.101924</td>
       <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.128228</td>
+      <td>0.103195</td>
+      <td>0.825558</td>
     </tr>
     <tr>
       <th>2931</th>
       <td>7281</td>
       <td>1967-06-05 00:41:00</td>
       <td>7281-1967-06-05-00-41-00</td>
-      <td>0.280049</td>
-      <td>0.464891</td>
       <td>0.304425</td>
+      <td>0.388547</td>
       <td>0.211934</td>
-      <td>0.043730</td>
+      <td>0.385111</td>
+      <td>0.464891</td>
       <td>0.332065</td>
       <td>0.388547</td>
       <td>...</td>
-      <td>0.043730</td>
-      <td>0.332065</td>
       <td>0.289663</td>
-      <td>0.388547</td>
-      <td>0.269251</td>
+      <td>0.304425</td>
       <td>0.289663</td>
-      <td>0.385111</td>
       <td>0.280049</td>
-      <td>0.464891</td>
+      <td>0.043730</td>
       <td>0.269251</td>
+      <td>0.269251</td>
+      <td>0.385111</td>
+      <td>0.332065</td>
+      <td>0.464891</td>
     </tr>
   </tbody>
 </table>
@@ -914,12 +914,15 @@
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b7ae9749"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
-    <script src="../_static/scripts/furo.js?v=2c7c1115"></script>
-    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/design-tabs.js?v=36754332"></script>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/design-tabs.js"></script>
     </body>
 </html>
