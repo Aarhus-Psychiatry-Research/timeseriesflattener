@@ -295,6 +295,42 @@ def test_add_age_error():
         )
 
 
+def test_incident_addition_with_multiple_timestamps_raises_meaningful_error():
+    prediction_times_str = """entity_id,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+
+    event_times_str = """entity_id,timestamp,value,
+                        1,2021-12-31 00:00:01, 1
+                        1,2021-12-31 00:00:01, 1
+                        """
+
+    prediction_times_df = str_to_df(prediction_times_str)
+    event_times_df = str_to_df(event_times_str)
+
+    flattened_dataset = TimeseriesFlattener(
+        prediction_times_df=prediction_times_df,
+        timestamp_col_name="timestamp",
+        entity_id_col_name="entity_id",
+        n_workers=4,
+        drop_pred_times_with_insufficient_look_distance=False,
+    )
+
+    flattened_dataset.add_spec(
+        spec=OutcomeSpec(
+            timeseries_df=event_times_df,
+            lookahead_days=2,
+            incident=True,
+            fallback=np.NaN,
+            feature_base_name="value",
+            aggregation_fn=maximum,
+        ),
+    )
+
+    with pytest.raises(ValueError, match="Since incident = True"):
+        flattened_dataset.get_df().reset_index(drop=True)
+
+
 def test_incident_outcome_removing_prediction_times():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
