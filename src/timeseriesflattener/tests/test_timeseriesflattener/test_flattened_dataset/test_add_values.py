@@ -327,7 +327,7 @@ def test_incident_addition_with_multiple_timestamps_raises_meaningful_error():
         ),
     )
 
-    with pytest.raises(ValueError, match="When incident = True"):
+    with pytest.raises(ValueError, match="Since incident = True"):
         flattened_dataset.get_df().reset_index(drop=True)
 
 
