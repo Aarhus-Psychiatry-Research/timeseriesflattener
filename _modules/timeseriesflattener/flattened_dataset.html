@@ -855,6 +855,11 @@
         <span class="n">prediction_timestamp_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="si">}</span><span class="s2">_prediction&quot;</span>
         <span class="n">outcome_timestamp_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="si">}</span><span class="s2">_outcome&quot;</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">outcome_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Since incident = True, we expect only one outcome timestamp per entity id. This is not the case in </span><span class="si">{</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">feature_base_name</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">,</span>
             <span class="n">outcome_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">,</span>

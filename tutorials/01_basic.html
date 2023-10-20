@@ -980,31 +980,31 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:51:37 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-20 11:25:24 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:51:37 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 5999 (59.99%) rows
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-20 11:25:24 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 5999 (59.99%) rows
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:51:37 [INFO] Processing 2 temporal features in parallel with 1 workers. Chunksize is 2. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-20 11:25:24 [INFO] Processing 2 temporal features in parallel with 1 workers. Chunksize is 2. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/2 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 2/2 [00:00&lt;00:00, 26.31it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 2/2 [00:00&lt;00:00, 26.24it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:51:37 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-20 11:25:24 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:51:37 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-20 11:25:24 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:51:37 [INFO] Concatenation took 0.004 seconds
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-20 11:25:24 [INFO] Concatenation took 0.004 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-10 14:51:37 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-10-20 11:25:24 [INFO] Merging with original df
 </pre></div>
 </div>
 <div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮
@@ -1022,8 +1022,8 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 │ ┃<span style="font-weight: bold"> column_name                </span>┃<span style="font-weight: bold"> NA  </span>┃<span style="font-weight: bold"> NA %   </span>┃<span style="font-weight: bold"> mean    </span>┃<span style="font-weight: bold"> sd     </span>┃<span style="font-weight: bold"> p0      </span>┃<span style="font-weight: bold"> p25    </span>┃<span style="font-weight: bold"> p75   </span>┃<span style="font-weight: bold"> p100   </span>┃<span style="font-weight: bold"> hist    </span>┃  │
 │ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id                 </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">   5000</span> │ <span style="color: #008080; text-decoration-color: #008080">  2900</span> │ <span style="color: #008080; text-decoration-color: #008080">      3</span> │ <span style="color: #008080; text-decoration-color: #008080">  2600</span> │ <span style="color: #008080; text-decoration-color: #008080"> 7500</span> │ <span style="color: #008080; text-decoration-color: #008080"> 10000</span> │ <span style="color: #008000; text-decoration-color: #008000">█████▇ </span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_predictor_name_      </span> │ <span style="color: #008080; text-decoration-color: #008080"> 72</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">      5</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.097</span> │ <span style="color: #008080; text-decoration-color: #008080">   3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">    6</span> │ <span style="color: #008080; text-decoration-color: #008080">   9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃██▃▁ </span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">outc_outcome_name_wi      </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.064</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.25</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     1</span> │ <span style="color: #008000; text-decoration-color: #008000">█    ▁ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_predictor_name_      </span> │ <span style="color: #008080; text-decoration-color: #008080"> 72</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">      5</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.097</span> │ <span style="color: #008080; text-decoration-color: #008080">   3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">    6</span> │ <span style="color: #008080; text-decoration-color: #008080">   9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃██▃▁ </span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_female               </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.49</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.5</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    1</span> │ <span style="color: #008080; text-decoration-color: #008080">     1</span> │ <span style="color: #008000; text-decoration-color: #008000">█    █ </span> │  │
 │ └────────────────────────────┴─────┴────────┴─────────┴────────┴─────────┴────────┴───────┴────────┴─────────┘  │
 │ <span style="font-style: italic">                                                   datetime                                                   </span>  │
@@ -1043,8 +1043,8 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;entity_id&#39;,
  &#39;timestamp&#39;,
  &#39;prediction_time_uuid&#39;,
- &#39;pred_predictor_name_within_730_days_mean_fallback_nan&#39;,
  &#39;outc_outcome_name_within_365_days_maximum_fallback_0_dichotomous&#39;,
+ &#39;pred_predictor_name_within_730_days_mean_fallback_nan&#39;,
  &#39;pred_female&#39;]
 </pre></div>
 </div>
@@ -1071,108 +1071,108 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 <div class="cell_output docutils container">
 <div class="output text_html"><style type="text/css">
 </style>
-<table id="T_05a3b" style="font-size: 14px">
+<table id="T_573e8" style="font-size: 14px">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
-      <th id="T_05a3b_level0_col0" class="col_heading level0 col0" >entity_id</th>
-      <th id="T_05a3b_level0_col1" class="col_heading level0 col1" >timestamp</th>
-      <th id="T_05a3b_level0_col2" class="col_heading level0 col2" >prediction_time_uuid</th>
-      <th id="T_05a3b_level0_col3" class="col_heading level0 col3" >pred_X</th>
-      <th id="T_05a3b_level0_col4" class="col_heading level0 col4" >outc_Y</th>
-      <th id="T_05a3b_level0_col5" class="col_heading level0 col5" >pred_female</th>
+      <th id="T_573e8_level0_col0" class="col_heading level0 col0" >entity_id</th>
+      <th id="T_573e8_level0_col1" class="col_heading level0 col1" >timestamp</th>
+      <th id="T_573e8_level0_col2" class="col_heading level0 col2" >prediction_time_uuid</th>
+      <th id="T_573e8_level0_col3" class="col_heading level0 col3" >outc_Y</th>
+      <th id="T_573e8_level0_col4" class="col_heading level0 col4" >pred_X</th>
+      <th id="T_573e8_level0_col5" class="col_heading level0 col5" >pred_female</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th id="T_05a3b_level0_row0" class="row_heading level0 row0" >0</th>
-      <td id="T_05a3b_row0_col0" class="data row0 col0" >9903</td>
-      <td id="T_05a3b_row0_col1" class="data row0 col1" >1968-05-09 21:24:00</td>
-      <td id="T_05a3b_row0_col2" class="data row0 col2" >9903-1968-05-09-21-24-00</td>
-      <td id="T_05a3b_row0_col3" class="data row0 col3" >0.990763</td>
-      <td id="T_05a3b_row0_col4" class="data row0 col4" >0.000000</td>
-      <td id="T_05a3b_row0_col5" class="data row0 col5" >0</td>
+      <th id="T_573e8_level0_row0" class="row_heading level0 row0" >0</th>
+      <td id="T_573e8_row0_col0" class="data row0 col0" >9903</td>
+      <td id="T_573e8_row0_col1" class="data row0 col1" >1968-05-09 21:24:00</td>
+      <td id="T_573e8_row0_col2" class="data row0 col2" >9903-1968-05-09-21-24-00</td>
+      <td id="T_573e8_row0_col3" class="data row0 col3" >0.000000</td>
+      <td id="T_573e8_row0_col4" class="data row0 col4" >0.990763</td>
+      <td id="T_573e8_row0_col5" class="data row0 col5" >0</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row1" class="row_heading level0 row1" >1</th>
-      <td id="T_05a3b_row1_col0" class="data row1 col0" >6447</td>
-      <td id="T_05a3b_row1_col1" class="data row1 col1" >1967-09-25 18:08:00</td>
-      <td id="T_05a3b_row1_col2" class="data row1 col2" >6447-1967-09-25-18-08-00</td>
-      <td id="T_05a3b_row1_col3" class="data row1 col3" >5.582745</td>
-      <td id="T_05a3b_row1_col4" class="data row1 col4" >0.000000</td>
-      <td id="T_05a3b_row1_col5" class="data row1 col5" >1</td>
+      <th id="T_573e8_level0_row1" class="row_heading level0 row1" >1</th>
+      <td id="T_573e8_row1_col0" class="data row1 col0" >6447</td>
+      <td id="T_573e8_row1_col1" class="data row1 col1" >1967-09-25 18:08:00</td>
+      <td id="T_573e8_row1_col2" class="data row1 col2" >6447-1967-09-25-18-08-00</td>
+      <td id="T_573e8_row1_col3" class="data row1 col3" >0.000000</td>
+      <td id="T_573e8_row1_col4" class="data row1 col4" >5.582745</td>
+      <td id="T_573e8_row1_col5" class="data row1 col5" >1</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row2" class="row_heading level0 row2" >2</th>
-      <td id="T_05a3b_row2_col0" class="data row2 col0" >4927</td>
-      <td id="T_05a3b_row2_col1" class="data row2 col1" >1968-06-30 12:13:00</td>
-      <td id="T_05a3b_row2_col2" class="data row2 col2" >4927-1968-06-30-12-13-00</td>
-      <td id="T_05a3b_row2_col3" class="data row2 col3" >4.957251</td>
-      <td id="T_05a3b_row2_col4" class="data row2 col4" >0.000000</td>
-      <td id="T_05a3b_row2_col5" class="data row2 col5" >0</td>
+      <th id="T_573e8_level0_row2" class="row_heading level0 row2" >2</th>
+      <td id="T_573e8_row2_col0" class="data row2 col0" >4927</td>
+      <td id="T_573e8_row2_col1" class="data row2 col1" >1968-06-30 12:13:00</td>
+      <td id="T_573e8_row2_col2" class="data row2 col2" >4927-1968-06-30-12-13-00</td>
+      <td id="T_573e8_row2_col3" class="data row2 col3" >0.000000</td>
+      <td id="T_573e8_row2_col4" class="data row2 col4" >4.957251</td>
+      <td id="T_573e8_row2_col5" class="data row2 col5" >0</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row3" class="row_heading level0 row3" >3</th>
-      <td id="T_05a3b_row3_col0" class="data row3 col0" >5475</td>
-      <td id="T_05a3b_row3_col1" class="data row3 col1" >1967-01-09 03:09:00</td>
-      <td id="T_05a3b_row3_col2" class="data row3 col2" >5475-1967-01-09-03-09-00</td>
-      <td id="T_05a3b_row3_col3" class="data row3 col3" >5.999336</td>
-      <td id="T_05a3b_row3_col4" class="data row3 col4" >0.000000</td>
-      <td id="T_05a3b_row3_col5" class="data row3 col5" >0</td>
+      <th id="T_573e8_level0_row3" class="row_heading level0 row3" >3</th>
+      <td id="T_573e8_row3_col0" class="data row3 col0" >5475</td>
+      <td id="T_573e8_row3_col1" class="data row3 col1" >1967-01-09 03:09:00</td>
+      <td id="T_573e8_row3_col2" class="data row3 col2" >5475-1967-01-09-03-09-00</td>
+      <td id="T_573e8_row3_col3" class="data row3 col3" >0.000000</td>
+      <td id="T_573e8_row3_col4" class="data row3 col4" >5.999336</td>
+      <td id="T_573e8_row3_col5" class="data row3 col5" >0</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row4" class="row_heading level0 row4" >4</th>
-      <td id="T_05a3b_row4_col0" class="data row4 col0" >9793</td>
-      <td id="T_05a3b_row4_col1" class="data row4 col1" >1968-12-15 12:59:00</td>
-      <td id="T_05a3b_row4_col2" class="data row4 col2" >9793-1968-12-15-12-59-00</td>
-      <td id="T_05a3b_row4_col3" class="data row4 col3" >7.294038</td>
-      <td id="T_05a3b_row4_col4" class="data row4 col4" >0.000000</td>
-      <td id="T_05a3b_row4_col5" class="data row4 col5" >0</td>
+      <th id="T_573e8_level0_row4" class="row_heading level0 row4" >4</th>
+      <td id="T_573e8_row4_col0" class="data row4 col0" >9793</td>
+      <td id="T_573e8_row4_col1" class="data row4 col1" >1968-12-15 12:59:00</td>
+      <td id="T_573e8_row4_col2" class="data row4 col2" >9793-1968-12-15-12-59-00</td>
+      <td id="T_573e8_row4_col3" class="data row4 col3" >0.000000</td>
+      <td id="T_573e8_row4_col4" class="data row4 col4" >7.294038</td>
+      <td id="T_573e8_row4_col5" class="data row4 col5" >0</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row5" class="row_heading level0 row5" >5</th>
-      <td id="T_05a3b_row5_col0" class="data row5 col0" >9768</td>
-      <td id="T_05a3b_row5_col1" class="data row5 col1" >1967-07-04 23:09:00</td>
-      <td id="T_05a3b_row5_col2" class="data row5 col2" >9768-1967-07-04-23-09-00</td>
-      <td id="T_05a3b_row5_col3" class="data row5 col3" >4.326286</td>
-      <td id="T_05a3b_row5_col4" class="data row5 col4" >0.000000</td>
-      <td id="T_05a3b_row5_col5" class="data row5 col5" >1</td>
+      <th id="T_573e8_level0_row5" class="row_heading level0 row5" >5</th>
+      <td id="T_573e8_row5_col0" class="data row5 col0" >9768</td>
+      <td id="T_573e8_row5_col1" class="data row5 col1" >1967-07-04 23:09:00</td>
+      <td id="T_573e8_row5_col2" class="data row5 col2" >9768-1967-07-04-23-09-00</td>
+      <td id="T_573e8_row5_col3" class="data row5 col3" >0.000000</td>
+      <td id="T_573e8_row5_col4" class="data row5 col4" >4.326286</td>
+      <td id="T_573e8_row5_col5" class="data row5 col5" >1</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row6" class="row_heading level0 row6" >6</th>
-      <td id="T_05a3b_row6_col0" class="data row6 col0" >7916</td>
-      <td id="T_05a3b_row6_col1" class="data row6 col1" >1968-12-20 03:38:00</td>
-      <td id="T_05a3b_row6_col2" class="data row6 col2" >7916-1968-12-20-03-38-00</td>
-      <td id="T_05a3b_row6_col3" class="data row6 col3" >4.629502</td>
-      <td id="T_05a3b_row6_col4" class="data row6 col4" >0.000000</td>
-      <td id="T_05a3b_row6_col5" class="data row6 col5" >0</td>
+      <th id="T_573e8_level0_row6" class="row_heading level0 row6" >6</th>
+      <td id="T_573e8_row6_col0" class="data row6 col0" >7916</td>
+      <td id="T_573e8_row6_col1" class="data row6 col1" >1968-12-20 03:38:00</td>
+      <td id="T_573e8_row6_col2" class="data row6 col2" >7916-1968-12-20-03-38-00</td>
+      <td id="T_573e8_row6_col3" class="data row6 col3" >0.000000</td>
+      <td id="T_573e8_row6_col4" class="data row6 col4" >4.629502</td>
+      <td id="T_573e8_row6_col5" class="data row6 col5" >0</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row7" class="row_heading level0 row7" >7</th>
-      <td id="T_05a3b_row7_col0" class="data row7 col0" >33</td>
-      <td id="T_05a3b_row7_col1" class="data row7 col1" >1967-07-28 03:16:00</td>
-      <td id="T_05a3b_row7_col2" class="data row7 col2" >33-1967-07-28-03-16-00</td>
-      <td id="T_05a3b_row7_col3" class="data row7 col3" >4.628500</td>
-      <td id="T_05a3b_row7_col4" class="data row7 col4" >0.000000</td>
-      <td id="T_05a3b_row7_col5" class="data row7 col5" >0</td>
+      <th id="T_573e8_level0_row7" class="row_heading level0 row7" >7</th>
+      <td id="T_573e8_row7_col0" class="data row7 col0" >33</td>
+      <td id="T_573e8_row7_col1" class="data row7 col1" >1967-07-28 03:16:00</td>
+      <td id="T_573e8_row7_col2" class="data row7 col2" >33-1967-07-28-03-16-00</td>
+      <td id="T_573e8_row7_col3" class="data row7 col3" >0.000000</td>
+      <td id="T_573e8_row7_col4" class="data row7 col4" >4.628500</td>
+      <td id="T_573e8_row7_col5" class="data row7 col5" >0</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row8" class="row_heading level0 row8" >8</th>
-      <td id="T_05a3b_row8_col0" class="data row8 col0" >2883</td>
-      <td id="T_05a3b_row8_col1" class="data row8 col1" >1968-01-28 21:50:00</td>
-      <td id="T_05a3b_row8_col2" class="data row8 col2" >2883-1968-01-28-21-50-00</td>
-      <td id="T_05a3b_row8_col3" class="data row8 col3" >8.257742</td>
-      <td id="T_05a3b_row8_col4" class="data row8 col4" >0.000000</td>
-      <td id="T_05a3b_row8_col5" class="data row8 col5" >1</td>
+      <th id="T_573e8_level0_row8" class="row_heading level0 row8" >8</th>
+      <td id="T_573e8_row8_col0" class="data row8 col0" >2883</td>
+      <td id="T_573e8_row8_col1" class="data row8 col1" >1968-01-28 21:50:00</td>
+      <td id="T_573e8_row8_col2" class="data row8 col2" >2883-1968-01-28-21-50-00</td>
+      <td id="T_573e8_row8_col3" class="data row8 col3" >0.000000</td>
+      <td id="T_573e8_row8_col4" class="data row8 col4" >8.257742</td>
+      <td id="T_573e8_row8_col5" class="data row8 col5" >1</td>
     </tr>
     <tr>
-      <th id="T_05a3b_level0_row9" class="row_heading level0 row9" >9</th>
-      <td id="T_05a3b_row9_col0" class="data row9 col0" >1515</td>
-      <td id="T_05a3b_row9_col1" class="data row9 col1" >1968-07-18 08:28:00</td>
-      <td id="T_05a3b_row9_col2" class="data row9 col2" >1515-1968-07-18-08-28-00</td>
-      <td id="T_05a3b_row9_col3" class="data row9 col3" >2.973084</td>
-      <td id="T_05a3b_row9_col4" class="data row9 col4" >0.000000</td>
-      <td id="T_05a3b_row9_col5" class="data row9 col5" >0</td>
+      <th id="T_573e8_level0_row9" class="row_heading level0 row9" >9</th>
+      <td id="T_573e8_row9_col0" class="data row9 col0" >1515</td>
+      <td id="T_573e8_row9_col1" class="data row9 col1" >1968-07-18 08:28:00</td>
+      <td id="T_573e8_row9_col2" class="data row9 col2" >1515-1968-07-18-08-28-00</td>
+      <td id="T_573e8_row9_col3" class="data row9 col3" >0.000000</td>
+      <td id="T_573e8_row9_col4" class="data row9 col4" >2.973084</td>
+      <td id="T_573e8_row9_col5" class="data row9 col5" >0</td>
     </tr>
   </tbody>
 </table>
