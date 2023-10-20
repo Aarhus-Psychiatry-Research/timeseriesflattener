@@ -294,6 +294,7 @@ def test_add_age_error():
             date_of_birth_col_name="date_of_birth",
         )
 
+
 def test_incident_addition_with_multiple_timestamps_raises_meaningful_error():
     prediction_times_str = """entity_id,timestamp,
                             1,2021-12-31 00:00:00
@@ -328,6 +329,7 @@ def test_incident_addition_with_multiple_timestamps_raises_meaningful_error():
 
     with pytest.raises(ValueError, match="When incident = True"):
         flattened_dataset.get_df().reset_index(drop=True)
+
 
 def test_incident_outcome_removing_prediction_times():
     prediction_times_str = """entity_id,timestamp,
