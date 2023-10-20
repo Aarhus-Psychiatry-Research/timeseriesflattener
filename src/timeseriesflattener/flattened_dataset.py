@@ -630,6 +630,11 @@ class TimeseriesFlattener:
         prediction_timestamp_col_name = f"{self.timestamp_col_name}_prediction"
         outcome_timestamp_col_name = f"{self.timestamp_col_name}_outcome"
 
+        if not outcome_spec.timeseries_df[self.entity_id_col_name].is_unique:
+            raise ValueError(
+                f"""Since incident = True, we expect only one outcome timestamp per entity id. This is not the case in {outcome_spec.feature_base_name}""",
+            )
+
         df = pd.merge(
             self._df,
             outcome_spec.timeseries_df,
