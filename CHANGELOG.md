@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.7.0 (2023-10-20)
+
+### Feature
+
+* Add meaningful error if entity id is not unique in incident outcome ([`9abaf75`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9abaf75dd455094d384b627d01fcdeb600ae0df7))
+
 ## v1.6.1 (2023-10-05)
 
 ### Fix
