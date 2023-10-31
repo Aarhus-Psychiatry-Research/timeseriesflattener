@@ -131,13 +131,8 @@ PSYCOP projects which use `timeseriesflattener`. Note that some of these project
 | ----------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **[Type 2 Diabetes]**   |              | Prediction of type 2 diabetes among patients with visits to psychiatric hospital departments                                                                                                                                          |
 | **[Cancer]**            |              | Prediction of Cancer among patients with visits to psychiatric hospital departments                                                                                                                                                   |
-| **[COPD]**              |              | Prediction of Chronic obstructive pulmonary disease (COPD) among patients with visits to psychiatric hospital departments                                                                                                             |
 | **[Forced admissions]** |              | Prediction of forced admissions of patients to the psychiatric hospital departments. Encompasses two separate projects: 1. Prediciting at time of discharge for inpatient admissions. 2. Predicting day before outpatient admissions. |
-| **[Coercion]**          |              | Prediction of coercion among patients admittied to the hospital psychiatric department. Encompasses predicting mechanical restraint, sedative medication and manual restraint 48 hours before coercion occurs.                        |
+| **[Restraint]**          |              | Prediction of coercion among patients admittied to the hospital psychiatric department. Encompasses predicting mechanical restraint, sedative medication and manual restraint 48 hours before coercion occurs.                        |
 
 
-[Type 2 diabetes]: https://github.com/Aarhus-Psychiatry-Research/psycop-t2d
-[Cancer]: https://github.com/Aarhus-Psychiatry-Research/psycop-cancer
-[COPD]: https://github.com/Aarhus-Psychiatry-Research/psycop-copd
-[Forced admissions]: https://github.com/Aarhus-Psychiatry-Research/psycop-forced-admissions
-[Coercion]: https://github.com/Aarhus-Psychiatry-Research/pyscop-coercion
+[Type 2 diabetes, Cancer, Forced admissions, Restraint]: https://github.com/Aarhus-Psychiatry-Research/psycop-common
