@@ -175,9 +175,10 @@ class TimeseriesFlattener:
         # Create pred_time_uuid_columne
         self._df[self.pred_time_uuid_col_name] = self._df[
             self.entity_id_col_name
-        ].astype(str) + self._df[self.timestamp_col_name].dt.strftime(
-            "-%Y-%m-%d-%H-%M-%S",
-        )
+        ].astype(str) + pd.to_datetime(
+            self._df[self.timestamp_col_name],
+            format="-%Y-%m-%d-%H-%M-%S",
+        ).astype(str)
 
         if log_to_stdout:
             # Setup logging to stdout by default
@@ -368,6 +369,9 @@ class TimeseriesFlattener:
             {output_spec.fallback: pd.NaT},
             inplace=True,  # noqa
         )
+
+        # Drop timestamp_pred, since it can cause issues with aggregation
+        df = df.drop(timestamp_pred_col_name, axis=1)
 
         df = TimeseriesFlattener._aggregate_values_within_interval_days(
             aggregation=output_spec.aggregation_fn,  # type: ignore
@@ -596,7 +600,9 @@ class TimeseriesFlattener:
 
         df = pd.DataFrame(
             {
-                self.entity_id_col_name: static_spec.timeseries_df[self.entity_id_col_name],  # type: ignore
+                self.entity_id_col_name: static_spec.timeseries_df[
+                    self.entity_id_col_name
+                ],  # type: ignore
                 output_col_name: static_spec.timeseries_df[value_col_name],  # type: ignore
             },
         )
