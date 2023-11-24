@@ -280,7 +280,7 @@ def test_add_age_error():
                             1,2021-12-31 00:00:00
                             """
     static_predictor = """entity_id,date_of_birth
-                        1,94-12-31 00:00:00
+                        1,XYZ
                         """
 
     dataset = TimeseriesFlattener(
@@ -288,7 +288,7 @@ def test_add_age_error():
         drop_pred_times_with_insufficient_look_distance=False,
     )
 
-    with pytest.raises(ValueError):  # noqa
+    with pytest.raises(ValueError, match=".*Recommend converting.*"):
         dataset.add_age(
             date_of_birth_df=str_to_df(static_predictor),
             date_of_birth_col_name="date_of_birth",
