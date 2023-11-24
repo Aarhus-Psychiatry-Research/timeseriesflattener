@@ -12,7 +12,7 @@ on:
       - main
 
 env:
-  cache-version: 0.0.8 # Change this number if you want to manually invalidate all caches
+  cache-version: 0.0.9 # Change this number if you want to manually invalidate all caches
 
 jobs:
   test:
@@ -42,7 +42,7 @@ jobs:
   jupyter-tutorials:
     runs-on: ${{ matrix.os }}
     env:
-      python-version: ${{ matrix.python-version }}
+      python-version: "3.9"
 
     strategy:
       matrix:

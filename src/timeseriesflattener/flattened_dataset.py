@@ -175,7 +175,7 @@ class TimeseriesFlattener:
         # Create pred_time_uuid_columne
         self._df[self.pred_time_uuid_col_name] = self._df[
             self.entity_id_col_name
-        ].astype(str) + self._df[self.timestamp_col_name].dt.strftime(
+        ].astype(str) + pd.to_datetime(self._df[self.timestamp_col_name]).dt.strftime(
             "-%Y-%m-%d-%H-%M-%S",
         )
 
@@ -368,6 +368,9 @@ class TimeseriesFlattener:
             {output_spec.fallback: pd.NaT},
             inplace=True,  # noqa
         )
+
+        # Drop timestamp_pred, since it can cause issues with aggregation
+        df = df.drop(timestamp_pred_col_name, axis=1)
 
         df = TimeseriesFlattener._aggregate_values_within_interval_days(
             aggregation=output_spec.aggregation_fn,  # type: ignore
@@ -596,7 +599,9 @@ class TimeseriesFlattener:
 
         df = pd.DataFrame(
             {
-                self.entity_id_col_name: static_spec.timeseries_df[self.entity_id_col_name],  # type: ignore
+                self.entity_id_col_name: static_spec.timeseries_df[
+                    self.entity_id_col_name
+                ],  # type: ignore
                 output_col_name: static_spec.timeseries_df[value_col_name],  # type: ignore
             },
         )
@@ -868,11 +873,11 @@ class TimeseriesFlattener:
             try:
                 date_of_birth_df[date_of_birth_col_name] = pd.to_datetime(
                     date_of_birth_df[date_of_birth_col_name],
-                    format="%Y-%m-%d",
                 )
+
             except ValueError as e:
                 raise ValueError(
-                    f"Conversion of {date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
+                    f"Conversion of {date_of_birth_col_name} to datetime failed. Recommend converting to datetime before adding.",
                 ) from e
 
         output_age_col_name = f"{output_prefix}_age_in_years"
@@ -892,7 +897,8 @@ class TimeseriesFlattener:
 
         self._df[output_age_col_name] = (
             (
-                self._df[self.timestamp_col_name] - self._df[tmp_date_of_birth_col_name]
+                pd.to_datetime(self._df[self.timestamp_col_name])
+                - self._df[tmp_date_of_birth_col_name]
             ).dt.days
             / (365.25)
         ).round(2)
