@@ -400,7 +400,7 @@
         <span class="c1"># Create pred_time_uuid_columne</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pred_time_uuid_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span>
-        <span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span>
             <span class="s2">&quot;-%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -593,6 +593,9 @@
             <span class="p">{</span><span class="n">output_spec</span><span class="o">.</span><span class="n">fallback</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">NaT</span><span class="p">},</span>
             <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa</span>
         <span class="p">)</span>
+
+        <span class="c1"># Drop timestamp_pred, since it can cause issues with aggregation</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">timestamp_pred_col_name</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">_aggregate_values_within_interval_days</span><span class="p">(</span>
             <span class="n">aggregation</span><span class="o">=</span><span class="n">output_spec</span><span class="o">.</span><span class="n">aggregation_fn</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
@@ -821,7 +824,9 @@
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span>
+                <span class="p">],</span>  <span class="c1"># type: ignore</span>
                 <span class="n">output_col_name</span><span class="p">:</span> <span class="n">static_spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="n">value_col_name</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
             <span class="p">},</span>
         <span class="p">)</span>
@@ -1093,11 +1098,11 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">date_of_birth_df</span><span class="p">[</span><span class="n">date_of_birth_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
                     <span class="n">date_of_birth_df</span><span class="p">[</span><span class="n">date_of_birth_col_name</span><span class="p">],</span>
-                    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
+
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Conversion of </span><span class="si">{</span><span class="n">date_of_birth_col_name</span><span class="si">}</span><span class="s2"> to datetime failed, doesn&#39;t match format %Y-%m-%d. Recommend converting to datetime before adding.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;Conversion of </span><span class="si">{</span><span class="n">date_of_birth_col_name</span><span class="si">}</span><span class="s2"> to datetime failed. Recommend converting to datetime before adding.&quot;</span><span class="p">,</span>
                 <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
         <span class="n">output_age_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s2">_age_in_years&quot;</span>
@@ -1117,7 +1122,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">output_age_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">tmp_date_of_birth_col_name</span><span class="p">]</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">])</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="n">tmp_date_of_birth_col_name</span><span class="p">]</span>
             <span class="p">)</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">days</span>
             <span class="o">/</span> <span class="p">(</span><span class="mf">365.25</span><span class="p">)</span>
         <span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
