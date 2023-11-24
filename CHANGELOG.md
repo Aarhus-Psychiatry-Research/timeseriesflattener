@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v1.8.0 (2023-11-24)
+
+### Feature
+
+* Upgrade pandas deps ([`99568ad`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/99568ad70a838278676eb5eac815a9009eb90bff))
+
+### Fix
+
+* Ensure stable pred_time_uuid generation ([`347b9c4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/347b9c405080c979986623cc29543c96aa9f2e67))
+* Add_age ([`cd70370`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cd703701393363ca375e1b42226262ea86f36aae))
+
 ## v1.7.0 (2023-10-20)
 
 ### Feature
