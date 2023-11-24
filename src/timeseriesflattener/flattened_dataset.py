@@ -178,7 +178,9 @@ class TimeseriesFlattener:
         ].astype(str) + pd.to_datetime(
             self._df[self.timestamp_col_name],
             format="-%Y-%m-%d-%H-%M-%S",
-        ).astype(str)
+        ).astype(
+            str,
+        )
 
         if log_to_stdout:
             # Setup logging to stdout by default
