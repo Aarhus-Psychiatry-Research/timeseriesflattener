@@ -874,11 +874,11 @@ class TimeseriesFlattener:
             try:
                 date_of_birth_df[date_of_birth_col_name] = pd.to_datetime(
                     date_of_birth_df[date_of_birth_col_name],
-                    format="%Y-%m-%d",
                 )
+
             except ValueError as e:
                 raise ValueError(
-                    f"Conversion of {date_of_birth_col_name} to datetime failed, doesn't match format %Y-%m-%d. Recommend converting to datetime before adding.",
+                    f"Conversion of {date_of_birth_col_name} to datetime failed. Recommend converting to datetime before adding.",
                 ) from e
 
         output_age_col_name = f"{output_prefix}_age_in_years"
@@ -898,7 +898,8 @@ class TimeseriesFlattener:
 
         self._df[output_age_col_name] = (
             (
-                self._df[self.timestamp_col_name] - self._df[tmp_date_of_birth_col_name]
+                pd.to_datetime(self._df[self.timestamp_col_name])
+                - self._df[tmp_date_of_birth_col_name]
             ).dt.days
             / (365.25)
         ).round(2)
