@@ -812,6 +812,7 @@ A <strong>prediction time</strong> indicates at which point the model issues a p
 <p>Since our outcome is binary, we want each prediction time to be labeled with 0 for the outcome if none is present within lookahead days. To do this, we use the fallback argument, which specifies the default value to use if none are found in <code class="docutils literal notranslate"><span class="pre">values_df</span></code> within <code class="docutils literal notranslate"><span class="pre">lookahead</span></code>. In this case, we set it to 0.</p>
 <p>Your use case determines how you want to handle multiple outcome values within lookahead days. In this case, we decide that any prediction time with at least one outcome (a timestamp in the loaded outcome data with a corresponding value of 1) within the specified lookahead days is “positive”. I.e., if there is both a 0 and a 1 within lookahead days, the prediction time should be labeled with a 1. We set <code class="docutils literal notranslate"><span class="pre">aggregation_fn</span> <span class="pre">=</span> <span class="pre">maximum</span></code> to accomplish this.</p>
 <p>We also specify that the outcome is not incident. This means that patient ID (dw_ek_borger) can experience the outcome more than once. If the outcome was marked as incident, all prediction times after the patient experiences the outcome are dropped. This is useful for cases where an event is permanent - for example, whether a patient has type 1 diabetes or not.</p>
+<p>Here, we specifiy that we want to look 365 days forward from the prediction time to search for outcomes. If we wanted to require a certain period of time from the prediction time before we look for outcome values, we can specify <code class="docutils literal notranslate"><span class="pre">lookahead_days</span></code> as an interval of (min_days, max_days) as a tuple instead.</p>
 <p>Lastly, we specify a name of the outcome which’ll be used when generating its column.</p>
 </section>
 <section id="temporal-predictor-specification">
@@ -836,6 +837,21 @@ A <strong>prediction time</strong> indicates at which point the model issues a p
 </div>
 <p><img alt="" src="../_images/term_c.png" /></p>
 <p>Values within the <em>lookbehind</em> window are aggregated using <code class="docutils literal notranslate"><span class="pre">aggregation_fn</span></code>, for example the mean as shown in this example, or max/min etc.</p>
+<p>Temporal predictors can also be specified to look for values within a certain time range from the prediction time, similar to outcome specifications. For instance, you might want to create multiple predictors, where one looks for values within (0, 30) days, and another within (31, 182) days.</p>
+<p>This can easily be specified by passing a tuple[min_days, max_days] to the lookbehind_days parameter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temporal_interval_predictor_spec</span> <span class="o">=</span> <span class="n">PredictorSpec</span><span class="p">(</span>
+    <span class="n">timeseries_df</span><span class="o">=</span><span class="n">df_synth_predictors</span><span class="p">,</span>
+    <span class="n">lookbehind_days</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span>
+    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="n">aggregation_fn</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+    <span class="n">feature_base_name</span><span class="o">=</span><span class="s2">&quot;predictor_interval_name&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 <section id="static-predictor-specification">
 <h3>Static predictor specification<a class="headerlink" href="#static-predictor-specification" title="Permalink to this heading">#</a></h3>
@@ -964,7 +980,7 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 <p>For most applications, this should be true - you do not want features to say they’re looking a year into the future, if you only have a month of data. This would compromise generalisability. However, there are some edge cases where you might want this to be false - see the advanced tutorial for a brief discussion on this.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ts_flattener</span><span class="o">.</span><span class="n">add_spec</span><span class="p">([</span><span class="n">sex_predictor_spec</span><span class="p">,</span> <span class="n">temporal_predictor_spec</span><span class="p">,</span> <span class="n">outcome_spec</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ts_flattener</span><span class="o">.</span><span class="n">add_spec</span><span class="p">([</span><span class="n">sex_predictor_spec</span><span class="p">,</span> <span class="n">temporal_predictor_spec</span><span class="p">,</span> <span class="n">temporal_interval_predictor_spec</span><span class="p">,</span> <span class="n">outcome_spec</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -980,31 +996,31 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-24 09:00:56 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-01-18 14:06:00 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-24 09:00:56 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 5999 (59.99%) rows
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-01-18 14:06:00 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 5999 (59.99%) rows
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-24 09:00:56 [INFO] Processing 2 temporal features in parallel with 1 workers. Chunksize is 2. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-01-18 14:06:00 [INFO] Processing 3 temporal features in parallel with 1 workers. Chunksize is 3. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/2 [00:00&lt;?, ?it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/3 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 2/2 [00:00&lt;00:00, 36.12it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 3/3 [00:00&lt;00:00, 37.73it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-24 09:00:56 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-01-18 14:06:00 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-24 09:00:56 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-01-18 14:06:00 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-24 09:00:56 [INFO] Concatenation took 0.003 seconds
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-01-18 14:06:00 [INFO] Concatenation took 0.004 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-24 09:00:56 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-01-18 14:06:00 [INFO] Merging with original df
 </pre></div>
 </div>
 <div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮
@@ -1012,24 +1028,27 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 │ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │
 │ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> dataframe         </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Values </span>┃ ┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Column Type </span>┃<span style="color: #008080; text-decoration-color: #008080; font-weight: bold"> Count </span>┃                                                          │
 │ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │
-│ │ Number of rows    │ 4001   │ │ int64       │ 2     │                                                          │
-│ │ Number of columns │ 6      │ │ float64     │ 2     │                                                          │
+│ │ Number of rows    │ 4001   │ │ float64     │ 3     │                                                          │
+│ │ Number of columns │ 7      │ │ int64       │ 2     │                                                          │
 │ └───────────────────┴────────┘ │ datetime64  │ 1     │                                                          │
 │                                │ string      │ 1     │                                                          │
 │                                └─────────────┴───────┘                                                          │
 │ <span style="font-style: italic">                                                    number                                                    </span>  │
-│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┓  │
-│ ┃<span style="font-weight: bold"> column_name              </span>┃<span style="font-weight: bold"> NA  </span>┃<span style="font-weight: bold"> NA %  </span>┃<span style="font-weight: bold"> mean   </span>┃<span style="font-weight: bold"> sd    </span>┃<span style="font-weight: bold"> p0     </span>┃<span style="font-weight: bold"> p25   </span>┃<span style="font-weight: bold"> p50   </span>┃<span style="font-weight: bold"> p75   </span>┃<span style="font-weight: bold"> p100   </span>┃<span style="font-weight: bold"> hist   </span>┃  │
-│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━┩  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id               </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">  5000</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2900</span> │ <span style="color: #008080; text-decoration-color: #008080">     3</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2600</span> │ <span style="color: #008080; text-decoration-color: #008080"> 5000</span> │ <span style="color: #008080; text-decoration-color: #008080"> 7500</span> │ <span style="color: #008080; text-decoration-color: #008080"> 10000</span> │ <span style="color: #008000; text-decoration-color: #008000">▇▇▇▇▇▇</span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">outc_outcome_name_within</span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.064</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.25</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     1</span> │ <span style="color: #008000; text-decoration-color: #008000">▇    ▁</span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">_365_days_maximum_fallba</span> │     │       │        │       │        │       │       │       │        │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">ck_0_dichotomous        </span> │     │       │        │       │        │       │       │       │        │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_predictor_name_with</span> │ <span style="color: #008080; text-decoration-color: #008080"> 72</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.6</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.097</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">    6</span> │ <span style="color: #008080; text-decoration-color: #008080">   9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃▇▇▃▁</span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">in_730_days_mean_fallbac</span> │     │       │        │       │        │       │       │       │        │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">k_nan                   </span> │     │       │        │       │        │       │       │       │        │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_female             </span> │ <span style="color: #008080; text-decoration-color: #008080">  0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.49</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.5</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">    1</span> │ <span style="color: #008080; text-decoration-color: #008080">     1</span> │ <span style="color: #008000; text-decoration-color: #008000">▇    ▇</span> │  │
-│ └──────────────────────────┴─────┴───────┴────────┴───────┴────────┴───────┴───────┴───────┴────────┴────────┘  │
+│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━┓  │
+│ ┃<span style="font-weight: bold"> column_name             </span>┃<span style="font-weight: bold"> NA    </span>┃<span style="font-weight: bold"> NA %   </span>┃<span style="font-weight: bold"> mean   </span>┃<span style="font-weight: bold"> sd    </span>┃<span style="font-weight: bold"> p0     </span>┃<span style="font-weight: bold"> p25   </span>┃<span style="font-weight: bold"> p50   </span>┃<span style="font-weight: bold"> p75  </span>┃<span style="font-weight: bold"> p100  </span>┃<span style="font-weight: bold"> hist   </span>┃  │
+│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━┩  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id              </span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">  5000</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2900</span> │ <span style="color: #008080; text-decoration-color: #008080">     3</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2600</span> │ <span style="color: #008080; text-decoration-color: #008080"> 5000</span> │ <span style="color: #008080; text-decoration-color: #008080">7500</span> │ <span style="color: #008080; text-decoration-color: #008080">10000</span> │ <span style="color: #008000; text-decoration-color: #008000">▇▇▇▇▇▇</span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_predictor_interval</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2877</span> │ <span style="color: #008080; text-decoration-color: #008080"> 71.91</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.02</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  5.1</span> │ <span style="color: #008080; text-decoration-color: #008080"> 7.4</span> │ <span style="color: #008080; text-decoration-color: #008080">   10</span> │ <span style="color: #008000; text-decoration-color: #008000">▇▇▇▇▇▇</span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">_name_within_30_to_90_d</span> │       │        │        │       │        │       │       │      │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">ays_mean_fallback_nan  </span> │       │        │        │       │        │       │       │      │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">outc_outcome_name_withi</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.064</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.25</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">    1</span> │ <span style="color: #008000; text-decoration-color: #008000">▇    ▁</span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">n_365_days_maximum_fall</span> │       │        │        │       │        │       │       │      │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">back_0_dichotomous     </span> │       │        │        │       │        │       │       │      │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_predictor_name_wit</span> │ <span style="color: #008080; text-decoration-color: #008080">   72</span> │ <span style="color: #008080; text-decoration-color: #008080">   1.8</span> │ <span style="color: #008080; text-decoration-color: #008080">     5</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.6</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.097</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.9</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">   6</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▃▇▇▃▁</span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">hin_730_days_mean_fallb</span> │       │        │        │       │        │       │       │      │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">ack_nan                </span> │       │        │        │       │        │       │       │      │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_female            </span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.49</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.5</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">    0</span> │ <span style="color: #008080; text-decoration-color: #008080">   1</span> │ <span style="color: #008080; text-decoration-color: #008080">    1</span> │ <span style="color: #008000; text-decoration-color: #008000">▇    ▇</span> │  │
+│ └─────────────────────────┴───────┴────────┴────────┴───────┴────────┴───────┴───────┴──────┴───────┴────────┘  │
 │ <span style="font-style: italic">                                                   datetime                                                   </span>  │
 │ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
 │ ┃<span style="font-weight: bold"> column_name      </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %    </span>┃<span style="font-weight: bold"> first                      </span>┃<span style="font-weight: bold"> last                       </span>┃<span style="font-weight: bold"> frequency    </span>┃  │
@@ -1047,6 +1066,7 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;entity_id&#39;,
  &#39;timestamp&#39;,
  &#39;prediction_time_uuid&#39;,
+ &#39;pred_predictor_interval_name_within_30_to_90_days_mean_fallback_nan&#39;,
  &#39;outc_outcome_name_within_365_days_maximum_fallback_0_dichotomous&#39;,
  &#39;pred_predictor_name_within_730_days_mean_fallback_nan&#39;,
  &#39;pred_female&#39;]
@@ -1058,12 +1078,14 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># For displayability, shorten col names</span>
 <span class="n">shortened_pred</span> <span class="o">=</span> <span class="s2">&quot;pred_X&quot;</span>
+<span class="n">shortened_pred_interval</span> <span class="o">=</span> <span class="s2">&quot;pred_X_30_to_90&quot;</span>
 <span class="n">shortened_outcome</span> <span class="o">=</span> <span class="s2">&quot;outc_Y&quot;</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="s2">&quot;pred_predictor_name_within_730_days_mean_fallback_nan&quot;</span><span class="p">:</span> <span class="n">shortened_pred</span><span class="p">,</span>
-        <span class="s2">&quot;outc_outcome_name_within_365_days_maximum_fallback_0_dichotomous&quot;</span><span class="p">:</span> <span class="n">shortened_outcome</span><span class="p">,</span>
+        <span class="s2">&quot;pred_predictor_name_within_0_to_730_days_mean_fallback_nan&quot;</span><span class="p">:</span> <span class="n">shortened_pred</span><span class="p">,</span>
+        <span class="s2">&quot;pred_predictor_interval_name_within_30_to_90_days_mean_fallback_nan&quot;</span><span class="p">:</span> <span class="n">shortened_pred_interval</span><span class="p">,</span>
+        <span class="s2">&quot;outc_outcome_name_within_0_to_365_days_maximum_fallback_0_dichotomous&quot;</span><span class="p">:</span> <span class="n">shortened_outcome</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1075,15 +1097,15 @@ As <code class="docutils literal notranslate"><span class="pre">StaticSpec</span
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">line</span> <span class="mi">13</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">shortened_outcome</span> <span class="o">=</span> <span class="s2">&quot;outc_Y&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="p">{</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span>         <span class="s2">&quot;pred_predictor_name_within_730_days_mean_fallback_nan&quot;</span><span class="p">:</span> <span class="n">shortened_pred</span><span class="p">,</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">line</span> <span class="mi">15</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">shortened_outcome</span> <span class="o">=</span> <span class="s2">&quot;outc_Y&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>     <span class="p">{</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span>         <span class="s2">&quot;pred_predictor_name_within_0_to_730_days_mean_fallback_nan&quot;</span><span class="p">:</span> <span class="n">shortened_pred</span><span class="p">,</span>
    <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">13</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">set_table_attributes</span><span class="p">(</span><span class="s1">&#39;style=&quot;font-size: 14px&quot;&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>     <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">15</span> <span class="n">df</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">set_table_attributes</span><span class="p">(</span><span class="s1">&#39;style=&quot;font-size: 14px&quot;&#39;</span><span class="p">)</span>
 
 <span class="nn">File ~/.local/lib/python3.10/site-packages/pandas/core/frame.py:1338,</span> in <span class="ni">DataFrame.style</span><span class="nt">(self)</span>
 <span class="g g-Whitespace">   </span><span class="mi">1318</span> <span class="nd">@property</span>

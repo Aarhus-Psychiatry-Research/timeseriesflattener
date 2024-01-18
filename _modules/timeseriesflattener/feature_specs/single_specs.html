@@ -224,16 +224,28 @@
         <article role="main">
           <h1>Source code for timeseriesflattener.feature_specs.single_specs</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">AggregationFunType</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.utils.pydantic_basemodel</span> <span class="kn">import</span> <span class="n">BaseModel</span>
 
 
+<div class="viewcode-block" id="LookPeriod"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.LookPeriod">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">LookPeriod</span><span class="p">:</span>
+    <span class="n">min_days</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">max_days</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_days</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_days</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid LookPeriod. The min_days (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_days</span><span class="si">}</span><span class="s2">) must be smaller than the max_days </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_days</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="CoercedFloats"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.CoercedFloats">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CoercedFloats</span><span class="p">:</span>
-    <span class="n">lookwindow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="n">lookperiod</span><span class="p">:</span> <span class="n">LookPeriod</span>
     <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></div>
 
 
@@ -245,17 +257,25 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="coerce_floats"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.coerce_floats">[docs]</a><span class="k">def</span> <span class="nf">coerce_floats</span><span class="p">(</span><span class="n">lookwindow</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoercedFloats</span><span class="p">:</span>
-    <span class="n">lookwindow</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">lookwindow</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">can_be_coerced_losslessly_to_int</span><span class="p">(</span><span class="n">lookwindow</span><span class="p">)</span>
-        <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">lookwindow</span><span class="p">)</span>
+<div class="viewcode-block" id="coerce_floats"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.coerce_floats">[docs]</a><span class="k">def</span> <span class="nf">coerce_floats</span><span class="p">(</span><span class="n">lookperiod</span><span class="p">:</span> <span class="n">LookPeriod</span><span class="p">,</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoercedFloats</span><span class="p">:</span>
+    <span class="n">min_days</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">lookperiod</span><span class="o">.</span><span class="n">min_days</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">can_be_coerced_losslessly_to_int</span><span class="p">(</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">min_days</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">min_days</span><span class="p">)</span>
     <span class="p">)</span>
+    <span class="n">max_days</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">lookperiod</span><span class="o">.</span><span class="n">max_days</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">can_be_coerced_losslessly_to_int</span><span class="p">(</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">max_days</span><span class="p">)</span>
+        <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">max_days</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">coerced_lookperiod</span> <span class="o">=</span> <span class="n">LookPeriod</span><span class="p">(</span><span class="n">min_days</span><span class="o">=</span><span class="n">min_days</span><span class="p">,</span> <span class="n">max_days</span><span class="o">=</span><span class="n">max_days</span><span class="p">)</span>
+
     <span class="n">fallback</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">fallback</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">can_be_coerced_losslessly_to_int</span><span class="p">(</span><span class="n">fallback</span><span class="p">)</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">fallback</span><span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">CoercedFloats</span><span class="p">(</span><span class="n">lookwindow</span><span class="o">=</span><span class="n">lookwindow</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="n">fallback</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">CoercedFloats</span><span class="p">(</span><span class="n">lookperiod</span><span class="o">=</span><span class="n">coerced_lookperiod</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="n">fallback</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StaticSpec"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.StaticSpec">[docs]</a><span class="k">class</span> <span class="nc">StaticSpec</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -284,13 +304,18 @@
 <div class="viewcode-block" id="get_temporal_col_name"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.get_temporal_col_name">[docs]</a><span class="k">def</span> <span class="nf">get_temporal_col_name</span><span class="p">(</span>
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">feature_base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">lookwindow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">lookperiod</span><span class="p">:</span> <span class="n">LookPeriod</span><span class="p">,</span>
     <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span><span class="p">,</span>
     <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the column name for the temporal feature.&quot;&quot;&quot;</span>
-    <span class="n">coerced</span> <span class="o">=</span> <span class="n">coerce_floats</span><span class="p">(</span><span class="n">lookwindow</span><span class="o">=</span><span class="n">lookwindow</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="n">fallback</span><span class="p">)</span>
-    <span class="n">col_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">feature_base_name</span><span class="si">}</span><span class="s2">_within_</span><span class="si">{</span><span class="n">coerced</span><span class="o">.</span><span class="n">lookwindow</span><span class="si">!s}</span><span class="s2">_days_</span><span class="si">{</span><span class="n">aggregation_fn</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_fallback_</span><span class="si">{</span><span class="n">coerced</span><span class="o">.</span><span class="n">fallback</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">coerced</span> <span class="o">=</span> <span class="n">coerce_floats</span><span class="p">(</span><span class="n">lookperiod</span><span class="o">=</span><span class="n">lookperiod</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="n">fallback</span><span class="p">)</span>
+    <span class="n">lookperiod_str</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coerced</span><span class="o">.</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">max_days</span><span class="si">!s}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">coerced</span><span class="o">.</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">min_days</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coerced</span><span class="o">.</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">min_days</span><span class="si">!s}</span><span class="s2">_to_</span><span class="si">{</span><span class="n">coerced</span><span class="o">.</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">max_days</span><span class="si">!s}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">col_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">feature_base_name</span><span class="si">}</span><span class="s2">_within_</span><span class="si">{</span><span class="n">lookperiod_str</span><span class="si">}</span><span class="s2">_days_</span><span class="si">{</span><span class="n">aggregation_fn</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_fallback_</span><span class="si">{</span><span class="n">coerced</span><span class="o">.</span><span class="n">fallback</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">return</span> <span class="n">col_str</span></div>
 
 
@@ -305,7 +330,8 @@
 <span class="sd">            NOTE: Column names can be overridden when initialising TimeSeriesFlattener.</span>
 <span class="sd">        feature_base_name: The name of the feature. Used for column name generation, e.g.</span>
 <span class="sd">            &lt;prefix&gt;_&lt;feature_baase_name&gt;_&lt;metadata&gt;.</span>
-<span class="sd">        lookahead_days: How far ahead from the prediction time to look for outcome values.</span>
+<span class="sd">        lookahead_days: In which interval from the prediction time to look for outcome values.</span>
+<span class="sd">            Can be tuple of two floats specifying (min_days, max_days) or float | int which will resolve to (0, value).</span>
 <span class="sd">        aggregation_fn: How to aggregate multiple values within lookahead days. Should take a grouped dataframe as input and return a single value.</span>
 <span class="sd">        fallback: Value to return if no values is found within window.</span>
 <span class="sd">        incident: Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.</span>
@@ -317,18 +343,27 @@
 
     <span class="n">timeseries_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
     <span class="n">feature_base_name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">lookahead_days</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">lookahead_days</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span>
     <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span>
     <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="n">incident</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;outc&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lookahead_period</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LookPeriod</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">LookPeriod</span><span class="p">(</span><span class="n">min_days</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LookPeriod</span><span class="p">(</span>
+            <span class="n">min_days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">max_days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="OutcomeSpec.get_output_col_name"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.get_output_col_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_output_col_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the column name for the output column.&quot;&quot;&quot;</span>
         <span class="n">col_str</span> <span class="o">=</span> <span class="n">get_temporal_col_name</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
             <span class="n">feature_base_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_base_name</span><span class="p">,</span>
-            <span class="n">lookwindow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">,</span>
+            <span class="n">lookperiod</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookahead_period</span><span class="p">,</span>
             <span class="n">aggregation_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregation_fn</span><span class="p">,</span>
             <span class="n">fallback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span><span class="p">,</span>
         <span class="p">)</span>
@@ -354,12 +389,10 @@
 <span class="sd">            NOTE: Column names can be overridden when initialising TimeSeriesFlattener.</span>
 <span class="sd">        feature_base_name: The name of the feature. Used for column name generation, e.g.</span>
 <span class="sd">            &lt;prefix&gt;_&lt;feature_baase_name&gt;_&lt;metadata&gt;.</span>
-<span class="sd">        lookbehind_days: How far behind from the prediction time to look for predictor values.</span>
-<span class="sd">        aggregation_fn: How to aggregate multiple values within lookahead days. Should take a grouped dataframe as input and return a single value.</span>
+<span class="sd">        lookbehind_days: In which interval from the prediction time to look for predictor values.</span>
+<span class="sd">            Can be tuple of two floats specifying (min_days, max_days) or float | int which will resolve to (0, value).</span>
+<span class="sd">        aggregation_fn: How to aggregate multiple values within lookbehind days. Should take a grouped dataframe as input and return a single value.</span>
 <span class="sd">        fallback: Value to return if no values is found within window.</span>
-<span class="sd">        incident: Whether the outcome is incident or not. E.g. type 2 diabetes is incident because you can only experience it once.</span>
-<span class="sd">            Incident outcomes can be handled in a vectorised way during resolution, which is faster than non-incident outcomes.</span>
-<span class="sd">            Requires that each entity only occurs once in the timeseries_df.</span>
 <span class="sd">        prefix: The prefix used for column name generation, e.g.</span>
 <span class="sd">            &lt;prefix&gt;_&lt;feature_name&gt;_&lt;metadata&gt;. Defaults to &quot;pred&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -368,15 +401,24 @@
     <span class="n">feature_base_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">AggregationFunType</span>
     <span class="n">fallback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
-    <span class="n">lookbehind_days</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">lookbehind_days</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span>
     <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lookbehind_period</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LookPeriod</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">LookPeriod</span><span class="p">(</span><span class="n">min_days</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LookPeriod</span><span class="p">(</span>
+            <span class="n">min_days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">max_days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="PredictorSpec.get_output_col_name"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.single_specs.PredictorSpec.get_output_col_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_output_col_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the column name for the output column.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">get_temporal_col_name</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
             <span class="n">feature_base_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_base_name</span><span class="p">,</span>
-            <span class="n">lookwindow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">,</span>
+            <span class="n">lookperiod</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lookbehind_period</span><span class="p">,</span>
             <span class="n">aggregation_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregation_fn</span><span class="p">,</span>
             <span class="n">fallback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span><span class="p">,</span>
         <span class="p">)</span></div></div>

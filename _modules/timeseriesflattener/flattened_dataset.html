@@ -245,6 +245,7 @@
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_cache.abstract_feature_cache</span> <span class="kn">import</span> <span class="n">FeatureCache</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.single_specs</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnySpec</span><span class="p">,</span>
+    <span class="n">LookPeriod</span><span class="p">,</span>
     <span class="n">OutcomeSpec</span><span class="p">,</span>
     <span class="n">PredictorSpec</span><span class="p">,</span>
     <span class="n">StaticSpec</span><span class="p">,</span>
@@ -482,7 +483,7 @@
     <span class="k">def</span> <span class="nf">_drop_records_outside_interval_days</span><span class="p">(</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">interval_days</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">lookperiod</span><span class="p">:</span> <span class="n">LookPeriod</span><span class="p">,</span>
         <span class="n">timestamp_pred_colname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">timestamp_value_colname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
@@ -492,7 +493,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            direction (str): Whether to look ahead or behind.</span>
-<span class="sd">            interval_days (float): How far to look</span>
+<span class="sd">            lookperiod (LookPeriod): Interval to look within.</span>
 <span class="sd">            df (DataFrame): Source dataframe</span>
 <span class="sd">            timestamp_pred_colname (str): Name of timestamp column for predictions in df.</span>
 <span class="sd">            timestamp_value_colname (str): Name of timestamp column for values in df.</span>
@@ -512,12 +513,12 @@
 
         <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;ahead&quot;</span><span class="p">:</span>
             <span class="n">df</span><span class="p">[</span><span class="s2">&quot;is_in_interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">interval_days</span>
-            <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">lookperiod</span><span class="o">.</span><span class="n">max_days</span>
+            <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">lookperiod</span><span class="o">.</span><span class="n">min_days</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;behind&quot;</span><span class="p">:</span>
             <span class="n">df</span><span class="p">[</span><span class="s2">&quot;is_in_interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">interval_days</span>
-            <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">max_days</span>
+            <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_from_pred_to_val_in_days&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">lookperiod</span><span class="o">.</span><span class="n">min_days</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;direction can only be &#39;ahead&#39; or &#39;behind&#39;&quot;</span><span class="p">)</span>
 
@@ -574,17 +575,17 @@
         <span class="c1"># Drop prediction times without event times within interval days</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
             <span class="n">direction</span> <span class="o">=</span> <span class="s2">&quot;ahead&quot;</span>
-            <span class="n">interval_days</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookahead_days</span>
+            <span class="n">lookperiod</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookahead_period</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_spec</span><span class="p">,</span> <span class="n">PredictorSpec</span><span class="p">):</span>
             <span class="n">direction</span> <span class="o">=</span> <span class="s2">&quot;behind&quot;</span>
-            <span class="n">interval_days</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookbehind_days</span>
+            <span class="n">lookperiod</span> <span class="o">=</span> <span class="n">output_spec</span><span class="o">.</span><span class="n">lookbehind_period</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown output_spec type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_spec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">TimeseriesFlattener</span><span class="o">.</span><span class="n">_drop_records_outside_interval_days</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span>
             <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span>
-            <span class="n">interval_days</span><span class="o">=</span><span class="n">interval_days</span><span class="p">,</span>
+            <span class="n">lookperiod</span><span class="o">=</span><span class="n">lookperiod</span><span class="p">,</span>
             <span class="n">timestamp_pred_colname</span><span class="o">=</span><span class="n">timestamp_pred_col_name</span><span class="p">,</span>
             <span class="n">timestamp_value_colname</span><span class="o">=</span><span class="n">timestamp_val_col_name</span><span class="p">,</span>
         <span class="p">)</span>
@@ -883,8 +884,12 @@
         <span class="k">if</span> <span class="n">outcome_spec</span><span class="o">.</span><span class="n">is_dichotomous</span><span class="p">():</span>
             <span class="n">outcome_is_within_lookahead</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">df</span><span class="p">[</span><span class="n">prediction_timestamp_col_name</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
-                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">lookahead_period</span><span class="o">.</span><span class="n">max_days</span><span class="p">)</span>
                 <span class="o">&gt;</span> <span class="n">df</span><span class="p">[</span><span class="n">outcome_timestamp_col_name</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">prediction_timestamp_col_name</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+                <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">lookahead_period</span><span class="o">.</span><span class="n">min_days</span><span class="p">)</span>
+                <span class="o">&lt;=</span> <span class="n">df</span><span class="p">[</span><span class="n">outcome_timestamp_col_name</span><span class="p">]</span>
             <span class="p">)</span>
 
             <span class="n">df</span><span class="p">[</span><span class="n">outcome_spec</span><span class="o">.</span><span class="n">get_output_col_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">outcome_is_within_lookahead</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
@@ -915,11 +920,11 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">PredictorSpec</span><span class="p">):</span>
             <span class="n">min_val_date</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-            <span class="k">return</span> <span class="n">min_val_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">lookbehind_days</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">min_val_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">lookbehind_period</span><span class="o">.</span><span class="n">max_days</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">OutcomeSpec</span><span class="p">):</span>
             <span class="n">max_val_date</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">timeseries_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-            <span class="k">return</span> <span class="n">max_val_date</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">lookahead_days</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">max_val_date</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">lookahead_period</span><span class="o">.</span><span class="n">max_days</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spec type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s2"> not recognised.&quot;</span><span class="p">)</span>
 

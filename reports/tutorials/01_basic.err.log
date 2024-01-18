@@ -3,7 +3,7 @@ Traceback (most recent call last):
     executenb(
   File "/home/runner/.local/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
-  File "/home/runner/.local/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 173, in wrapped
+  File "/home/runner/.local/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
     return loop.run_until_complete(inner)
   File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
     return future.result()
@@ -17,12 +17,14 @@ nbclient.exceptions.CellExecutionError: An error occurred while executing the fo
 ------------------
 # For displayability, shorten col names
 shortened_pred = "pred_X"
+shortened_pred_interval = "pred_X_30_to_90"
 shortened_outcome = "outc_Y"
 
 df = df.rename(
     {
-        "pred_predictor_name_within_730_days_mean_fallback_nan": shortened_pred,
-        "outc_outcome_name_within_365_days_maximum_fallback_0_dichotomous": shortened_outcome,
+        "pred_predictor_name_within_0_to_730_days_mean_fallback_nan": shortened_pred,
+        "pred_predictor_interval_name_within_30_to_90_days_mean_fallback_nan": shortened_pred_interval,
+        "outc_outcome_name_within_0_to_365_days_maximum_fallback_0_dichotomous": shortened_outcome,
     },
     axis=1,
 )
@@ -33,15 +35,15 @@ df[0:10].style.set_table_attributes('style="font-size: 14px"')
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mImportError[0m                               Traceback (most recent call last)
-Cell [0;32mIn[11], line 13[0m
-[1;32m      3[0m shortened_outcome [38;5;241m=[39m [38;5;124m"[39m[38;5;124moutc_Y[39m[38;5;124m"[39m
-[1;32m      5[0m df [38;5;241m=[39m df[38;5;241m.[39mrename(
-[1;32m      6[0m     {
-[1;32m      7[0m         [38;5;124m"[39m[38;5;124mpred_predictor_name_within_730_days_mean_fallback_nan[39m[38;5;124m"[39m: shortened_pred,
+Cell [0;32mIn[12], line 15[0m
+[1;32m      4[0m shortened_outcome [38;5;241m=[39m [38;5;124m"[39m[38;5;124moutc_Y[39m[38;5;124m"[39m
+[1;32m      6[0m df [38;5;241m=[39m df[38;5;241m.[39mrename(
+[1;32m      7[0m     {
+[1;32m      8[0m         [38;5;124m"[39m[38;5;124mpred_predictor_name_within_0_to_730_days_mean_fallback_nan[39m[38;5;124m"[39m: shortened_pred,
 [0;32m   (...)[0m
-[1;32m     10[0m     axis[38;5;241m=[39m[38;5;241m1[39m,
-[1;32m     11[0m )
-[0;32m---> 13[0m [43mdf[49m[43m[[49m[38;5;241;43m0[39;49m[43m:[49m[38;5;241;43m10[39;49m[43m][49m[38;5;241;43m.[39;49m[43mstyle[49m[38;5;241m.[39mset_table_attributes([38;5;124m'[39m[38;5;124mstyle=[39m[38;5;124m"[39m[38;5;124mfont-size: 14px[39m[38;5;124m"[39m[38;5;124m'[39m)
+[1;32m     12[0m     axis[38;5;241m=[39m[38;5;241m1[39m,
+[1;32m     13[0m )
+[0;32m---> 15[0m [43mdf[49m[43m[[49m[38;5;241;43m0[39;49m[43m:[49m[38;5;241;43m10[39;49m[43m][49m[38;5;241;43m.[39;49m[43mstyle[49m[38;5;241m.[39mset_table_attributes([38;5;124m'[39m[38;5;124mstyle=[39m[38;5;124m"[39m[38;5;124mfont-size: 14px[39m[38;5;124m"[39m[38;5;124m'[39m)
 
 File [0;32m~/.local/lib/python3.10/site-packages/pandas/core/frame.py:1338[0m, in [0;36mDataFrame.style[0;34m(self)[0m
 [1;32m   1318[0m [38;5;129m@property[39m
