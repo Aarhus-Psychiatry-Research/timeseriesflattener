@@ -11,6 +11,12 @@ class LookPeriod:
     min_days: float
     max_days: float
 
+    def __post_init__(self):
+        if self.min_days > self.max_days:
+            raise ValueError(
+                f"Invalid LookPeriod. The min_days ({self.min_days}) must be smaller than the max_days {self.max_days}.",
+            )
+
 
 @dataclass(frozen=True)
 class CoercedFloats:
@@ -45,13 +51,6 @@ def coerce_floats(lookperiod: LookPeriod, fallback: float) -> CoercedFloats:
     )
 
     return CoercedFloats(lookperiod=coerced_lookperiod, fallback=fallback)
-
-
-def check_lookperiod_tuple_is_valid(lookwindow: Tuple[float, float]) -> None:
-    if len(lookwindow) != 2 or lookwindow[0] <= lookwindow[1]:
-        raise ValueError(
-            "The lookahead/lookbehind tuple must be of length 2 and the first element must be smaller than the second element.",
-        )
 
 
 class StaticSpec(BaseModel):
@@ -125,11 +124,6 @@ class OutcomeSpec(BaseModel):
     incident: bool
     prefix: str = "outc"
 
-    def __post_init__(self):
-        if isinstance(self.lookahead_days, (float, int)):
-            self.lookahead_days = (0, self.lookahead_days)
-        check_lookperiod_tuple_is_valid(self.lookahead_days)
-
     @property
     def lookahead_period(self) -> LookPeriod:
         if isinstance(self.lookahead_days, (float, int)):
@@ -184,11 +178,6 @@ class PredictorSpec(BaseModel):
     fallback: Union[float, int]
     lookbehind_days: Union[float, Tuple[float, float]]
     prefix: str = "pred"
-
-    def __post_init__(self):
-        if isinstance(self.lookbehind_days, (float, int)):
-            self.lookbehind_days = (0, self.lookbehind_days)
-        check_lookperiod_tuple_is_valid(self.lookbehind_days)
 
     @property
     def lookbehind_period(self) -> LookPeriod:
