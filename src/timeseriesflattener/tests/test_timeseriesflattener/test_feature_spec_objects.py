@@ -79,9 +79,9 @@ def test_create_combinations_outcome_specs(empty_named_df: NamedDataframe):
     """Test that create_combinations() creates the correct outcome_specs."""
     outc_spec_batch = OutcomeGroupSpec(
         named_dataframes=[empty_named_df],
-        lookahead_days=[1, 2],
+        lookahead_days=[1, 2, (1, 2)],
         aggregation_fns=[maximum],
         fallback=[0],
         incident=[True],
     ).create_combinations()
-    assert len(outc_spec_batch) == 2
+    assert len(outc_spec_batch) == 3

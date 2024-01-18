@@ -99,7 +99,7 @@ def test_predictor_with_interval_lookperiod():
                             1,2022-01-01 00:00:00
                             """
     predictor_df_str = """entity_id,timestamp,value,
-                        1,2021-12-30 00:00:01, 2 
+                        1,2021-12-30 00:00:01, 2
                         1,2021-12-15 00:00:00, 1
                         """
     assert_flattened_data_as_expected(
@@ -193,7 +193,7 @@ def test_outcome_with_interval_lookperiod_outside():
                             1,2022-01-01 00:00:00
                             """
     outcome_df_str = """entity_id,timestamp,value,
-                        1,2022-01-02 00:00:00, 1  
+                        1,2022-01-02 00:00:00, 1
                         """
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
@@ -208,12 +208,13 @@ def test_outcome_with_interval_lookperiod_outside():
         expected_values=[0],
     )
 
+
 def test_outcome_interval_lookperiod_inside():
     prediction_times_df_str = """entity_id,timestamp,
                             1,2022-01-01 00:00:00
                             """
     outcome_df_str = """entity_id,timestamp,value,
-                        1,2022-01-03 00:00:00, 1  
+                        1,2022-01-03 00:00:00, 1
                         """
     assert_flattened_data_as_expected(
         prediction_times_df=prediction_times_df_str,
@@ -227,7 +228,6 @@ def test_outcome_interval_lookperiod_inside():
         ),
         expected_values=[1],
     )
-
 
 
 def test_citizen_without_outcome():

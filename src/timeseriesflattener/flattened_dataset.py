@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Sequence, Tuple, Union
+from typing import Callable, List, Optional, Sequence, Union
 
 import coloredlogs
 import numpy as np
@@ -658,12 +658,13 @@ class TimeseriesFlattener:
 
         if outcome_spec.is_dichotomous():
             outcome_is_within_lookahead = (
-                (df[prediction_timestamp_col_name]  # type: ignore
+                df[prediction_timestamp_col_name]  # type: ignore
                 + timedelta(days=outcome_spec.lookahead_period.max_days)
-                > df[outcome_timestamp_col_name]) &
-                (df[prediction_timestamp_col_name]  # type: ignore
+                > df[outcome_timestamp_col_name]
+            ) & (
+                df[prediction_timestamp_col_name]  # type: ignore
                 + timedelta(days=outcome_spec.lookahead_period.min_days)
-                <= df[outcome_timestamp_col_name])
+                <= df[outcome_timestamp_col_name]
             )
 
             df[outcome_spec.get_output_col_name()] = outcome_is_within_lookahead.astype(
