@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Tuple, Union
 
 import pandas as pd
+
 from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
@@ -86,7 +87,12 @@ def get_temporal_col_name(
 ) -> str:
     """Get the column name for the temporal feature."""
     coerced = coerce_floats(lookperiod=lookperiod, fallback=fallback)
-    col_str = f"{prefix}_{feature_base_name}_within_{coerced.lookperiod.min_days!s}_to_{coerced.lookperiod.max_days!s}_days_{aggregation_fn.__name__}_fallback_{coerced.fallback}"
+    lookperiod_str = (
+        f"{coerced.lookperiod.max_days!s}"
+        if coerced.lookperiod.min_days == 0
+        else f"{coerced.lookperiod.min_days!s}_to_{coerced.lookperiod.max_days!s}"
+    )
+    col_str = f"{prefix}_{feature_base_name}_within_{lookperiod_str}_days_{aggregation_fn.__name__}_fallback_{coerced.fallback}"
     return col_str
 
 
