@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/MartinBernstorff/swift-python-cookiecutter",
-  "commit": "ad7156663893ea72553b2b94f007603b9157de6e",
+  "commit": "d0e8eb6aa3d3b1f39ff40e12f392316e65363833",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -12,7 +12,6 @@
       "github_user": "MartinBernstorff",
       "version": "0.0.0",
       "copyright_year": "2023",
-      "add_makefile": "y",
       "license": "MIT",
       "_copy_without_render": [
         "*.github"
