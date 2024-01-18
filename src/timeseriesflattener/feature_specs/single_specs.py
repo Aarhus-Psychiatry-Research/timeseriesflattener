@@ -131,7 +131,8 @@ class OutcomeSpec(BaseModel):
         if isinstance(self.lookahead_days, (float, int)):
             return LookPeriod(min_days=0, max_days=self.lookahead_days)
         return LookPeriod(
-            min_days=self.lookahead_days[0], max_days=self.lookahead_days[1],
+            min_days=self.lookahead_days[0],
+            max_days=self.lookahead_days[1],
         )
 
     def get_output_col_name(self) -> str:
@@ -191,7 +192,8 @@ class PredictorSpec(BaseModel):
         if isinstance(self.lookbehind_days, (float, int)):
             return LookPeriod(min_days=0, max_days=self.lookbehind_days)
         return LookPeriod(
-            min_days=self.lookbehind_days[0], max_days=self.lookbehind_days[1],
+            min_days=self.lookbehind_days[0],
+            max_days=self.lookbehind_days[1],
         )
 
     def get_output_col_name(self) -> str:
