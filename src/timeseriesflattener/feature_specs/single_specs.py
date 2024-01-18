@@ -47,7 +47,7 @@ def coerce_floats(lookperiod: LookPeriod, fallback: float) -> CoercedFloats:
     return CoercedFloats(lookperiod=coerced_lookperiod, fallback=fallback)
 
 
-def check_lookwindow_tuple_is_valid(lookwindow: Tuple[float, float]) -> None:
+def check_lookperiod_tuple_is_valid(lookwindow: Tuple[float, float]) -> None:
     if len(lookwindow) != 2 or lookwindow[0] <= lookwindow[1]:
         raise ValueError(
             "The lookahead/lookbehind tuple must be of length 2 and the first element must be smaller than the second element.",
@@ -80,12 +80,12 @@ class StaticSpec(BaseModel):
 def get_temporal_col_name(
     prefix: str,
     feature_base_name: str,
-    lookwindow: LookPeriod,
+    lookperiod: LookPeriod,
     aggregation_fn: AggregationFunType,
     fallback: Union[float, int],
 ) -> str:
     """Get the column name for the temporal feature."""
-    coerced = coerce_floats(lookperiod=lookwindow, fallback=fallback)
+    coerced = coerce_floats(lookperiod=lookperiod, fallback=fallback)
     col_str = f"{prefix}_{feature_base_name}_within_{coerced.lookperiod.min_days!s}_to_{coerced.lookperiod.max_days!s}_days_{aggregation_fn.__name__}_fallback_{coerced.fallback}"
     return col_str
 
@@ -123,11 +123,10 @@ class OutcomeSpec(BaseModel):
     def __post_init__(self):
         if isinstance(self.lookahead_days, (float, int)):
             self.lookahead_days = (0, self.lookahead_days)
-        check_lookwindow_tuple_is_valid(self.lookahead_days)
+        check_lookperiod_tuple_is_valid(self.lookahead_days)
 
     @property
     def lookahead_period(self) -> LookPeriod:
-        """Get the lookbehind period as a tuple."""
         if isinstance(self.lookahead_days, (float, int)):
             return LookPeriod(min_days=0, max_days=self.lookahead_days)
         return LookPeriod(
@@ -140,7 +139,7 @@ class OutcomeSpec(BaseModel):
         col_str = get_temporal_col_name(
             prefix=self.prefix,
             feature_base_name=self.feature_base_name,
-            lookwindow=self.lookahead_period,
+            lookperiod=self.lookahead_period,
             aggregation_fn=self.aggregation_fn,
             fallback=self.fallback,
         )
@@ -184,11 +183,10 @@ class PredictorSpec(BaseModel):
     def __post_init__(self):
         if isinstance(self.lookbehind_days, (float, int)):
             self.lookbehind_days = (0, self.lookbehind_days)
-        check_lookwindow_tuple_is_valid(self.lookbehind_days)
+        check_lookperiod_tuple_is_valid(self.lookbehind_days)
 
     @property
     def lookbehind_period(self) -> LookPeriod:
-        """Get the lookbehind period as a tuple."""
         if isinstance(self.lookbehind_days, (float, int)):
             return LookPeriod(min_days=0, max_days=self.lookbehind_days)
         return LookPeriod(
@@ -201,7 +199,7 @@ class PredictorSpec(BaseModel):
         return get_temporal_col_name(
             prefix=self.prefix,
             feature_base_name=self.feature_base_name,
-            lookwindow=self.lookbehind_period,
+            lookperiod=self.lookbehind_period,
             aggregation_fn=self.aggregation_fn,
             fallback=self.fallback,
         )
