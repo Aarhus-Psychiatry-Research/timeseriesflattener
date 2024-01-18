@@ -13,9 +13,7 @@ from timeseriesflattener.feature_specs.group_specs import (
     PredictorGroupSpec,
 )
 from timeseriesflattener.feature_specs.single_specs import (
-    LookPeriod,
     PredictorSpec,
-    get_temporal_col_name,
 )
 from timeseriesflattener.testing.utils_for_testing import str_to_df
 
@@ -98,12 +96,12 @@ def test_invalid_lookbehind():
     prediction_times_df_str = """entity_id,timestamp,
                                 1,2021-12-30 00:00:00
                                 """
-    spec = PredictorSpec(
+    PredictorSpec(
         timeseries_df=str_to_df(prediction_times_df_str),
         lookbehind_days=(1, 0),
         aggregation_fn=maximum,
         fallback=2,
         feature_base_name="value",
     )
-    with pytest.raises(ValueError, match=r".*Invalid.*"):  # noqa
-        lookperiod = spec.lookbehind_period
+    with pytest.raises(ValueError, match=r".*Invalid.*"):
+        pass
