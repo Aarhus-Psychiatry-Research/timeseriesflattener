@@ -102,4 +102,4 @@ def test_invalid_lookbehind():
         feature_base_name="value",
     )
     with pytest.raises(ValueError, match=r".*Invalid.*"):
-        lookperiod = spec.lookbehind_period
+        assert spec.lookbehind_period
