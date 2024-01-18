@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Callable, List, Optional, Sequence, Tuple, Union
 
 import coloredlogs
 import numpy as np
@@ -20,6 +20,7 @@ from pydantic import BaseModel as PydanticBaseModel
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
+    LookPeriod,
     OutcomeSpec,
     PredictorSpec,
     StaticSpec,
@@ -257,7 +258,7 @@ class TimeseriesFlattener:
     def _drop_records_outside_interval_days(
         df: DataFrame,
         direction: str,
-        interval_days: float,
+        lookperiod: LookPeriod,
         timestamp_pred_colname: str,
         timestamp_value_colname: str,
     ) -> DataFrame:
@@ -267,7 +268,7 @@ class TimeseriesFlattener:
 
         Args:
             direction (str): Whether to look ahead or behind.
-            interval_days (float): How far to look
+            lookperiod (LookPeriod): Interval to look within.
             df (DataFrame): Source dataframe
             timestamp_pred_colname (str): Name of timestamp column for predictions in df.
             timestamp_value_colname (str): Name of timestamp column for values in df.
@@ -287,12 +288,12 @@ class TimeseriesFlattener:
 
         if direction == "ahead":
             df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] <= interval_days
-            ) & (df["time_from_pred_to_val_in_days"] > 0)
+                df["time_from_pred_to_val_in_days"] <= lookperiod.max_days
+            ) & (df["time_from_pred_to_val_in_days"] > lookperiod.min_days)
         elif direction == "behind":
             df["is_in_interval"] = (
-                df["time_from_pred_to_val_in_days"] >= -interval_days
-            ) & (df["time_from_pred_to_val_in_days"] < 0)
+                df["time_from_pred_to_val_in_days"] >= -lookperiod.max_days
+            ) & (df["time_from_pred_to_val_in_days"] < -lookperiod.min_days)
         else:
             raise ValueError("direction can only be 'ahead' or 'behind'")
 
@@ -349,17 +350,17 @@ class TimeseriesFlattener:
         # Drop prediction times without event times within interval days
         if isinstance(output_spec, OutcomeSpec):
             direction = "ahead"
-            interval_days = output_spec.lookahead_days
+            lookperiod = output_spec.lookahead_period
         elif isinstance(output_spec, PredictorSpec):
             direction = "behind"
-            interval_days = output_spec.lookbehind_days
+            lookperiod = output_spec.lookbehind_period
         else:
             raise ValueError(f"Unknown output_spec type {type(output_spec)}")
 
         df = TimeseriesFlattener._drop_records_outside_interval_days(
             df,
             direction=direction,
-            interval_days=interval_days,
+            lookperiod=lookperiod,
             timestamp_pred_colname=timestamp_pred_col_name,
             timestamp_value_colname=timestamp_val_col_name,
         )
@@ -657,9 +658,12 @@ class TimeseriesFlattener:
 
         if outcome_spec.is_dichotomous():
             outcome_is_within_lookahead = (
-                df[prediction_timestamp_col_name]  # type: ignore
-                + timedelta(days=outcome_spec.lookahead_days)
-                > df[outcome_timestamp_col_name]
+                (df[prediction_timestamp_col_name]  # type: ignore
+                + timedelta(days=outcome_spec.lookahead_period.max_days)
+                > df[outcome_timestamp_col_name]) &
+                (df[prediction_timestamp_col_name]  # type: ignore
+                + timedelta(days=outcome_spec.lookahead_period.min_days)
+                <= df[outcome_timestamp_col_name])
             )
 
             df[outcome_spec.get_output_col_name()] = outcome_is_within_lookahead.astype(
@@ -690,11 +694,11 @@ class TimeseriesFlattener:
 
         if isinstance(spec, PredictorSpec):
             min_val_date = spec.timeseries_df[self.timestamp_col_name].min()  # type: ignore
-            return min_val_date + pd.Timedelta(days=spec.lookbehind_days)
+            return min_val_date + pd.Timedelta(days=spec.lookbehind_period.max_days)
 
         if isinstance(spec, OutcomeSpec):
             max_val_date = spec.timeseries_df[self.timestamp_col_name].max()  # type: ignore
-            return max_val_date - pd.Timedelta(days=spec.lookahead_days)
+            return max_val_date - pd.Timedelta(days=spec.lookahead_period.max_days)
 
         raise ValueError(f"Spec type {type(spec)} not recognised.")
 
