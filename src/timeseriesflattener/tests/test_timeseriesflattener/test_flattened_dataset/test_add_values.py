@@ -670,12 +670,8 @@ def test_add_outcome_timestamps():
     prediction_times_df = str_to_df(prediction_times_str)
     event_times_df = str_to_df(event_times_str)
     expected_df = str_to_df(expected_df_str)
-    expected_df[
-        "outc_timestamp_within_10_days_latest_fallback_nan_dichotomous"
-    ] = (
-        expected_df[
-            "outc_timestamp_within_10_days_latest_fallback_nan_dichotomous"
-        ]
+    expected_df["outc_timestamp_within_10_days_latest_fallback_nan_dichotomous"] = (
+        expected_df["outc_timestamp_within_10_days_latest_fallback_nan_dichotomous"]
         .astype(str)
         .replace("NaT", np.NaN)
     )

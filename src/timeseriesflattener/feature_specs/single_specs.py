@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Tuple, Union
 
 import pandas as pd
-
 from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
