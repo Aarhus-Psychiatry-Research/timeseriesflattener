@@ -2,6 +2,20 @@
 
 <!--next-version-placeholder-->
 
+## v1.9.0 (2024-01-18)
+
+### Feature
+
+* Allow feature generation in time ranges ([`924e63a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/924e63a862bd9afa87dee66b3cad088405d34941))
+
+### Fix
+
+* Make generated colnames backwards compatible ([`b767c29`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b767c2993cccd0bfd2218a568213aa4cff0860b7))
+
+### Documentation
+
+* Add new functionality to tutorials ([`bc809aa`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bc809aa6e64b428ba681e53a2edc4eb24cef7a85))
+
 ## v1.8.0 (2023-11-24)
 
 ### Feature
