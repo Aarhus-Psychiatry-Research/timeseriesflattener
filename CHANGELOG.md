@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.9.1 (2024-01-23)
+
+### Fix
+
+* List to Sequence type hint in group specs ([`133be8b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/133be8ba476a6cb6f2d4cc34d201eb31977e8ce9))
+
 ## v1.9.0 (2024-01-18)
 
 ### Feature
