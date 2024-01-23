@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import Dict, List, Sequence, Tuple, Union
 
 import pandas as pd
-
 from timeseriesflattener.aggregation_fns import AggregationFunType
 from timeseriesflattener.feature_specs.single_specs import (
     AnySpec,
