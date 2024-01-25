@@ -2,6 +2,37 @@
 
 <!--next-version-placeholder-->
 
+## v1.9.1 (2024-01-23)
+
+### Fix
+
+* List to Sequence type hint in group specs ([`133be8b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/133be8ba476a6cb6f2d4cc34d201eb31977e8ce9))
+
+## v1.9.0 (2024-01-18)
+
+### Feature
+
+* Allow feature generation in time ranges ([`924e63a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/924e63a862bd9afa87dee66b3cad088405d34941))
+
+### Fix
+
+* Make generated colnames backwards compatible ([`b767c29`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b767c2993cccd0bfd2218a568213aa4cff0860b7))
+
+### Documentation
+
+* Add new functionality to tutorials ([`bc809aa`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bc809aa6e64b428ba681e53a2edc4eb24cef7a85))
+
+## v1.8.0 (2023-11-24)
+
+### Feature
+
+* Upgrade pandas deps ([`99568ad`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/99568ad70a838278676eb5eac815a9009eb90bff))
+
+### Fix
+
+* Ensure stable pred_time_uuid generation ([`347b9c4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/347b9c405080c979986623cc29543c96aa9f2e67))
+* Add_age ([`cd70370`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cd703701393363ca375e1b42226262ea86f36aae))
+
 ## v1.7.0 (2023-10-20)
 
 ### Feature

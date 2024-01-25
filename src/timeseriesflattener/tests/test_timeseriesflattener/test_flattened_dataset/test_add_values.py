@@ -94,6 +94,27 @@ def test_multiple_citizens_predictor():
     )
 
 
+def test_predictor_with_interval_lookperiod():
+    prediction_times_df_str = """entity_id,timestamp,
+                            1,2022-01-01 00:00:00
+                            """
+    predictor_df_str = """entity_id,timestamp,value,
+                        1,2021-12-30 00:00:01, 2
+                        1,2021-12-15 00:00:00, 1
+                        """
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=PredictorSpec(
+            timeseries_df=str_to_df(predictor_df_str),
+            lookbehind_days=(5, 30),
+            fallback=np.NaN,
+            feature_base_name="value",
+            aggregation_fn=maximum,
+        ),
+        expected_values=[1],
+    )
+
+
 # Outcomes
 def test_event_after_prediction_time():
     prediction_times_df_str = """entity_id,timestamp,
@@ -164,6 +185,48 @@ def test_multiple_citizens_outcome():
             feature_base_name="value",
         ),
         expected_values=[1, np.NaN, 1, np.NaN],
+    )
+
+
+def test_outcome_with_interval_lookperiod_outside():
+    prediction_times_df_str = """entity_id,timestamp,
+                            1,2022-01-01 00:00:00
+                            """
+    outcome_df_str = """entity_id,timestamp,value,
+                        1,2022-01-02 00:00:00, 1
+                        """
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=OutcomeSpec(
+            timeseries_df=str_to_df(outcome_df_str),
+            lookahead_days=(2, 10),
+            fallback=0,
+            incident=True,
+            feature_base_name="value",
+            aggregation_fn=maximum,
+        ),
+        expected_values=[0],
+    )
+
+
+def test_outcome_interval_lookperiod_inside():
+    prediction_times_df_str = """entity_id,timestamp,
+                            1,2022-01-01 00:00:00
+                            """
+    outcome_df_str = """entity_id,timestamp,value,
+                        1,2022-01-03 00:00:00, 1
+                        """
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=OutcomeSpec(
+            timeseries_df=str_to_df(outcome_df_str),
+            lookahead_days=(1, 10),
+            fallback=0,
+            incident=True,
+            feature_base_name="value",
+            aggregation_fn=maximum,
+        ),
+        expected_values=[1],
     )
 
 
