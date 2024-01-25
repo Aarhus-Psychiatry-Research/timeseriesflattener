@@ -49,12 +49,14 @@ dev = [
   "pandas-stubs",           # type stubs for pandas
   "invoke==2.1.1",
   "tox",
+  "lumberman",
 ]
 test = [
   "pytest>=7.1.3,<7.3.0",
   "pytest-cov>=3.0.0,<3.1.0",
   "pytest-xdist>=3.0.0,<3.2.0",
   "pytest-sugar>=0.9.4,<0.10.0",
+  "pytest-testmon==2.1.0",
 ]
 docs = [
   "sphinx==5.3.0",
