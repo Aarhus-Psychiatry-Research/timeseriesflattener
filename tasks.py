@@ -176,33 +176,16 @@ def exit_if_error_in_stdout(result: Result):
             exit(0)
 
 
-def pre_commit(c: Context, auto_fix: bool):
+def pre_commit(c: Context):
     """Run pre-commit checks."""
 
     # Essential to have a clean working directory before pre-commit to avoid committing
     # heterogenous files under a "style: linting" commit
-    if is_uncommitted_changes(c):
-        print(
-            f"{Emo.WARN} Your git working directory is not clean. Stash or commit before running pre-commit.",
-        )
-        exit(1)
-
     echo_header(f"{Emo.CLEAN} Running pre-commit checks")
     pre_commit_cmd = "pre-commit run --all-files"
     result = c.run(pre_commit_cmd, pty=True, warn=True)
 
     exit_if_error_in_stdout(result)
-
-    if ("fixed" in result.stdout or "reformatted" in result.stdout) and auto_fix:
-        _add_commit(c, msg="style: Auto-fixes from pre-commit")
-
-        print(f"{Emo.DO} Fixed errors, re-running pre-commit checks")
-        second_result = c.run(pre_commit_cmd, pty=True, warn=True)
-        exit_if_error_in_stdout(second_result)
-    else:
-        if result.return_code != 0:
-            print(f"{Emo.FAIL} Pre-commit checks failed")
-            exit(1)
 
 
 @task
@@ -241,6 +224,7 @@ def test(
     c: Context,
     python_versions: str = "3.9",
     pytest_args: List[str] = [],  # noqa
+    testmon: bool = False,
 ):
     """Run tests"""
     echo_header(f"{Emo.TEST} Running tests")
@@ -255,6 +239,8 @@ def test(
             "--disable-warnings",
             "-q",
         ]
+    if testmon:
+        pytest_args.append("--testmon")
 
     pytest_arg_str = " ".join(pytest_args)
 
