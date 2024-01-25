@@ -25,11 +25,6 @@ jobs:
     env:
       python-version: ${{ matrix.python-version }}
 
-    # This allows a subsequently queued workflow run to interrupt previous runs
-    concurrency:
-      group: "${{ github.workflow }} - ${{ matrix.python-version}} ${{ matrix.os }} @ ${{ github.ref }}"
-      cancel-in-progress: true
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -48,11 +43,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
 
-    # This allows a subsequently queued workflow run to interrupt previous runs
-    concurrency:
-      group: "${{ github.workflow }} - jupyter-tutorials - ${{ matrix.os }} @ ${{ github.ref }}"
-      cancel-in-progress: true
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -64,7 +54,6 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    concurrency: release
     needs: test
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:

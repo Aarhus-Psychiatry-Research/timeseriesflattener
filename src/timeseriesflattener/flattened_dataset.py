@@ -16,6 +16,7 @@ import pandas as pd
 import tqdm
 from pandas import DataFrame
 from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ConfigDict
 
 from timeseriesflattener.feature_cache.abstract_feature_cache import FeatureCache
 from timeseriesflattener.feature_specs.single_specs import (
@@ -38,9 +39,7 @@ class SpecCollection(PydanticBaseModel):
     outcome_specs: List[OutcomeSpec] = []
     predictor_specs: List[PredictorSpec] = []
     static_specs: List[AnySpec] = []
-
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __len__(self) -> int:
         """Return number of specs in collection."""
