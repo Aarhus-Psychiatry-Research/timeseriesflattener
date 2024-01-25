@@ -1,0 +1,22 @@
+diff a/README.md b/README.md	(rejected hunks)
+@@ -4,9 +4,8 @@
+ 
+ [![PyPI](https://img.shields.io/pypi/v/timeseriesflattener.svg)][pypi status]
+ [![Python Version](https://img.shields.io/pypi/pyversions/timeseriesflattener)][pypi status]
+-[![documentation](https://github.com/MartinBernstorff/timeseriesflattener/workflows/documentation/badge.svg)][documentation]
++[![documentation](https://github.com/MartinBernstorff/timeseriesflattener/actions/workflows/documentation.yml/badge.svg)][documentation]
+ [![Tests](https://github.com/MartinBernstorff/timeseriesflattener/actions/workflows/tests.yml/badge.svg)][tests]
+-
+ [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)][black]
+ 
+ [pypi status]: https://pypi.org/project/timeseriesflattener/
+@@ -29,6 +28,9 @@ You can install `timeseriesflattener` via [pip] from [PyPI]:
+ pip install timeseriesflattener
+ ```
+ 
++[pip]: https://pip.pypa.io/en/stable/installing/
++[PyPI]: https://pypi.org/project/timeseriesflattener/
++
+ ## Usage
+ 
+ TODO: Add minimal usage example

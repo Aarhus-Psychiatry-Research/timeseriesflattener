@@ -103,12 +103,12 @@ def add_and_commit(c: Context, msg: Optional[str] = None):
     if is_uncommitted_changes(c):
         uncommitted_changes_descr = c.run(
             "git status --porcelain",
-            pty=True,
+            pty=NOT_WINDOWS,
             hide=True,
         ).stdout
 
         echo_header(
-            f"{Emo.WARN} Uncommitted changes detected",
+            f"{msg_type.WARN} Uncommitted changes detected",
         )
 
         for line in uncommitted_changes_descr.splitlines():
@@ -129,7 +129,7 @@ def branch_exists_on_remote(c: Context) -> bool:
 
 
 def update_branch(c: Context):
-    echo_header(f"{Emo.SYNC} Syncing branch with remote")
+    echo_header(f"{msg_type.SYNC} Syncing branch with remote")
 
     if not branch_exists_on_remote(c):
         c.run("git push --set-upstream origin HEAD")
@@ -143,12 +143,12 @@ def update_branch(c: Context):
 def create_pr(c: Context):
     c.run(
         "gh pr create --web",
-        pty=True,
+        pty=NOT_WINDOWS,
     )
 
 
 def update_pr(c: Context):
-    echo_header(f"{Emo.COMMUNICATE} Syncing PR")
+    echo_header(f"{msg_type.COMMUNICATE} Syncing PR")
     # Get current branch name
     branch_name = Path(".git/HEAD").read_text().split("/")[-1].strip()
     pr_result: Result = c.run(
@@ -162,7 +162,7 @@ def update_pr(c: Context):
     else:
         open_web = input("Open in browser? [y/n] ")
         if "y" in open_web.lower():
-            c.run("gh pr view --web", pty=True)
+            c.run("gh pr view --web", pty=NOT_WINDOWS)
 
 
 def exit_if_error_in_stdout(result: Result):
@@ -319,10 +319,11 @@ def docs(c: Context, view: bool = False, view_only: bool = False):
     Build and view docs. If neither build or view are specified, both are run.
     """
     if not view_only:
-        echo_header(f"{Emo.DO} Building docs")
-        c.run("sphinx-build -b html docs docs/_build/html")
+        echo_header(f"{msg_type.DOING}: Building docs")
+        c.run("tox -e docs")
+
     if view or view_only:
-        echo_header(f"{Emo.EXAMINE} open docs in browser")
+        echo_header(f"{msg_type.EXAMINE}: Opening docs in browser")
         # check the OS and open the docs in the browser
         if platform.system() == "Windows":
             c.run("start docs/_build/html/index.html")
