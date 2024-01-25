@@ -1,6 +1,6 @@
 """Flattens timeseries.
 
-Takes a time-series and flattens it into a set of prediction times describing values.
+Takes a time-series and flattens it into a set of prediction times with describing values.
 """
 import datetime as dt
 import logging
