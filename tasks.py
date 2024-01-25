@@ -278,7 +278,7 @@ def test(
 
 def test_for_rej():
     # Get all paths in current directory or subdirectories that end in .rej
-    rej_files = list(Path(".").rglob("*.rej"))
+    rej_files = list(Path().rglob("*.rej"))
 
     if len(rej_files) > 0:
         print(f"\n{Emo.FAIL} Found .rej files leftover from cruft update.\n")
@@ -289,11 +289,10 @@ def test_for_rej():
 
 
 @task
-def lint(c: Context, auto_fix: bool = False):
+def lint(c: Context):
     """Lint the project using the pre-commit hooks and mypy."""
     test_for_rej()
-    pre_commit(c=c, auto_fix=auto_fix)
-    static_type_checks(c)
+    pre_commit(c=c)
 
 
 @task
@@ -304,10 +303,10 @@ def test_tutorials(c: Context):
 
 
 @task
-def pr(c: Context, auto_fix: bool = True):
+def pr(c: Context):
     """Run all checks and update the PR."""
     add_and_commit(c)
-    lint(c, auto_fix=auto_fix)
+    lint(c)
     test(c, python_versions="3.9")
     test_tutorials(c)
     update_branch(c)
