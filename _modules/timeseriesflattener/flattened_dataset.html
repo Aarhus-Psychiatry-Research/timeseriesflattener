@@ -241,6 +241,7 @@
 <span class="kn">import</span> <span class="nn">tqdm</span>
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
 <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">PydanticBaseModel</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">ConfigDict</span>
 
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_cache.abstract_feature_cache</span> <span class="kn">import</span> <span class="n">FeatureCache</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.single_specs</span> <span class="kn">import</span> <span class="p">(</span>
@@ -263,9 +264,7 @@
     <span class="n">outcome_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OutcomeSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">predictor_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PredictorSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">static_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AnySpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
-<div class="viewcode-block" id="SpecCollection.Config"><a class="viewcode-back" href="../../timeseriesflattener.html#timeseriesflattener.flattened_dataset.SpecCollection.Config">[docs]</a>    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span></div>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of specs in collection.&quot;&quot;&quot;</span>
