@@ -1,5 +1,5 @@
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Extra
+from pydantic import ConfigDict
 
 
 class BaseModel(PydanticBaseModel):
@@ -16,9 +16,4 @@ class BaseModel(PydanticBaseModel):
     # 2) pylance reads the docstring directly from the static file
     # This means we want to auto-generate docstrings to support the inheritance,
     # but also need to hard-code the docstring to support pylance.
-    class Config:
-        """Disallow  attributes not in the the class."""
-
-        arbitrary_types_allowed = True
-        allow_mutation = False
-        extra = Extra.forbid
+    model_config = ConfigDict(arbitrary_types_allowed=True, frozen=True, extra="forbid")
