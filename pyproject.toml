@@ -44,7 +44,6 @@ dev = [
   "pyright==1.1.330.post0",
   "pre-commit==3.4.0",
   "ruff==0.0.292",          # important that these match the pre-commit hooks
-  "black[jupyter]==23.9.1", # important that these match the pre-commit hooks
   "pandas-stubs",           # type stubs for pandas
   "invoke==2.1.1",
   "tox",
@@ -59,11 +58,11 @@ test = [
 ]
 docs = [
   "sphinx==5.3.0",
-   "furo==2023.3.27",
-   "sphinx-copybutton==0.5.2",
-   "sphinxext-opengraph==0.8.2",
-   "myst-nb==0.17.2",
-   "sphinx_design==0.3.0",
+  "furo==2023.3.27",
+  "sphinx-copybutton==0.5.2",
+  "sphinxext-opengraph==0.8.2",
+  "myst-nb==0.17.2",
+  "sphinx_design==0.3.0",
 ]
 tutorials = ["jupyter>=1.0.0,<1.1.0", "skimpy>=0.0.7,<0.1.0"]
 
@@ -80,6 +79,7 @@ documentation = "https://aarhus-psychiatry-research.github.io/timeseriesflattene
 exclude = [".*venv*/", ".venv38/", ".tox"]
 
 [tool.ruff]
+line-length = 100
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = [
   "A",
@@ -109,7 +109,16 @@ select = [
   "SIM",
   "W",
 ]
-ignore = ["ANN101", "ANN401", "E402", "E501", "F401", "F841", "RET504"]
+ignore = [
+  "ANN101",
+  "ANN401",
+  "E402",
+  "E501",
+  "F401",
+  "F841",
+  "RET504",
+  "COM812",
+]
 ignore-init-module-imports = true
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 unfixable = ["ERA"]
@@ -141,6 +150,9 @@ exclude = [
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 target-version = "py38"
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
 
 [tool.ruff.flake8-annotations]
 mypy-init-return = true
