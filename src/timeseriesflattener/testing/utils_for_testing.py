@@ -114,15 +114,10 @@ def assert_flattened_data_as_expected(
     elif expected_values:
         output_df = flattened_ds.get_df()
         value_cols = _get_value_cols_based_on_spec(output_df, output_spec)
-        output = output_df[value_cols].values.tolist()
-        expected = list(expected_values)
+        output = pd.Series(output_df[value_cols].values)
+        expected = pd.Series(expected_values)
 
-        for i, expected_val in enumerate(expected):
-            # NaN != NaN, hence specific handling
-            if not isinstance(expected_val, (str, list)) and np.isnan(expected_val):
-                assert np.isnan(output[i])
-            else:
-                assert expected_val == output[i]
+        assert_series_equal(output, expected, check_dtype=False)
     else:
         raise ValueError("Must provide an expected set of data")
 
