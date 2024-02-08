@@ -752,6 +752,9 @@ class TimeseriesFlattener:
     def _process_temporal_specs(self):
         """Process outcome specs."""
 
+        if self.drop_pred_times_with_insufficient_look_distance:
+            self._df = self._drop_pred_time_if_insufficient_look_distance(df=self._df)
+
         for spec in self.unprocessed_specs.outcome_specs:
             # Handle incident specs separately, since their operations can be vectorised,
             # making them much faster
@@ -769,9 +772,6 @@ class TimeseriesFlattener:
 
         temporal_batch: List[TemporalSpec] = self.unprocessed_specs.outcome_specs  # type: ignore
         temporal_batch += self.unprocessed_specs.predictor_specs
-
-        if self.drop_pred_times_with_insufficient_look_distance:
-            self._df = self._drop_pred_time_if_insufficient_look_distance(df=self._df)
 
         if len(temporal_batch) > 0:
             self._add_temporal_batch(temporal_batch=temporal_batch)

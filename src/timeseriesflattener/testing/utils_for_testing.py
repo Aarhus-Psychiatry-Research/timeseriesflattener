@@ -89,6 +89,7 @@ def assert_flattened_data_as_expected(
     output_spec: AnySpec,
     expected_df: Optional[pd.DataFrame] = None,
     expected_values: Optional[Sequence[Any]] = None,
+    drop_pred_times_with_insufficient_look_distance: bool = False,
 ):
     """Flatten spec and assert that flattened data is as expected."""
     if isinstance(prediction_times_df, str):
@@ -97,7 +98,7 @@ def assert_flattened_data_as_expected(
     flattened_ds = TimeseriesFlattener(
         prediction_times_df=prediction_times_df,
         n_workers=4,
-        drop_pred_times_with_insufficient_look_distance=False,
+        drop_pred_times_with_insufficient_look_distance=drop_pred_times_with_insufficient_look_distance,
     )
 
     flattened_ds.add_spec(
