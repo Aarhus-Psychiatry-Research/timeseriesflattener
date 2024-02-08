@@ -349,6 +349,12 @@ Requires that each entity only occurs once in the timeseries_df.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_computed_fields" title="Permalink to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid',</span> <span class="pre">'frozen':</span> <span class="pre">True}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config" title="Permalink to this definition">#</a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
@@ -430,6 +436,12 @@ Can be tuple of two floats specifying (min_days, max_days) or float | int which 
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_computed_fields" title="Permalink to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'arbitrary_types_allowed':</span> <span class="pre">True,</span> <span class="pre">'extra':</span> <span class="pre">'forbid',</span> <span class="pre">'frozen':</span> <span class="pre">True}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config" title="Permalink to this definition">#</a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
@@ -484,6 +496,12 @@ NOTE: Column names can be overridden when initialising TimeSeriesFlattener.</p><
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.get_output_col_name">
 <span class="sig-name descname"><span class="pre">get_output_col_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/single_specs.html#StaticSpec.get_output_col_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.get_output_col_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.model_computed_fields">
+<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_computed_fields" title="Permalink to this definition">#</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.feature_specs.single_specs.StaticSpec.model_config">
@@ -613,6 +631,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.is_dichotomous"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.is_dichotomous()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_days"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.lookahead_days</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.lookahead_period"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.lookahead_period</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.model_computed_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_config"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.model_config</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.model_fields"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.model_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.OutcomeSpec.prefix"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.prefix</span></code></a></li>
@@ -626,6 +645,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.get_output_col_name()</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_days"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.lookbehind_days</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.lookbehind_period"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.lookbehind_period</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.model_computed_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_config"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.model_config</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.model_fields"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.model_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.PredictorSpec.prefix"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.prefix</span></code></a></li>
@@ -635,6 +655,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec"><code class="docutils literal notranslate"><span class="pre">StaticSpec</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.feature_base_name"><code class="docutils literal notranslate"><span class="pre">StaticSpec.feature_base_name</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.get_output_col_name"><code class="docutils literal notranslate"><span class="pre">StaticSpec.get_output_col_name()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">StaticSpec.model_computed_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_config"><code class="docutils literal notranslate"><span class="pre">StaticSpec.model_config</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.model_fields"><code class="docutils literal notranslate"><span class="pre">StaticSpec.model_fields</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.feature_specs.single_specs.StaticSpec.prefix"><code class="docutils literal notranslate"><span class="pre">StaticSpec.prefix</span></code></a></li>
