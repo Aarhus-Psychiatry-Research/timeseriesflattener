@@ -705,3 +705,28 @@ def test_add_outcome_timestamps():
                 df[col] = df[col].astype("int32")
 
         pd.testing.assert_series_equal(outcome_df[col], expected_df[col])
+
+
+def test_drop_pred_times_with_insufficient_look_distance():
+    prediction_times_df_str = """entity_id,timestamp,
+                            1,2022-01-01 00:00:00
+                            1,2022-01-02 00:00:00
+                            1,2022-01-03 00:00:00
+                            1,2022-01-04 00:00:00
+                            """
+    outcome_df_str = """entity_id,timestamp,value,
+                        1,2022-01-04 00:00:00, 1
+                        """
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_df_str,
+        output_spec=OutcomeSpec(
+            timeseries_df=str_to_df(outcome_df_str),
+            lookahead_days=(2),
+            fallback=0,
+            incident=True,
+            feature_base_name="value",
+            aggregation_fn=maximum,
+        ),
+        expected_values=[0, 0],
+        drop_pred_times_with_insufficient_look_distance=True,
+    )
