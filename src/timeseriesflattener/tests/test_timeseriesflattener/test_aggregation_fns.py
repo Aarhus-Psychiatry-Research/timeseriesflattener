@@ -15,10 +15,7 @@ from timeseriesflattener.aggregation_fns import (
     summed,
     variance,
 )
-from timeseriesflattener.feature_specs.single_specs import (
-    OutcomeSpec,
-    PredictorSpec,
-)
+from timeseriesflattener.feature_specs.single_specs import OutcomeSpec, PredictorSpec
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,

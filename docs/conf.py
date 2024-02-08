@@ -68,10 +68,7 @@ html_static_path = ["_static"]
 html_show_sourcelink = True
 
 
-source_suffix = {
-    ".rst": "restructuredtext",
-    ".md": "markdown",
-}
+source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 
 html_static_path = ["_static"]
 html_favicon = "_static/favicon.ico"
@@ -98,21 +95,15 @@ html_theme_options = {
                 </svg>
             """,
             "class": "",
-        },
+        }
     ],
     "source_repository": repo_url,
     "source_branch": "main",
     "source_directory": "docs/",
     "light_logo": "icon.png",
     "dark_logo": "icon_dark.png",
-    "light_css_variables": {
-        "color-brand-primary": "#ff5454",
-        "color-brand-content": "#ff7575",
-    },
-    "dark_css_variables": {
-        "color-brand-primary": "#ff8f8f",
-        "color-brand-content": "#ff8f8f",
-    },
+    "light_css_variables": {"color-brand-primary": "#ff5454", "color-brand-content": "#ff7575"},
+    "dark_css_variables": {"color-brand-primary": "#ff8f8f", "color-brand-content": "#ff8f8f"},
     "sidebar_hide_name": False,
     "navigation_with_keys": True,
 }

@@ -37,18 +37,13 @@ def split_df_and_register_to_dict(
         value_col_name (str): Name of the column containing the value for each value. Defaults to "values".
         value_names_col_name (str): Name of the column containing the names of the different types of values for each value. Defaults to "value_names".
     """
-    passed_columns = [
-        entity_id_col_name,
-        timestamp_col_name,
-        value_col_name,
-        value_names_col_name,
-    ]
+    passed_columns = [entity_id_col_name, timestamp_col_name, value_col_name, value_names_col_name]
     missing_columns = [col for col in passed_columns if col not in list(df.columns)]
 
     # If any of the required columns is missing, raise an error
     if len(missing_columns) > 0:
         raise ValueError(
-            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}. Available columns are {df.columns}.",
+            f"The following required column(s) is/are missing from the input dataframe: {missing_columns}. Available columns are {df.columns}."
         )
 
     # Get the unique value names from the dataframe
@@ -89,10 +84,7 @@ def format_dict_for_printing(d: dict) -> str:
     )
 
 
-def load_dataset_from_file(
-    file_path: Path,
-    nrows: Union[int, None] = None,
-) -> pd.DataFrame:
+def load_dataset_from_file(file_path: Path, nrows: Union[int, None] = None) -> pd.DataFrame:
     """Load dataset from file. Handles csv and parquet files based on suffix.
 
     Args:
@@ -117,9 +109,7 @@ def load_dataset_from_file(
 
 
 def load_most_recent_file_matching_pattern_as_df(
-    dir_path: Path,
-    file_pattern: str,
-    file_suffix: str,
+    dir_path: Path, file_pattern: str, file_suffix: str
 ) -> pd.DataFrame:
     """Load most recent df matching pattern.
 
@@ -157,10 +147,7 @@ def df_contains_duplicates(df: pd.DataFrame, col_subset: List[str]) -> bool:
     return df.duplicated(subset=col_subset).any()
 
 
-def write_df_to_file(
-    df: pd.DataFrame,
-    file_path: Path,
-):
+def write_df_to_file(df: pd.DataFrame, file_path: Path):
     """Write dataset to file. Handles csv and parquet files based on suffix.
 
     Args:
@@ -204,9 +191,7 @@ def assert_no_duplicate_dicts_in_list(predictor_spec_list: List[Dict[str, Any]])
 
 
 def print_df_dimensions_diff(  # noqa
-    func: Callable,
-    print_when_starting: bool = False,
-    print_when_no_diff: bool = False,
+    func: Callable, print_when_starting: bool = False, print_when_no_diff: bool = False
 ):
     """Print the difference in rows between the input and output dataframes."""
 
@@ -232,9 +217,7 @@ def print_df_dimensions_diff(  # noqa
             n_in_dim_before_func = df.shape[dim_int]
 
             if print_when_no_diff:
-                log.info(
-                    f"{func.__name__}: {n_in_dim_before_func} {dim} before function",
-                )
+                log.info(f"{func.__name__}: {n_in_dim_before_func} {dim} before function")
 
             result = func(*args, **kwargs)
 
@@ -242,10 +225,7 @@ def print_df_dimensions_diff(  # noqa
 
             if diff != 0:
                 percent_diff = round(
-                    (n_in_dim_before_func - result.shape[dim_int])
-                    / n_in_dim_before_func
-                    * 100,
-                    2,
+                    (n_in_dim_before_func - result.shape[dim_int]) / n_in_dim_before_func * 100, 2
                 )
 
                 log.info(f"{func.__name__}: Dropped {diff} ({percent_diff}%) {dim}")

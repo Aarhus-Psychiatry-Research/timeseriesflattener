@@ -8,9 +8,7 @@ from timeseriesflattener.testing.synth_data_generator.synth_col_generators impor
     create_outcome_values,
     generate_data_columns,
 )
-from timeseriesflattener.testing.synth_data_generator.utils import (
-    replace_vals_with_na,
-)
+from timeseriesflattener.testing.synth_data_generator.utils import replace_vals_with_na
 
 
 def generate_synth_data(

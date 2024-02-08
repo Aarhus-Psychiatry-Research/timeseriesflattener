@@ -4,11 +4,7 @@ from typing import Dict, List, Sequence, Tuple, Union
 
 import pandas as pd
 from timeseriesflattener.aggregation_fns import AggregationFunType
-from timeseriesflattener.feature_specs.single_specs import (
-    AnySpec,
-    OutcomeSpec,
-    PredictorSpec,
-)
+from timeseriesflattener.feature_specs.single_specs import AnySpec, OutcomeSpec, PredictorSpec
 from timeseriesflattener.utils.pydantic_basemodel import BaseModel
 
 
@@ -40,9 +36,7 @@ class PredictorGroupSpec(BaseModel):
 
     def create_combinations(self) -> List[PredictorSpec]:
         """Create all combinations from the group spec."""
-        combination_dict = create_feature_combinations_from_dict(
-            dictionary=self.__dict__,
-        )
+        combination_dict = create_feature_combinations_from_dict(dictionary=self.__dict__)
 
         return [
             PredictorSpec(
@@ -84,9 +78,7 @@ class OutcomeGroupSpec(BaseModel):
 
     def create_combinations(self) -> List[OutcomeSpec]:
         """Create all combinations from the group spec."""
-        combination_dict = create_feature_combinations_from_dict(
-            dictionary=self.__dict__,
-        )
+        combination_dict = create_feature_combinations_from_dict(dictionary=self.__dict__)
 
         return [
             OutcomeSpec(
@@ -117,9 +109,7 @@ def create_feature_combinations_from_dict(
         List[Dict[str]]: list of all possible combinations of the arguments.
     """
     # Make all elements iterable
-    dictionary = {
-        k: v if isinstance(v, (list, tuple)) else [v] for k, v in dictionary.items()
-    }
+    dictionary = {k: v if isinstance(v, (list, tuple)) else [v] for k, v in dictionary.items()}
     keys, values = zip(*dictionary.items())
 
     # Create all combinations of top level elements
@@ -128,18 +118,13 @@ def create_feature_combinations_from_dict(
     return permutations_dicts  # type: ignore
 
 
-def create_specs_from_group(
-    feature_group_spec: GroupSpec,
-    output_class: AnySpec,
-) -> List[AnySpec]:
+def create_specs_from_group(feature_group_spec: GroupSpec, output_class: AnySpec) -> List[AnySpec]:
     """Create a list of specs from a GroupSpec."""
     # Create all combinations of top level elements
     # For each attribute in the FeatureGroupSpec
 
     feature_group_spec_dict = feature_group_spec.__dict__
 
-    permuted_dicts = create_feature_combinations_from_dict(
-        dictionary=feature_group_spec_dict,
-    )
+    permuted_dicts = create_feature_combinations_from_dict(dictionary=feature_group_spec_dict)
 
     return [output_class(**d) for d in permuted_dicts]  # type: ignore

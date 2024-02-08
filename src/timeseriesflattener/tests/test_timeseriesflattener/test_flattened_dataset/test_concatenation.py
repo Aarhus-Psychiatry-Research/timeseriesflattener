@@ -51,10 +51,7 @@ def test_benchmark_full_index_comparison_before_concatenate():
     # 0.004 seconds for 9 dfs when sampling 5_000 rows
     # 0.033 seconds for 9 dfs when sampling 100_000 rows
     # 7.622 seconds for 100 dfs when sampling 2_000_000 rows
-    compute_seconds = benchmark(
-        TimeseriesFlattener._check_dfs_are_ready_for_concat,
-        dfs,
-    )
+    compute_seconds = benchmark(TimeseriesFlattener._check_dfs_are_ready_for_concat, dfs)
 
     assert compute_seconds < 4
 
