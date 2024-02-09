@@ -79,7 +79,7 @@ def _get_timedelta_frame(
 ) -> TimedeltaFrame:
     # Join the prediction time dataframe
     joined_frame = predictiontime_frame.to_lazyframe_with_uuid().join(
-        value_frame.df, on=predictiontime_frame.entity_id_col_name
+        value_frame.lazyframe, on=predictiontime_frame.entity_id_col_name
     )
 
     # Get timedelta
@@ -134,7 +134,7 @@ class Flattener:
                     predictiontime_frame=self.predictiontime_frame, spec=spec
                 )
             )
-            .map(lambda x: x.df)
+            .map(lambda x: x.lazyframe)
             .to_list()
         )
         return AggregatedValueFrame(df=_horizontally_concatenate_dfs(dfs))

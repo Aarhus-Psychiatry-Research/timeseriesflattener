@@ -2,6 +2,7 @@ import datetime as dt
 from dataclasses import dataclass
 from typing import Protocol, Sequence, Union
 
+import pandas as pd
 import polars as pl
 
 ValueType = Union[int, float, str]
@@ -34,14 +35,22 @@ class PredictionTimeFrame:
         return self.df
 
 
-@dataclass(frozen=True)
+@dataclass
 class ValueFrame:
     """A frame that contains the values of a time series."""
 
-    df: pl.LazyFrame
+    df: pl.LazyFrame | pd.DataFrame
     value_type: str
     entity_id_col_name: str = default_entity_id_col_name
     value_timestamp_col_name: str = "value_timestamp"
+
+    @property
+    def lazyframe(self) -> pl.LazyFrame:
+        return self.df if isinstance(self.df, pl.LazyFrame) else pl.from_pandas(self.df).lazy()
+
+    @property
+    def eagerframe(self) -> pl.DataFrame:
+        return self.df.collect() if isinstance(self.df, pl.LazyFrame) else pl.from_pandas(self.df)
 
 
 @dataclass(frozen=True)
