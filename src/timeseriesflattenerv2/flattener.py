@@ -15,25 +15,28 @@ from .feature_specs import (
     TimedeltaFrame,
     ValueFrame,
     ValueSpecification,
+    ValueType,
 )
 
 
 def _aggregate_within_slice(
-    sliced_frame: SlicedFrame, aggregators: Sequence[Aggregator]
-) -> Iter[AggregatedValueFrame]:
+    sliced_frame: SlicedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
+) -> Sequence[AggregatedValueFrame]:
     aggregated_value_frames = [
-        aggregator.apply(SlicedFrame(sliced_frame.df), column_name=sliced_frame.value_col_name)
-        for aggregator in aggregators
+        agg.apply(SlicedFrame(sliced_frame.df), column_name=sliced_frame.value_col_name)
+        for agg in aggregators
     ]
 
-    return Iter(
+    with_fallback = [frame.fill_nulls(fallback=fallback) for frame in aggregated_value_frames]
+
+    return [
         AggregatedValueFrame(
             df=frame.df,
             pred_time_uuid_col_name=sliced_frame.pred_time_uuid_col_name,
             value_col_name=sliced_frame.value_col_name,
         )
-        for frame in aggregated_value_frames
-    )
+        for frame in with_fallback
+    ]
 
 
 def _slice_frame(timedelta_frame: TimedeltaFrame, distance: LookDistance) -> SlicedFrame:
@@ -47,10 +50,13 @@ def _slice_frame(timedelta_frame: TimedeltaFrame, distance: LookDistance) -> Sli
 
 
 def _slice_and_aggregate_spec(
-    timedelta_frame: TimedeltaFrame, distance: LookDistance, aggregators: Sequence[Aggregator]
-) -> Iter[AggregatedValueFrame]:
+    timedelta_frame: TimedeltaFrame,
+    distance: LookDistance,
+    aggregators: Sequence[Aggregator],
+    fallback: ValueType,
+) -> Sequence[AggregatedValueFrame]:
     sliced_frame = _slice_frame(timedelta_frame, distance)
-    return _aggregate_within_slice(sliced_frame, aggregators)
+    return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
 
 
 def _normalise_lookdistances(spec: ValueSpecification) -> Sequence[LookDistance]:
@@ -99,7 +105,10 @@ def _process_spec(
         Iter(lookdistances)
         .map(
             lambda distance: _slice_and_aggregate_spec(
-                timedelta_frame=timedelta_frame, distance=distance, aggregators=spec.aggregators
+                timedelta_frame=timedelta_frame,
+                distance=distance,
+                aggregators=spec.aggregators,
+                fallback=spec.fallback,
             )
         )
         .flatten()
