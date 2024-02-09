@@ -332,8 +332,8 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
-<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
 
 
 <span class="c1"># define function to embed text and return a dataframe</span>
@@ -341,6 +341,7 @@
     <span class="n">tfidf_model</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">max_features</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
     <span class="n">embeddings</span> <span class="o">=</span> <span class="n">tfidf_model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">embeddings</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">tfidf_model</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">())</span>
+
 
 <span class="c1"># embed text</span>
 <span class="n">embedded_text</span> <span class="o">=</span> <span class="n">embed_text_to_df</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">synth_text</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
@@ -354,7 +355,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">embedded_text_with_metadata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">embedded_text_with_metadata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
 </pre></div>
 </div>
 </div>
@@ -474,13 +475,11 @@
 <p>Now that we have our embeddings, we can use the <code class="docutils literal notranslate"><span class="pre">df_with_multiple_values_to_named_dataframes</span></code> function to turn the embeddings into a format that can be readily supplied to <code class="docutils literal notranslate"><span class="pre">PredictorGroupSpec</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.df_transforms</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">df_with_multiple_values_to_named_dataframes</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.df_transforms</span> <span class="kn">import</span> <span class="n">df_with_multiple_values_to_named_dataframes</span>
 
 <span class="c1"># split the dataframe into a list of named dataframes with one value each</span>
 <span class="n">embedded_dfs</span> <span class="o">=</span> <span class="n">df_with_multiple_values_to_named_dataframes</span><span class="p">(</span>
-    <span class="n">df</span><span class="o">=</span><span class="n">embedded_text_with_metadata</span><span class="p">,</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">embedded_text_with_metadata</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
     <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
     <span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
     <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;tfidf_&quot;</span><span class="p">,</span>
@@ -579,9 +578,9 @@
 <p>Let’s make some features!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">mean</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="n">mean</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.group_specs</span> <span class="kn">import</span> <span class="n">PredictorGroupSpec</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># create a group spec for the embedded text that will take the mean of each embedding on the column axis</span>
 <span class="c1"># for the last 365 and 730 days</span>
@@ -623,31 +622,31 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-08 11:51:05 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-09 13:26:32 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-08 11:51:06 [INFO] Processing 20 temporal features in parallel with 1 workers. Chunksize is 20. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-09 13:26:32 [INFO] Processing 20 temporal features in parallel with 1 workers. Chunksize is 20. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/20 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 1/20 [00:00&lt;00:07,  2.60it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  5%|▌         | 1/20 [00:00&lt;00:07,  2.68it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 20/20 [00:00&lt;00:00, 51.96it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 20/20 [00:00&lt;00:00, 53.57it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-08 11:51:06 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-09 13:26:33 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-08 11:51:06 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-09 13:26:33 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-08 11:51:06 [INFO] Concatenation took 0.029 seconds
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-09 13:26:33 [INFO] Concatenation took 0.029 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-08 11:51:06 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-09 13:26:33 [INFO] Merging with original df
 </pre></div>
 </div>
 </div>
@@ -683,23 +682,23 @@
       <th>timestamp</th>
       <th>prediction_time_uuid</th>
       <th>pred_tfidf_for_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_that_within_365_days_mean_fallback_nan</th>
       <th>pred_tfidf_the_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_or_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_patient_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_of_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_and_within_365_days_mean_fallback_nan</th>
-      <th>...</th>
-      <th>pred_tfidf_and_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_that_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_to_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_was_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_in_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_to_within_365_days_mean_fallback_nan</th>
-      <th>pred_tfidf_or_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_that_within_365_days_mean_fallback_nan</th>
       <th>pred_tfidf_the_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_of_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_for_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_patient_within_730_days_mean_fallback_nan</th>
+      <th>...</th>
+      <th>pred_tfidf_of_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_in_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_that_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_to_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_and_within_365_days_mean_fallback_nan</th>
       <th>pred_tfidf_was_within_730_days_mean_fallback_nan</th>
-      <th>pred_tfidf_patient_within_365_days_mean_fallback_nan</th>
+      <th>pred_tfidf_or_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_to_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_and_within_730_days_mean_fallback_nan</th>
+      <th>pred_tfidf_or_within_365_days_mean_fallback_nan</th>
     </tr>
   </thead>
   <tbody>
@@ -709,23 +708,23 @@
       <td>1968-11-28 16:05:00</td>
       <td>4977-1968-11-28-16-05-00</td>
       <td>0.088050</td>
+      <td>0.534890</td>
       <td>0.090356</td>
       <td>0.534890</td>
-      <td>0.221549</td>
-      <td>0.133722</td>
       <td>0.536339</td>
-      <td>0.145809</td>
+      <td>0.088050</td>
+      <td>0.133722</td>
       <td>...</td>
-      <td>0.145809</td>
+      <td>0.536339</td>
+      <td>0.483324</td>
       <td>0.090356</td>
       <td>0.284485</td>
+      <td>0.145809</td>
       <td>0.086927</td>
-      <td>0.483324</td>
-      <td>0.284485</td>
       <td>0.221549</td>
-      <td>0.534890</td>
-      <td>0.086927</td>
-      <td>0.133722</td>
+      <td>0.284485</td>
+      <td>0.145809</td>
+      <td>0.221549</td>
     </tr>
     <tr>
       <th>2463</th>
@@ -733,23 +732,23 @@
       <td>1965-11-02 07:17:00</td>
       <td>6840-1965-11-02-07-17-00</td>
       <td>0.376386</td>
+      <td>0.285810</td>
       <td>0.096561</td>
       <td>0.285810</td>
-      <td>0.355142</td>
-      <td>0.071452</td>
       <td>0.573168</td>
-      <td>0.155821</td>
+      <td>0.376386</td>
+      <td>0.071452</td>
       <td>...</td>
-      <td>0.155821</td>
+      <td>0.573168</td>
+      <td>0.258256</td>
       <td>0.096561</td>
       <td>0.456030</td>
+      <td>0.155821</td>
       <td>0.092896</td>
-      <td>0.258256</td>
-      <td>0.456030</td>
       <td>0.355142</td>
-      <td>0.285810</td>
-      <td>0.092896</td>
-      <td>0.071452</td>
+      <td>0.456030</td>
+      <td>0.155821</td>
+      <td>0.355142</td>
     </tr>
     <tr>
       <th>2580</th>
@@ -757,23 +756,23 @@
       <td>1968-08-26 15:19:00</td>
       <td>18-1968-08-26-15-19-00</td>
       <td>0.000000</td>
+      <td>0.601521</td>
       <td>0.000000</td>
       <td>0.601521</td>
       <td>0.000000</td>
+      <td>0.000000</td>
       <td>0.401014</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
       <td>...</td>
       <td>0.000000</td>
       <td>0.000000</td>
+      <td>0.000000</td>
       <td>0.639848</td>
+      <td>0.000000</td>
       <td>0.260680</td>
       <td>0.000000</td>
       <td>0.639848</td>
       <td>0.000000</td>
-      <td>0.601521</td>
-      <td>0.260680</td>
-      <td>0.401014</td>
+      <td>0.000000</td>
     </tr>
     <tr>
       <th>2741</th>
@@ -781,23 +780,23 @@
       <td>1969-06-03 04:36:00</td>
       <td>9832-1969-06-03-04-36-00</td>
       <td>0.101924</td>
+      <td>0.825558</td>
       <td>0.000000</td>
       <td>0.825558</td>
-      <td>0.128228</td>
-      <td>0.103195</td>
       <td>0.236513</td>
-      <td>0.225044</td>
+      <td>0.101924</td>
+      <td>0.103195</td>
       <td>...</td>
-      <td>0.225044</td>
+      <td>0.236513</td>
+      <td>0.186493</td>
       <td>0.000000</td>
       <td>0.164655</td>
+      <td>0.225044</td>
       <td>0.335410</td>
-      <td>0.186493</td>
-      <td>0.164655</td>
       <td>0.128228</td>
-      <td>0.825558</td>
-      <td>0.335410</td>
-      <td>0.103195</td>
+      <td>0.164655</td>
+      <td>0.225044</td>
+      <td>0.128228</td>
     </tr>
     <tr>
       <th>2931</th>
@@ -805,23 +804,23 @@
       <td>1967-06-05 00:41:00</td>
       <td>7281-1967-06-05-00-41-00</td>
       <td>0.043730</td>
+      <td>0.464891</td>
       <td>0.269251</td>
       <td>0.464891</td>
-      <td>0.385111</td>
-      <td>0.332065</td>
       <td>0.304425</td>
-      <td>0.289663</td>
+      <td>0.043730</td>
+      <td>0.332065</td>
       <td>...</td>
-      <td>0.289663</td>
+      <td>0.304425</td>
+      <td>0.280049</td>
       <td>0.269251</td>
       <td>0.211934</td>
+      <td>0.289663</td>
       <td>0.388547</td>
-      <td>0.280049</td>
-      <td>0.211934</td>
       <td>0.385111</td>
-      <td>0.464891</td>
-      <td>0.388547</td>
-      <td>0.332065</td>
+      <td>0.211934</td>
+      <td>0.289663</td>
+      <td>0.385111</td>
     </tr>
   </tbody>
 </table>
