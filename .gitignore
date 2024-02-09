@@ -168,4 +168,4 @@ poetry.lock
 **/.tmp/
 
 *nbconvert*
-.testmondata
+.testmondata*

@@ -2,10 +2,9 @@ import datetime as dt
 from dataclasses import dataclass
 
 import polars as pl
-from timeseriesflattener.testing.utils_for_testing import str_to_df
+from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-from timeseriesflattenerv2.flattener import Flattener
-
+from . import flattener
 from .feature_specs import (
     AggregatedValueFrame,
     Aggregator,
@@ -30,26 +29,24 @@ class MeanAggregator(Aggregator):
 
 
 def test_flattener():
-    pred_frame = str_to_df(
+    pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp
         1,2021-01-03"""
     )
 
-    value_frame = str_to_df(
+    value_frame = str_to_pl_df(
         """entity_id,value,value_timestamp
         1,1,2021-01-01
         1,2,2021-01-02
         1,3,2021-01-03"""
     )
 
-    result = Flattener(
-        predictiontime_frame=PredictionTimeFrame(df=pl.from_pandas(pred_frame).lazy())
+    result = flattener.Flattener(
+        predictiontime_frame=PredictionTimeFrame(df=pred_frame.lazy())
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(
-                    df=pl.from_pandas(value_frame).lazy(), value_type="test_value"
-                ),
+                value_frame=ValueFrame(df=value_frame.lazy(), value_type="test_value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallbacks=["NaN"],
@@ -58,3 +55,26 @@ def test_flattener():
     )
 
     assert isinstance(result, AggregatedValueFrame)
+
+
+def test_get_timedelta_frame():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+        1,2021-01-03"""
+    )
+
+    value_frame = str_to_pl_df(
+        """entity_id,value,value_timestamp
+        1,1,2021-01-01
+        1,2,2021-01-02
+        1,3,2021-01-03"""
+    )
+
+    expected_timedeltas = [dt.timedelta(days=-2), dt.timedelta(days=-1), dt.timedelta(days=0)]
+
+    result = flattener._get_timedelta_frame(
+        predictiontime_frame=PredictionTimeFrame(df=pred_frame.lazy()),
+        value_frame=ValueFrame(df=value_frame.lazy(), value_type="test_value"),
+    )
+
+    assert result.get_timedeltas() == expected_timedeltas
