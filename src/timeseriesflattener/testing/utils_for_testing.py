@@ -1,10 +1,10 @@
 """Utilities for testing."""
-
 from io import StringIO
 from typing import Any, List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
+import polars as pl
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
 from timeseriesflattener import TimeseriesFlattener
@@ -29,6 +29,22 @@ def convert_cols_with_matching_colnames_to_datetime(
     ].apply(pd.to_datetime)
 
     return df
+
+
+def str_to_pl_df(
+    string: str,
+    convert_timestamp_to_datetime: bool = True,
+    convert_np_nan_to_nan: bool = True,
+    convert_str_to_float: bool = False,
+) -> pl.DataFrame:
+    df = str_to_df(
+        string=string,
+        convert_timestamp_to_datetime=convert_timestamp_to_datetime,
+        convert_np_nan_to_nan=convert_np_nan_to_nan,
+        convert_str_to_float=convert_str_to_float,
+    )
+
+    return pl.from_pandas(df)
 
 
 def str_to_df(

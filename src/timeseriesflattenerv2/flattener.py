@@ -68,47 +68,64 @@ def _horizontally_concatenate_dfs(dfs: Sequence[pl.LazyFrame]) -> pl.LazyFrame:
     return pl.concat(dfs, how="horizontal")
 
 
+def _get_timedelta_frame(
+    predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
+) -> TimedeltaFrame:
+    # Join the prediction time dataframe
+    joined_frame = predictiontime_frame.to_lazyframe_with_uuid().join(
+        value_frame.df, on=predictiontime_frame.entity_id_col_name
+    )
+
+    # Get timedelta
+    timedelta_frame = joined_frame.with_columns(
+        (
+            pl.col(value_frame.value_timestamp_col_name)
+            - pl.col(predictiontime_frame.timestamp_col_name)
+        ).alias("time_from_prediction_to_value")
+    )
+
+    return TimedeltaFrame(timedelta_frame)
+
+
+def _process_spec(
+    predictiontime_frame: PredictionTimeFrame, spec: ValueSpecification
+) -> ValueFrame:
+    lookdistances = _normalise_lookdistances(spec)
+    timedelta_frame = _get_timedelta_frame(
+        predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
+    )
+
+    aggregated_value_frames = (
+        Iter(lookdistances)
+        .map(
+            lambda distance: _slice_and_aggregate_spec(
+                timedelta_frame=timedelta_frame, distance=distance, aggregators=spec.aggregators
+            )
+        )
+        .flatten()
+    )
+
+    return ValueFrame(
+        df=_horizontally_concatenate_dfs([f.df for f in aggregated_value_frames.to_list()]),
+        value_type=spec.value_frame.value_type,
+        entity_id_col_name=spec.value_frame.entity_id_col_name,
+        value_timestamp_col_name=spec.value_frame.value_timestamp_col_name,
+    )
+
+
 @dataclass
 class Flattener:
     predictiontime_frame: PredictionTimeFrame
 
-    def _get_timedelta_frame(self, spec: ValueSpecification) -> TimedeltaFrame:
-        # Join the prediction time dataframe
-        joined_frame = self.predictiontime_frame.to_lazyframe_with_uuid().join(
-            spec.value_frame.df, on=self.predictiontime_frame.entity_id_col_name
-        )
-
-        # Get timedelta
-        timedelta_frame = joined_frame.with_columns(
-            (
-                pl.col(spec.value_frame.value_timestamp_col_name)
-                - pl.col(self.predictiontime_frame.timestamp_col_name)
-            ).alias("time_from_prediction_to_value")
-        )
-
-        return TimedeltaFrame(timedelta_frame)
-
-    def _process_spec(self, spec: ValueSpecification) -> ValueFrame:
-        lookdistances = _normalise_lookdistances(spec)
-        timedelta_frame = self._get_timedelta_frame(spec)
-
-        aggregated_value_frames = (
-            Iter(lookdistances)
+    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedValueFrame:
+        dfs = (
+            Iter(specs)
             .map(
-                lambda distance: _slice_and_aggregate_spec(
-                    timedelta_frame=timedelta_frame, distance=distance, aggregators=spec.aggregators
+                lambda spec: _process_spec(
+                    predictiontime_frame=self.predictiontime_frame, spec=spec
                 )
             )
-            .flatten()
+            .map(lambda x: x.df)
+            .to_list()
         )
-
-        return ValueFrame(
-            df=_horizontally_concatenate_dfs([f.df for f in aggregated_value_frames.to_list()]),
-            value_type=spec.value_frame.value_type,
-            entity_id_col_name=spec.value_frame.entity_id_col_name,
-            value_timestamp_col_name=spec.value_frame.value_timestamp_col_name,
-        )
-
-    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedValueFrame:
-        dfs = Iter(specs).map(self._process_spec).map(lambda x: x.df).to_list()
         return AggregatedValueFrame(df=_horizontally_concatenate_dfs(dfs))

@@ -88,6 +88,9 @@ class TimedeltaFrame:
     timedelta_col_name: str = "time_from_prediction_to_value"
     value_col_name: str = "value"
 
+    def get_timedeltas(self) -> Sequence[dt.datetime]:
+        return self.df.collect().get_column(self.timedelta_col_name).to_list()
+
 
 ValueSpecification = Union[PredictorSpec, OutcomeSpec]
 
