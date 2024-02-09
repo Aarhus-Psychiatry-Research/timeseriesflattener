@@ -20,9 +20,7 @@ from .feature_specs import (
 class MeanAggregator(Aggregator):
     name: str = "mean"
 
-    def apply(
-        self, sliced_frame: SlicedFrame, column_name: str
-    ) -> AggregatedValueFrame:
+    def apply(self, sliced_frame: SlicedFrame, column_name: str) -> AggregatedValueFrame:
         df = sliced_frame.df.group_by(pl.col(sliced_frame.pred_time_uuid_col_name)).agg(
             pl.col(column_name).mean().alias(column_name)
         )
@@ -49,14 +47,10 @@ def test_flattener():
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(
-                    df=pl.from_pandas(value_frame), value_type="test_value"
-                ),
+                value_frame=ValueFrame(df=pl.from_pandas(value_frame), value_type="test_value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallbacks=["NaN"],
             )
         ]
     )
-
-    pass

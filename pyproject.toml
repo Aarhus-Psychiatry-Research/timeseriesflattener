@@ -43,7 +43,7 @@ name = "MIT"
 dev = [
   "pyright==1.1.330.post0",
   "pre-commit==3.4.0",
-  "ruff==0.0.292",          # important that these match the pre-commit hooks
+  "ruff==0.2.1",            # important that these match the pre-commit hooks
   "pandas-stubs",           # type stubs for pandas
   "invoke==2.1.1",
   "tox",
@@ -80,7 +80,13 @@ exclude = [".*venv*/", ".venv38/", ".tox"]
 
 [tool.ruff]
 line-length = 100
+target-version = "py38"
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
 select = [
   "A",
   "ANN",
@@ -149,19 +155,16 @@ exclude = [
 ]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-target-version = "py38"
 
-[tool.ruff.format]
-skip-magic-trailing-comma = true
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 mypy-init-return = true
 suppress-none-returning = true
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-third-party = ["wandb"]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 

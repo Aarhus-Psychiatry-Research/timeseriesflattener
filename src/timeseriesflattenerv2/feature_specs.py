@@ -1,6 +1,6 @@
 import datetime as dt
-from dataclasses import InitVar, dataclass
-from typing import NewType, Protocol, Sequence, Union
+from dataclasses import dataclass
+from typing import Protocol, Sequence, Union
 
 import polars as pl
 
@@ -24,9 +24,7 @@ class PredictionTimeFrame:
     def __post_init__(self):
         self.df = self.df.with_columns(
             pl.concat_str(
-                pl.col(self.entity_id_col_name),
-                pl.lit("-"),
-                pl.col(self.timestamp_col_name),
+                pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
             ).alias(self.pred_time_uuid_col_name)
         )
 
@@ -50,10 +48,7 @@ class SlicedFrame:
 
     df: pl.LazyFrame
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
-    pred_time_timestamp_col_name: str = default_pred_time_col_name
-    value_timestamp_col_name: str = "value_timestamp"
     value_col_name: str = "value"
-    value_type: str = "value"
 
 
 @dataclass(frozen=True)
