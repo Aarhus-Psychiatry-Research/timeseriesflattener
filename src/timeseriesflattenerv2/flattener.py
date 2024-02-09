@@ -5,6 +5,7 @@ import polars as pl
 from iterpy._iter import Iter
 
 from .feature_specs import (
+    AggregatedFrame,
     AggregatedValueFrame,
     Aggregator,
     LookDistance,
@@ -22,9 +23,12 @@ from .feature_specs import (
 def _aggregate_within_slice(
     sliced_frame: SlicedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
 ) -> Sequence[AggregatedValueFrame]:
+    grouped_frame = sliced_frame.df.groupby(
+        sliced_frame.pred_time_uuid_col_name, maintain_order=True
+    )
+
     aggregated_value_frames = [
-        agg.apply(SlicedFrame(sliced_frame.df), column_name=sliced_frame.value_col_name)
-        for agg in aggregators
+        agg.apply(grouped_frame, column_name=sliced_frame.value_col_name) for agg in aggregators
     ]
 
     with_fallback = [frame.fill_nulls(fallback=fallback) for frame in aggregated_value_frames]
@@ -69,9 +73,12 @@ def _normalise_lookdistances(spec: ValueSpecification) -> Sequence[LookDistance]
     return lookdistances
 
 
-def _horizontally_concatenate_dfs(dfs: Sequence[pl.LazyFrame]) -> pl.LazyFrame:
-    # Run some checks on the dfs
-    return pl.concat(dfs, how="horizontal")
+def horizontally_concatenate_dfs(
+    dfs: Sequence[pl.LazyFrame], pred_time_uuid_col_name: str
+) -> pl.LazyFrame:
+    dfs_without_identifiers = Iter(dfs).map(lambda df: df.drop([pred_time_uuid_col_name])).to_list()
+
+    return pl.concat([dfs[0], *dfs_without_identifiers[1:]], how="horizontal")
 
 
 def _get_timedelta_frame(
@@ -96,16 +103,13 @@ def _get_timedelta_frame(
 def _process_spec(
     predictiontime_frame: PredictionTimeFrame, spec: ValueSpecification
 ) -> ValueFrame:
-    lookdistances = _normalise_lookdistances(spec)
-    timedelta_frame = _get_timedelta_frame(
-        predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
-    )
-
     aggregated_value_frames = (
-        Iter(lookdistances)
+        Iter(_normalise_lookdistances(spec))
         .map(
             lambda distance: _slice_and_aggregate_spec(
-                timedelta_frame=timedelta_frame,
+                timedelta_frame=_get_timedelta_frame(
+                    predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
+                ),
                 distance=distance,
                 aggregators=spec.aggregators,
                 fallback=spec.fallback,
@@ -115,7 +119,10 @@ def _process_spec(
     )
 
     return ValueFrame(
-        df=_horizontally_concatenate_dfs([f.df for f in aggregated_value_frames.to_list()]),
+        df=horizontally_concatenate_dfs(
+            [f.df for f in aggregated_value_frames.to_list()],
+            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        ),
         value_type=spec.value_frame.value_type,
         entity_id_col_name=spec.value_frame.entity_id_col_name,
         value_timestamp_col_name=spec.value_frame.value_timestamp_col_name,
@@ -126,7 +133,7 @@ def _process_spec(
 class Flattener:
     predictiontime_frame: PredictionTimeFrame
 
-    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedValueFrame:
+    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedFrame:
         dfs = (
             Iter(specs)
             .map(
@@ -137,4 +144,10 @@ class Flattener:
             .map(lambda x: x.lazyframe)
             .to_list()
         )
-        return AggregatedValueFrame(df=_horizontally_concatenate_dfs(dfs))
+        return AggregatedFrame(
+            df=horizontally_concatenate_dfs(
+                dfs, pred_time_uuid_col_name=self.predictiontime_frame.pred_time_uuid_col_name
+            ),
+            pred_time_uuid_col_name=self.predictiontime_frame.pred_time_uuid_col_name,
+            timestamp_col_name=self.predictiontime_frame.timestamp_col_name,
+        )
