@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import polars as pl
 from timeseriesflattener.testing.utils_for_testing import str_to_df
 
-from timeseriesflattenerv2.Flattener import Flattener
+from timeseriesflattenerv2.flattener import Flattener
 
 from .feature_specs import (
     AggregatedValueFrame,
@@ -43,11 +43,13 @@ def test_flattener():
     )
 
     result = Flattener(
-        predictiontime_frame=PredictionTimeFrame(df=pl.from_pandas(pred_frame))
+        predictiontime_frame=PredictionTimeFrame(df=pl.from_pandas(pred_frame).lazy())
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(df=pl.from_pandas(value_frame), value_type="test_value"),
+                value_frame=ValueFrame(
+                    df=pl.from_pandas(value_frame).lazy(), value_type="test_value"
+                ),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallbacks=["NaN"],
