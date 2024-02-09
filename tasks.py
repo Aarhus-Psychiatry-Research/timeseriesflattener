@@ -56,16 +56,11 @@ def git_init(c: Context, branch: str = "main"):
         print(f"{Emo.GOOD} Git repository already initialized")
 
 
-def setup_venv(
-    c: Context,
-    python_version: str,
-) -> str:
+def setup_venv(c: Context, python_version: str) -> str:
     venv_name = f'.venv{python_version.replace(".", "")}'
 
     if not Path(venv_name).exists():
-        echo_header(
-            f"{Emo.DO} Creating virtual environment for {python_version}{Emo.PY}",
-        )
+        echo_header(f"{Emo.DO} Creating virtual environment for {python_version}{Emo.PY}")
         c.run(f"python{python_version} -m venv {venv_name}")
         print(f"{Emo.GOOD} Virtual environment created")
     else:
@@ -88,11 +83,7 @@ def _add_commit(c: Context, msg: Optional[str] = None):
 
 
 def is_uncommitted_changes(c: Context) -> bool:
-    git_status_result: Result = c.run(
-        "git status --porcelain",
-        pty=True,
-        hide=True,
-    )
+    git_status_result: Result = c.run("git status --porcelain", pty=True, hide=True)
 
     uncommitted_changes = git_status_result.stdout != ""
     return uncommitted_changes
@@ -101,15 +92,9 @@ def is_uncommitted_changes(c: Context) -> bool:
 def add_and_commit(c: Context, msg: Optional[str] = None):
     """Add and commit all changes."""
     if is_uncommitted_changes(c):
-        uncommitted_changes_descr = c.run(
-            "git status --porcelain",
-            pty=True,
-            hide=True,
-        ).stdout
+        uncommitted_changes_descr = c.run("git status --porcelain", pty=True, hide=True).stdout
 
-        echo_header(
-            f"{Emo.WARN} Uncommitted changes detected",
-        )
+        echo_header(f"{Emo.WARN} Uncommitted changes detected")
 
         for line in uncommitted_changes_descr.splitlines():
             print(f"    {line.strip()}")
@@ -120,10 +105,7 @@ def add_and_commit(c: Context, msg: Optional[str] = None):
 def branch_exists_on_remote(c: Context) -> bool:
     branch_name = Path(".git/HEAD").read_text().split("/")[-1].strip()
 
-    branch_exists_result: Result = c.run(
-        f"git ls-remote --heads origin {branch_name}",
-        hide=True,
-    )
+    branch_exists_result: Result = c.run(f"git ls-remote --heads origin {branch_name}", hide=True)
 
     return branch_name in branch_exists_result.stdout
 
@@ -141,21 +123,14 @@ def update_branch(c: Context):
 
 
 def create_pr(c: Context):
-    c.run(
-        "gh pr create --web",
-        pty=True,
-    )
+    c.run("gh pr create --web", pty=True)
 
 
 def update_pr(c: Context):
     echo_header(f"{Emo.COMMUNICATE} Syncing PR")
     # Get current branch name
     branch_name = Path(".git/HEAD").read_text().split("/")[-1].strip()
-    pr_result: Result = c.run(
-        "gh pr list --state OPEN",
-        pty=False,
-        hide=True,
-    )
+    pr_result: Result = c.run("gh pr list --state OPEN", pty=False, hide=True)
 
     if branch_name not in pr_result.stdout:
         create_pr(c)
@@ -169,11 +144,12 @@ def exit_if_error_in_stdout(result: Result):
     # Find N remaining using regex
 
     if "error" in result.stdout:
-        errors_remaining = re.findall(r"\d+(?=( remaining))", result.stdout)[
-            0
-        ]  # testing
-        if errors_remaining != "0":
-            exit(0)
+        try:
+            errors_remaining = re.findall(r"\d+(?=( remaining))", result.stdout)[0]  # testing
+            if errors_remaining != "0":
+                exit(0)
+        except IndexError:
+            pass
 
 
 def pre_commit(c: Context):
@@ -207,7 +183,7 @@ def setup(c: Context, python_version: str = "3.9"):
     git_init(c)
     venv_name = setup_venv(c, python_version=python_version)
     print(
-        f"{Emo.DO} Activate your virtual environment by running: \n\n\t\t source {venv_name}/bin/activate \n",
+        f"{Emo.DO} Activate your virtual environment by running: \n\n\t\t source {venv_name}/bin/activate \n"
     )
     print(f"{Emo.DO} Then install the project by running: \n\n\t\t inv install\n")
 
@@ -222,9 +198,9 @@ def update(c: Context):
 @task(iterable="pytest_args")
 def test(
     c: Context,
-    python_versions: str = "3.9",
+    python_versions: str = "3.10",
     pytest_args: List[str] = [],  # noqa
-    testmon: bool = False,
+    testmon: bool = True,
 ):
     """Run tests"""
     echo_header(f"{Emo.TEST} Running tests")
@@ -249,9 +225,7 @@ def test(
     python_version_arg_string = ",".join(python_version_strings)
 
     test_result: Result = c.run(
-        f"tox -e {python_version_arg_string} -- {pytest_arg_str}",
-        warn=True,
-        pty=True,
+        f"tox -e {python_version_arg_string} -- {pytest_arg_str}", warn=True, pty=True
     )
 
     # If "failed" in the pytest results
@@ -260,9 +234,7 @@ def test(
         echo_header("Failed tests")
 
         # Get lines with "FAILED" in them from the .pytest_results file
-        failed_tests = [
-            line for line in test_result.stdout if line.startswith("FAILED")
-        ]
+        failed_tests = [line for line in test_result.stdout if line.startswith("FAILED")]
 
         for line in failed_tests:
             # Remove from start of line until /test_
@@ -298,7 +270,7 @@ def lint(c: Context):
 @task
 def test_tutorials(c: Context):
     c.run(
-        "find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs jupyter nbconvert --to notebook --execute",
+        "find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs jupyter nbconvert --to notebook --execute"
     )
 
 

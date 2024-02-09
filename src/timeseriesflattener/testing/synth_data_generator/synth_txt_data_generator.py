@@ -35,11 +35,7 @@ def generate_synth_txt_data(
     df = pd.DataFrame(columns=list(predictors.keys()))
 
     # Generate data
-    df = generate_data_columns(
-        predictors=predictors,
-        n_samples=n_samples,
-        df=df,
-    )
+    df = generate_data_columns(predictors=predictors, n_samples=n_samples, df=df)
 
     # randomly replace predictors with NAs
     if na_prob:
@@ -55,10 +51,7 @@ if __name__ == "__main__":
         "text": {"column_type": "text"},
     }
 
-    out_df = generate_synth_txt_data(
-        predictors=column_specifications,
-        n_samples=100,
-    )
+    out_df = generate_synth_txt_data(predictors=column_specifications, n_samples=100)
 
     save_path = Path(__file__).parent.parent.parent.parent
     out_df.to_csv(save_path / "tests" / "test_data" / "synth_txt_data.csv")

@@ -10,11 +10,7 @@ if __name__ == "__main__":
     column_specifications = {
         "citizen_ids": {"column_type": "uniform_int", "min": 0, "max": 1_200_001},
         "timestamp": {"column_type": "datetime_uniform", "min": 0, "max": 5 * 365},
-        "timestamp_outcome": {
-            "column_type": "datetime_uniform",
-            "min": 1 * 365,
-            "max": 6 * 365,
-        },
+        "timestamp_outcome": {"column_type": "datetime_uniform", "min": 1 * 365, "max": 6 * 365},
         "pred_hba1c_within_100_days_max_fallback_np.nan": {
             "column_type": "normal",
             "mean": 48,

@@ -9,14 +9,11 @@ from pandas import DataFrame
 from pandas.testing import assert_series_equal
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.feature_specs.single_specs import AnySpec
-from timeseriesflattener.testing.load_synth_data import (
-    synth_predictor_binary,
-)
+from timeseriesflattener.testing.load_synth_data import synth_predictor_binary
 
 
 def convert_cols_with_matching_colnames_to_datetime(
-    df: DataFrame,
-    colname_substr: str,
+    df: DataFrame, colname_substr: str
 ) -> DataFrame:
     """Convert columns that contain colname_substr in their name to datetimes.
 
@@ -28,8 +25,7 @@ def convert_cols_with_matching_colnames_to_datetime(
         DataFrame: The converted df
     """
     df.loc[:, df.columns.str.contains(colname_substr)] = df.loc[
-        :,
-        df.columns.str.contains(colname_substr),
+        :, df.columns.str.contains(colname_substr)
     ].apply(pd.to_datetime)
 
     return df
@@ -70,10 +66,7 @@ def str_to_df(
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
-def _get_value_cols_based_on_spec(
-    df: pd.DataFrame,
-    spec: AnySpec,
-) -> Union[str, List[str]]:
+def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: AnySpec) -> Union[str, List[str]]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_base_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
@@ -101,16 +94,12 @@ def assert_flattened_data_as_expected(
         drop_pred_times_with_insufficient_look_distance=drop_pred_times_with_insufficient_look_distance,
     )
 
-    flattened_ds.add_spec(
-        spec=output_spec,
-    )
+    flattened_ds.add_spec(spec=output_spec)
 
     if expected_df:
         for col in expected_df.columns:
             assert_series_equal(
-                left=flattened_ds.get_df()[col],
-                right=expected_df[col],
-                check_dtype=False,
+                left=flattened_ds.get_df()[col], right=expected_df[col], check_dtype=False
             )
     elif expected_values:
         output_df = flattened_ds.get_df()

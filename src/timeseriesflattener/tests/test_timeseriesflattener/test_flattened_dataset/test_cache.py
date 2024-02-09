@@ -10,10 +10,7 @@ import pytest
 
 from timeseriesflattener.aggregation_fns import maximum, mean
 from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
-from timeseriesflattener.feature_specs.group_specs import (
-    NamedDataframe,
-    PredictorGroupSpec,
-)
+from timeseriesflattener.feature_specs.group_specs import NamedDataframe, PredictorGroupSpec
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 from timeseriesflattener.testing.load_synth_data import (
     load_synth_prediction_times,
@@ -27,7 +24,7 @@ from timeseriesflattener.tests.test_timeseriesflattener.test_flattened_dataset.u
 
 base_float_predictor_combinations = PredictorGroupSpec(
     named_dataframes=[
-        NamedDataframe(df=load_synth_predictor_float(), name="synth_predictor_float"),
+        NamedDataframe(df=load_synth_predictor_float(), name="synth_predictor_float")
     ],
     lookbehind_days=[365, 730],
     aggregation_fns=[mean],
@@ -35,9 +32,7 @@ base_float_predictor_combinations = PredictorGroupSpec(
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
-    named_dataframes=[
-        NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary"),
-    ],
+    named_dataframes=[NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary")],
     lookbehind_days=[365, 730],
     aggregation_fns=[maximum],
     fallback=[np.NaN],
@@ -45,13 +40,10 @@ base_binary_predictor_combinations = PredictorGroupSpec(
 
 
 @pytest.mark.parametrize(
-    "predictor_specs",
-    [base_float_predictor_combinations, base_binary_predictor_combinations],
+    "predictor_specs", [base_float_predictor_combinations, base_binary_predictor_combinations]
 )
 def test_cache_hitting(
-    tmp_path: Path,
-    predictor_specs: List[PredictorSpec],
-    synth_prediction_times: pd.DataFrame,
+    tmp_path: Path, predictor_specs: List[PredictorSpec], synth_prediction_times: pd.DataFrame
 ):
     """Test that cache hits."""
 

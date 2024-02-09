@@ -42,10 +42,7 @@ def train_pca_model(embedding: np.ndarray) -> PCA:
     return model
 
 
-def save_model_to_test_dir(
-    model: Any,
-    filename: str,
-):
+def save_model_to_test_dir(model: Any, filename: str):
     """
     Saves the model to a pickle file
 

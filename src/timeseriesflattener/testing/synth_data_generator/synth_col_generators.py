@@ -33,11 +33,7 @@ def create_outcome_values(
         effect, col = var.split("*")
         _y = float(effect) * df[col] + _y
 
-    noise = np.random.normal(
-        loc=noise_mean_sd[0],
-        scale=noise_mean_sd[1],
-        size=n_samples,
-    )
+    noise = np.random.normal(loc=noise_mean_sd[0], scale=noise_mean_sd[1], size=n_samples)
 
     # Z-score normalise and add noise
     _y = stats.zscore(_y) + noise
@@ -46,11 +42,7 @@ def create_outcome_values(
     return out  # type: ignore
 
 
-def generate_col_from_specs(
-    column_type: str,
-    n_samples: int,
-    col_specs: dict,
-) -> Iterable:
+def generate_col_from_specs(column_type: str, n_samples: int, col_specs: dict) -> Iterable:
     """Generate a column of data.
 
     Args:
@@ -68,36 +60,22 @@ def generate_col_from_specs(
         return -np.arange(n_samples)
 
     if column_type == "uniform_int":
-        return np.random.randint(
-            low=col_specs["min"],
-            high=col_specs["max"],
-            size=n_samples,
-        )
+        return np.random.randint(low=col_specs["min"], high=col_specs["max"], size=n_samples)
 
     if column_type == "uniform_float":
-        return np.random.uniform(
-            low=col_specs["min"],
-            high=col_specs["max"],
-            size=n_samples,
-        )
+        return np.random.uniform(low=col_specs["min"], high=col_specs["max"], size=n_samples)
 
     if column_type == "normal":
-        return np.random.normal(
-            loc=col_specs["mean"],
-            scale=col_specs["sd"],
-            size=n_samples,
-        )
+        return np.random.normal(loc=col_specs["mean"], scale=col_specs["sd"], size=n_samples)
 
     if column_type == "datetime_uniform":
         return pd.to_datetime(
             np.random.uniform(  # type: ignore
-                low=col_specs["min"],
-                high=col_specs["max"],
-                size=n_samples,
+                low=col_specs["min"], high=col_specs["max"], size=n_samples
             ),
             unit="D",
         ).round(  # type: ignore
-            "min",
+            "min"
         )
 
     raise ValueError(f"Unknown distribution: {column_type}")
@@ -148,9 +126,7 @@ def generate_data_columns(
             column_type = col_props["column_type"]
 
             df[col_name] = generate_col_from_specs(
-                column_type=column_type,
-                n_samples=n_samples,
-                col_specs=col_props,
+                column_type=column_type, n_samples=n_samples, col_specs=col_props
             )
 
             # If column has min and/or max, floor and ceil appropriately
@@ -167,14 +143,9 @@ if __name__ == "__main__":
     # Get project root directory
     column_specs = [
         {
-            "dw_ek_borger": {
-                "column_type": "id",
-            },
+            "dw_ek_borger": {"column_type": "id"},
             "raw_predictor": {"column_type": "uniform_float", "min": 0, "max": 10},
-        },
+        }
     ]
 
-    df = generate_data_columns(
-        predictors=column_specs,
-        n_samples=10_000,
-    )
+    df = generate_data_columns(predictors=column_specs, n_samples=10_000)

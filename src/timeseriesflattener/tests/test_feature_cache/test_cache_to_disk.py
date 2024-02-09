@@ -10,9 +10,7 @@ from timeseriesflattener.feature_cache.cache_to_disk import DiskCache
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec
 
 
-def test_write_and_check_feature(
-    tmp_path: Path,
-):
+def test_write_and_check_feature(tmp_path: Path):
     """Test that write_feature writes a feature to disk."""
 
     cache = DiskCache(
@@ -20,9 +18,7 @@ def test_write_and_check_feature(
         pred_time_uuid_col_name="pred_time_uuid",
         entity_id_col_name="entity_id",
         cache_file_suffix="csv",
-        prediction_times_df=pd.DataFrame(
-            {"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]},
-        ),
+        prediction_times_df=pd.DataFrame({"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]}),
     )
 
     values_df = pd.DataFrame(
@@ -31,7 +27,7 @@ def test_write_and_check_feature(
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             "value": [1, 2, 3],
-        },
+        }
     )
 
     test_spec = PredictorSpec(
@@ -48,7 +44,7 @@ def test_write_and_check_feature(
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_output_col_name()}": [1, 2, 3],
-        },
+        }
     )
 
     assert cache.feature_exists(feature_spec=test_spec) is False
@@ -75,17 +71,11 @@ def test_read_feature(tmp_path: Path):
         entity_id_col_name="entity_id",
         timestamp_col_name="timestamp",
         cache_file_suffix="csv",
-        prediction_times_df=pd.DataFrame(
-            {"pred_time_uuid": [1, 2, 3], "entity_id": [1, 2, 3]},
-        ),
+        prediction_times_df=pd.DataFrame({"pred_time_uuid": [1, 2, 3], "entity_id": [1, 2, 3]}),
     )
 
     values_df = pd.DataFrame(
-        {
-            "entity_id": [1, 2, 3, 4, 5],
-            "timestamp": [1, 2, 3, 4, 5],
-            "value": [1, 2, 3, 4, 5],
-        },
+        {"entity_id": [1, 2, 3, 4, 5], "timestamp": [1, 2, 3, 4, 5], "value": [1, 2, 3, 4, 5]}
     )
 
     test_spec = PredictorSpec(
@@ -98,15 +88,11 @@ def test_read_feature(tmp_path: Path):
 
     generated_df = pd.DataFrame(
         {
-            "entity_id": [
-                1,
-                2,
-                3,
-            ],
+            "entity_id": [1, 2, 3],
             "pred_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_output_col_name()}": [1, 2, np.nan],
-        },
+        }
     )
 
     cache.write_feature(feature_spec=test_spec, df=generated_df)
@@ -115,7 +101,4 @@ def test_read_feature(tmp_path: Path):
 
     # For each column in df, check that the values are equal to generated_df
     for col in df.columns:
-        assert_frame_equal(
-            df[col].to_frame(),
-            generated_df[col].to_frame(),
-        )
+        assert_frame_equal(df[col].to_frame(), generated_df[col].to_frame())

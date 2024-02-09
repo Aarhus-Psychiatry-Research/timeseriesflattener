@@ -73,11 +73,7 @@ def boolean(grouped_df: DataFrameGroupBy) -> DataFrame:
     Returns:
         DataFrame: Dataframe with value column containing only 0 or 1s.
     """
-    df = (
-        grouped_df["timestamp_val"]
-        .apply(lambda x: (~x.isna()).sum())
-        .reset_index(name="value")
-    )
+    df = grouped_df["timestamp_val"].apply(lambda x: (~x.isna()).sum()).reset_index(name="value")
 
     df.loc[df["value"] > 0, "value"] = 1
 
@@ -95,17 +91,11 @@ def change_per_day(grouped_df: DataFrameGroupBy) -> DataFrame:
     """
 
     # Check if some patients have multiple values but only one timestamp
-    if any(
-        grouped_df.timestamp_val.apply(
-            lambda x: len(set(x)) == 1 and len(x) > 1,
-        ).values,
-    ):
+    if any(grouped_df.timestamp_val.apply(lambda x: len(set(x)) == 1 and len(x) > 1).values):
         raise ValueError(
-            "One or more patients only have values with identical timestamps. There may be an error in the data.",
+            "One or more patients only have values with identical timestamps. There may be an error in the data."
         )
 
     return grouped_df.apply(
-        lambda x: Series(
-            {"value": stats.linregress(x.timestamp_val, x.value)[0]},
-        ),
+        lambda x: Series({"value": stats.linregress(x.timestamp_val, x.value)[0]})
     )

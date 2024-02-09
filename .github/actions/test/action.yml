@@ -4,7 +4,6 @@ inputs:
   python-version:
     description: "Which Python version to run on"
     required: true
-    default: "3.9"
 
 runs:
   using: "composite"
