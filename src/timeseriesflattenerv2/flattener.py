@@ -1,3 +1,4 @@
+import datetime as dt
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -33,23 +34,31 @@ def _aggregate_within_slice(
 
     with_fallback = [frame.fill_nulls(fallback=fallback) for frame in aggregated_value_frames]
 
-    return [
-        AggregatedValueFrame(
-            df=frame.df,
-            pred_time_uuid_col_name=sliced_frame.pred_time_uuid_col_name,
-            value_col_name=sliced_frame.value_col_name,
+    return with_fallback
+
+
+def _slice_frame(
+    timedelta_frame: TimedeltaFrame, distance: LookDistance, column_prefix: str
+) -> SlicedFrame:
+    new_colname = f"{column_prefix}_value_within_{abs(distance.days)}_days"
+
+    if distance < dt.timedelta(0):
+        sliced_frame = timedelta_frame.df.filter(
+            (pl.col(timedelta_frame.timedelta_col_name) >= distance).and_(
+                pl.col(timedelta_frame.timedelta_col_name) <= dt.timedelta(0)
+            )
         )
-        for frame in with_fallback
-    ]
-
-
-def _slice_frame(timedelta_frame: TimedeltaFrame, distance: LookDistance) -> SlicedFrame:
-    sliced_frame = timedelta_frame.df.filter(pl.col(timedelta_frame.timedelta_col_name) <= distance)
+    else:
+        sliced_frame = timedelta_frame.df.filter(
+            (pl.col(timedelta_frame.timedelta_col_name) <= distance).and_(
+                pl.col(timedelta_frame.timedelta_col_name) >= dt.timedelta(0)
+            )
+        )
 
     return SlicedFrame(
-        df=sliced_frame,
+        df=sliced_frame.rename({timedelta_frame.value_col_name: new_colname}),
         pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
-        value_col_name=timedelta_frame.value_col_name,
+        value_col_name=new_colname,
     )
 
 
@@ -58,8 +67,9 @@ def _slice_and_aggregate_spec(
     distance: LookDistance,
     aggregators: Sequence[Aggregator],
     fallback: ValueType,
+    column_prefix: str,
 ) -> Sequence[AggregatedValueFrame]:
-    sliced_frame = _slice_frame(timedelta_frame, distance)
+    sliced_frame = _slice_frame(timedelta_frame, distance, column_prefix)
     return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
 
 
@@ -113,6 +123,7 @@ def _process_spec(
                 distance=distance,
                 aggregators=spec.aggregators,
                 fallback=spec.fallback,
+                column_prefix=spec.column_prefix,
             )
         )
         .flatten()

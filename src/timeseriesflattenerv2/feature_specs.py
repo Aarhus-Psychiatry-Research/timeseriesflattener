@@ -69,14 +69,21 @@ class AggregatedValueFrame:
     value_col_name: str
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
 
-    def fill_nulls(self, fallback: ValueType) -> "SlicedFrame":
-        filled = self.df.with_columns(pl.col(self.value_col_name).fill_null(fallback))
+    def fill_nulls(self, fallback: ValueType) -> "AggregatedValueFrame":
+        filled = self.df.with_columns(
+            pl.col(self.value_col_name)
+            .fill_null(fallback)
+            .alias(f"{self.value_col_name}_fallback_{fallback}")
+        ).drop([self.value_col_name])
 
-        return SlicedFrame(
+        return AggregatedValueFrame(
             df=filled,
             pred_time_uuid_col_name=self.pred_time_uuid_col_name,
             value_col_name=self.value_col_name,
         )
+
+    def eagerframe(self) -> pl.DataFrame:
+        return self.df.collect()
 
 
 class Aggregator(Protocol):
@@ -90,6 +97,7 @@ class PredictorSpec:
     lookbehind_distances: Sequence[LookDistance]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
+    column_prefix: str = "pred"
 
 
 @dataclass(frozen=True)
@@ -98,6 +106,7 @@ class OutcomeSpec:
     lookahead_distances: Sequence[LookDistance]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
+    column_prefix: str = "outc"
 
 
 @dataclass(frozen=True)
