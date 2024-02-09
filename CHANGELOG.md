@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.11.0 (2024-02-09)
+
+### Feature
+
+* Polars prototype ([`36e6837`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/36e68375528ea8bf71801711f8245ac86efff625))
+
 ## v1.10.0 (2024-01-25)
 
 ### Feature
