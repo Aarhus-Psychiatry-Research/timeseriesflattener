@@ -49,10 +49,7 @@ class DiskCache(FeatureCache):
         self.entity_entity_id_col_name = entity_id_col_name
         self.timestamp_col_name = timestamp_col_name
 
-    def _load_most_recent_df_matching_pattern(
-        self,
-        file_pattern: str,
-    ) -> pd.DataFrame:
+    def _load_most_recent_df_matching_pattern(self, file_pattern: str) -> pd.DataFrame:
         """Load most recent df matching pattern.
 
         Args:
@@ -72,14 +69,9 @@ class DiskCache(FeatureCache):
 
         path_of_most_recent_file = max(files_with_suffix, key=os.path.getctime)
 
-        return load_dataset_from_file(
-            file_path=path_of_most_recent_file,
-        )
+        return load_dataset_from_file(file_path=path_of_most_recent_file)
 
-    def _get_file_name(
-        self,
-        feature_spec: TemporalSpec,
-    ) -> str:
+    def _get_file_name(self, feature_spec: TemporalSpec) -> str:
         """Get file name for feature spec.
 
         Args:
@@ -92,10 +84,7 @@ class DiskCache(FeatureCache):
 
         return f"{feature_spec.get_output_col_name()}_{n_rows}_rows_in_values_df"
 
-    def _get_file_pattern(
-        self,
-        feature_spec: TemporalSpec,
-    ) -> str:
+    def _get_file_pattern(self, feature_spec: TemporalSpec) -> str:
         """Get file pattern for feature spec.
 
         Args:
@@ -118,7 +107,7 @@ class DiskCache(FeatureCache):
             DataFrame: DataFrame with fallback column expanded
         """
         df = self._load_most_recent_df_matching_pattern(
-            file_pattern=self._get_file_pattern(feature_spec=feature_spec),
+            file_pattern=self._get_file_pattern(feature_spec=feature_spec)
         )
 
         # Expand fallback column
@@ -133,19 +122,13 @@ class DiskCache(FeatureCache):
         fallback = np.nan if feature_spec.fallback == "nan" else feature_spec.fallback
 
         # Replace NaNs with fallback
-        df[feature_spec.get_output_col_name()] = df[
-            feature_spec.get_output_col_name()
-        ].fillna(
-            fallback,  # type: ignore
+        df[feature_spec.get_output_col_name()] = df[feature_spec.get_output_col_name()].fillna(
+            fallback  # type: ignore
         )
 
         return df
 
-    def write_feature(
-        self,
-        feature_spec: TemporalSpec,
-        df: pd.DataFrame,
-    ):
+    def write_feature(self, feature_spec: TemporalSpec, df: pd.DataFrame):
         """Write feature to cache."""
         file_name = self._get_file_name(feature_spec=feature_spec)
 
@@ -161,14 +144,10 @@ class DiskCache(FeatureCache):
         timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         write_df_to_file(
             df=df,
-            file_path=self.feature_cache_dir
-            / f"{file_name}_{timestamp}.{self.cache_file_suffix}",
+            file_path=self.feature_cache_dir / f"{file_name}_{timestamp}.{self.cache_file_suffix}",
         )
 
-    def feature_exists(
-        self,
-        feature_spec: TemporalSpec,
-    ) -> bool:
+    def feature_exists(self, feature_spec: TemporalSpec) -> bool:
         """Check if cache is hit.
 
         Args:
@@ -180,9 +159,7 @@ class DiskCache(FeatureCache):
         file_pattern = self._get_file_pattern(feature_spec=feature_spec)
 
         # Check that file exists
-        file_pattern_hits = list(
-            self.feature_cache_dir.glob(file_pattern),
-        )
+        file_pattern_hits = list(self.feature_cache_dir.glob(file_pattern))
 
         if len(file_pattern_hits) == 0:
             return False

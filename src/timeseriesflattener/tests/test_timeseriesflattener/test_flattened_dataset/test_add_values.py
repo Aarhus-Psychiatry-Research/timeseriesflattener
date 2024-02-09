@@ -7,11 +7,7 @@ import pytest
 
 from timeseriesflattener import TimeseriesFlattener
 from timeseriesflattener.aggregation_fns import latest, maximum, minimum
-from timeseriesflattener.feature_specs.single_specs import (
-    OutcomeSpec,
-    PredictorSpec,
-    StaticSpec,
-)
+from timeseriesflattener.feature_specs.single_specs import OutcomeSpec, PredictorSpec, StaticSpec
 from timeseriesflattener.testing.utils_for_testing import (
     assert_flattened_data_as_expected,
     str_to_df,
@@ -23,12 +19,12 @@ def test_predictor_after_prediction_time():
     prediction_times_df = str_to_df(
         """entity_id,timestamp,
     1,2021-12-31 00:00:00
-    """,
+    """
     )
     predictor_df = str_to_df(
         """entity_id,timestamp,value,
     1,2022-01-01 00:00:01, 1.0
-    """,
+    """
     )
 
     assert_flattened_data_as_expected(
@@ -273,20 +269,12 @@ def test_static_predictor():
 
     dataset.add_spec(
         StaticSpec(  # type: ignore
-            timeseries_df=str_to_df(static_predictor),
-            feature_base_name=feature_name,
-            prefix=prefix,
-        ),
+            timeseries_df=str_to_df(static_predictor), feature_base_name=feature_name, prefix=prefix
+        )
     )
 
     expected_values = pd.DataFrame(
-        {
-            output_col_name: [
-                "1994-12-31 00:00:01",
-                "1994-12-31 00:00:01",
-                "1994-12-31 00:00:01",
-            ],
-        },
+        {output_col_name: ["1994-12-31 00:00:01", "1994-12-31 00:00:01", "1994-12-31 00:00:01"]}
     )
 
     pd.testing.assert_series_equal(
@@ -319,15 +307,7 @@ def test_add_age():
         output_prefix=output_prefix,
     )
 
-    expected_values = pd.DataFrame(
-        {
-            f"{output_prefix}_age_in_years": [
-                0.0,
-                27.0,
-                27.0,
-            ],
-        },
-    )
+    expected_values = pd.DataFrame({f"{output_prefix}_age_in_years": [0.0, 27.0, 27.0]})
 
     pd.testing.assert_series_equal(
         left=dataset.get_df()["eval_age_in_years"].reset_index(drop=True),
@@ -353,8 +333,7 @@ def test_add_age_error():
 
     with pytest.raises(ValueError, match=".*Recommend converting.*"):
         dataset.add_age(
-            date_of_birth_df=str_to_df(static_predictor),
-            date_of_birth_col_name="date_of_birth",
+            date_of_birth_df=str_to_df(static_predictor), date_of_birth_col_name="date_of_birth"
         )
 
 
@@ -387,7 +366,7 @@ def test_incident_addition_with_multiple_timestamps_raises_meaningful_error():
             fallback=np.NaN,
             feature_base_name="value",
             aggregation_fn=maximum,
-        ),
+        )
     )
 
     with pytest.raises(ValueError, match="Since incident = True"):
@@ -434,17 +413,13 @@ def test_incident_outcome_removing_prediction_times():
             fallback=np.NaN,
             feature_base_name="value",
             aggregation_fn=maximum,
-        ),
+        )
     )
 
     outcome_df = flattened_dataset.get_df().reset_index(drop=True)
 
     for col in expected_df.columns:
-        pd.testing.assert_series_equal(
-            outcome_df[col],
-            expected_df[col],
-            check_dtype=False,
-        )
+        pd.testing.assert_series_equal(outcome_df[col], expected_df[col], check_dtype=False)
 
 
 def test_add_multiple_static_predictors():
@@ -504,16 +479,13 @@ def test_add_multiple_static_predictors():
         spec=[
             output_spec,
             StaticSpec(  # type: ignore
-                timeseries_df=male_df,
-                feature_base_name="male",
-                prefix="pred",
+                timeseries_df=male_df, feature_base_name="male", prefix="pred"
             ),
-        ],
+        ]
     )
 
     flattened_dataset.add_age(
-        date_of_birth_col_name="date_of_birth",
-        date_of_birth_df=birthdates_df,
+        date_of_birth_col_name="date_of_birth", date_of_birth_df=birthdates_df
     )
 
     outcome_df = flattened_dataset.get_df()
@@ -584,7 +556,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
                 incident=True,
                 feature_base_name="value",
             ),
-        ],
+        ]
     )
 
     outcome_df = flattened_dataset.get_df().set_index("entity_id").sort_index()
@@ -592,10 +564,7 @@ def test_add_temporal_predictors_then_temporal_outcome():
 
     for col in expected_df.columns:
         pd.testing.assert_series_equal(
-            outcome_df[col],
-            expected_df[col],
-            check_index=False,
-            check_dtype=False,
+            outcome_df[col], expected_df[col], check_index=False, check_dtype=False
         )
 
 
@@ -634,7 +603,7 @@ def test_add_temporal_incident_binary_outcome():
             fallback=np.NaN,
             feature_base_name="value",
             aggregation_fn=maximum,
-        ),
+        )
     )
 
     outcome_df = flattened_dataset.get_df()
@@ -692,7 +661,7 @@ def test_add_outcome_timestamps():
             fallback=np.NaN,
             feature_base_name="timestamp",
             aggregation_fn=latest,
-        ),
+        )
     )
 
     outcome_df = flattened_dataset.get_df()

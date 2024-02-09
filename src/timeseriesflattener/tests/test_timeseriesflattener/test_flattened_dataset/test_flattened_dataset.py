@@ -4,11 +4,7 @@ import pandas as pd
 import pytest
 
 from timeseriesflattener.aggregation_fns import latest, mean
-from timeseriesflattener.feature_specs.single_specs import (
-    OutcomeSpec,
-    PredictorSpec,
-    StaticSpec,
-)
+from timeseriesflattener.feature_specs.single_specs import OutcomeSpec, PredictorSpec, StaticSpec
 from timeseriesflattener.flattened_dataset import TimeseriesFlattener
 
 
@@ -35,11 +31,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         aggregation_fn=mean,
         fallback=np.nan,
     )
-    static_spec = StaticSpec(
-        timeseries_df=synth_outcome,
-        feature_base_name="static",
-        prefix="pred",
-    )
+    static_spec = StaticSpec(timeseries_df=synth_outcome, feature_base_name="static", prefix="pred")
 
     # Test adding a single spec
     dataset.add_spec(outcome_spec)
@@ -55,10 +47,7 @@ def test_add_spec(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFr
         dataset.add_spec("invalid spec")  # type: ignore
 
 
-def test_compute_specs(
-    synth_prediction_times: pd.DataFrame,
-    synth_outcome: pd.DataFrame,
-):
+def test_compute_specs(synth_prediction_times: pd.DataFrame, synth_outcome: pd.DataFrame):
     # Create an instance of the class that contains the `add_spec` method
     dataset = TimeseriesFlattener(
         prediction_times_df=synth_prediction_times,
@@ -102,7 +91,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
         {
             "entity_id": [1, 1, 1, 1],
             "datetime": ["2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04"],
-        },
+        }
     )
 
     ts_flattener = TimeseriesFlattener(
@@ -111,13 +100,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
         timestamp_col_name="datetime",
     )
 
-    pred_val_df = pd.DataFrame(
-        {
-            "entity_id": [1],
-            "datetime": ["2022-01-01"],
-            "value": [1],
-        },
-    )
+    pred_val_df = pd.DataFrame({"entity_id": [1], "datetime": ["2022-01-01"], "value": [1]})
 
     # Create a sample set of specs
     predictor_spec = PredictorSpec(
@@ -128,13 +111,7 @@ def test_drop_pred_time_if_insufficient_look_distance():
         feature_base_name="test_feature",
     )
 
-    out_val_df = pd.DataFrame(
-        {
-            "entity_id": [1],
-            "datetime": ["2022-01-05"],
-            "value": [4],
-        },
-    )
+    out_val_df = pd.DataFrame({"entity_id": [1], "datetime": ["2022-01-05"], "value": [4]})
 
     outcome_spec = OutcomeSpec(
         timeseries_df=out_val_df,
@@ -162,7 +139,7 @@ def test_double_compute_doesn_not_duplicate_columns():
         {
             "entity_id": [1, 1, 2, 2],
             "date": ["2020-01-01", "2020-02-01", "2020-02-01", "2020-03-01"],
-        },
+        }
     )
     # Load a dataframe with raw values you wish to aggregate as predictors
     predictor_df = pd.DataFrame(
@@ -178,7 +155,7 @@ def test_double_compute_doesn_not_duplicate_columns():
                 "2020-03-16",
             ],
             "value": [1, 2, 3, 4, 4, 5, 6],
-        },
+        }
     )
 
     predictor_spec = PredictorSpec(

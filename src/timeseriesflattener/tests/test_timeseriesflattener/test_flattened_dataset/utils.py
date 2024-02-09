@@ -70,7 +70,7 @@ def create_flattened_df(
     )
 
     flat_ds.add_spec(
-        spec=predictor_specs,  # type: ignore
+        spec=predictor_specs  # type: ignore
     )
 
     return flat_ds.get_df()

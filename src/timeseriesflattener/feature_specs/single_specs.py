@@ -14,7 +14,7 @@ class LookPeriod:
     def __post_init__(self):
         if self.min_days > self.max_days:
             raise ValueError(
-                f"Invalid LookPeriod. The min_days ({self.min_days}) must be smaller than the max_days {self.max_days}.",
+                f"Invalid LookPeriod. The min_days ({self.min_days}) must be smaller than the max_days {self.max_days}."
             )
 
 
@@ -46,9 +46,7 @@ def coerce_floats(lookperiod: LookPeriod, fallback: float) -> CoercedFloats:
 
     coerced_lookperiod = LookPeriod(min_days=min_days, max_days=max_days)
 
-    fallback = (
-        fallback if not can_be_coerced_losslessly_to_int(fallback) else int(fallback)
-    )
+    fallback = fallback if not can_be_coerced_losslessly_to_int(fallback) else int(fallback)
 
     return CoercedFloats(lookperiod=coerced_lookperiod, fallback=fallback)
 
@@ -128,10 +126,7 @@ class OutcomeSpec(BaseModel):
     def lookahead_period(self) -> LookPeriod:
         if isinstance(self.lookahead_days, (float, int)):
             return LookPeriod(min_days=0, max_days=self.lookahead_days)
-        return LookPeriod(
-            min_days=self.lookahead_days[0],
-            max_days=self.lookahead_days[1],
-        )
+        return LookPeriod(min_days=self.lookahead_days[0], max_days=self.lookahead_days[1])
 
     def get_output_col_name(self) -> str:
         """Get the column name for the output column."""
@@ -183,10 +178,7 @@ class PredictorSpec(BaseModel):
     def lookbehind_period(self) -> LookPeriod:
         if isinstance(self.lookbehind_days, (float, int)):
             return LookPeriod(min_days=0, max_days=self.lookbehind_days)
-        return LookPeriod(
-            min_days=self.lookbehind_days[0],
-            max_days=self.lookbehind_days[1],
-        )
+        return LookPeriod(min_days=self.lookbehind_days[0], max_days=self.lookbehind_days[1])
 
     def get_output_col_name(self) -> str:
         """Generate the column name for the output column."""

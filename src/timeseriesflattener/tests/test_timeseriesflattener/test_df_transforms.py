@@ -1,9 +1,7 @@
 import pytest
 from pandas import DataFrame
 
-from timeseriesflattener.df_transforms import (
-    df_with_multiple_values_to_named_dataframes,
-)
+from timeseriesflattener.df_transforms import df_with_multiple_values_to_named_dataframes
 from timeseriesflattener.testing.utils_for_testing import str_to_df
 
 
@@ -15,9 +13,7 @@ def df_with_multiple_values() -> DataFrame:
     return str_to_df(df_str)
 
 
-def test_df_with_multiple_values_to_named_dataframes(
-    df_with_multiple_values: DataFrame,
-) -> None:
+def test_df_with_multiple_values_to_named_dataframes(df_with_multiple_values: DataFrame) -> None:
     dfs = df_with_multiple_values_to_named_dataframes(
         df=df_with_multiple_values,
         entity_id_col_name="entity_id",
@@ -34,13 +30,13 @@ def test_df_with_multiple_values_to_named_dataframes(
         str_to_df(
             """entity_id,timestamp,value,
                     1,2021-12-30 00:00:01, 1
-                    1,2021-12-29 00:00:02, 2""",
-        ),
+                    1,2021-12-29 00:00:02, 2"""
+        )
     )
     assert dfs[1].df.equals(
         str_to_df(
             """entity_id,timestamp,value,
                     1,2021-12-30 00:00:01, 2
-                    1,2021-12-29 00:00:02, 3""",
-        ),
+                    1,2021-12-29 00:00:02, 3"""
+        )
     )

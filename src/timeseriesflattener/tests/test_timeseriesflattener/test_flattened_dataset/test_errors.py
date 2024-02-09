@@ -52,7 +52,7 @@ def test_col_does_not_exist():
                 aggregation_fn=maximum,
                 fallback=2,
                 feature_base_name="value",
-            ),
+            )
         )
 
 

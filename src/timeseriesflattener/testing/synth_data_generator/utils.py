@@ -7,9 +7,7 @@ import pandas as pd
 
 
 def replace_vals_with_na(
-    df: pd.DataFrame,
-    na_prob: float,
-    na_ignore_cols: Optional[list[str]] = None,
+    df: pd.DataFrame, na_prob: float, na_ignore_cols: Optional[list[str]] = None
 ) -> pd.DataFrame:
     """Replace values with NAs.
 

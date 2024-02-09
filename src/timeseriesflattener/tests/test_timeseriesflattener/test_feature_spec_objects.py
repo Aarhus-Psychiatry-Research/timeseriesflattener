@@ -25,7 +25,7 @@ def test_skip_all_if_no_need_to_process(empty_named_df: NamedDataframe):
                 lookbehind_days=[1],
                 aggregation_fns=[maximum],
                 fallback=[0],
-            ).create_combinations(),
+            ).create_combinations()
         )
         == 1
     )
