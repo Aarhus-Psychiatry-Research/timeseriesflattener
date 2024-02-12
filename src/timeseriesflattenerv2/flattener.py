@@ -4,6 +4,7 @@ from typing import Sequence
 
 import polars as pl
 from iterpy._iter import Iter
+from rich.progress import track
 
 from .feature_specs import (
     AggregatedFrame,
@@ -24,7 +25,7 @@ from .feature_specs import (
 def _aggregate_within_slice(
     sliced_frame: SlicedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
 ) -> Sequence[AggregatedValueFrame]:
-    grouped_frame = sliced_frame.df.groupby(
+    grouped_frame = sliced_frame.init_df.groupby(
         sliced_frame.pred_time_uuid_col_name, maintain_order=True
     )
 
@@ -56,7 +57,7 @@ def _slice_frame(
         )
 
     return SlicedFrame(
-        df=sliced_frame.rename({timedelta_frame.value_col_name: new_colname}),
+        init_df=sliced_frame.rename({timedelta_frame.value_col_name: new_colname}),
         pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
         value_col_name=new_colname,
     )
@@ -95,8 +96,8 @@ def _get_timedelta_frame(
     predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
 ) -> TimedeltaFrame:
     # Join the prediction time dataframe
-    joined_frame = predictiontime_frame.to_lazyframe_with_uuid().join(
-        value_frame.lazyframe, on=predictiontime_frame.entity_id_col_name
+    joined_frame = predictiontime_frame.df.join(
+        value_frame.df, on=predictiontime_frame.entity_id_col_name
     )
 
     # Get timedelta
@@ -130,8 +131,8 @@ def _process_spec(
     )
 
     return ValueFrame(
-        df=horizontally_concatenate_dfs(
-            [f.df for f in aggregated_value_frames.to_list()],
+        init_df=horizontally_concatenate_dfs(
+            [AggValueFrame.df for AggValueFrame in aggregated_value_frames.to_list()],
             pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
         ),
         value_type=spec.value_frame.value_type,
@@ -143,18 +144,28 @@ def _process_spec(
 @dataclass
 class Flattener:
     predictiontime_frame: PredictionTimeFrame
+    lazy: bool = True
 
     def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedFrame:
-        dfs = (
-            Iter(specs)
-            .map(
-                lambda spec: _process_spec(
-                    predictiontime_frame=self.predictiontime_frame, spec=spec
-                )
+        if not self.lazy:
+            self.predictiontime_frame.df = self.predictiontime_frame.collect()  # type: ignore
+            for spec in specs:
+                spec.value_frame.df = spec.value_frame.collect()  # type: ignore
+
+        processed_specs: Sequence[ValueFrame] = []
+
+        for spec in track(specs, description="Processing specs..."):
+            print(f"Processing {spec.value_frame!s}")
+
+            if not self.lazy:
+                spec.value_frame.collect()
+
+            processed_specs.append(
+                _process_spec(predictiontime_frame=self.predictiontime_frame, spec=spec)
             )
-            .map(lambda x: x.lazyframe)
-            .to_list()
-        )
+
+        dfs = [spec.df for spec in processed_specs]
+
         return AggregatedFrame(
             df=horizontally_concatenate_dfs(
                 dfs, pred_time_uuid_col_name=self.predictiontime_frame.pred_time_uuid_col_name

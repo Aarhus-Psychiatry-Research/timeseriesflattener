@@ -29,11 +29,11 @@ def test_flattener():
     )
 
     result = flattener.Flattener(
-        predictiontime_frame=PredictionTimeFrame(df=pred_frame.lazy())
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(df=value_frame.lazy(), value_type="test_value"),
+                value_frame=ValueFrame(init_df=value_frame.lazy(), value_type="test_value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
@@ -47,6 +47,40 @@ def test_flattener():
     )
 
     assert_frame_equal(result.df.collect(), expected)
+
+
+def test_eager_flattener():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+        1,2021-01-03"""
+    )
+
+    value_frame = str_to_pl_df(
+        """entity_id,value,value_timestamp
+        1,1,2021-01-01
+        1,2,2021-01-02
+        1,4,2021-01-03"""
+    )
+
+    result = flattener.Flattener(
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()), lazy=False
+    ).aggregate_timeseries(
+        specs=[
+            PredictorSpec(
+                value_frame=ValueFrame(init_df=value_frame.lazy(), value_type="test_value"),
+                lookbehind_distances=[dt.timedelta(days=1)],
+                aggregators=[MeanAggregator()],
+                fallback=np.nan,
+            )
+        ]
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_within_1_days_mean_fallback_nan
+1-2021-01-03 00:00:00.000000,3.0"""
+    )
+
+    assert_frame_equal(result.df, expected)  # type: ignore
 
 
 def test_get_timedelta_frame():
@@ -65,8 +99,8 @@ def test_get_timedelta_frame():
     expected_timedeltas = [dt.timedelta(days=-2), dt.timedelta(days=-1), dt.timedelta(days=0)]
 
     result = flattener._get_timedelta_frame(
-        predictiontime_frame=PredictionTimeFrame(df=pred_frame.lazy()),
-        value_frame=ValueFrame(df=value_frame.lazy(), value_type="test_value"),
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
+        value_frame=ValueFrame(init_df=value_frame.lazy(), value_type="test_value"),
     )
 
     assert result.get_timedeltas() == expected_timedeltas
@@ -74,7 +108,7 @@ def test_get_timedelta_frame():
 
 def test_aggregate_within_slice():
     sliced_frame = SlicedFrame(
-        df=str_to_pl_df(
+        init_df=str_to_pl_df(
             """pred_time_uuid,value
 1-2021-01-03,1
 1-2021-01-03,2
@@ -98,7 +132,9 @@ def test_aggregate_within_slice():
 
 def test_aggregate_over_fallback():
     sliced_frame = SlicedFrame(
-        df=pl.LazyFrame({"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [None, None]})
+        init_df=pl.LazyFrame(
+            {"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [None, None]}
+        )
     )
 
     aggregated_values = flattener._aggregate_within_slice(
@@ -115,7 +151,7 @@ def test_aggregate_over_fallback():
 
 def test_multiple_aggregatrs():
     sliced_frame = SlicedFrame(
-        df=str_to_pl_df(
+        init_df=str_to_pl_df(
             """pred_time_uuid,value
 1-2021-01-03,1
 1-2021-01-03,2
