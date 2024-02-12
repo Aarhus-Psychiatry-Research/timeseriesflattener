@@ -35,7 +35,7 @@ dependencies = [
   "coloredlogs>14.0.0",
   "tqdm>4.1.0",
   "polars==0.20.7",
-  "iterpy==0.22.1",
+  "iterpy==1.5.1",
 ]
 
 [project.license]

@@ -3,12 +3,32 @@ import datetime as dt
 import numpy as np
 import polars as pl
 import polars.testing as polars_testing
+import pytest
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
 from timeseriesflattenerv2.aggregators import MaxAggregator, MeanAggregator
 
 from . import flattener
 from .feature_specs import PredictionTimeFrame, PredictorSpec, SlicedFrame, ValueFrame
+
+FakePredictiontimeFrame = PredictionTimeFrame(
+    init_df=pl.LazyFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})
+)
+FakeValueFrame = ValueFrame(
+    init_df=pl.LazyFrame({"entity_id": [1], "value": [1], "timestamp": ["2021-01-01"]}),
+    value_col_name="value",
+)
+FakePredictorSpec = PredictorSpec(
+    value_frame=ValueFrame(
+        init_df=pl.LazyFrame(
+            {"entity_id": [1], "FakeValueColName": [1], "timestamp": ["2021-01-01"]}
+        ),
+        value_col_name="FakeValueColName",
+    ),
+    lookbehind_distances=[dt.timedelta(days=1)],
+    aggregators=[MeanAggregator()],
+    fallback=np.nan,
+)
 
 
 def assert_frame_equal(result: pl.DataFrame, expected: pl.DataFrame):
@@ -257,3 +277,10 @@ def test_multiple_aggregatrs():
         ).collect(),
         expected,
     )
+
+
+def test_error_if_conflicting_value_col_names():
+    with pytest.raises(flattener.SpecError, match=".*unique.*"):
+        flattener.Flattener(predictiontime_frame=FakePredictiontimeFrame).aggregate_timeseries(
+            specs=[FakePredictorSpec, FakePredictorSpec]
+        )
