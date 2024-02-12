@@ -22,7 +22,7 @@ def test_flattener():
     )
 
     value_frame = str_to_pl_df(
-        """entity_id,value,value_timestamp
+        """entity_id,value,timestamp
         1,1,2021-01-01
         1,2,2021-01-02
         1,4,2021-01-03"""
@@ -33,7 +33,7 @@ def test_flattener():
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.lazy(), value_type="test_value"),
+                value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
@@ -56,7 +56,7 @@ def test_eager_flattener():
     )
 
     value_frame = str_to_pl_df(
-        """entity_id,value,value_timestamp
+        """entity_id,value,timestamp
         1,1,2021-01-01
         1,2,2021-01-02
         1,4,2021-01-03"""
@@ -67,7 +67,7 @@ def test_eager_flattener():
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.lazy(), value_type="test_value"),
+                value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
@@ -83,6 +83,52 @@ def test_eager_flattener():
     assert_frame_equal(result.df, expected)  # type: ignore
 
 
+def test_flattener_multiple_features():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+        1,2021-01-03"""
+    )
+
+    value_frame = str_to_pl_df(
+        """entity_id,value,timestamp
+        1,1,2021-01-01
+        1,2,2021-01-02
+        1,4,2021-01-03"""
+    )
+
+    result = flattener.Flattener(
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
+    ).aggregate_timeseries(
+        specs=[
+            PredictorSpec(
+                value_frame=ValueFrame(
+                    init_df=value_frame.rename({"value": "value_1"}).lazy(),
+                    value_col_name="value_1",
+                ),
+                lookbehind_distances=[dt.timedelta(days=1)],
+                aggregators=[MeanAggregator()],
+                fallback=np.nan,
+            ),
+            PredictorSpec(
+                value_frame=ValueFrame(
+                    init_df=value_frame.rename({"value": "value_2"}).lazy(),
+                    value_col_name="value_2",
+                ),
+                lookbehind_distances=[dt.timedelta(days=1)],
+                aggregators=[MeanAggregator()],
+                fallback=np.nan,
+            ),
+        ]
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_1_within_1_days_mean_fallback_nan,pred_value_2_within_1_days_mean_fallback_nan
+1-2021-01-03 00:00:00.000000,3.0,3.0"""
+    )
+
+    assert_frame_equal(result.df.collect(), expected)
+
+
 def test_get_timedelta_frame():
     pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp
@@ -90,7 +136,7 @@ def test_get_timedelta_frame():
     )
 
     value_frame = str_to_pl_df(
-        """entity_id,value,value_timestamp
+        """entity_id,value,timestamp
         1,1,2021-01-01
         1,2,2021-01-02
         1,3,2021-01-03"""
@@ -100,7 +146,7 @@ def test_get_timedelta_frame():
 
     result = flattener._get_timedelta_frame(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
-        value_frame=ValueFrame(init_df=value_frame.lazy(), value_type="test_value"),
+        value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
     )
 
     assert result.get_timedeltas() == expected_timedeltas
@@ -114,7 +160,8 @@ def test_aggregate_within_slice():
 1-2021-01-03,2
 2-2021-01-03,2
 2-2021-01-03,4"""
-        ).lazy()
+        ).lazy(),
+        value_col_name="value",
     )
 
     aggregated_values = flattener._aggregate_within_slice(
@@ -134,7 +181,8 @@ def test_aggregate_over_fallback():
     sliced_frame = SlicedFrame(
         init_df=pl.LazyFrame(
             {"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [None, None]}
-        )
+        ),
+        value_col_name="value",
     )
 
     aggregated_values = flattener._aggregate_within_slice(
@@ -157,7 +205,8 @@ def test_multiple_aggregatrs():
 1-2021-01-03,2
 2-2021-01-03,2
 2-2021-01-03,4"""
-        ).lazy()
+        ).lazy(),
+        value_col_name="value",
     )
 
     aggregated_values = flattener._aggregate_within_slice(

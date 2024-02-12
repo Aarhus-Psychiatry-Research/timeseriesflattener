@@ -39,9 +39,9 @@ def _aggregate_within_slice(
 
 
 def _slice_frame(
-    timedelta_frame: TimedeltaFrame, distance: LookDistance, column_prefix: str
+    timedelta_frame: TimedeltaFrame, distance: LookDistance, column_prefix: str, value_col_name: str
 ) -> SlicedFrame:
-    new_colname = f"{column_prefix}_value_within_{abs(distance.days)}_days"
+    new_colname = f"{column_prefix}_{value_col_name}_within_{abs(distance.days)}_days"
 
     if distance < dt.timedelta(0):
         sliced_frame = timedelta_frame.df.filter(
@@ -70,7 +70,9 @@ def _slice_and_aggregate_spec(
     fallback: ValueType,
     column_prefix: str,
 ) -> Sequence[AggregatedValueFrame]:
-    sliced_frame = _slice_frame(timedelta_frame, distance, column_prefix)
+    sliced_frame = _slice_frame(
+        timedelta_frame, distance, column_prefix, timedelta_frame.value_col_name
+    )
     return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
 
 
@@ -108,7 +110,7 @@ def _get_timedelta_frame(
         ).alias("time_from_prediction_to_value")
     )
 
-    return TimedeltaFrame(timedelta_frame)
+    return TimedeltaFrame(timedelta_frame, value_col_name=value_frame.value_col_name)
 
 
 def _process_spec(
@@ -135,9 +137,9 @@ def _process_spec(
             [AggValueFrame.df for AggValueFrame in aggregated_value_frames.to_list()],
             pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
         ),
-        value_type=spec.value_frame.value_type,
         entity_id_col_name=spec.value_frame.entity_id_col_name,
         value_timestamp_col_name=spec.value_frame.value_timestamp_col_name,
+        value_col_name=spec.value_frame.value_col_name,
     )
 
 

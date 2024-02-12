@@ -15,6 +15,7 @@ LookDistance = dt.timedelta
 default_entity_id_col_name = "entity_id"
 default_pred_time_uuid_col_name = "pred_time_uuid"
 default_pred_time_col_name = "pred_timestamp"
+default_timestamp_col_name = "timestamp"
 
 
 @dataclass
@@ -49,9 +50,9 @@ class ValueFrame:
     """A frame that contains the values of a time series."""
 
     init_df: InitVar[pl.LazyFrame | pd.DataFrame]
-    value_type: str
+    value_col_name: str
     entity_id_col_name: str = default_entity_id_col_name
-    value_timestamp_col_name: str = "value_timestamp"
+    value_timestamp_col_name: str = "timestamp"
 
     def __post_init__(self, init_df: pl.LazyFrame | pd.DataFrame):
         if isinstance(init_df, pd.DataFrame):
@@ -70,8 +71,8 @@ class SlicedFrame:
     """A frame that has been sliced by a lookdirection."""
 
     init_df: pl.LazyFrame
+    value_col_name: str
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
-    value_col_name: str = "value"
 
     @property
     def df(self) -> pl.LazyFrame:
@@ -129,9 +130,9 @@ class OutcomeSpec:
 @dataclass
 class TimedeltaFrame:
     df: pl.LazyFrame
+    value_col_name: str
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
     timedelta_col_name: str = "time_from_prediction_to_value"
-    value_col_name: str = "value"
 
     def get_timedeltas(self) -> Sequence[dt.datetime]:
         return self.collect().get_column(self.timedelta_col_name).to_list()
