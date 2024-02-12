@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.16.0 (2024-02-12)
+
+### Feature
+
+* **#386:** Make debugging easier ([`94b3179`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/94b317980b82c8ac4043fd542541d36fb1bec8ed))
+
 ## v1.15.0 (2024-02-12)
 
 ### Feature
