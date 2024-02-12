@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.12.0 (2024-02-12)
+
+### Feature
+
+* **#359:** Handle fallbacks ([`e72a90b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e72a90bfab75600ea50901f1812ac9aac2c03b93))
+
 ## v1.11.0 (2024-02-09)
 
 ### Feature
