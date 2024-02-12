@@ -42,6 +42,9 @@ class PredictionTimeFrame:
             return self.df
         return self.df.collect()
 
+    def required_columns(self) -> Sequence[str]:
+        return [self.entity_id_col_name]
+
 
 @dataclass
 class ValueFrame:

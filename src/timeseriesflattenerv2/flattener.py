@@ -5,8 +5,8 @@ import polars as pl
 from iterpy.iter import Iter
 from rich.progress import track
 
-from timeseriesflattenerv2.horizontally_concatenate_dfs import horizontally_concatenate_dfs
-from timeseriesflattenerv2.process_spec import process_spec
+from timeseriesflattenerv2._horisontally_concat import horizontally_concatenate_dfs
+from timeseriesflattenerv2._process_spec import process_spec
 
 from .feature_specs import AggregatedFrame, PredictionTimeFrame, ValueSpecification
 
@@ -32,6 +32,44 @@ def _specs_are_without_conflicts(specs: Sequence[ValueSpecification]) -> Iter[Sp
     return conflicting_value_col_names
 
 
+@dataclass(frozen=True)
+class MissingColumnNameError(Exception):
+    description: str
+
+
+@dataclass(frozen=True)
+class SpecRequirementPair:
+    required_columns: Sequence[str]
+    spec: ValueSpecification
+
+    def missing_columns(self) -> Iter[str]:
+        return Iter(self.required_columns).filter(
+            lambda col_name: col_name not in self.spec.value_frame.df.columns
+        )
+
+
+def _specs_contain_required_columns(
+    specs: Sequence[ValueSpecification], predictiontime_frame: PredictionTimeFrame
+) -> Iter[MissingColumnNameError]:
+    missing_col_names = (
+        Iter(specs)
+        .map(
+            lambda s: SpecRequirementPair(
+                required_columns=predictiontime_frame.required_columns(), spec=s
+            )
+        )
+        .filter(lambda pair: pair.missing_columns().count() > 0)
+        .flatten()
+        .map(
+            lambda pair: MissingColumnNameError(
+                description=f"{pair.missing_columns().to_list()} is missing in the {pair.spec.value_frame.value_col_name} specification."
+            )
+        )
+    )
+
+    return missing_col_names
+
+
 @dataclass
 class Flattener:
     predictiontime_frame: PredictionTimeFrame
@@ -40,13 +78,15 @@ class Flattener:
     def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedFrame:
         # Check for conflicts in the specs
         conflicting_specs = _specs_are_without_conflicts(specs)
+        underspecified_specs = _specs_contain_required_columns(
+            specs=specs, predictiontime_frame=self.predictiontime_frame
+        )
+        errors = Iter([conflicting_specs, underspecified_specs]).flatten()
 
-        if conflicting_specs.count() > 0:
+        if errors.count() > 0:
             raise SpecError(
                 "Conflicting specs."
-                + "".join(
-                    conflicting_specs.map(lambda error: f"  \n - {error.description}").to_list()
-                )
+                + "".join(errors.map(lambda error: f"  \n - {error.description}").to_list())
             )
 
         if not self.lazy:
@@ -59,6 +99,7 @@ class Flattener:
         for spec in track(specs, description="Processing specs..."):
             print(f"Processing spec: {spec.value_frame.value_col_name}")
             processed_spec = process_spec(predictiontime_frame=self.predictiontime_frame, spec=spec)
+
             if isinstance(processed_spec.df, pl.LazyFrame):
                 dfs.append(processed_spec.collect().lazy())
             else:
