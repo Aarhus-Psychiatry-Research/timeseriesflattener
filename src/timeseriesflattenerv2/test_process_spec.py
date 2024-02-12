@@ -3,11 +3,11 @@ import datetime as dt
 import polars as pl
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-import timeseriesflattenerv2.process_spec
+import timeseriesflattenerv2._process_spec
 
+from ._horisontally_concat import horizontally_concatenate_dfs
 from .aggregators import MaxAggregator, MeanAggregator
 from .feature_specs import PredictionTimeFrame, SlicedFrame, ValueFrame
-from .horizontally_concatenate_dfs import horizontally_concatenate_dfs
 from .test_flattener import assert_frame_equal
 
 
@@ -19,7 +19,7 @@ def test_aggregate_over_fallback():
         value_col_name="value",
     )
 
-    aggregated_values = timeseriesflattenerv2.process_spec._aggregate_within_slice(
+    aggregated_values = timeseriesflattenerv2._process_spec._aggregate_within_slice(
         sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
@@ -43,7 +43,7 @@ def test_aggregate_within_slice():
         value_col_name="value",
     )
 
-    aggregated_values = timeseriesflattenerv2.process_spec._aggregate_within_slice(
+    aggregated_values = timeseriesflattenerv2._process_spec._aggregate_within_slice(
         sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
@@ -71,7 +71,7 @@ def test_get_timedelta_frame():
 
     expected_timedeltas = [dt.timedelta(days=-2), dt.timedelta(days=-1), dt.timedelta(days=0)]
 
-    result = timeseriesflattenerv2.process_spec._get_timedelta_frame(
+    result = timeseriesflattenerv2._process_spec._get_timedelta_frame(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
         value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
     )
@@ -91,7 +91,7 @@ def test_multiple_aggregatrs():
         value_col_name="value",
     )
 
-    aggregated_values = timeseriesflattenerv2.process_spec._aggregate_within_slice(
+    aggregated_values = timeseriesflattenerv2._process_spec._aggregate_within_slice(
         sliced_frame=sliced_frame, aggregators=[MeanAggregator(), MaxAggregator()], fallback=0
     )
 

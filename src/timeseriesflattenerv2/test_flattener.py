@@ -186,3 +186,12 @@ def test_error_if_conflicting_value_col_names():
         flattener.Flattener(predictiontime_frame=FakePredictiontimeFrame).aggregate_timeseries(
             specs=[FakePredictorSpec, FakePredictorSpec]
         )
+
+
+def test_error_if_missing_entity_id_column():
+    with pytest.raises(flattener.SpecError, match=".*is missing in the .* specification.*"):
+        flattener.Flattener(
+            predictiontime_frame=PredictionTimeFrame(
+                init_df=pl.LazyFrame({"no_entity_id": [1, 2, 3]}), entity_id_col_name="no_entity_id"
+            )
+        ).aggregate_timeseries(specs=[FakePredictorSpec])
