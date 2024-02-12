@@ -4,7 +4,7 @@ from typing import Protocol, Sequence, Union
 
 import polars as pl
 
-Fallback = Union[int, float, str]
+ValueType = Union[int, float, str]
 LookDistance = dt.timedelta
 
 # TODO: Add validation that all entity_id and timestamp columns are the same
@@ -25,7 +25,9 @@ class PredictionTimeFrame:
         self.df = self.df.with_columns(
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
-            ).alias(self.pred_time_uuid_col_name)
+            )
+            .str.strip_chars()
+            .alias(self.pred_time_uuid_col_name)
         )
 
     def to_lazyframe_with_uuid(self) -> pl.LazyFrame:
@@ -57,6 +59,15 @@ class AggregatedValueFrame:
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
     value_col_name: str = "value"
 
+    def fill_nulls(self, fallback: ValueType) -> "SlicedFrame":
+        filled = self.df.with_columns(pl.col(self.value_col_name).fill_null(fallback))
+
+        return SlicedFrame(
+            df=filled,
+            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
+            value_col_name=self.value_col_name,
+        )
+
 
 class Aggregator(Protocol):
     name: str
@@ -70,7 +81,7 @@ class PredictorSpec:
     value_frame: ValueFrame
     lookbehind_distances: Sequence[LookDistance]
     aggregators: Sequence[Aggregator]
-    fallbacks: Sequence[Fallback]
+    fallback: ValueType
 
 
 @dataclass(frozen=True)
@@ -78,7 +89,7 @@ class OutcomeSpec:
     value_frame: ValueFrame
     lookahead_distances: Sequence[LookDistance]
     aggregators: Sequence[Aggregator]
-    fallbacks: Sequence[Fallback]
+    fallback: ValueType
 
 
 @dataclass(frozen=True)

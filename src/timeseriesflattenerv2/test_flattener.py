@@ -1,13 +1,14 @@
 import datetime as dt
-from dataclasses import dataclass
 
 import polars as pl
+import polars.testing as polars_testing
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
+
+from timeseriesflattenerv2.aggregators import MeanAggregator
 
 from . import flattener
 from .feature_specs import (
     AggregatedValueFrame,
-    Aggregator,
     PredictionTimeFrame,
     PredictorSpec,
     SlicedFrame,
@@ -15,17 +16,8 @@ from .feature_specs import (
 )
 
 
-@dataclass
-class MeanAggregator(Aggregator):
-    name: str = "mean"
-
-    def apply(self, sliced_frame: SlicedFrame, column_name: str) -> AggregatedValueFrame:
-        df = sliced_frame.df.group_by(pl.col(sliced_frame.pred_time_uuid_col_name)).agg(
-            pl.col(column_name).mean().alias(column_name)
-        )
-        # TODO: Figure out how to standardise the output column names
-
-        return AggregatedValueFrame(df=df)
+def assert_frame_equal(left: pl.DataFrame, right: pl.DataFrame):
+    polars_testing.assert_frame_equal(left, right, check_dtype=False, check_column_order=False)
 
 
 def test_flattener():
@@ -49,7 +41,7 @@ def test_flattener():
                 value_frame=ValueFrame(df=value_frame.lazy(), value_type="test_value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
-                fallbacks=["NaN"],
+                fallback="NaN",
             )
         ]
     )
@@ -78,3 +70,44 @@ def test_get_timedelta_frame():
     )
 
     assert result.get_timedeltas() == expected_timedeltas
+
+
+def test_aggregate_within_slice():
+    sliced_frame = SlicedFrame(
+        df=str_to_pl_df(
+            """pred_time_uuid,value
+1-2021-01-03,1
+1-2021-01-03,2
+2-2021-01-03,2
+2-2021-01-03,4"""
+        ).lazy()
+    )
+
+    aggregated_values = flattener._aggregate_within_slice(
+        sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,value
+1-2021-01-03,1.5
+2-2021-01-03,3"""
+    )
+
+    assert_frame_equal(aggregated_values[0].df.collect(), expected)
+
+
+def test_aggregate_over_fallback():
+    sliced_frame = SlicedFrame(
+        df=pl.LazyFrame({"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [None, None]})
+    )
+
+    aggregated_values = flattener._aggregate_within_slice(
+        sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,value
+1-2021-01-03,0"""
+    )
+
+    assert_frame_equal(aggregated_values[0].df.collect(), expected)
