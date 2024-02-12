@@ -1,9 +1,10 @@
 import datetime as dt
-from dataclasses import dataclass
+from dataclasses import InitVar, dataclass
 from typing import Protocol, Sequence, Union
 
 import pandas as pd
 import polars as pl
+from polars.dataframe.group_by import GroupBy
 from polars.lazyframe.group_by import LazyGroupBy
 
 ValueType = Union[int, float, str]
@@ -18,12 +19,17 @@ default_pred_time_col_name = "pred_timestamp"
 
 @dataclass
 class PredictionTimeFrame:
-    df: pl.LazyFrame
+    init_df: InitVar[pl.LazyFrame | pd.DataFrame]
     entity_id_col_name: str = default_entity_id_col_name
     timestamp_col_name: str = default_pred_time_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
 
-    def __post_init__(self):
+    def __post_init__(self, init_df: pl.LazyFrame | pd.DataFrame):
+        if isinstance(init_df, pd.DataFrame):
+            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
+        else:
+            self.df: pl.LazyFrame = init_df
+
         self.df = self.df.with_columns(
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
@@ -32,38 +38,47 @@ class PredictionTimeFrame:
             .alias(self.pred_time_uuid_col_name)
         )
 
-    def to_lazyframe_with_uuid(self) -> pl.LazyFrame:
-        return self.df
+    def collect(self) -> pl.DataFrame:
+        if isinstance(self.df, pl.DataFrame):
+            return self.df
+        return self.df.collect()
 
 
 @dataclass
 class ValueFrame:
     """A frame that contains the values of a time series."""
 
-    df: pl.LazyFrame | pd.DataFrame
+    init_df: InitVar[pl.LazyFrame | pd.DataFrame]
     value_type: str
     entity_id_col_name: str = default_entity_id_col_name
     value_timestamp_col_name: str = "value_timestamp"
 
-    @property
-    def lazyframe(self) -> pl.LazyFrame:
-        return self.df if isinstance(self.df, pl.LazyFrame) else pl.from_pandas(self.df).lazy()
+    def __post_init__(self, init_df: pl.LazyFrame | pd.DataFrame):
+        if isinstance(init_df, pd.DataFrame):
+            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
+        else:
+            self.df: pl.LazyFrame = init_df
 
-    @property
-    def eagerframe(self) -> pl.DataFrame:
-        return self.df.collect() if isinstance(self.df, pl.LazyFrame) else pl.from_pandas(self.df)
+    def collect(self) -> pl.DataFrame:
+        if isinstance(self.df, pl.DataFrame):
+            return self.df
+        return self.df.collect()
 
 
 @dataclass(frozen=True)
 class SlicedFrame:
     """A frame that has been sliced by a lookdirection."""
 
-    df: pl.LazyFrame
+    init_df: pl.LazyFrame
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
     value_col_name: str = "value"
 
+    @property
+    def df(self) -> pl.LazyFrame:
+        return self.init_df
 
-@dataclass(frozen=True)
+
+@dataclass
 class AggregatedValueFrame:
     df: pl.LazyFrame
     value_col_name: str
@@ -82,12 +97,14 @@ class AggregatedValueFrame:
             value_col_name=self.value_col_name,
         )
 
-    def eagerframe(self) -> pl.DataFrame:
+    def collect(self) -> pl.DataFrame:
+        if isinstance(self.df, pl.DataFrame):
+            return self.df
         return self.df.collect()
 
 
 class Aggregator(Protocol):
-    def apply(self, value_frame: LazyGroupBy, column_name: str) -> AggregatedValueFrame:
+    def apply(self, value_frame: LazyGroupBy | GroupBy, column_name: str) -> AggregatedValueFrame:
         ...
 
 
@@ -109,7 +126,7 @@ class OutcomeSpec:
     column_prefix: str = "outc"
 
 
-@dataclass(frozen=True)
+@dataclass
 class TimedeltaFrame:
     df: pl.LazyFrame
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
@@ -117,7 +134,10 @@ class TimedeltaFrame:
     value_col_name: str = "value"
 
     def get_timedeltas(self) -> Sequence[dt.datetime]:
-        return self.df.collect().get_column(self.timedelta_col_name).to_list()
+        return self.collect().get_column(self.timedelta_col_name).to_list()
+
+    def collect(self) -> pl.DataFrame:
+        return self.df.collect()
 
 
 ValueSpecification = Union[PredictorSpec, OutcomeSpec]
@@ -128,3 +148,8 @@ class AggregatedFrame:
     df: pl.LazyFrame
     pred_time_uuid_col_name: str
     timestamp_col_name: str
+
+    def collect(self) -> pl.DataFrame:
+        if isinstance(self.df, pl.DataFrame):
+            return self.df
+        return self.df.collect()
