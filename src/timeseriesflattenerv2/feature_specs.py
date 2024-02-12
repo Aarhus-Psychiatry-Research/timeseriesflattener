@@ -4,6 +4,7 @@ from typing import Protocol, Sequence, Union
 
 import pandas as pd
 import polars as pl
+from polars.lazyframe.group_by import LazyGroupBy
 
 ValueType = Union[int, float, str]
 LookDistance = dt.timedelta
@@ -65,8 +66,8 @@ class SlicedFrame:
 @dataclass(frozen=True)
 class AggregatedValueFrame:
     df: pl.LazyFrame
+    value_col_name: str
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
-    value_col_name: str = "value"
 
     def fill_nulls(self, fallback: ValueType) -> "SlicedFrame":
         filled = self.df.with_columns(pl.col(self.value_col_name).fill_null(fallback))
@@ -79,9 +80,7 @@ class AggregatedValueFrame:
 
 
 class Aggregator(Protocol):
-    name: str
-
-    def apply(self, value_frame: SlicedFrame, column_name: str) -> AggregatedValueFrame:
+    def apply(self, value_frame: LazyGroupBy, column_name: str) -> AggregatedValueFrame:
         ...
 
 
@@ -117,5 +116,6 @@ ValueSpecification = Union[PredictorSpec, OutcomeSpec]
 
 @dataclass(frozen=True)
 class AggregatedFrame:
+    df: pl.LazyFrame
     pred_time_uuid_col_name: str
     timestamp_col_name: str

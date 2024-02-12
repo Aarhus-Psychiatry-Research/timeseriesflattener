@@ -4,11 +4,11 @@ import polars as pl
 import polars.testing as polars_testing
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-from timeseriesflattenerv2.aggregators import MeanAggregator
+from timeseriesflattenerv2.aggregators import MaxAggregator, MeanAggregator
 
 from . import flattener
 from .feature_specs import (
-    AggregatedValueFrame,
+    AggregatedFrame,
     PredictionTimeFrame,
     PredictorSpec,
     SlicedFrame,
@@ -17,9 +17,7 @@ from .feature_specs import (
 
 
 def assert_frame_equal(left: pl.DataFrame, right: pl.DataFrame):
-    polars_testing.assert_frame_equal(
-        left, right, check_dtype=False, check_column_order=False, check_row_order=False
-    )
+    polars_testing.assert_frame_equal(left, right, check_dtype=False, check_column_order=False)
 
 
 def test_flattener():
@@ -48,7 +46,7 @@ def test_flattener():
         ]
     )
 
-    assert isinstance(result, AggregatedValueFrame)
+    assert isinstance(result, AggregatedFrame)
 
 
 def test_get_timedelta_frame():
@@ -90,7 +88,7 @@ def test_aggregate_within_slice():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value
+        """pred_time_uuid,value_mean
 1-2021-01-03,1.5
 2-2021-01-03,3"""
     )
@@ -108,8 +106,37 @@ def test_aggregate_over_fallback():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value
+        """pred_time_uuid,value_mean
 1-2021-01-03,0"""
     )
 
     assert_frame_equal(aggregated_values[0].df.collect(), expected)
+
+
+def test_multiple_aggregatrs():
+    sliced_frame = SlicedFrame(
+        df=str_to_pl_df(
+            """pred_time_uuid,value
+1-2021-01-03,1
+1-2021-01-03,2
+2-2021-01-03,2
+2-2021-01-03,4"""
+        ).lazy()
+    )
+
+    aggregated_values = flattener._aggregate_within_slice(
+        sliced_frame=sliced_frame, aggregators=[MeanAggregator(), MaxAggregator()], fallback=0
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,value_mean,value_max
+1-2021-01-03,1.5,2
+2-2021-01-03,3,4"""
+    )
+
+    assert_frame_equal(
+        flattener.horizontally_concatenate_dfs(
+            [agg.df for agg in aggregated_values], pred_time_uuid_col_name="pred_time_uuid"
+        ).collect(),
+        expected,
+    )

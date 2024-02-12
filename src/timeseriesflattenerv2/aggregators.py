@@ -1,18 +1,25 @@
 from dataclasses import dataclass
 
 import polars as pl
+from polars.lazyframe.group_by import LazyGroupBy
 
-from .feature_specs import AggregatedValueFrame, Aggregator, SlicedFrame
+from timeseriesflattenerv2.feature_specs import Aggregator
+
+from .feature_specs import AggregatedValueFrame
 
 
 @dataclass
 class MeanAggregator(Aggregator):
-    name: str = "mean"
+    def apply(self, grouped_frame: LazyGroupBy, column_name: str) -> AggregatedValueFrame:
+        value_col_name = f"{column_name}_mean"
+        df = grouped_frame.agg(pl.col(column_name).mean().alias(value_col_name))
+        return AggregatedValueFrame(df=df, value_col_name=value_col_name)
 
-    def apply(self, sliced_frame: SlicedFrame, column_name: str) -> AggregatedValueFrame:
-        df = sliced_frame.df.group_by(
-            sliced_frame.pred_time_uuid_col_name, maintain_order=True
-        ).agg(pl.col(column_name).mean())
-        # TODO: Figure out how to standardise the output column names
 
-        return AggregatedValueFrame(df=df)
+@dataclass
+class MaxAggregator(Aggregator):
+    def apply(self, grouped_frame: LazyGroupBy, column_name: str) -> AggregatedValueFrame:
+        value_col_name = f"{column_name}_max"
+        df = grouped_frame.agg(pl.col(column_name).max().alias(value_col_name))
+
+        return AggregatedValueFrame(df=df, value_col_name=value_col_name)
