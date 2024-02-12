@@ -48,7 +48,6 @@ dev = [
   "ruff==0.2.1",            # important that these match the pre-commit hooks
   "pandas-stubs",           # type stubs for pandas
   "invoke==2.1.1",
-  "tox",
   "lumberman",
 ]
 test = [
@@ -180,25 +179,3 @@ build_command = "python -m pip install build; python -m build"
 
 [tool.setuptools]
 include-package-data = true
-
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = py310
-
-[testenv]
-description: run unit tests
-extras = test
-use_develop = true
-commands =
-  pytest -n auto {posargs:tests}
-
-[testenv:type]
-description: run static type checking
-extras = test, dev
-basepython = py310
-use_develop = true
-allowlist_externals = ls
-commands =
-  pyright .
-"""
