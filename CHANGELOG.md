@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.15.0 (2024-02-12)
+
+### Feature
+
+* **#376:** Add prefix to colname ([`d0e01b7`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d0e01b73c45e76210d20225c80ffc94f58827449))
+
 ## v1.14.0 (2024-02-12)
 
 ### Feature
