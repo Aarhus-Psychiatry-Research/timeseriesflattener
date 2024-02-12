@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.14.0 (2024-02-12)
+
+### Feature
+
+* **#360:** Ensure correct ordering before concatenating ([`3af55e3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3af55e3e3d1316905eba77050995eba71b73ce8f))
+
 ## v1.13.0 (2024-02-12)
 
 ### Feature
