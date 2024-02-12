@@ -1,5 +1,6 @@
 import datetime as dt
 
+import numpy as np
 import polars as pl
 import polars.testing as polars_testing
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
@@ -7,17 +8,11 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 from timeseriesflattenerv2.aggregators import MaxAggregator, MeanAggregator
 
 from . import flattener
-from .feature_specs import (
-    AggregatedFrame,
-    PredictionTimeFrame,
-    PredictorSpec,
-    SlicedFrame,
-    ValueFrame,
-)
+from .feature_specs import PredictionTimeFrame, PredictorSpec, SlicedFrame, ValueFrame
 
 
-def assert_frame_equal(left: pl.DataFrame, right: pl.DataFrame):
-    polars_testing.assert_frame_equal(left, right, check_dtype=False, check_column_order=False)
+def assert_frame_equal(result: pl.DataFrame, expected: pl.DataFrame):
+    polars_testing.assert_frame_equal(result, expected, check_dtype=False, check_column_order=False)
 
 
 def test_flattener():
@@ -30,7 +25,7 @@ def test_flattener():
         """entity_id,value,value_timestamp
         1,1,2021-01-01
         1,2,2021-01-02
-        1,3,2021-01-03"""
+        1,4,2021-01-03"""
     )
 
     result = flattener.Flattener(
@@ -41,12 +36,17 @@ def test_flattener():
                 value_frame=ValueFrame(df=value_frame.lazy(), value_type="test_value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
-                fallback="NaN",
+                fallback=np.nan,
             )
         ]
     )
 
-    assert isinstance(result, AggregatedFrame)
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_within_1_days_mean_fallback_nan
+1-2021-01-03 00:00:00.000000,3.0"""
+    )
+
+    assert_frame_equal(result.df.collect(), expected)
 
 
 def test_get_timedelta_frame():
@@ -88,7 +88,7 @@ def test_aggregate_within_slice():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_mean
+        """pred_time_uuid,value_mean_fallback_0
 1-2021-01-03,1.5
 2-2021-01-03,3"""
     )
@@ -106,7 +106,7 @@ def test_aggregate_over_fallback():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_mean
+        """pred_time_uuid,value_mean_fallback_0
 1-2021-01-03,0"""
     )
 
@@ -129,7 +129,7 @@ def test_multiple_aggregatrs():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_mean,value_max
+        """pred_time_uuid,value_mean_fallback_0,value_max_fallback_0
 1-2021-01-03,1.5,2
 2-2021-01-03,3,4"""
     )
