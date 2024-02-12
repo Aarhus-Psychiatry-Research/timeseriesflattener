@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Sequence
 
 import polars as pl
-from iterpy._iter import Iter
+from iterpy.iter import Iter
 from rich.progress import track
 
 from .feature_specs import (
@@ -39,21 +39,31 @@ def _aggregate_within_slice(
 
 
 def _slice_frame(
-    timedelta_frame: TimedeltaFrame, distance: LookDistance, column_prefix: str, value_col_name: str
+    timedelta_frame: TimedeltaFrame,
+    lookdistance: LookDistance,
+    column_prefix: str,
+    value_col_name: str,
 ) -> SlicedFrame:
-    new_colname = f"{column_prefix}_{value_col_name}_within_{abs(distance.days)}_days"
+    new_colname = f"{column_prefix}_{value_col_name}_within_{abs(lookdistance.days)}_days"
 
-    if distance < dt.timedelta(0):
+    timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
+
+    lookbehind = lookdistance < dt.timedelta(0)
+    no_predictor_value = timedelta_col.is_null()
+
+    # The predictor case
+    if lookbehind:
+        after_lookbehind_start = lookdistance <= timedelta_col
+        before_pred_time = timedelta_col <= dt.timedelta(0)
         sliced_frame = timedelta_frame.df.filter(
-            (pl.col(timedelta_frame.timedelta_col_name) >= distance).and_(
-                pl.col(timedelta_frame.timedelta_col_name) <= dt.timedelta(0)
-            )
+            (after_lookbehind_start).and_(before_pred_time).or_(no_predictor_value)
         )
+    # The outcome case
     else:
+        after_pred_time = dt.timedelta(0) <= timedelta_col
+        before_lookahead_end = timedelta_col <= lookdistance
         sliced_frame = timedelta_frame.df.filter(
-            (pl.col(timedelta_frame.timedelta_col_name) <= distance).and_(
-                pl.col(timedelta_frame.timedelta_col_name) >= dt.timedelta(0)
-            )
+            (after_pred_time).and_(before_lookahead_end).or_(no_predictor_value)
         )
 
     return SlicedFrame(
@@ -99,7 +109,7 @@ def _get_timedelta_frame(
 ) -> TimedeltaFrame:
     # Join the prediction time dataframe
     joined_frame = predictiontime_frame.df.join(
-        value_frame.df, on=predictiontime_frame.entity_id_col_name
+        value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left"
     )
 
     # Get timedelta
@@ -154,19 +164,17 @@ class Flattener:
             for spec in specs:
                 spec.value_frame.df = spec.value_frame.collect()  # type: ignore
 
-        processed_specs: Sequence[ValueFrame] = []
-
+        # Process and collect the specs. One-by-one, to get feedback on progress.
+        dfs: Sequence[pl.LazyFrame] = []
         for spec in track(specs, description="Processing specs..."):
-            print(f"Processing {spec.value_frame!s}")
-
-            if not self.lazy:
-                spec.value_frame.collect()
-
-            processed_specs.append(
-                _process_spec(predictiontime_frame=self.predictiontime_frame, spec=spec)
+            print(f"Processing spec: {spec.value_frame.value_col_name}")
+            processed_spec = _process_spec(
+                predictiontime_frame=self.predictiontime_frame, spec=spec
             )
-
-        dfs = [spec.df for spec in processed_specs]
+            if isinstance(processed_spec.df, pl.LazyFrame):
+                dfs.append(processed_spec.collect().lazy())
+            else:
+                dfs.append(processed_spec.df)
 
         return AggregatedFrame(
             df=horizontally_concatenate_dfs(
