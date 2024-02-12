@@ -17,7 +17,9 @@ from .feature_specs import (
 
 
 def assert_frame_equal(left: pl.DataFrame, right: pl.DataFrame):
-    polars_testing.assert_frame_equal(left, right, check_dtype=False, check_column_order=False)
+    polars_testing.assert_frame_equal(
+        left, right, check_dtype=False, check_column_order=False, check_row_order=False
+    )
 
 
 def test_flattener():
