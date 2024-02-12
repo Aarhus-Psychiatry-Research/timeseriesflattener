@@ -8,26 +8,22 @@ inputs:
 runs:
   using: "composite"
   steps:
-    ### Setup prerequisites
-    - name: Cache tox
-      uses: actions/cache@v3.2.6
-      id: cache_tox
-      with:
-        path: |
-          .tox
-        key: ${{ runner.os }}-${{ matrix.python-version }}
+    - name: Checkout (GitHub)
+      uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ inputs.python-version }}
-
-    - name: Install dependencies
+    - name: Replace python version in Dockerfile
       shell: bash
       run: |
-        pip install invoke tox
+        sed -i '/python:.*/c\FROM python:${{ inputs.python-version }}' Dockerfile
 
-    - name: Run tests
+    - name: Create github hosts file
       shell: bash
-      run: |
-        inv test --python-versions=${{ matrix.python-version }} --pytest-args "src/" --pytest-args "--skiphuggingface" --pytest-args "--cov=src" --pytest-args "--cov-report term-missing" --pytest-args="--color=yes"
+      run: | # If this file is not created, the dev container fails because of non-existent mount
+        mkdir -p ~/.config/gh
+        touch ~/.config/gh/hosts.yml
+
+    - name: Pre-build dev container image
+      uses: devcontainers/ci@v0.3
+      with:
+        runCmd: |
+          inv test --pytest-args "src/" --pytest-args "--skiphuggingface" --pytest-args "--cov=src" --pytest-args "--cov-report term-missing" --pytest-args="--color=yes" --pytest-args="-n auto"

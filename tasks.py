@@ -165,9 +165,9 @@ def pre_commit(c: Context):
 
 
 @task
-def static_type_checks(c: Context):
+def types(c: Context):
     echo_header(f"{Emo.CLEAN} Running static type checks")
-    c.run("tox -e type", pty=True)
+    c.run("pyright .", pty=True)
 
 
 @task
@@ -198,7 +198,6 @@ def update(c: Context):
 @task(iterable="pytest_args")
 def test(
     c: Context,
-    python_versions: str = "3.10",
     pytest_args: List[str] = [],  # noqa
     testmon: bool = True,
 ):
@@ -214,19 +213,14 @@ def test(
             "-p no:cov",
             "--disable-warnings",
             "-q",
+            "--testmon",
         ]
     if testmon:
         pytest_args.append("--testmon")
 
     pytest_arg_str = " ".join(pytest_args)
 
-    python_version_list = python_versions.replace(".", "").split(",")
-    python_version_strings = [f"py{v}" for v in python_version_list]
-    python_version_arg_string = ",".join(python_version_strings)
-
-    test_result: Result = c.run(
-        f"tox -e {python_version_arg_string} -- {pytest_arg_str}", warn=True, pty=True
-    )
+    test_result: Result = c.run(f"pytest {pytest_arg_str}", warn=True, pty=True)
 
     # If "failed" in the pytest results
     if "failed" in test_result.stdout:
@@ -279,7 +273,7 @@ def pr(c: Context):
     """Run all checks and update the PR."""
     add_and_commit(c)
     lint(c)
-    test(c, python_versions="3.9")
+    test(c)
     test_tutorials(c)
     update_branch(c)
     update_pr(c)
