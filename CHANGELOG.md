@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.13.0 (2024-02-12)
+
+### Feature
+
+* **#365:** Support ingesting from pandas dataframes ([`6614836`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/66148367972043f9746311383a1ed281d872afa8))
+
 ## v1.12.0 (2024-02-12)
 
 ### Feature
