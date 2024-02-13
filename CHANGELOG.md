@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.20.0 (2024-02-13)
+
+### Feature
+
+* Further tweak benchmarks ([`f29654d`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f29654d78271048b5d8746c5d37a7512d407ad83))
+
 ## v1.19.0 (2024-02-13)
 
 ### Feature
