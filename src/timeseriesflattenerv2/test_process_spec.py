@@ -5,7 +5,6 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
 import timeseriesflattenerv2._process_spec as process_spec
 
-from ._horisontally_concat import horizontally_concatenate_dfs
 from .aggregators import MaxAggregator, MeanAggregator
 from .feature_specs import PredictionTimeFrame, SlicedFrame, TimedeltaFrame, ValueFrame
 from .test_flattener import assert_frame_equal
@@ -28,7 +27,7 @@ def test_aggregate_over_fallback():
 1-2021-01-03,0"""
     )
 
-    assert_frame_equal(aggregated_values[0].df.collect(), expected)
+    assert_frame_equal(aggregated_values.collect(), expected)
 
 
 def test_aggregate_with_null():
@@ -48,7 +47,7 @@ def test_aggregate_with_null():
 1-2021-01-03,1"""
     )
 
-    assert_frame_equal(aggregated_values[0].df.collect(), expected)
+    assert_frame_equal(aggregated_values.collect(), expected)
 
 
 def test_aggregate_within_slice():
@@ -73,7 +72,7 @@ def test_aggregate_within_slice():
 2-2021-01-03,3"""
     )
 
-    assert_frame_equal(aggregated_values[0].df.collect(), expected)
+    assert_frame_equal(aggregated_values.collect(), expected)
 
 
 def test_get_timedelta_frame():
@@ -155,9 +154,4 @@ def test_multiple_aggregators():
 2-2021-01-03,3,4"""
     )
 
-    assert_frame_equal(
-        horizontally_concatenate_dfs(
-            [agg.df for agg in aggregated_values], pred_time_uuid_col_name="pred_time_uuid"
-        ).collect(),
-        expected,
-    )
+    assert_frame_equal(aggregated_values.collect(), expected)
