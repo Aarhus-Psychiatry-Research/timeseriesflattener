@@ -3,9 +3,13 @@ import random
 from dataclasses import dataclass
 from typing import Literal, Sequence
 
+import numpy as np
 import polars as pl
 import pytest
 from iterpy.iter import Iter
+from timeseriesflattener.feature_specs.group_specs import NamedDataframe
+from timeseriesflattener.feature_specs.group_specs import PredictorGroupSpec as V1PGSpec
+from timeseriesflattener.feature_specs.single_specs import PredictorSpec as V1PSpec
 from timeseriesflattenerv2.aggregators import MaxAggregator, MeanAggregator
 from timeseriesflattenerv2.feature_specs import (
     AggregatedFrame,
@@ -16,6 +20,8 @@ from timeseriesflattenerv2.feature_specs import (
     ValueFrame,
 )
 from timeseriesflattenerv2.flattener import Flattener
+
+from .timeseriesflattener.aggregation_fns import AggregationFunType, maximum, minimum
 
 
 def _generate_valueframe(n_obseravations: int, feature_name: str) -> ValueFrame:
@@ -77,6 +83,28 @@ def _generate_benchmark_dataset(
     ]
 
     return BenchmarkDataset(pred_time_frame=pred_time_df, predictor_specs=predictor_specs)
+
+
+def _v2_aggregator_to_v1(agg: Aggregator) -> AggregationFunType:
+    if isinstance(agg, MaxAggregator):
+        return maximum
+    if isinstance(agg, MeanAggregator):
+        return minimum
+    raise ValueError(f"Unknown aggregator {agg}")
+
+
+def _v2_pred_spec_to_v1(pred_spec: PredictorSpec) -> Sequence[V1PSpec]:
+    return V1PGSpec(
+        lookbehind_days=[d.days for d in pred_spec.lookbehind_distances],
+        named_dataframes=[
+            NamedDataframe(
+                df=pred_spec.value_frame.collect().to_pandas(),
+                name=pred_spec.value_frame.value_col_name,
+            )
+        ],
+        aggregation_fns=[_v2_aggregator_to_v1(agg) for agg in pred_spec.aggregators],
+        fallback=[np.nan],
+    ).create_combinations()
 
 
 @pytest.mark.parametrize(("n_pred_times"), [1, 10, 100], ids=lambda i: f"preds={i}")
