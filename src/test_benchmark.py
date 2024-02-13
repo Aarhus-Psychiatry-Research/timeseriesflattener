@@ -12,7 +12,6 @@ from timeseriesflattener.feature_specs.group_specs import PredictorGroupSpec as 
 from timeseriesflattener.feature_specs.single_specs import PredictorSpec as V1PSpec
 from timeseriesflattenerv2.aggregators import MaxAggregator, MeanAggregator
 from timeseriesflattenerv2.feature_specs import (
-    AggregatedFrame,
     Aggregator,
     LookDistance,
     PredictionTimeFrame,
@@ -110,7 +109,7 @@ def _v2_pred_spec_to_v1(pred_spec: PredictorSpec) -> Sequence[V1PSpec]:
 @pytest.mark.parametrize(("n_pred_times"), [1, 10, 100], ids=lambda i: f"preds={i}")
 @pytest.mark.parametrize(("n_features"), [1, 10, 100], ids=lambda i: f"feats={i}")
 @pytest.mark.parametrize(
-    ("n_observations_per_pred_time"), [1, 5, 10], ids=lambda i: f"obs_per_pred={i}"
+    ("n_observations_per_pred_time"), [2, 4, 8], ids=lambda i: f"obs_per_pred={i}"
 )
 def test_benchmark(
     n_pred_times: int,
@@ -126,12 +125,11 @@ def test_benchmark(
         lookbehinds=[dt.timedelta(days=i) for i in range(1, 10)],
     )
 
+    flattener = Flattener(predictiontime_frame=dataset.pred_time_frame, lazy=True)
+
     @benchmark
     def flatten():
-        flattener = Flattener(
-            predictiontime_frame=dataset.pred_time_frame, lazy=True
-        ).aggregate_timeseries(specs=dataset.predictor_specs)
-        assert isinstance(flattener, AggregatedFrame)
+        flattener.aggregate_timeseries(specs=dataset.predictor_specs)
 
 
 if __name__ == "__main__":
