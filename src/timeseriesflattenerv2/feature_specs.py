@@ -1,11 +1,9 @@
 import datetime as dt
 from dataclasses import InitVar, dataclass
-from typing import Protocol, Sequence, Union
+from typing import NewType, Protocol, Sequence, Union
 
 import pandas as pd
 import polars as pl
-from polars.dataframe.group_by import GroupBy
-from polars.lazyframe.group_by import LazyGroupBy
 
 ValueType = Union[int, float, str, None]
 LookDistance = dt.timedelta
@@ -108,8 +106,11 @@ class AggregatedValueFrame:
         return self.df.collect()
 
 
+AggregatorInstance = NewType("AggregatorInstance", pl.Expr)
+
+
 class Aggregator(Protocol):
-    def apply(self, value_frame: LazyGroupBy | GroupBy, column_name: str) -> AggregatedValueFrame:
+    def __call__(self, column_name: str) -> pl.Expr:
         ...
 
 

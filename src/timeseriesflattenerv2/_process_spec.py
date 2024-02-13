@@ -2,11 +2,11 @@ import datetime as dt
 from typing import Sequence
 
 import polars as pl
+import polars.selectors as cs
 from iterpy.iter import Iter
 
 from ._horisontally_concat import horizontally_concatenate_dfs
 from .feature_specs import (
-    AggregatedValueFrame,
     Aggregator,
     LookDistance,
     OutcomeSpec,
@@ -18,34 +18,6 @@ from .feature_specs import (
     ValueSpecification,
     ValueType,
 )
-
-
-def process_spec(predictiontime_frame: PredictionTimeFrame, spec: ValueSpecification) -> ValueFrame:
-    aggregated_value_frames = (
-        Iter(_normalise_lookdistances(spec))
-        .map(
-            lambda distance: _slice_and_aggregate_spec(
-                timedelta_frame=_get_timedelta_frame(
-                    predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
-                ),
-                distance=distance,
-                aggregators=spec.aggregators,
-                fallback=spec.fallback,
-                column_prefix=spec.column_prefix,
-            )
-        )
-        .flatten()
-    )
-
-    return ValueFrame(
-        init_df=horizontally_concatenate_dfs(
-            [AggValueFrame.df for AggValueFrame in aggregated_value_frames.to_list()],
-            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
-        ),
-        entity_id_col_name=spec.value_frame.entity_id_col_name,
-        value_timestamp_col_name=spec.value_frame.value_timestamp_col_name,
-        value_col_name=spec.value_frame.value_col_name,
-    )
 
 
 def _get_timedelta_frame(
@@ -130,16 +102,23 @@ def _slice_frame(
 
 def _aggregate_within_slice(
     sliced_frame: SlicedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
-) -> Sequence[AggregatedValueFrame]:
+) -> pl.LazyFrame:
+    aggregator_expressions = [aggregator(sliced_frame.value_col_name) for aggregator in aggregators]
+
     grouped_frame = sliced_frame.init_df.group_by(
         sliced_frame.pred_time_uuid_col_name, maintain_order=True
+    ).agg(aggregator_expressions)
+
+    value_columns = (
+        Iter(grouped_frame.columns)
+        .filter(lambda col: sliced_frame.value_col_name in col)
+        .map(lambda old_name: (old_name, f"{old_name}_fallback_{fallback}"))
     )
+    rename_mapping = dict(value_columns)
 
-    aggregated_value_frames = [
-        agg.apply(grouped_frame, column_name=sliced_frame.value_col_name) for agg in aggregators
-    ]
-
-    with_fallback = [frame.fill_nulls(fallback=fallback) for frame in aggregated_value_frames]
+    with_fallback = grouped_frame.with_columns(
+        cs.contains(sliced_frame.value_col_name).fill_null(fallback)
+    ).rename(rename_mapping)
 
     return with_fallback
 
@@ -150,8 +129,36 @@ def _slice_and_aggregate_spec(
     aggregators: Sequence[Aggregator],
     fallback: ValueType,
     column_prefix: str,
-) -> Sequence[AggregatedValueFrame]:
+) -> pl.LazyFrame:
     sliced_frame = _slice_frame(
         timedelta_frame, distance, column_prefix, timedelta_frame.value_col_name
     )
     return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
+
+
+def process_spec(predictiontime_frame: PredictionTimeFrame, spec: ValueSpecification) -> ValueFrame:
+    aggregated_value_frames = (
+        Iter(_normalise_lookdistances(spec))
+        .map(
+            lambda distance: _slice_and_aggregate_spec(
+                timedelta_frame=_get_timedelta_frame(
+                    predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
+                ),
+                distance=distance,
+                aggregators=spec.aggregators,
+                fallback=spec.fallback,
+                column_prefix=spec.column_prefix,
+            )
+        )
+        .flatten()
+    )
+
+    return ValueFrame(
+        init_df=horizontally_concatenate_dfs(
+            aggregated_value_frames.to_list(),
+            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        ),
+        entity_id_col_name=spec.value_frame.entity_id_col_name,
+        value_timestamp_col_name=spec.value_frame.value_timestamp_col_name,
+        value_col_name=spec.value_frame.value_col_name,
+    )
