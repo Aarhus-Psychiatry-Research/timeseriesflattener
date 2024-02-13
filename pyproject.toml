@@ -36,6 +36,7 @@ dependencies = [
   "tqdm>4.1.0",
   "polars==0.20.7",
   "iterpy==1.5.1",
+  "rich>=13.0.0",
 ]
 
 [project.license]
