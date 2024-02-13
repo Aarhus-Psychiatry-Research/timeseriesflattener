@@ -131,7 +131,7 @@ def _slice_frame(
 def _aggregate_within_slice(
     sliced_frame: SlicedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
 ) -> Sequence[AggregatedValueFrame]:
-    grouped_frame = sliced_frame.init_df.groupby(
+    grouped_frame = sliced_frame.init_df.group_by(
         sliced_frame.pred_time_uuid_col_name, maintain_order=True
     )
 
