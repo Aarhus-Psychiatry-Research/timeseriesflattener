@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.18.1 (2024-02-13)
+
+### Fix
+
+* Ensure all prediction times are kept when slicing ([#397](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/397)) ([`6a5aa16`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6a5aa161fa9a0c4c1cdd1d0fcd5ed9befa30a221))
+* Ensure all prediction times are kep when slicing ([`9e5cef4`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9e5cef4f124072c28a57b17ed29574ae26bc912f))
+
 ## v1.18.0 (2024-02-13)
 
 ### Feature
