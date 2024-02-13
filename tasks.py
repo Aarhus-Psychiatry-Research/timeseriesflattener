@@ -214,6 +214,7 @@ def test(
             "--disable-warnings",
             "-q",
             "--testmon",
+            "--benchmark-disable",
         ]
     if testmon:
         pytest_args.append("--testmon")

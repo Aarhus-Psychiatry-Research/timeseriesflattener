@@ -9,7 +9,6 @@ import pytest
 from iterpy.iter import Iter
 from timeseriesflattenerv2.aggregators import MaxAggregator, MeanAggregator
 from timeseriesflattenerv2.feature_specs import (
-    AggregatedFrame,
     Aggregator,
     LookDistance,
     PredictionTimeFrame,
@@ -80,15 +79,17 @@ def _generate_benchmark_dataset(
     return BenchmarkDataset(pred_time_frame=pred_time_df, predictor_specs=predictor_specs)
 
 
-@pytest.mark.parametrize(("n_pred_times"), [1, 5, 10], ids=lambda i: f"preds={i}")
-@pytest.mark.parametrize(("n_features"), [1, 5, 10], ids=lambda i: f"feats={i}")
 @pytest.mark.parametrize(
-    ("n_observations_per_pred_time"), [1, 5, 10], ids=lambda i: f"obs_per_pred={i}"
+    ("n_observations_per_pred_time"), [2, 4], ids=lambda i: f"obs_per_pred={i}"
 )
+@pytest.mark.parametrize(("n_features"), [2, 4], ids=lambda i: f"feats={i}")
+@pytest.mark.parametrize(("n_lookbehinds"), [2, 4], ids=lambda i: f"lookbeh={i}")
+@pytest.mark.parametrize(("n_pred_times"), [100, 200, 400], ids=lambda i: f"preds={i}")
 def test_benchmark(
     n_pred_times: int,
     n_features: int,
     n_observations_per_pred_time: int,
+    n_lookbehinds: int,
     benchmark,  # noqa: ANN001
 ):
     dataset = _generate_benchmark_dataset(
@@ -96,15 +97,14 @@ def test_benchmark(
         n_features=n_features,
         n_observations_per_pred_time=n_observations_per_pred_time,
         aggregations=["max", "mean"],
-        lookbehinds=[dt.timedelta(days=i) for i in range(1, 10)],
+        lookbehinds=[dt.timedelta(days=i) for i in range(n_lookbehinds)],
     )
+
+    flattener = Flattener(predictiontime_frame=dataset.pred_time_frame, lazy=False)
 
     @benchmark
     def flatten():
-        flattener = Flattener(
-            predictiontime_frame=dataset.pred_time_frame, lazy=True
-        ).aggregate_timeseries(specs=dataset.predictor_specs)
-        assert isinstance(flattener, AggregatedFrame)
+        flattener.aggregate_timeseries(specs=dataset.predictor_specs)
 
 
 if __name__ == "__main__":
