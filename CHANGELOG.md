@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.17.0 (2024-02-13)
+
+### Feature
+
+* **#379:** Check that no value columns have the same name ([`28518e0`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/28518e0cf6a4b248652014ac5994dc227ffef275))
+
 ## v1.16.0 (2024-02-12)
 
 ### Feature
