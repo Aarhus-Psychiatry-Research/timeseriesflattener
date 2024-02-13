@@ -86,7 +86,7 @@ def _generate_benchmark_dataset(
 
 @dataclass(frozen=True)
 class TestExample:
-    n_pred_times: int = 12_000
+    n_pred_times: int = 24_000
     n_features: int = 1
     n_observations_per_pred_time: int = 10
     n_lookbehinds: int = 1
@@ -120,7 +120,7 @@ class TestExample:
     ("example"),
     [
         TestExample(),
-        TestExample(n_pred_times=24_000),
+        TestExample(n_pred_times=48_000),
         TestExample(n_features=2),
         TestExample(n_lookbehinds=2),
         TestExample(n_lookbehinds=4),
