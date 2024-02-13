@@ -80,10 +80,10 @@ def _generate_benchmark_dataset(
 
 
 @pytest.mark.parametrize(
-    ("n_observations_per_pred_time"), [2, 4], ids=lambda i: f"obs_per_pred={i}"
+    ("n_observations_per_pred_time"), [100, 200, 400], ids=lambda i: f"obs_per_pred={i}"
 )
-@pytest.mark.parametrize(("n_features"), [2, 4], ids=lambda i: f"feats={i}")
-@pytest.mark.parametrize(("n_lookbehinds"), [2, 4], ids=lambda i: f"lookbeh={i}")
+@pytest.mark.parametrize(("n_features"), [2, 4, 8], ids=lambda i: f"feats={i}")
+@pytest.mark.parametrize(("n_lookbehinds"), [2, 4, 8], ids=lambda i: f"lookbeh={i}")
 @pytest.mark.parametrize(("n_pred_times"), [100, 200, 400], ids=lambda i: f"preds={i}")
 def test_benchmark(
     n_pred_times: int,
