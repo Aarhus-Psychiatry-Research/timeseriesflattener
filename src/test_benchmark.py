@@ -112,7 +112,12 @@ def _v2_pred_spec_to_v1(pred_spec: PredictorSpec) -> Sequence[V1PSpec]:
 @pytest.mark.parametrize(
     ("n_observations_per_pred_time"), [1, 10, 100], ids=lambda i: f"obs_per_pred={i}"
 )
-def test_benchmark(n_pred_times: int, n_features: int, n_observations_per_pred_time: int):
+def test_benchmark(
+    n_pred_times: int,
+    n_features: int,
+    n_observations_per_pred_time: int,
+    benchmark,  # noqa: ANN001
+):
     dataset = _generate_benchmark_dataset(
         n_pred_times=n_pred_times,
         n_features=n_features,
@@ -121,7 +126,7 @@ def test_benchmark(n_pred_times: int, n_features: int, n_observations_per_pred_t
         lookbehinds=[dt.timedelta(days=i) for i in range(1, 10)],
     )
 
-    @pytest.mark.benchmark()
+    @benchmark
     def flatten():
         flattener = Flattener(
             predictiontime_frame=dataset.pred_time_frame, lazy=True
