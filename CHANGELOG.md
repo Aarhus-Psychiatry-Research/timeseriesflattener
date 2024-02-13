@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.20.1 (2024-02-13)
+
+### Performance
+
+* Aggregate with one groupby ([`d933d46`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d933d46c8ecd87f80fd8a80b9f998a7a1ec83986))
+
 ## v1.20.0 (2024-02-13)
 
 ### Feature
