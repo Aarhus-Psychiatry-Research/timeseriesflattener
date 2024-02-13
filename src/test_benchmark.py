@@ -18,6 +18,8 @@ from timeseriesflattenerv2.feature_specs import (
 )
 from timeseriesflattenerv2.flattener import Flattener
 
+from .timeseriesflattener.aggregation_fns import AggregationFunType
+
 
 def _generate_valueframe(n_obseravations: int, feature_name: str) -> ValueFrame:
     return ValueFrame(
@@ -82,6 +84,28 @@ def _generate_benchmark_dataset(
     ]
 
     return BenchmarkDataset(pred_time_frame=pred_time_df, predictor_specs=predictor_specs)
+
+
+def _v2_aggregator_to_v1(agg: Aggregator) -> AggregationFunType:
+    if isinstance(agg, MaxAggregator):
+        return maximum
+    if isinstance(agg, MeanAggregator):
+        return minimum
+    raise ValueError(f"Unknown aggregator {agg}")
+
+
+def _v2_pred_spec_to_v1(pred_spec: PredictorSpec) -> Sequence[V1PSpec]:
+    return V1PGSpec(
+        lookbehind_days=[d.days for d in pred_spec.lookbehind_distances],
+        named_dataframes=[
+            NamedDataframe(
+                df=pred_spec.value_frame.collect().to_pandas(),
+                name=pred_spec.value_frame.value_col_name,
+            )
+        ],
+        aggregation_fns=[_v2_aggregator_to_v1(agg) for agg in pred_spec.aggregators],
+        fallback=[np.nan],
+    ).create_combinations()
 
 
 @dataclass(frozen=True)
