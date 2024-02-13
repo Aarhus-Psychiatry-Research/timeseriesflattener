@@ -1,0 +1,49 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "PR",
+            "type": "shell",
+            "command": "echo All done!",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "Test",
+                "Submit PR",
+            ],
+            "presentation": {
+                "reveal": "never",
+                "group": "confirmation",
+                "clear": true,
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "inv test",
+            "presentation": {
+                "group": "pr",
+                "clear": true,
+                "showReuseMessage": false,
+            }
+        },
+        {
+            "label": "Submit PR",
+            "type": "shell",
+            "command": "lumberman sync --squash --automerge",
+            "presentation": {
+                "group": "pr",
+                "revealProblems": "onProblem",
+                "focus": true,
+                "clear": true,
+                "showReuseMessage": false,
+            }
+        },
+    ]
+}
