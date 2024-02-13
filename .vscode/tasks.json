@@ -6,19 +6,19 @@
         {
             "label": "PR",
             "type": "shell",
-            "command": "echo All done!",
+            "command": "lumberman sync --squash --automerge",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "dependsOn": [
                 "Test",
-                "Submit PR",
+                "Lint",
             ],
             "presentation": {
                 "reveal": "never",
-                "group": "confirmation",
-                "clear": true,
+                "group": "pr",
+                "clear": false,
                 "showReuseMessage": false
             },
             "problemMatcher": []
@@ -34,9 +34,9 @@
             }
         },
         {
-            "label": "Submit PR",
+            "label": "Lint",
             "type": "shell",
-            "command": "lumberman sync --squash --automerge",
+            "command": "inv lint",
             "presentation": {
                 "group": "pr",
                 "revealProblems": "onProblem",
