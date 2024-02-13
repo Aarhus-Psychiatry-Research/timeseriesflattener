@@ -83,6 +83,38 @@ def test_eager_flattener():
     assert_frame_equal(result.df, expected)  # type: ignore
 
 
+def test_keep_prediction_times_without_predictors():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+        1,2021-01-03"""
+    )
+
+    value_frame = str_to_pl_df(
+        """entity_id,value,timestamp
+        2,1,2021-01-01"""
+    )
+
+    result = flattener.Flattener(
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
+    ).aggregate_timeseries(
+        specs=[
+            PredictorSpec(
+                value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
+                lookbehind_distances=[dt.timedelta(days=1)],
+                aggregators=[MeanAggregator()],
+                fallback=123,
+            )
+        ]
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_within_1_days_mean_fallback_123
+1-2021-01-03 00:00:00.000000,123.0"""
+    )
+
+    assert_frame_equal(result.df.collect(), expected)
+
+
 def test_flattener_multiple_features():
     pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp

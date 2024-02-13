@@ -7,10 +7,8 @@ import polars as pl
 from polars.dataframe.group_by import GroupBy
 from polars.lazyframe.group_by import LazyGroupBy
 
-ValueType = Union[int, float, str]
+ValueType = Union[int, float, str, None]
 LookDistance = dt.timedelta
-
-# TODO: Add validation that all entity_id and timestamp columns are the same
 
 default_entity_id_col_name = "entity_id"
 default_pred_time_uuid_col_name = "pred_time_uuid"
