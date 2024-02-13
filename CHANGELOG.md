@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.18.0 (2024-02-13)
+
+### Feature
+
+* **#356:** Validate shared columns exist in all specs on ingest ([`c0aa8cd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c0aa8cd98d2a0cd639c6b0cb58acb67677ed54a2))
+
 ## v1.17.0 (2024-02-13)
 
 ### Feature
