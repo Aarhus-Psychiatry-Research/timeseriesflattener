@@ -80,7 +80,7 @@ repository = "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
 documentation = "https://aarhus-psychiatry-research.github.io/timeseriesflattener/"
 
 [tool.pyright]
-exclude = [".*venv*/", ".venv38/", ".tox"]
+exclude = [".*venv*/", ".venv38/", ".tox", ".benchmark_cache"]
 
 [tool.ruff]
 line-length = 100
@@ -157,6 +157,7 @@ exclude = [
   "venv",
   "__init__.py",
   "docs/conf.py",
+  ".benchmark_cache/*",
 ]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
