@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.19.0 (2024-02-13)
+
+### Feature
+
+* **#384:** Add benchmark ([`4d746de`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4d746debe6cb8ac9a15c44e6f21bd2c77fbc0d45))
+
 ## v1.18.1 (2024-02-13)
 
 ### Fix
