@@ -79,6 +79,9 @@ class SlicedFrame:
     def df(self) -> pl.LazyFrame:
         return self.init_df
 
+    def collect(self) -> pl.DataFrame:
+        return self.init_df.collect()
+
 
 @dataclass
 class AggregatedValueFrame:

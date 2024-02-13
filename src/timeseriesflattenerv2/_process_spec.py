@@ -77,6 +77,16 @@ def _normalise_lookdistances(spec: ValueSpecification) -> Sequence[LookDistance]
     return lookdistances
 
 
+def _null_values_outside_lookwindow(
+    df: pl.LazyFrame, lookwindow_predicate: pl.Expr, cols_to_null: Sequence[str]
+) -> pl.LazyFrame:
+    for col_to_null in cols_to_null:
+        df = df.with_columns(
+            pl.when(lookwindow_predicate).then(pl.col(col_to_null)).otherwise(None)
+        )
+    return df
+
+
 def _slice_frame(
     timedelta_frame: TimedeltaFrame,
     lookdistance: LookDistance,
@@ -87,22 +97,28 @@ def _slice_frame(
 
     timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
 
-    lookbehind = lookdistance < dt.timedelta(0)
-    no_predictor_value = timedelta_col.is_null()
+    is_lookbehind = lookdistance < dt.timedelta(0)
 
     # The predictor case
-    if lookbehind:
+    if is_lookbehind:
         after_lookbehind_start = lookdistance <= timedelta_col
-        before_pred_time = timedelta_col <= dt.timedelta(0)
-        sliced_frame = timedelta_frame.df.filter(
-            (after_lookbehind_start).and_(before_pred_time).or_(no_predictor_value)
+        before_prediction_time = timedelta_col <= dt.timedelta(0)
+
+        within_lookbehind = after_lookbehind_start.and_(before_prediction_time)
+        sliced_frame = _null_values_outside_lookwindow(
+            df=timedelta_frame.df,
+            lookwindow_predicate=within_lookbehind,
+            cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
         )
     # The outcome case
     else:
-        after_pred_time = dt.timedelta(0) <= timedelta_col
+        after_prediction_time = dt.timedelta(0) <= timedelta_col
         before_lookahead_end = timedelta_col <= lookdistance
-        sliced_frame = timedelta_frame.df.filter(
-            (after_pred_time).and_(before_lookahead_end).or_(no_predictor_value)
+        within_lookahead = after_prediction_time.and_(before_lookahead_end)
+        sliced_frame = _null_values_outside_lookwindow(
+            df=timedelta_frame.df,
+            lookwindow_predicate=within_lookahead,
+            cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
         )
 
     return SlicedFrame(
