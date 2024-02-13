@@ -4,6 +4,7 @@ from typing import Sequence
 import polars as pl
 from iterpy.iter import Iter
 
+from ._horisontally_concat import horizontally_concatenate_dfs
 from .feature_specs import (
     AggregatedValueFrame,
     Aggregator,
@@ -17,7 +18,6 @@ from .feature_specs import (
     ValueSpecification,
     ValueType,
 )
-from .horizontally_concatenate_dfs import horizontally_concatenate_dfs
 
 
 def process_spec(predictiontime_frame: PredictionTimeFrame, spec: ValueSpecification) -> ValueFrame:
