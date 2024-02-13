@@ -1,0 +1,1 @@
+{"duration": 1.004171371459961, "input_args": {"n_pred_times": "6400", "n_features": "2", "n_observations_per_pred_time": "20", "aggregations": "['max', 'mean']", "lookbehinds": "[datetime.timedelta(0), datetime.timedelta(days=1)]"}, "time": 1707827696.6457212}
