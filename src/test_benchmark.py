@@ -79,9 +79,11 @@ def _generate_benchmark_dataset(
     return BenchmarkDataset(pred_time_frame=pred_time_df, predictor_specs=predictor_specs)
 
 
-@pytest.mark.parametrize(("n_pred_times"), [1, 10, 100])
-@pytest.mark.parametrize(("n_features"), [1, 10, 100])
-@pytest.mark.parametrize(("n_observations_per_pred_time"), [1, 10, 100])
+@pytest.mark.parametrize(("n_pred_times"), [1, 10, 100], ids=lambda i: f"preds={i}")
+@pytest.mark.parametrize(("n_features"), [1, 10, 100], ids=lambda i: f"feats={i}")
+@pytest.mark.parametrize(
+    ("n_observations_per_pred_time"), [1, 10, 100], ids=lambda i: f"obs_per_pred={i}"
+)
 def test_benchmark(n_pred_times: int, n_features: int, n_observations_per_pred_time: int):
     dataset = _generate_benchmark_dataset(
         n_pred_times=n_pred_times,
