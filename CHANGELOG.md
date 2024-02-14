@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.21.1 (2024-02-14)
+
+### Performance
+
+* **#423:** Multiprocessing ([`71de8c1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/71de8c12bfb495b1747597748d7d543752d6904b))
+
 ## v1.21.0 (2024-02-14)
 
 ### Feature
