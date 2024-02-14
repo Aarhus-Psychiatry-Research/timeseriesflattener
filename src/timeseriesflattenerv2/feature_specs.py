@@ -20,12 +20,17 @@ class PredictionTimeFrame:
     entity_id_col_name: str = default_entity_id_col_name
     timestamp_col_name: str = default_pred_time_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+    attempt_downcast: InitVar[bool] = False
 
-    def __post_init__(self, init_df: pl.LazyFrame | pd.DataFrame):
+    def __post_init__(self, init_df: pl.LazyFrame | pd.DataFrame, attempt_downcast: bool):
         if isinstance(init_df, pd.DataFrame):
             self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
         else:
             self.df: pl.LazyFrame = init_df
+
+        if attempt_downcast:
+            downcast_frame = _downcast_dataframe(self.value_frame.df)
+            self.value_frame = ValueFrame(downcast_frame, self.value_frame.value_col_name)
 
         self.df = self.df.with_columns(
             pl.concat_str(
