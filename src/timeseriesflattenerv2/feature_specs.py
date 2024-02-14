@@ -66,8 +66,8 @@ class ValueFrame:
 
 
 @dataclass(frozen=True)
-class SlicedFrame:
-    """A frame that has been sliced by a lookdirection."""
+class TimeMaskedFrame:
+    """A frame that has had all values outside its lookbehind and lookahead distances masked."""
 
     init_df: pl.LazyFrame
     value_col_name: str
