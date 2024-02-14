@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.23.0 (2024-02-14)
+
+### Feature
+
+* Validate columns in valueframe ([`5019ad5`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5019ad585035189c1cb832d9b32cc8c4e5350a59))
+
 ## v1.22.0 (2024-02-14)
 
 ### Feature
