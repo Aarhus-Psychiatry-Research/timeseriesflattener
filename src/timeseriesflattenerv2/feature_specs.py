@@ -118,19 +118,32 @@ PolarsInt = [pl.Int64, pl.UInt64, pl.Int32, pl.UInt32, pl.Int16, pl.UInt16, pl.I
 PolarsFloat = [pl.Float64, pl.Float32]
 
 
-def _downcast_column(df: pl.DataFrame, col_name: str) -> pl.DataFrame:
+def _downcast_column(
+    df: pl.DataFrame, col_name: str, downcast_types: Sequence[pl.DataType]
+) -> pl.DataFrame:
+    for dtype in downcast_types[-1::-1]:
+        try:
+            return df.with_columns(pl.col(col_name).cast(dtype))
+        except pl.ComputeError:
+            print(f"Failed to downcast with {dtype}, trying next type.")
+            continue
+    return df
+
+
+def _downcast_dispatcher(
+    df: pl.DataFrame, col_name: str, type_categories: Sequence[Sequence[pl.DataType]]
+) -> pl.DataFrame:
     dtype = df[col_name].dtype
-    if dtype in PolarsInt:
-        return df.cast(pl.UInt8)
-    if dtype in PolarsFloat:
-        return df.cast(pl.Float32)
+    for category in type_categories:
+        if dtype in category:
+            df = _downcast_column(df, col_name, category)
     return df
 
 
 def _downcast_dataframe(df: pl.LazyFrame) -> pl.LazyFrame:
+    collected_df = df.collect()
     for col in df.columns:
-        collected_df = df.collect()
-        collected_df = _downcast_column(collected_df, col)
+        collected_df = _downcast_dispatcher(collected_df, col, [PolarsInt, PolarsFloat])
 
     return collected_df.lazy()
 
