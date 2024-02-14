@@ -44,6 +44,11 @@ class PredictionTimeFrame:
         return [self.entity_id_col_name]
 
 
+@dataclass(frozen=True)
+class SpecColumnError(Exception):
+    description: str
+
+
 @dataclass
 class ValueFrame:
     """A frame that contains the values of a time series."""
@@ -58,6 +63,18 @@ class ValueFrame:
             self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
         else:
             self.df: pl.LazyFrame = init_df
+        # validate that the required columns are present in the dataframe
+        required_columns = [
+            self.entity_id_col_name,
+            self.value_col_name,
+            self.value_timestamp_col_name,
+        ]
+        missing_columns = [col for col in required_columns if col not in self.df.columns]
+        if missing_columns:
+            raise SpecColumnError(
+                f"""Missing columns: {missing_columns} in the {self.value_col_name} specification.
+                Current columns are: {self.df.columns}."""
+            )
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
@@ -154,6 +171,17 @@ class AggregatedFrame:
     df: pl.LazyFrame
     pred_time_uuid_col_name: str
     timestamp_col_name: str
+
+    def collect(self) -> pl.DataFrame:
+        if isinstance(self.df, pl.DataFrame):
+            return self.df
+        return self.df.collect()
+
+
+@dataclass(frozen=True)
+class ProcessedFrame:
+    df: pl.LazyFrame
+    pred_time_uuid_col_name: str
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
