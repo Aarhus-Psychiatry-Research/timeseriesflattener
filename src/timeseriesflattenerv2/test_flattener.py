@@ -10,7 +10,7 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 from timeseriesflattenerv2.aggregators import MeanAggregator
 
 from . import flattener
-from .feature_specs import PredictionTimeFrame, PredictorSpec, ValueFrame
+from .feature_specs import PredictionTimeFrame, PredictorSpec, SpecColumnError, ValueFrame
 
 FakePredictiontimeFrame = PredictionTimeFrame(
     init_df=pl.LazyFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})
@@ -180,3 +180,11 @@ def test_error_if_missing_entity_id_column():
                 init_df=pl.LazyFrame({"no_entity_id": [1, 2, 3]}), entity_id_col_name="no_entity_id"
             )
         ).aggregate_timeseries(specs=[FakePredictorSpec])
+
+
+def test_error_if_missing_column_in_valueframe():
+    with pytest.raises(SpecColumnError, match="Missing columns: *"):
+        ValueFrame(
+            init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"]}),
+            value_col_name="value",
+        )

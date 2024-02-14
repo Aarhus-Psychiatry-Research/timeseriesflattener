@@ -12,6 +12,7 @@ from .feature_specs import (
     OutcomeSpec,
     PredictionTimeFrame,
     PredictorSpec,
+    ProcessedFrame,
     TimedeltaFrame,
     TimeMaskedFrame,
     ValueFrame,
@@ -136,7 +137,9 @@ def _slice_and_aggregate_spec(
     return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
 
 
-def process_spec(spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame) -> ValueFrame:
+def process_spec(
+    spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
+) -> ProcessedFrame:
     aggregated_value_frames = (
         Iter(_normalise_lookdistances(spec))
         .map(
@@ -153,12 +156,10 @@ def process_spec(spec: ValueSpecification, predictiontime_frame: PredictionTimeF
         .flatten()
     )
 
-    return ValueFrame(
-        init_df=horizontally_concatenate_dfs(
+    return ProcessedFrame(
+        df=horizontally_concatenate_dfs(
             aggregated_value_frames.to_list(),
             pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
         ),
-        entity_id_col_name=spec.value_frame.entity_id_col_name,
-        value_timestamp_col_name=spec.value_frame.value_timestamp_col_name,
-        value_col_name=spec.value_frame.value_col_name,
+        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
     )
