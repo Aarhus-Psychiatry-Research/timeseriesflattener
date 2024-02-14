@@ -136,7 +136,7 @@ def _slice_and_aggregate_spec(
     return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
 
 
-def process_spec(predictiontime_frame: PredictionTimeFrame, spec: ValueSpecification) -> ValueFrame:
+def process_spec(spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame) -> ValueFrame:
     aggregated_value_frames = (
         Iter(_normalise_lookdistances(spec))
         .map(

@@ -1,4 +1,5 @@
 import datetime as dt
+from dataclasses import dataclass
 
 import numpy as np
 import polars as pl
@@ -35,7 +36,23 @@ def assert_frame_equal(result: pl.DataFrame, expected: pl.DataFrame):
     polars_testing.assert_frame_equal(result, expected, check_dtype=False, check_column_order=False)
 
 
-def test_flattener():
+@dataclass(frozen=True)
+class FlattenerExample:
+    should: str  # What the example is testing
+    lazy: bool = True
+    n_workers: int | None = None
+
+
+@pytest.mark.parametrize(
+    ("example"),
+    [
+        FlattenerExample(should="work with lazy flattening", lazy=True),
+        FlattenerExample(should="work with eager flattening", lazy=False),
+        FlattenerExample(should="work with multiprocessing", n_workers=2),
+    ],
+    ids=lambda example: example.should,
+)
+def test_flattener(example: FlattenerExample):
     pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp
         1,2021-01-03"""
@@ -49,7 +66,9 @@ def test_flattener():
     )
 
     result = flattener.Flattener(
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
+        compute_lazily=example.lazy,
+        n_workers=example.n_workers,
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
@@ -66,41 +85,7 @@ def test_flattener():
 1-2021-01-03 00:00:00.000000,3.0"""
     )
 
-    assert_frame_equal(result.df.collect(), expected)
-
-
-def test_eager_flattener():
-    pred_frame = str_to_pl_df(
-        """entity_id,pred_timestamp
-        1,2021-01-03"""
-    )
-
-    value_frame = str_to_pl_df(
-        """entity_id,value,timestamp
-        1,1,2021-01-01
-        1,2,2021-01-02
-        1,4,2021-01-03"""
-    )
-
-    result = flattener.Flattener(
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()), lazy=False
-    ).aggregate_timeseries(
-        specs=[
-            PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
-                lookbehind_distances=[dt.timedelta(days=1)],
-                aggregators=[MeanAggregator()],
-                fallback=np.nan,
-            )
-        ]
-    )
-
-    expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_1_days_mean_fallback_nan
-1-2021-01-03 00:00:00.000000,3.0"""
-    )
-
-    assert_frame_equal(result.df, expected)  # type: ignore
+    assert_frame_equal(result.collect(), expected)
 
 
 def test_keep_prediction_times_without_predictors():
@@ -132,7 +117,7 @@ def test_keep_prediction_times_without_predictors():
 1-2021-01-03 00:00:00.000000,123.0"""
     )
 
-    assert_frame_equal(result.df.collect(), expected)
+    assert_frame_equal(result.collect(), expected)
 
 
 def test_flattener_multiple_features():
@@ -178,7 +163,7 @@ def test_flattener_multiple_features():
 1-2021-01-03 00:00:00.000000,3.0,3.0"""
     )
 
-    assert_frame_equal(result.df.collect(), expected)
+    assert_frame_equal(result.collect(), expected)
 
 
 def test_error_if_conflicting_value_col_names():
