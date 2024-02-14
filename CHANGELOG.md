@@ -2,6 +2,25 @@
 
 <!--next-version-placeholder-->
 
+## v1.22.0 (2024-02-14)
+
+### Feature
+
+* **#402:** Allow eager polarsframes as input ([#433](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/433)) ([`ffe2f0a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ffe2f0ac34aea48dd75f4c79ff885a0f4bd43477))
+* **#402:** Allow eager polarsframes as input ([`f1e4cee`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f1e4ceee85d3d0ae7b967eb6c597df2e99fdc00c))
+
+## v1.21.1 (2024-02-14)
+
+### Performance
+
+* **#423:** Multiprocessing ([`71de8c1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/71de8c12bfb495b1747597748d7d543752d6904b))
+
+## v1.21.0 (2024-02-14)
+
+### Feature
+
+* Expand aggregators ([`866a3a1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/866a3a164ab388e2336d0c26a9dbd02a02093cf3))
+
 ## v1.20.1 (2024-02-13)
 
 ### Performance

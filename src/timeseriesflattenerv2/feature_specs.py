@@ -13,19 +13,23 @@ default_pred_time_uuid_col_name = "pred_time_uuid"
 default_pred_time_col_name = "pred_timestamp"
 default_timestamp_col_name = "timestamp"
 
+InitDF_T = pl.LazyFrame | pl.DataFrame | pd.DataFrame
+
 
 @dataclass
 class PredictionTimeFrame:
-    init_df: InitVar[pl.LazyFrame | pd.DataFrame]
+    init_df: InitVar[InitDF_T]
     entity_id_col_name: str = default_entity_id_col_name
     timestamp_col_name: str = default_pred_time_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
 
-    def __post_init__(self, init_df: pl.LazyFrame | pd.DataFrame):
-        if isinstance(init_df, pd.DataFrame):
-            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
-        else:
+    def __post_init__(self, init_df: InitDF_T):
+        if isinstance(init_df, pl.LazyFrame):
             self.df: pl.LazyFrame = init_df
+        elif isinstance(init_df, pd.DataFrame):
+            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
+        elif isinstance(init_df, pl.DataFrame):
+            self.df: pl.LazyFrame = init_df.lazy()
 
         self.df = self.df.with_columns(
             pl.concat_str(
@@ -53,16 +57,18 @@ class SpecColumnError(Exception):
 class ValueFrame:
     """A frame that contains the values of a time series."""
 
-    init_df: InitVar[pl.LazyFrame | pd.DataFrame]
+    init_df: InitVar[InitDF_T]
     value_col_name: str
     entity_id_col_name: str = default_entity_id_col_name
     value_timestamp_col_name: str = "timestamp"
 
-    def __post_init__(self, init_df: pl.LazyFrame | pd.DataFrame):
-        if isinstance(init_df, pd.DataFrame):
-            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
-        else:
+    def __post_init__(self, init_df: InitDF_T):
+        if isinstance(init_df, pl.LazyFrame):
             self.df: pl.LazyFrame = init_df
+        elif isinstance(init_df, pd.DataFrame):
+            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
+        elif isinstance(init_df, pl.DataFrame):
+            self.df: pl.LazyFrame = init_df.lazy()
         # validate that the required columns are present in the dataframe
         required_columns = [
             self.entity_id_col_name,
@@ -83,8 +89,8 @@ class ValueFrame:
 
 
 @dataclass(frozen=True)
-class SlicedFrame:
-    """A frame that has been sliced by a lookdirection."""
+class TimeMaskedFrame:
+    """A frame that has had all values outside its lookbehind and lookahead distances masked."""
 
     init_df: pl.LazyFrame
     value_col_name: str

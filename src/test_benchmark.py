@@ -141,7 +141,7 @@ def test_bench(
         lookbehinds=[dt.timedelta(days=i) for i in range(example.n_lookbehinds)],
     )
 
-    flattener = Flattener(predictiontime_frame=dataset.pred_time_frame, lazy=False)
+    flattener = Flattener(predictiontime_frame=dataset.pred_time_frame, compute_lazily=False)
 
     @benchmark
     def flatten():
