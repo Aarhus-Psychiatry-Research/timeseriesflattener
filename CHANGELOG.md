@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.21.0 (2024-02-14)
+
+### Feature
+
+* Expand aggregators ([`866a3a1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/866a3a164ab388e2336d0c26a9dbd02a02093cf3))
+
 ## v1.20.1 (2024-02-13)
 
 ### Performance
