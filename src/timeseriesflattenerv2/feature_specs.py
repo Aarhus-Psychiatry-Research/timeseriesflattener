@@ -114,13 +114,40 @@ class Aggregator(Protocol):
         ...
 
 
-@dataclass(frozen=True)
+PolarsInt = [pl.Int64, pl.UInt64, pl.Int32, pl.UInt32, pl.Int16, pl.UInt16, pl.Int8, pl.UInt8]
+PolarsFloat = [pl.Float64, pl.Float32]
+
+
+def _downcast_column(df: pl.DataFrame, col_name: str) -> pl.DataFrame:
+    dtype = df[col_name].dtype
+    if dtype in PolarsInt:
+        return df.cast(pl.UInt8)
+    if dtype in PolarsFloat:
+        return df.cast(pl.Float32)
+    return df
+
+
+def _downcast_dataframe(df: pl.LazyFrame) -> pl.LazyFrame:
+    for col in df.columns:
+        collected_df = df.collect()
+        collected_df = _downcast_column(collected_df, col)
+
+    return collected_df.lazy()
+
+
+@dataclass
 class PredictorSpec:
     value_frame: ValueFrame
     lookbehind_distances: Sequence[LookDistance]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "pred"
+    attempt_downcast: InitVar[bool] = False
+
+    def __post_init__(self, attempt_downcast: bool) -> None:
+        if attempt_downcast:
+            downcast_frame = _downcast_dataframe(self.value_frame.df)
+            self.value_frame = ValueFrame(downcast_frame, self.value_frame.value_col_name)
 
 
 @dataclass(frozen=True)
