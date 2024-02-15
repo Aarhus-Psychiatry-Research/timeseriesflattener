@@ -1,8 +1,7 @@
 import datetime as dt
 from abc import ABC, abstractmethod
 from dataclasses import InitVar, dataclass
-
-from typing import Literal, NewType, Protocol, Sequence, Union
+from typing import Literal, NewType, Sequence, Union
 
 import pandas as pd
 import polars as pl
