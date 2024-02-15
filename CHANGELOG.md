@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.24.0 (2024-02-15)
+
+### Feature
+
+* **#396:** Add all aggregators from v1 ([`a1fa957`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a1fa957ad53ec95a358843ea0ff00b4f5d763ccc))
+
 ## v1.23.0 (2024-02-14)
 
 ### Feature
