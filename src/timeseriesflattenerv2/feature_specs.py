@@ -159,11 +159,10 @@ def _lookdistance_to_normalised_lookperiod(
             closest_to_prediction_time=dt.timedelta(days=0),
             furthest_from_prediction_time=lookdistance if is_ahead else -lookdistance,
         )
-    else:
-        return LookPeriod(
-            closest_to_prediction_time=lookdistance[0] if is_ahead else -lookdistance[0],
-            furthest_from_prediction_time=lookdistance[1] if is_ahead else -lookdistance[1],
-        )
+    return LookPeriod(
+        closest_to_prediction_time=lookdistance[0] if is_ahead else -lookdistance[0],
+        furthest_from_prediction_time=lookdistance[1] if is_ahead else -lookdistance[1],
+    )
 
 
 @dataclass(frozen=True)
