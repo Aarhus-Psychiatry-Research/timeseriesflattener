@@ -143,7 +143,7 @@ class LookPeriod:
     last: LookDistance
 
     def __post_init__(self):
-        if self.first > self.last:
+        if self.first >= self.last:
             raise ValueError(
                 f"Invalid LookPeriod. The first value ({self.first}) must be smaller than the large value ({self.last})."
             )
