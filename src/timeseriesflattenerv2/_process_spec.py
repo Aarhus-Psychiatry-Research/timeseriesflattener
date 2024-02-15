@@ -8,10 +8,8 @@ from iterpy.iter import Iter
 from ._horisontally_concat import horizontally_concatenate_dfs
 from .feature_specs import (
     Aggregator,
-    LookDistance,
-    OutcomeSpec,
+    LookPeriod,
     PredictionTimeFrame,
-    PredictorSpec,
     ProcessedFrame,
     TimedeltaFrame,
     TimeMaskedFrame,
@@ -40,16 +38,6 @@ def _get_timedelta_frame(
     return TimedeltaFrame(timedelta_frame, value_col_name=value_frame.value_col_name)
 
 
-def _normalise_lookdistances(spec: ValueSpecification) -> Sequence[LookDistance]:
-    if isinstance(spec, PredictorSpec):
-        lookdistances = [-distance for distance in spec.lookbehind_distances]
-    elif isinstance(spec, OutcomeSpec):
-        lookdistances = spec.lookahead_distances
-    else:
-        raise ValueError("Unknown spec type")
-    return lookdistances
-
-
 def _null_values_outside_lookwindow(
     df: pl.LazyFrame, lookwindow_predicate: pl.Expr, cols_to_null: Sequence[str]
 ) -> pl.LazyFrame:
@@ -61,21 +49,22 @@ def _null_values_outside_lookwindow(
 
 
 def _slice_frame(
-    timedelta_frame: TimedeltaFrame,
-    lookdistance: LookDistance,
-    column_prefix: str,
-    value_col_name: str,
+    timedelta_frame: TimedeltaFrame, lookperiod: LookPeriod, column_prefix: str, value_col_name: str
 ) -> TimeMaskedFrame:
-    new_colname = f"{column_prefix}_{value_col_name}_within_{abs(lookdistance.days)}_days"
+    # TODO: #436 base suffix on the type of timedelta (days, hours, minutes)
 
     timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
 
-    is_lookbehind = lookdistance < dt.timedelta(0)
+    is_lookbehind = lookperiod.first < dt.timedelta(0)
+    new_colname_prefix = f"{column_prefix}_{value_col_name}_within_"
 
     # The predictor case
     if is_lookbehind:
-        after_lookbehind_start = lookdistance <= timedelta_col
-        before_prediction_time = timedelta_col <= dt.timedelta(0)
+        new_colname = (
+            new_colname_prefix + f"{abs(lookperiod.last.days)}_to_{abs(lookperiod.first.days)}_days"
+        )
+        after_lookbehind_start = lookperiod.first <= timedelta_col
+        before_prediction_time = timedelta_col <= lookperiod.last
 
         within_lookbehind = after_lookbehind_start.and_(before_prediction_time)
         sliced_frame = _null_values_outside_lookwindow(
@@ -85,8 +74,10 @@ def _slice_frame(
         )
     # The outcome case
     else:
-        after_prediction_time = dt.timedelta(0) <= timedelta_col
-        before_lookahead_end = timedelta_col <= lookdistance
+        new_colname = new_colname_prefix + f"{lookperiod.first.days}_to_{lookperiod.last.days}_days"
+        after_prediction_time = lookperiod.first <= timedelta_col
+        before_lookahead_end = timedelta_col <= lookperiod.last
+
         within_lookahead = after_prediction_time.and_(before_lookahead_end)
         sliced_frame = _null_values_outside_lookwindow(
             df=timedelta_frame.df,
@@ -126,13 +117,13 @@ def _aggregate_within_slice(
 
 def _slice_and_aggregate_spec(
     timedelta_frame: TimedeltaFrame,
-    distance: LookDistance,
+    lookperiod: LookPeriod,
     aggregators: Sequence[Aggregator],
     fallback: ValueType,
     column_prefix: str,
 ) -> pl.LazyFrame:
     sliced_frame = _slice_frame(
-        timedelta_frame, distance, column_prefix, timedelta_frame.value_col_name
+        timedelta_frame, lookperiod, column_prefix, timedelta_frame.value_col_name
     )
     return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
 
@@ -141,13 +132,13 @@ def process_spec(
     spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     aggregated_value_frames = (
-        Iter(_normalise_lookdistances(spec))
+        Iter(spec.normalised_lookperiod)
         .map(
-            lambda distance: _slice_and_aggregate_spec(
+            lambda lookperiod: _slice_and_aggregate_spec(
                 timedelta_frame=_get_timedelta_frame(
                     predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
                 ),
-                distance=distance,
+                lookperiod=lookperiod,
                 aggregators=spec.aggregators,
                 fallback=spec.fallback,
                 column_prefix=spec.column_prefix,

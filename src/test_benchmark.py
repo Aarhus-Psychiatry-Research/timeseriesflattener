@@ -50,7 +50,7 @@ def _generate_benchmark_dataset(
     n_features: int,
     n_observations_per_pred_time: int,
     aggregations: Sequence[Literal["max", "mean"]],
-    lookbehinds: Sequence[LookDistance],
+    lookbehinds: Sequence[LookDistance | tuple[LookDistance, LookDistance]],
 ) -> BenchmarkDataset:
     pred_time_df = PredictionTimeFrame(
         init_df=pl.LazyFrame(
@@ -138,7 +138,7 @@ def test_bench(
         n_features=example.n_features,
         n_observations_per_pred_time=example.n_observations_per_pred_time,
         aggregations=example.aggregations,
-        lookbehinds=[dt.timedelta(days=i) for i in range(example.n_lookbehinds)],
+        lookbehinds=[dt.timedelta(days=i + 1) for i in range(example.n_lookbehinds)],
     )
 
     flattener = Flattener(predictiontime_frame=dataset.pred_time_frame, compute_lazily=False)

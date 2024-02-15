@@ -10,7 +10,13 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 from timeseriesflattenerv2.aggregators import MeanAggregator
 
 from . import flattener
-from .feature_specs import PredictionTimeFrame, PredictorSpec, SpecColumnError, ValueFrame
+from .feature_specs import (
+    OutcomeSpec,
+    PredictionTimeFrame,
+    PredictorSpec,
+    SpecColumnError,
+    ValueFrame,
+)
 
 FakePredictiontimeFrame = PredictionTimeFrame(
     init_df=pl.LazyFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})
@@ -81,7 +87,7 @@ def test_flattener(example: FlattenerExample):
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_1_days_mean_fallback_nan
+        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
 1-2021-01-03 00:00:00.000000,3.0"""
     )
 
@@ -113,7 +119,7 @@ def test_keep_prediction_times_without_predictors():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_1_days_mean_fallback_123
+        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_123
 1-2021-01-03 00:00:00.000000,123.0"""
     )
 
@@ -159,7 +165,7 @@ def test_flattener_multiple_features():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_1_within_1_days_mean_fallback_nan,pred_value_2_within_1_days_mean_fallback_nan
+        """pred_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_nan,pred_value_2_within_0_to_1_days_mean_fallback_nan
 1-2021-01-03 00:00:00.000000,3.0,3.0"""
     )
 
@@ -188,3 +194,61 @@ def test_error_if_missing_column_in_valueframe():
             init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"]}),
             value_col_name="value",
         )
+
+
+def test_predictor_with_interval_lookperiod():
+    prediction_times_df_str = """entity_id,pred_timestamp,
+                            1,2022-01-01 00:00:00
+                            """
+    predictor_df_str = """entity_id,timestamp,value,
+                        1,2021-12-30 00:00:01, 2
+                        1,2021-12-15 00:00:00, 1
+                        """
+    result = flattener.Flattener(
+        predictiontime_frame=PredictionTimeFrame(init_df=str_to_pl_df(prediction_times_df_str))
+    ).aggregate_timeseries(
+        specs=[
+            PredictorSpec(
+                value_frame=ValueFrame(
+                    init_df=str_to_pl_df(predictor_df_str), value_col_name="value"
+                ),
+                lookbehind_distances=[(dt.timedelta(days=5), dt.timedelta(days=30))],
+                fallback=np.NaN,
+                aggregators=[MeanAggregator()],
+            )
+        ]
+    )
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_within_5_to_30_days_mean_fallback_nan
+1-2022-01-01 00:00:00.000000,1"""
+    )
+    assert_frame_equal(result.collect(), expected)
+
+
+def test_outcome_with_interval_lookperiod():
+    prediction_times_df_str = """entity_id,pred_timestamp,
+                            1,2022-01-01 00:00:00
+                            """
+    outcome_df_str = """entity_id,timestamp,value,
+                        1,2022-01-02 00:00:01, 2
+                        1,2022-01-15 00:00:00, 1
+                        """
+    result = flattener.Flattener(
+        predictiontime_frame=PredictionTimeFrame(init_df=str_to_pl_df(prediction_times_df_str))
+    ).aggregate_timeseries(
+        specs=[
+            OutcomeSpec(
+                value_frame=ValueFrame(
+                    init_df=str_to_pl_df(outcome_df_str), value_col_name="value"
+                ),
+                lookahead_distances=[(dt.timedelta(days=5), dt.timedelta(days=30))],
+                fallback=np.NaN,
+                aggregators=[MeanAggregator()],
+            )
+        ]
+    )
+    expected = str_to_pl_df(
+        """pred_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
+1-2022-01-01 00:00:00.000000,1"""
+    )
+    assert_frame_equal(result.collect(), expected)

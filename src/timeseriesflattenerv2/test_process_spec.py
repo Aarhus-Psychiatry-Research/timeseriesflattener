@@ -6,7 +6,13 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 import timeseriesflattenerv2._process_spec as process_spec
 
 from .aggregators import MaxAggregator, MeanAggregator
-from .feature_specs import PredictionTimeFrame, TimedeltaFrame, TimeMaskedFrame, ValueFrame
+from .feature_specs import (
+    LookPeriod,
+    PredictionTimeFrame,
+    TimedeltaFrame,
+    TimeMaskedFrame,
+    ValueFrame,
+)
 from .test_flattener import assert_frame_equal
 
 
@@ -117,7 +123,7 @@ def test_slice_without_any_within_window():
 
     result = process_spec._slice_frame(
         timedelta_frame=timedelta_frame,
-        lookdistance=dt.timedelta(days=-2),
+        lookperiod=LookPeriod(first=dt.timedelta(days=-2), last=dt.timedelta(days=0)),
         column_prefix="pred",
         value_col_name="value",
     ).collect()
@@ -125,7 +131,7 @@ def test_slice_without_any_within_window():
     from polars.testing import assert_series_equal
 
     assert_series_equal(
-        result.get_column("pred_value_within_2_days"),
+        result.get_column("pred_value_within_0_to_2_days"),
         timedelta_frame.df.collect().get_column("is_null"),
         check_names=False,
         check_dtype=False,
