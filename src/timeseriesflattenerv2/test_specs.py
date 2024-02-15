@@ -14,16 +14,16 @@ MockValueFrame = ValueFrame(
 
 def test_predictor_spec_post_init():
     lookdistance_start = dt.timedelta(days=1)
-    lookdistance_days = dt.timedelta(days=10)
+    lookdistance_end = dt.timedelta(days=10)
 
     predictor_spec = PredictorSpec(
         value_frame=MockValueFrame,
-        lookbehind_distances=[(lookdistance_start, lookdistance_days)],
+        lookbehind_distances=[(lookdistance_start, lookdistance_end)],
         aggregators=[MeanAggregator()],
         fallback=0,
     )
 
-    assert predictor_spec.normalised_lookperiod[0].first == -lookdistance_days
+    assert predictor_spec.normalised_lookperiod[0].first == -lookdistance_end
     assert predictor_spec.normalised_lookperiod[0].last == -lookdistance_start
 
 
