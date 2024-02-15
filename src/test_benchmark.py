@@ -139,7 +139,7 @@ def test_bench(
         n_observations_per_pred_time=example.n_observations_per_pred_time,
         aggregations=example.aggregations,
         lookbehinds=[
-            (dt.timedelta(days=0), dt.timedelta(days=i)) for i in range(example.n_lookbehinds)
+            (dt.timedelta(days=0), dt.timedelta(days=i + 1)) for i in range(example.n_lookbehinds)
         ],
     )
 
