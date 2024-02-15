@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "timeseriesflattener"
-version = "1.20.1"
+version = "1.23.0"
 authors = [
   { name = "Lasse Hansen", email = "lasseh0310@gmail.com" },
   { name = "Jakob Grøhn Damgaard", email = "bokajgd@gmail.com" },
@@ -34,7 +34,7 @@ dependencies = [
   "frozendict>=2.3.4",
   "coloredlogs>14.0.0",
   "tqdm>4.1.0",
-  "polars==0.20.7",
+  "polars>0.18.0",
   "iterpy==1.5.1",
   "rich>=13.0.0",
 ]

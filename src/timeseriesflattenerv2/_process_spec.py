@@ -13,8 +13,8 @@ from .feature_specs import (
     PredictionTimeFrame,
     PredictorSpec,
     ProcessedFrame,
-    SlicedFrame,
     TimedeltaFrame,
+    TimeMaskedFrame,
     ValueFrame,
     ValueSpecification,
     ValueType,
@@ -65,7 +65,7 @@ def _slice_frame(
     lookdistance: LookDistance,
     column_prefix: str,
     value_col_name: str,
-) -> SlicedFrame:
+) -> TimeMaskedFrame:
     new_colname = f"{column_prefix}_{value_col_name}_within_{abs(lookdistance.days)}_days"
 
     timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
@@ -94,7 +94,7 @@ def _slice_frame(
             cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
         )
 
-    return SlicedFrame(
+    return TimeMaskedFrame(
         init_df=sliced_frame.rename({timedelta_frame.value_col_name: new_colname}),
         pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
         value_col_name=new_colname,
@@ -102,7 +102,7 @@ def _slice_frame(
 
 
 def _aggregate_within_slice(
-    sliced_frame: SlicedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
+    sliced_frame: TimeMaskedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
 ) -> pl.LazyFrame:
     aggregator_expressions = [aggregator(sliced_frame.value_col_name) for aggregator in aggregators]
 
@@ -138,7 +138,7 @@ def _slice_and_aggregate_spec(
 
 
 def process_spec(
-    predictiontime_frame: PredictionTimeFrame, spec: ValueSpecification
+    spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     aggregated_value_frames = (
         Iter(_normalise_lookdistances(spec))

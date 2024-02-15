@@ -6,12 +6,12 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 import timeseriesflattenerv2._process_spec as process_spec
 
 from .aggregators import MaxAggregator, MeanAggregator
-from .feature_specs import PredictionTimeFrame, SlicedFrame, TimedeltaFrame, ValueFrame
+from .feature_specs import PredictionTimeFrame, TimedeltaFrame, TimeMaskedFrame, ValueFrame
 from .test_flattener import assert_frame_equal
 
 
 def test_aggregate_over_fallback():
-    sliced_frame = SlicedFrame(
+    sliced_frame = TimeMaskedFrame(
         init_df=pl.LazyFrame(
             {"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [None, None]}
         ),
@@ -31,7 +31,7 @@ def test_aggregate_over_fallback():
 
 
 def test_aggregate_with_null():
-    sliced_frame = SlicedFrame(
+    sliced_frame = TimeMaskedFrame(
         init_df=pl.LazyFrame(
             {"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [1, None]}
         ),
@@ -51,7 +51,7 @@ def test_aggregate_with_null():
 
 
 def test_aggregate_within_slice():
-    sliced_frame = SlicedFrame(
+    sliced_frame = TimeMaskedFrame(
         init_df=str_to_pl_df(
             """pred_time_uuid,value
 1-2021-01-03,1
@@ -133,7 +133,7 @@ def test_slice_without_any_within_window():
 
 
 def test_multiple_aggregators():
-    sliced_frame = SlicedFrame(
+    sliced_frame = TimeMaskedFrame(
         init_df=str_to_pl_df(
             """pred_time_uuid,value
 1-2021-01-03,1
