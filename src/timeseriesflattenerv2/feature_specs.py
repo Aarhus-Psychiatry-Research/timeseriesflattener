@@ -1,5 +1,7 @@
 import datetime as dt
+from abc import ABC, abstractmethod
 from dataclasses import InitVar, dataclass
+
 from typing import Literal, NewType, Protocol, Sequence, Union
 
 import pandas as pd
@@ -132,9 +134,15 @@ class AggregatedValueFrame:
 AggregatorInstance = NewType("AggregatorInstance", pl.Expr)
 
 
-class Aggregator(Protocol):
+class Aggregator(ABC):
+    name: str
+
+    @abstractmethod
     def __call__(self, column_name: str) -> pl.Expr:
         ...
+
+    def new_col_name(self, previous_col_name: str) -> str:
+        return f"{previous_col_name}_{self.name}"
 
 
 @dataclass(frozen=True)
