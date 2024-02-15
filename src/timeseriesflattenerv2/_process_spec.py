@@ -113,13 +113,13 @@ def _aggregate_within_slice(
 
 def _slice_and_aggregate_spec(
     timedelta_frame: TimedeltaFrame,
-    distance: LookPeriod,
+    lookperiod: LookPeriod,
     aggregators: Sequence[Aggregator],
     fallback: ValueType,
     column_prefix: str,
 ) -> pl.LazyFrame:
     sliced_frame = _slice_frame(
-        timedelta_frame, distance, column_prefix, timedelta_frame.value_col_name
+        timedelta_frame, lookperiod, column_prefix, timedelta_frame.value_col_name
     )
     return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
 
@@ -130,11 +130,11 @@ def process_spec(
     aggregated_value_frames = (
         Iter(spec.normalised_lookperiod)
         .map(
-            lambda distance: _slice_and_aggregate_spec(
+            lambda lookperiod: _slice_and_aggregate_spec(
                 timedelta_frame=_get_timedelta_frame(
                     predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
                 ),
-                distance=distance,
+                lookperiod=lookperiod,
                 aggregators=spec.aggregators,
                 fallback=spec.fallback,
                 column_prefix=spec.column_prefix,
