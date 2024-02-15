@@ -29,14 +29,14 @@ def test_predictor_spec_post_init():
 
 def test_outcome_spec_post_init():
     lookdistance_start = dt.timedelta(days=1)
-    lookdistance_days = dt.timedelta(days=10)
+    lookdistance_end = dt.timedelta(days=10)
 
     outcome_spec = OutcomeSpec(
         value_frame=MockValueFrame,
-        lookahead_distances=[(lookdistance_start, lookdistance_days)],
+        lookahead_distances=[(lookdistance_start, lookdistance_end)],
         aggregators=[MeanAggregator()],
         fallback=0,
     )
 
     assert outcome_spec.normalised_lookperiod[0].first == lookdistance_start
-    assert outcome_spec.normalised_lookperiod[0].last == lookdistance_days
+    assert outcome_spec.normalised_lookperiod[0].last == lookdistance_end
