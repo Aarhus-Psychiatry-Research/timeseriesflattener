@@ -1,5 +1,5 @@
 import datetime as dt
-from dataclasses import InitVar, dataclass
+from dataclasses import InitVar, dataclass, field
 from typing import Literal, NewType, Protocol, Sequence, Union
 
 import pandas as pd
@@ -139,59 +139,53 @@ class Aggregator(Protocol):
 
 @dataclass(frozen=True)
 class LookPeriod:
-    closest_to_prediction_time: LookDistance
-    furthest_from_prediction_time: LookDistance
+    first: LookDistance
+    last: LookDistance
 
     def __post_init__(self):
-        if abs(self.closest_to_prediction_time) > abs(self.furthest_from_prediction_time):
+        if self.first > self.last:
             raise ValueError(
-                f"Invalid LookPeriod. The value closest_to_prediction_time ({self.closest_to_prediction_time}) must be smaller than furthest_from_prediction_time {self.furthest_from_prediction_time}."
+                f"Invalid LookPeriod. The first value ({self.first}) must be smaller than the large value ({self.last})."
             )
 
 
 def _lookdistance_to_normalised_lookperiod(
-    lookdistance: LookDistance | tuple[LookDistance, LookDistance],
-    direction: Literal["ahead", "behind"],
+    lookdistance: tuple[LookDistance, LookDistance], direction: Literal["ahead", "behind"]
 ) -> LookPeriod:
     is_ahead = direction == "ahead"
-    if isinstance(lookdistance, LookDistance):
-        return LookPeriod(
-            closest_to_prediction_time=dt.timedelta(days=0),
-            furthest_from_prediction_time=lookdistance if is_ahead else -lookdistance,
-        )
     return LookPeriod(
-        closest_to_prediction_time=lookdistance[0] if is_ahead else -lookdistance[0],
-        furthest_from_prediction_time=lookdistance[1] if is_ahead else -lookdistance[1],
+        first=lookdistance[0] if is_ahead else -lookdistance[1],
+        last=lookdistance[1] if is_ahead else -lookdistance[0],
     )
 
 
-@dataclass(frozen=True)
+@dataclass
 class PredictorSpec:
     value_frame: ValueFrame
-    lookbehind_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
+    lookbehind_distances: Sequence[tuple[LookDistance, LookDistance]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "pred"
+    normalised_lookperiod: Sequence[LookPeriod] = field(init=False)
 
-    @property
-    def normalised_lookperiod(self) -> Sequence[LookPeriod]:
-        return [
+    def __post_init__(self):
+        self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="behind")
             for lookdistance in self.lookbehind_distances
         ]
 
 
-@dataclass(frozen=True)
+@dataclass()
 class OutcomeSpec:
     value_frame: ValueFrame
-    lookahead_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
+    lookahead_distances: Sequence[tuple[LookDistance, LookDistance]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "outc"
+    normalised_lookperiod: Sequence[LookPeriod] = field(init=False)
 
-    @property
-    def normalised_lookperiod(self) -> Sequence[LookPeriod]:
-        return [
+    def __post_init__(self):
+        self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in self.lookahead_distances
         ]

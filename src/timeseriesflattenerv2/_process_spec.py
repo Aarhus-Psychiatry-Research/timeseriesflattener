@@ -52,16 +52,19 @@ def _slice_frame(
     timedelta_frame: TimedeltaFrame, lookperiod: LookPeriod, column_prefix: str, value_col_name: str
 ) -> TimeMaskedFrame:
     # TODO: #436 base suffix on the type of timedelta (days, hours, minutes)
-    new_colname = f"{column_prefix}_{value_col_name}_within_{abs(lookperiod.closest_to_prediction_time.days)}_to_{abs(lookperiod.furthest_from_prediction_time.days)}_days"
 
     timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
 
-    is_lookbehind = lookperiod.furthest_from_prediction_time < dt.timedelta(0)
+    is_lookbehind = lookperiod.first < dt.timedelta(0)
+    new_colname_prefix = f"{column_prefix}_{value_col_name}_within_"
 
     # The predictor case
     if is_lookbehind:
-        after_lookbehind_start = lookperiod.furthest_from_prediction_time <= timedelta_col
-        before_prediction_time = timedelta_col <= lookperiod.closest_to_prediction_time
+        new_colname = (
+            new_colname_prefix + f"{abs(lookperiod.last.days)}_to_{abs(lookperiod.first.days)}_days"
+        )
+        after_lookbehind_start = timedelta_col >= lookperiod.first
+        before_prediction_time = timedelta_col <= lookperiod.last
 
         within_lookbehind = after_lookbehind_start.and_(before_prediction_time)
         sliced_frame = _null_values_outside_lookwindow(
@@ -71,8 +74,9 @@ def _slice_frame(
         )
     # The outcome case
     else:
-        after_prediction_time = lookperiod.closest_to_prediction_time <= timedelta_col
-        before_lookahead_end = timedelta_col <= lookperiod.furthest_from_prediction_time
+        new_colname = new_colname_prefix + f"{lookperiod.first.days}_to_{lookperiod.last.days}_days"
+        after_prediction_time = lookperiod.first <= timedelta_col
+        before_lookahead_end = timedelta_col <= lookperiod.last
 
         within_lookahead = after_prediction_time.and_(before_lookahead_end)
         sliced_frame = _null_values_outside_lookwindow(

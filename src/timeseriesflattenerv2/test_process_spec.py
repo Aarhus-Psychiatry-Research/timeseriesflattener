@@ -123,10 +123,7 @@ def test_slice_without_any_within_window():
 
     result = process_spec._slice_frame(
         timedelta_frame=timedelta_frame,
-        lookperiod=LookPeriod(
-            closest_to_prediction_time=dt.timedelta(days=0),
-            furthest_from_prediction_time=dt.timedelta(days=-2),
-        ),
+        lookperiod=LookPeriod(first=dt.timedelta(days=-2), last=dt.timedelta(days=0)),
         column_prefix="pred",
         value_col_name="value",
     ).collect()

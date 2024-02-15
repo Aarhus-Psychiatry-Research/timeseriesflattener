@@ -32,7 +32,7 @@ FakePredictorSpec = PredictorSpec(
         ),
         value_col_name="FakeValueColName",
     ),
-    lookbehind_distances=[dt.timedelta(days=1)],
+    lookbehind_distances=[(dt.timedelta(days=0), dt.timedelta(days=1))],
     aggregators=[MeanAggregator()],
     fallback=np.nan,
 )
@@ -79,7 +79,7 @@ def test_flattener(example: FlattenerExample):
         specs=[
             PredictorSpec(
                 value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
-                lookbehind_distances=[dt.timedelta(days=1)],
+                lookbehind_distances=[(dt.timedelta(days=0), dt.timedelta(days=1))],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
             )
@@ -111,7 +111,7 @@ def test_keep_prediction_times_without_predictors():
         specs=[
             PredictorSpec(
                 value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
-                lookbehind_distances=[dt.timedelta(days=1)],
+                lookbehind_distances=[(dt.timedelta(days=0), dt.timedelta(days=1))],
                 aggregators=[MeanAggregator()],
                 fallback=123,
             )
@@ -148,7 +148,7 @@ def test_flattener_multiple_features():
                     init_df=value_frame.rename({"value": "value_1"}).lazy(),
                     value_col_name="value_1",
                 ),
-                lookbehind_distances=[dt.timedelta(days=1)],
+                lookbehind_distances=[(dt.timedelta(days=0), dt.timedelta(days=1))],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
             ),
@@ -157,7 +157,7 @@ def test_flattener_multiple_features():
                     init_df=value_frame.rename({"value": "value_2"}).lazy(),
                     value_col_name="value_2",
                 ),
-                lookbehind_distances=[dt.timedelta(days=1)],
+                lookbehind_distances=[(dt.timedelta(days=0), dt.timedelta(days=1))],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
             ),
