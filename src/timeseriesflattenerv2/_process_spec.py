@@ -1,4 +1,5 @@
 import datetime as dt
+from dataclasses import dataclass
 from typing import Sequence
 
 import polars as pl
@@ -60,81 +61,83 @@ def _null_values_outside_lookwindow(
     return df
 
 
-def _slice_frame(
-    timedelta_frame: TimedeltaFrame,
-    lookdistance: LookDistance,
-    column_prefix: str,
-    value_col_name: str,
-) -> TimeMaskedFrame:
-    new_colname = f"{column_prefix}_{value_col_name}_within_{abs(lookdistance.days)}_days"
+@dataclass(frozen=True)
+class _TimeMasker:
+    lookdistance: LookDistance
+    column_prefix: str
+    value_col_name: str
 
-    timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
-
-    is_lookbehind = lookdistance < dt.timedelta(0)
-
-    # The predictor case
-    if is_lookbehind:
-        after_lookbehind_start = lookdistance <= timedelta_col
-        before_prediction_time = timedelta_col <= dt.timedelta(0)
-
-        within_lookbehind = after_lookbehind_start.and_(before_prediction_time)
-        sliced_frame = _null_values_outside_lookwindow(
-            df=timedelta_frame.df,
-            lookwindow_predicate=within_lookbehind,
-            cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
-        )
-    # The outcome case
-    else:
-        after_prediction_time = dt.timedelta(0) <= timedelta_col
-        before_lookahead_end = timedelta_col <= lookdistance
-        within_lookahead = after_prediction_time.and_(before_lookahead_end)
-        sliced_frame = _null_values_outside_lookwindow(
-            df=timedelta_frame.df,
-            lookwindow_predicate=within_lookahead,
-            cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
+    def __call__(self, timedelta_frame: TimedeltaFrame) -> TimeMaskedFrame:
+        new_colname = (
+            f"{self.column_prefix}_{self.value_col_name}_within_{abs(self.lookdistance.days)}_days"
         )
 
-    return TimeMaskedFrame(
-        init_df=sliced_frame.rename({timedelta_frame.value_col_name: new_colname}),
-        pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
-        value_col_name=new_colname,
-    )
+        timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
+
+        is_lookbehind = self.lookdistance < dt.timedelta(0)
+
+        # The predictor case
+        if is_lookbehind:
+            after_lookbehind_start = self.lookdistance <= timedelta_col
+            before_prediction_time = timedelta_col <= dt.timedelta(0)
+
+            within_lookbehind = after_lookbehind_start.and_(before_prediction_time)
+            masked_frame = _null_values_outside_lookwindow(
+                df=timedelta_frame.df,
+                lookwindow_predicate=within_lookbehind,
+                cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
+            )
+        # The outcome case
+        else:
+            after_prediction_time = dt.timedelta(0) <= timedelta_col
+            before_lookahead_end = timedelta_col <= self.lookdistance
+            within_lookahead = after_prediction_time.and_(before_lookahead_end)
+            masked_frame = _null_values_outside_lookwindow(
+                df=timedelta_frame.df,
+                lookwindow_predicate=within_lookahead,
+                cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
+            )
+
+        return TimeMaskedFrame(
+            init_df=masked_frame.rename({timedelta_frame.value_col_name: new_colname}),
+            pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
+            value_col_name=new_colname,
+        )
 
 
-def _aggregate_within_slice(
-    sliced_frame: TimeMaskedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
+@dataclass(frozen=True)
+class _MaskedAggregator:
+    aggregators: Sequence[Aggregator]
+    fallback: ValueType
+
+    def __call__(self, masked_frame: TimeMaskedFrame) -> pl.LazyFrame:
+        aggregator_expressions = [
+            aggregator(masked_frame.value_col_name) for aggregator in self.aggregators
+        ]
+
+        grouped_frame = masked_frame.init_df.group_by(
+            masked_frame.pred_time_uuid_col_name, maintain_order=True
+        ).agg(aggregator_expressions)
+
+        value_columns = (
+            Iter(grouped_frame.columns)
+            .filter(lambda col: masked_frame.value_col_name in col)
+            .map(lambda old_name: (old_name, f"{old_name}_fallback_{self.fallback}"))
+        )
+        rename_mapping = dict(value_columns)
+
+        with_fallback = grouped_frame.with_columns(
+            cs.contains(masked_frame.value_col_name).fill_null(self.fallback)
+        ).rename(rename_mapping)
+
+        return with_fallback
+
+
+def _mask_and_aggregate_spec(
+    timedelta_frame: TimedeltaFrame, time_masker: _TimeMasker, masked_aggregator: _MaskedAggregator
 ) -> pl.LazyFrame:
-    aggregator_expressions = [aggregator(sliced_frame.value_col_name) for aggregator in aggregators]
-
-    grouped_frame = sliced_frame.init_df.group_by(
-        sliced_frame.pred_time_uuid_col_name, maintain_order=True
-    ).agg(aggregator_expressions)
-
-    value_columns = (
-        Iter(grouped_frame.columns)
-        .filter(lambda col: sliced_frame.value_col_name in col)
-        .map(lambda old_name: (old_name, f"{old_name}_fallback_{fallback}"))
-    )
-    rename_mapping = dict(value_columns)
-
-    with_fallback = grouped_frame.with_columns(
-        cs.contains(sliced_frame.value_col_name).fill_null(fallback)
-    ).rename(rename_mapping)
-
-    return with_fallback
-
-
-def _slice_and_aggregate_spec(
-    timedelta_frame: TimedeltaFrame,
-    distance: LookDistance,
-    aggregators: Sequence[Aggregator],
-    fallback: ValueType,
-    column_prefix: str,
-) -> pl.LazyFrame:
-    sliced_frame = _slice_frame(
-        timedelta_frame, distance, column_prefix, timedelta_frame.value_col_name
-    )
-    return _aggregate_within_slice(sliced_frame, aggregators, fallback=fallback)
+    masked_frame = time_masker(timedelta_frame)
+    return masked_aggregator(masked_frame)
 
 
 def process_spec(
@@ -143,14 +146,18 @@ def process_spec(
     aggregated_value_frames = (
         Iter(_normalise_lookdistances(spec))
         .map(
-            lambda distance: _slice_and_aggregate_spec(
+            lambda distance: _mask_and_aggregate_spec(
                 timedelta_frame=_get_timedelta_frame(
                     predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
                 ),
-                distance=distance,
-                aggregators=spec.aggregators,
-                fallback=spec.fallback,
-                column_prefix=spec.column_prefix,
+                time_masker=_TimeMasker(
+                    lookdistance=distance,
+                    column_prefix=spec.column_prefix,
+                    value_col_name=spec.value_frame.value_col_name,
+                ),
+                masked_aggregator=_MaskedAggregator(
+                    aggregators=spec.aggregators, fallback=spec.fallback
+                ),
             )
         )
         .flatten()
