@@ -1,6 +1,6 @@
 import datetime as dt
 from dataclasses import InitVar, dataclass
-from typing import NewType, Protocol, Sequence, Union
+from typing import Literal, NewType, Protocol, Sequence, Union
 
 import pandas as pd
 import polars as pl
@@ -138,21 +138,64 @@ class Aggregator(Protocol):
 
 
 @dataclass(frozen=True)
+class LookPeriod:
+    closest_to_prediction_time: LookDistance
+    furthest_from_prediction_time: LookDistance
+
+    def __post_init__(self):
+        if abs(self.closest_to_prediction_time) > abs(self.furthest_from_prediction_time):
+            raise ValueError(
+                f"Invalid LookPeriod. The value closest_to_prediction_time ({self.closest_to_prediction_time}) must be smaller than furthest_from_prediction_time {self.furthest_from_prediction_time}."
+            )
+
+
+def _lookdistance_to_normalised_lookperiod(
+    lookdistance: LookDistance | tuple[LookDistance, LookDistance],
+    direction: Literal["ahead", "behind"],
+) -> LookPeriod:
+    is_ahead = direction == "ahead"
+    if isinstance(lookdistance, LookDistance):
+        return LookPeriod(
+            closest_to_prediction_time=dt.timedelta(days=0),
+            furthest_from_prediction_time=lookdistance if is_ahead else -lookdistance,
+        )
+    else:
+        return LookPeriod(
+            closest_to_prediction_time=lookdistance[0] if is_ahead else -lookdistance[0],
+            furthest_from_prediction_time=lookdistance[1] if is_ahead else -lookdistance[1],
+        )
+
+
+@dataclass(frozen=True)
 class PredictorSpec:
     value_frame: ValueFrame
-    lookbehind_distances: Sequence[LookDistance]
+    lookbehind_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "pred"
+
+    @property
+    def normalised_lookperiod(self) -> Sequence[LookPeriod]:
+        return [
+            _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="behind")
+            for lookdistance in self.lookbehind_distances
+        ]
 
 
 @dataclass(frozen=True)
 class OutcomeSpec:
     value_frame: ValueFrame
-    lookahead_distances: Sequence[LookDistance]
+    lookahead_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "outc"
+
+    @property
+    def normalised_lookperiod(self) -> Sequence[LookPeriod]:
+        return [
+            _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
+            for lookdistance in self.lookahead_distances
+        ]
 
 
 @dataclass

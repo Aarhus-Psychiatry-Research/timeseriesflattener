@@ -81,7 +81,7 @@ def test_flattener(example: FlattenerExample):
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_1_days_mean_fallback_nan
+        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
 1-2021-01-03 00:00:00.000000,3.0"""
     )
 
@@ -113,7 +113,7 @@ def test_keep_prediction_times_without_predictors():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_1_days_mean_fallback_123
+        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_123
 1-2021-01-03 00:00:00.000000,123.0"""
     )
 
@@ -159,7 +159,7 @@ def test_flattener_multiple_features():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_1_within_1_days_mean_fallback_nan,pred_value_2_within_1_days_mean_fallback_nan
+        """pred_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_nan,pred_value_2_within_0_to_1_days_mean_fallback_nan
 1-2021-01-03 00:00:00.000000,3.0,3.0"""
     )
 
