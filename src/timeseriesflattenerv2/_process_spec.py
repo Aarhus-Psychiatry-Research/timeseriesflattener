@@ -63,7 +63,7 @@ def _slice_frame(
         new_colname = (
             new_colname_prefix + f"{abs(lookperiod.last.days)}_to_{abs(lookperiod.first.days)}_days"
         )
-        after_lookbehind_start = timedelta_col >= lookperiod.first
+        after_lookbehind_start = lookperiod.first <= timedelta_col
         before_prediction_time = timedelta_col <= lookperiod.last
 
         within_lookbehind = after_lookbehind_start.and_(before_prediction_time)

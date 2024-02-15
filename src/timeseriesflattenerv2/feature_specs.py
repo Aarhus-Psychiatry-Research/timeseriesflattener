@@ -1,5 +1,5 @@
 import datetime as dt
-from dataclasses import InitVar, dataclass, field
+from dataclasses import InitVar, dataclass
 from typing import Literal, NewType, Protocol, Sequence, Union
 
 import pandas as pd
@@ -150,9 +150,15 @@ class LookPeriod:
 
 
 def _lookdistance_to_normalised_lookperiod(
-    lookdistance: tuple[LookDistance, LookDistance], direction: Literal["ahead", "behind"]
+    lookdistance: LookDistance | tuple[LookDistance, LookDistance],
+    direction: Literal["ahead", "behind"],
 ) -> LookPeriod:
     is_ahead = direction == "ahead"
+    if isinstance(lookdistance, LookDistance):
+        return LookPeriod(
+            first=dt.timedelta(days=0) if is_ahead else -lookdistance,
+            last=lookdistance if is_ahead else dt.timedelta(0),
+        )
     return LookPeriod(
         first=lookdistance[0] if is_ahead else -lookdistance[1],
         last=lookdistance[1] if is_ahead else -lookdistance[0],
@@ -162,32 +168,34 @@ def _lookdistance_to_normalised_lookperiod(
 @dataclass
 class PredictorSpec:
     value_frame: ValueFrame
-    lookbehind_distances: Sequence[tuple[LookDistance, LookDistance]]
+    lookbehind_distances: InitVar[Sequence[LookDistance | tuple[LookDistance, LookDistance]]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "pred"
-    normalised_lookperiod: Sequence[LookPeriod] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(
+        self, lookbehind_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
+    ):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="behind")
-            for lookdistance in self.lookbehind_distances
+            for lookdistance in lookbehind_distances
         ]
 
 
 @dataclass()
 class OutcomeSpec:
     value_frame: ValueFrame
-    lookahead_distances: Sequence[tuple[LookDistance, LookDistance]]
+    lookahead_distances: InitVar[Sequence[LookDistance | tuple[LookDistance, LookDistance]]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "outc"
-    normalised_lookperiod: Sequence[LookPeriod] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(
+        self, lookahead_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
+    ):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
-            for lookdistance in self.lookahead_distances
+            for lookdistance in lookahead_distances
         ]
 
 
