@@ -83,7 +83,7 @@ def _add_commit(c: Context, msg: Optional[str] = None):
 
 
 def is_uncommitted_changes(c: Context) -> bool:
-    git_status_result: Result = c.run("git status --porcelain", pty=True, hide=True)
+    git_status_result: Result = c.run("git status --porcelain", pty=True, hide=True)  # type: ignore
 
     uncommitted_changes = git_status_result.stdout != ""
     return uncommitted_changes
@@ -105,7 +105,7 @@ def add_and_commit(c: Context, msg: Optional[str] = None):
 def branch_exists_on_remote(c: Context) -> bool:
     branch_name = Path(".git/HEAD").read_text().split("/")[-1].strip()
 
-    branch_exists_result: Result = c.run(f"git ls-remote --heads origin {branch_name}", hide=True)
+    branch_exists_result: Result = c.run(f"git ls-remote --heads origin {branch_name}", hide=True)  # type: ignore
 
     return branch_name in branch_exists_result.stdout
 
@@ -130,7 +130,7 @@ def update_pr(c: Context):
     echo_header(f"{Emo.COMMUNICATE} Syncing PR")
     # Get current branch name
     branch_name = Path(".git/HEAD").read_text().split("/")[-1].strip()
-    pr_result: Result = c.run("gh pr list --state OPEN", pty=False, hide=True)
+    pr_result: Result = c.run("gh pr list --state OPEN", pty=False, hide=True)  # type: ignore
 
     if branch_name not in pr_result.stdout:
         create_pr(c)
@@ -161,7 +161,7 @@ def pre_commit(c: Context):
     pre_commit_cmd = "pre-commit run --all-files"
     result = c.run(pre_commit_cmd, pty=True, warn=True)
 
-    exit_if_error_in_stdout(result)
+    exit_if_error_in_stdout(result)  # type: ignore
 
 
 @task
@@ -221,7 +221,7 @@ def test(
 
     pytest_arg_str = " ".join(pytest_args)
 
-    test_result: Result = c.run(f"pytest {pytest_arg_str}", warn=True, pty=True)
+    test_result: Result = c.run(f"pytest {pytest_arg_str}", warn=True, pty=True)  # type: ignore
 
     # If "failed" in the pytest results
     if "failed" in test_result.stdout:

@@ -7,7 +7,7 @@ import polars.testing as polars_testing
 import pytest
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-from timeseriesflattenerv2.aggregators import MeanAggregator
+from timeseriesflattenerv2.aggregators import EarliestAggregator, MeanAggregator
 
 from . import flattener
 from .feature_specs import (
@@ -96,13 +96,13 @@ def test_flattener(example: FlattenerExample):
 
 def test_keep_prediction_times_without_predictors():
     pred_frame = str_to_pl_df(
-        """entity_id,pred_timestamp
+        """entity_id,pred_timestamp,pred_time_uuid
         1,2021-01-03"""
     )
 
     value_frame = str_to_pl_df(
         """entity_id,value,timestamp
-        2,1,2021-01-01"""
+        1,1,2021-01-01"""
     )
 
     result = flattener.Flattener(
@@ -112,15 +112,18 @@ def test_keep_prediction_times_without_predictors():
             PredictorSpec(
                 value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
                 lookbehind_distances=[dt.timedelta(days=1)],
-                aggregators=[MeanAggregator()],
+                aggregators=[MeanAggregator(), EarliestAggregator(timestamp_col_name="timestamp")],
                 fallback=123,
             )
         ]
     )
 
-    expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_123
-1-2021-01-03 00:00:00.000000,123.0"""
+    expected = pl.DataFrame(
+        {
+            "pred_time_uuid": ["1-2021-01-03 00:00:00.000000"],
+            "pred_value_within_0_to_1_days_mean_fallback_123": [123],
+            "pred_value_within_0_to_1_days_earliest_fallback_123": [123],
+        }
     )
 
     assert_frame_equal(result.collect(), expected)
@@ -183,7 +186,13 @@ def test_error_if_missing_entity_id_column():
     with pytest.raises(flattener.SpecError, match=".*is missing in the .* specification.*"):
         flattener.Flattener(
             predictiontime_frame=PredictionTimeFrame(
-                init_df=pl.LazyFrame({"no_entity_id": [1, 2, 3]}), entity_id_col_name="no_entity_id"
+                init_df=pl.LazyFrame(
+                    {
+                        "no_entity_id": [1, 2, 3],
+                        "pred_timestamp": ["2013-01-01", "2013-01-01", "2013-01-01"],
+                    }
+                ),
+                entity_id_col_name="no_entity_id",
             )
         ).aggregate_timeseries(specs=[FakePredictorSpec])
 

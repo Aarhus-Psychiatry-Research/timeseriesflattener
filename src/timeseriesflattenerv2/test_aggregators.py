@@ -136,7 +136,10 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
 def test_aggregator(example: AggregatorExampleType):
     result = _aggregate_masked_frame(
         sliced_frame=TimeMaskedFrame(
-            init_df=example.input, value_col_name="value", pred_time_uuid_col_name="pred_time_uuid"
+            init_df=example.input,
+            value_col_name="value",
+            pred_time_uuid_col_name="pred_time_uuid",
+            timestamp_col_name="timestamp",
         ),
         aggregators=[example.aggregator],
         fallback=np.nan,

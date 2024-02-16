@@ -61,7 +61,7 @@ if __name__ == "__main__":
     corpus = load_synth_txt_data()
     bow_model = train_bow_model(corpus)
     embedding = bow_model.transform(corpus)
-    pca_model = train_pca_model(embedding.toarray())
+    pca_model = train_pca_model(embedding.toarray())  # type: ignore
 
     save_model_to_test_dir(bow_model, "synth_bow_model.pkl")
     save_model_to_test_dir(pca_model, "synth_pca_model.pkl")
