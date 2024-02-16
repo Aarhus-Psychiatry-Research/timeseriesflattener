@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.27.0 (2024-02-16)
+
+### Feature
+
+* **#399:** Handle boolean outcomes without value column automatically ([`b4e09bc`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b4e09bc7ee483ef5618cb716469ce1d1f0038d74))
+
 ## v1.26.0 (2024-02-16)
 
 ### Feature
