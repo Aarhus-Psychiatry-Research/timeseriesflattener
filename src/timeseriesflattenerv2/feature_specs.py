@@ -1,7 +1,7 @@
 import datetime as dt
 from abc import ABC, abstractmethod
 from dataclasses import InitVar, dataclass
-from typing import Literal, NewType, Sequence, Union
+from typing import Literal, NewType, Sequence, TypeAlias, Union
 
 import pandas as pd
 import polars as pl
@@ -18,6 +18,35 @@ default_timestamp_col_name = "timestamp"
 InitDF_T = pl.LazyFrame | pl.DataFrame | pd.DataFrame
 
 
+def _anyframe_to_lazyframe(init_df: InitDF_T) -> pl.LazyFrame:
+    if isinstance(init_df, pl.LazyFrame):
+        return init_df
+    if isinstance(init_df, pl.DataFrame):
+        return init_df.lazy()
+    if isinstance(init_df, pd.DataFrame):
+        return pl.from_pandas(init_df).lazy()
+    raise ValueError(f"Unsupported type: {type(init_df)}.")
+
+
+FrameTypes: TypeAlias = "PredictionTimeFrame | ValueFrame | TimeMaskedFrame | AggregatedValueFrame | TimedeltaFrame | TimestampValueFrame | PredictorSpec | OutcomeSpec | BooleanOutcomeSpec"
+
+
+def _validate_col_name_columns_exist(obj: FrameTypes):
+    missing_columns = (
+        Iter(dir(obj))
+        .filter(lambda attr_name: attr_name.endswith("_col_name"))
+        .map(lambda attr_name: getattr(obj, attr_name))
+        .filter(lambda col_name: col_name not in obj.df.columns)
+        .to_list()
+    )
+
+    if len(missing_columns) > 0:
+        raise SpecColumnError(
+            f"""Missing columns: {missing_columns} in dataframe.
+Current columns are: {obj.df.columns}."""
+        )
+
+
 @dataclass
 class PredictionTimeFrame:
     init_df: InitVar[InitDF_T]
@@ -26,13 +55,7 @@ class PredictionTimeFrame:
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
 
     def __post_init__(self, init_df: InitDF_T):
-        if isinstance(init_df, pl.LazyFrame):
-            self.df: pl.LazyFrame = init_df
-        elif isinstance(init_df, pd.DataFrame):
-            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
-        elif isinstance(init_df, pl.DataFrame):
-            self.df: pl.LazyFrame = init_df.lazy()
-
+        self.df = _anyframe_to_lazyframe(init_df)
         self.df = self.df.with_columns(
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
@@ -41,21 +64,7 @@ class PredictionTimeFrame:
             .alias(self.pred_time_uuid_col_name)
         )
 
-        self._validate_columns_exist()
-
-    def _validate_columns_exist(self):
-        missing_columns = (
-            Iter(dir(self))
-            .filter(lambda attr_name: attr_name.endswith("_col_name"))
-            .map(lambda attr_name: getattr(self, attr_name))
-            .filter(lambda col_name: col_name not in self.df.columns)
-        )
-
-        if missing_columns.count() > 0:
-            raise SpecColumnError(
-                f"""Missing columns: {missing_columns} in dataframe.
-                Current columns are: {self.df.columns}."""
-            )
+        _validate_col_name_columns_exist(obj=self)
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
@@ -81,24 +90,26 @@ class ValueFrame:
     value_timestamp_col_name: str = "timestamp"
 
     def __post_init__(self, init_df: InitDF_T):
-        if isinstance(init_df, pl.LazyFrame):
-            self.df: pl.LazyFrame = init_df
-        elif isinstance(init_df, pd.DataFrame):
-            self.df: pl.LazyFrame = pl.from_pandas(init_df).lazy()
-        elif isinstance(init_df, pl.DataFrame):
-            self.df: pl.LazyFrame = init_df.lazy()
-        # validate that the required columns are present in the dataframe
-        required_columns = [
-            self.entity_id_col_name,
-            self.value_col_name,
-            self.value_timestamp_col_name,
-        ]
-        missing_columns = [col for col in required_columns if col not in self.df.columns]
-        if missing_columns:
-            raise SpecColumnError(
-                f"""Missing columns: {missing_columns} in the {self.value_col_name} specification.
-                Current columns are: {self.df.columns}."""
-            )
+        self.df = _anyframe_to_lazyframe(init_df)
+        _validate_col_name_columns_exist(obj=self)
+
+    def collect(self) -> pl.DataFrame:
+        if isinstance(self.df, pl.DataFrame):
+            return self.df
+        return self.df.collect()
+
+
+@dataclass
+class TimestampValueFrame:
+    """A frame that contains the values of a time series."""
+
+    init_df: InitVar[InitDF_T]
+    value_timestamp_col_name: str = "timestamp"
+    entity_id_col_name: str = default_entity_id_col_name
+
+    def __post_init__(self, init_df: InitDF_T):
+        self.df = _anyframe_to_lazyframe(init_df)
+        _validate_col_name_columns_exist(obj=self)
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
@@ -114,6 +125,11 @@ class TimeMaskedFrame:
     value_col_name: str
     timestamp_col_name: str = default_timestamp_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+    validate_cols_exist: bool = True
+
+    def __post_init__(self):
+        if self.validate_cols_exist:
+            _validate_col_name_columns_exist(obj=self)
 
     @property
     def df(self) -> pl.LazyFrame:
@@ -128,6 +144,9 @@ class AggregatedValueFrame:
     df: pl.LazyFrame
     value_col_name: str
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+
+    def __post_init__(self):
+        _validate_col_name_columns_exist(obj=self)
 
     def fill_nulls(self, fallback: ValueType) -> "AggregatedValueFrame":
         filled = self.df.with_columns(
@@ -190,38 +209,73 @@ def _lookdistance_to_normalised_lookperiod(
     )
 
 
+LookDistances = Sequence[LookDistance | tuple[LookDistance, LookDistance]]
+
+
 @dataclass
 class PredictorSpec:
     value_frame: ValueFrame
-    lookbehind_distances: InitVar[Sequence[LookDistance | tuple[LookDistance, LookDistance]]]
+    lookbehind_distances: InitVar[LookDistances]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "pred"
 
-    def __post_init__(
-        self, lookbehind_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
-    ):
+    def __post_init__(self, lookbehind_distances: LookDistances):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="behind")
             for lookdistance in lookbehind_distances
         ]
+        _validate_col_name_columns_exist(obj=self)
+
+    @property
+    def df(self) -> pl.LazyFrame:
+        return self.value_frame.df
 
 
-@dataclass()
+@dataclass
 class OutcomeSpec:
     value_frame: ValueFrame
-    lookahead_distances: InitVar[Sequence[LookDistance | tuple[LookDistance, LookDistance]]]
+    lookahead_distances: InitVar[LookDistances]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "outc"
 
-    def __post_init__(
-        self, lookahead_distances: Sequence[LookDistance | tuple[LookDistance, LookDistance]]
-    ):
+    def __post_init__(self, lookahead_distances: LookDistances):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in lookahead_distances
         ]
+        _validate_col_name_columns_exist(obj=self)
+
+    @property
+    def df(self) -> pl.LazyFrame:
+        return self.value_frame.df
+
+
+@dataclass
+class BooleanOutcomeSpec:
+    init_frame: InitVar[TimestampValueFrame]
+    lookahead_distances: LookDistances
+    aggregators: Sequence[Aggregator]
+    fallback: ValueType
+    column_prefix: str = "outc"
+
+    def __post_init__(self, init_frame: TimestampValueFrame):
+        self.normalised_lookperiod = [
+            _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
+            for lookdistance in self.lookahead_distances
+        ]
+
+        self.value_frame = ValueFrame(
+            init_df=init_frame.df.with_columns((pl.lit(1)).alias("value")),
+            value_col_name="value",
+            entity_id_col_name=init_frame.entity_id_col_name,
+            value_timestamp_col_name=init_frame.value_timestamp_col_name,
+        )
+
+    @property
+    def df(self) -> pl.LazyFrame:
+        return self.value_frame.df
 
 
 @dataclass
@@ -232,6 +286,9 @@ class TimedeltaFrame:
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
     timedelta_col_name: str = "time_from_prediction_to_value"
 
+    def __post_init__(self):
+        _validate_col_name_columns_exist(obj=self)
+
     def get_timedeltas(self) -> Sequence[dt.datetime]:
         return self.collect().get_column(self.timedelta_col_name).to_list()
 
@@ -239,7 +296,7 @@ class TimedeltaFrame:
         return self.df.collect()
 
 
-ValueSpecification = Union[PredictorSpec, OutcomeSpec]
+ValueSpecification = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
 
 
 @dataclass(frozen=True)

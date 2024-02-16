@@ -39,7 +39,11 @@ class SingleVarAggregatorExample:
     @property
     def input(self) -> pl.LazyFrame:
         return pl.LazyFrame(
-            {"pred_time_uuid": [1] * len(self.input_values), "value": self.input_values}
+            {
+                "pred_time_uuid": [1] * len(self.input_values),
+                "value": self.input_values,
+                "timestamp": ["2021-01-01"] * len(self.input_values),
+            }
         )
 
     @property
@@ -135,7 +139,7 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
 )
 def test_aggregator(example: AggregatorExampleType):
     result = _aggregate_masked_frame(
-        sliced_frame=TimeMaskedFrame(
+        masked_frame=TimeMaskedFrame(
             init_df=example.input,
             value_col_name="value",
             pred_time_uuid_col_name="pred_time_uuid",

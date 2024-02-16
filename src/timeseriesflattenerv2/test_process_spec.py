@@ -17,15 +17,20 @@ from .test_flattener import assert_frame_equal
 
 
 def test_aggregate_over_fallback():
-    sliced_frame = TimeMaskedFrame(
+    masked_frame = TimeMaskedFrame(
+        validate_cols_exist=False,
         init_df=pl.LazyFrame(
-            {"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [None, None]}
+            {
+                "pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
+                "value": [None, None],
+                "timestamp": ["2021-01-01", "2021-01-02"],
+            }
         ),
         value_col_name="value",
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
-        sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
+        masked_frame=masked_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
     expected = str_to_pl_df(
@@ -37,15 +42,20 @@ def test_aggregate_over_fallback():
 
 
 def test_aggregate_with_null():
-    sliced_frame = TimeMaskedFrame(
+    masked_frame = TimeMaskedFrame(
+        validate_cols_exist=False,
         init_df=pl.LazyFrame(
-            {"pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"], "value": [1, None]}
+            {
+                "pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
+                "value": [1, None],
+                "timestamp": ["2021-01-01", "2021-01-02"],
+            }
         ),
         value_col_name="value",
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
-        sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
+        masked_frame=masked_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
     expected = str_to_pl_df(
@@ -57,7 +67,8 @@ def test_aggregate_with_null():
 
 
 def test_aggregate_within_slice():
-    sliced_frame = TimeMaskedFrame(
+    masked_frame = TimeMaskedFrame(
+        validate_cols_exist=False,
         init_df=str_to_pl_df(
             """pred_time_uuid,value
 1-2021-01-03,1
@@ -69,7 +80,7 @@ def test_aggregate_within_slice():
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
-        sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
+        masked_frame=masked_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
     expected = str_to_pl_df(
@@ -141,7 +152,8 @@ def test_slice_without_any_within_window():
 
 
 def test_multiple_aggregators():
-    sliced_frame = TimeMaskedFrame(
+    masked_frame = TimeMaskedFrame(
+        validate_cols_exist=False,
         init_df=str_to_pl_df(
             """pred_time_uuid,value
 1-2021-01-03,1
@@ -153,7 +165,7 @@ def test_multiple_aggregators():
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
-        sliced_frame=sliced_frame, aggregators=[MeanAggregator(), MaxAggregator()], fallback=0
+        masked_frame=masked_frame, aggregators=[MeanAggregator(), MaxAggregator()], fallback=0
     )
 
     expected = str_to_pl_df(
