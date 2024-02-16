@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.25.1 (2024-02-16)
+
+### Fix
+
+* **#447:** Implement earliest and latest without requiring sorting ([#450](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/450)) ([`f88fccb`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/f88fccb15cdb7d92f9db3272ee87aa7fe60b03d2))
+* **#447:** Implement earliest and latest without requiring sorting ([`24acab1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/24acab1ef8efb6fcba90cbc8ff5e5403c4573011))
+
 ## v1.25.0 (2024-02-16)
 
 ### Feature
