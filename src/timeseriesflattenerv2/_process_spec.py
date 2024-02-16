@@ -88,23 +88,23 @@ def _mask_outside_lookperiod(
 
 
 def _aggregate_masked_frame(
-    sliced_frame: TimeMaskedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
+    masked_frame: TimeMaskedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
 ) -> pl.LazyFrame:
-    aggregator_expressions = [aggregator(sliced_frame.value_col_name) for aggregator in aggregators]
+    aggregator_expressions = [aggregator(masked_frame.value_col_name) for aggregator in aggregators]
 
-    grouped_frame = sliced_frame.init_df.group_by(
-        sliced_frame.pred_time_uuid_col_name, maintain_order=True
+    grouped_frame = masked_frame.init_df.group_by(
+        masked_frame.pred_time_uuid_col_name, maintain_order=True
     ).agg(aggregator_expressions)
 
     value_columns = (
         Iter(grouped_frame.columns)
-        .filter(lambda col: sliced_frame.value_col_name in col)
+        .filter(lambda col: masked_frame.value_col_name in col)
         .map(lambda old_name: (old_name, f"{old_name}_fallback_{fallback}"))
     )
     rename_mapping = dict(value_columns)
 
     with_fallback = grouped_frame.with_columns(
-        cs.contains(sliced_frame.value_col_name).fill_null(fallback)
+        cs.contains(masked_frame.value_col_name).fill_null(fallback)
     ).rename(rename_mapping)
 
     return with_fallback
@@ -132,7 +132,7 @@ def process_spec(
                     predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
                 ),
                 masked_aggregator=lambda sliced_frame: _aggregate_masked_frame(
-                    aggregators=spec.aggregators, fallback=spec.fallback, sliced_frame=sliced_frame
+                    aggregators=spec.aggregators, fallback=spec.fallback, masked_frame=sliced_frame
                 ),
                 time_masker=lambda timedelta_frame: _mask_outside_lookperiod(
                     timedelta_frame=timedelta_frame,
