@@ -7,14 +7,14 @@ from timeseriesflattenerv2.feature_specs import Aggregator
 
 
 class MinAggregator(Aggregator):
-    name = "min"
+    name: str = "min"
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).min().alias(self.new_col_name(column_name))
 
 
 class MaxAggregator(Aggregator):
-    name = "max"
+    name: str = "max"
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).max().alias(self.new_col_name(column_name))
@@ -34,18 +34,32 @@ class CountAggregator(Aggregator):
         return pl.col(column_name).count().alias(self.new_col_name(column_name))
 
 
+@dataclass(frozen=True)
 class EarliestAggregator(Aggregator):
+    timestamp_col_name: str
     name: str = "earliest"
 
     def __call__(self, column_name: str) -> pl.Expr:
-        return pl.col(column_name).first().alias(self.new_col_name(column_name))
+        return (
+            pl.col(column_name)
+            .filter(pl.col(self.timestamp_col_name) == pl.col(self.timestamp_col_name).min())
+            .first()
+            .alias(self.new_col_name(column_name))
+        )
 
 
+@dataclass(frozen=True)
 class LatestAggregator(Aggregator):
+    timestamp_col_name: str
     name: str = "latest"
 
     def __call__(self, column_name: str) -> pl.Expr:
-        return pl.col(column_name).last().alias(self.new_col_name(column_name))
+        return (
+            pl.col(column_name)
+            .filter(pl.col(self.timestamp_col_name) == pl.col(self.timestamp_col_name).max())
+            .first()
+            .alias(self.new_col_name(column_name))
+        )
 
 
 class SumAggregator(Aggregator):

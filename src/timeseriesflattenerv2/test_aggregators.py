@@ -73,12 +73,6 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
             aggregator=CountAggregator(), input_values=[1, 2], expected_output_values=[2]
         ),
         SingleVarAggregatorExample(
-            aggregator=EarliestAggregator(), input_values=[1, 2], expected_output_values=[1]
-        ),
-        SingleVarAggregatorExample(
-            aggregator=LatestAggregator(), input_values=[1, 2], expected_output_values=[2]
-        ),
-        SingleVarAggregatorExample(
             aggregator=SumAggregator(), input_values=[1, 2], expected_output_values=[3]
         ),
         SingleVarAggregatorExample(
@@ -104,6 +98,36 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
                 """pred_time_uuid,value_slope_fallback_nan
 1,2.0,
 """
+            ),
+        ),
+        ComplexAggregatorExample(
+            aggregator=EarliestAggregator(timestamp_col_name="timestamp"),
+            input=str_to_pl_df(
+                """pred_time_uuid,timestamp,value
+1,2013-01-01,1, # Kept, first value in 1
+1,2013-01-02,2, # Dropped, second value in 1
+2,2013-01-04,3, # Dropped, second value in 2
+2,2013-01-03,4, # Kept, first value in 2"""
+            ).lazy(),
+            expected_output=str_to_pl_df(
+                """pred_time_uuid,value_earliest_fallback_nan
+1,1,
+2,4,"""
+            ),
+        ),
+        ComplexAggregatorExample(
+            aggregator=LatestAggregator(timestamp_col_name="timestamp"),
+            input=str_to_pl_df(
+                """pred_time_uuid,timestamp,value
+1,2013-01-01,1, # Dropped, first value in 1
+1,2013-01-02,2, # Kept, second value in 1
+2,2013-01-04,3, # Kept, second value in 2
+2,2013-01-03,4, # Dropped, first value in 2"""
+            ).lazy(),
+            expected_output=str_to_pl_df(
+                """pred_time_uuid,value_latest_fallback_nan
+1,2,
+2,3,"""
             ),
         ),
     ],
