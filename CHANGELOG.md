@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.26.0 (2024-02-16)
+
+### Feature
+
+* **#449:** Propagate timeseries column to aggregation function ([#451](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/451)) ([`8b4c7ed`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8b4c7ed4dc0ad5e8824482749c58be73bd6be178))
+* **#449:** Propagate timeseries column to aggregation function ([`3bea4bb`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3bea4bb7e2e1619765d236afebf97475cda261d2))
+
 ## v1.25.1 (2024-02-16)
 
 ### Fix
