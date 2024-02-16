@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.25.0 (2024-02-16)
+
+### Feature
+
+* Lookperiod tuple ([`ff43abd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ff43abdde7349b66a1e150e8d0d6ea85cfed6d1e))
+
 ## v1.24.0 (2024-02-15)
 
 ### Feature
