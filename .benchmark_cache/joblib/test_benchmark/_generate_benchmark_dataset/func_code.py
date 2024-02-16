@@ -5,7 +5,7 @@ def _generate_benchmark_dataset(
     n_features: int,
     n_observations_per_pred_time: int,
     aggregations: Sequence[Literal["max", "mean"]],
-    lookbehinds: Sequence[LookDistance],
+    lookbehinds: Sequence[LookDistance | tuple[LookDistance, LookDistance]],
 ) -> BenchmarkDataset:
     pred_time_df = PredictionTimeFrame(
         init_df=pl.LazyFrame(

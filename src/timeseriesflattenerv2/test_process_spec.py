@@ -24,7 +24,7 @@ def test_aggregate_over_fallback():
         value_col_name="value",
     )
 
-    aggregated_values = process_spec._aggregate_within_slice(
+    aggregated_values = process_spec._aggregate_masked_frame(
         sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
@@ -44,7 +44,7 @@ def test_aggregate_with_null():
         value_col_name="value",
     )
 
-    aggregated_values = process_spec._aggregate_within_slice(
+    aggregated_values = process_spec._aggregate_masked_frame(
         sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
@@ -68,7 +68,7 @@ def test_aggregate_within_slice():
         value_col_name="value",
     )
 
-    aggregated_values = process_spec._aggregate_within_slice(
+    aggregated_values = process_spec._aggregate_masked_frame(
         sliced_frame=sliced_frame, aggregators=[MeanAggregator()], fallback=0
     )
 
@@ -121,7 +121,7 @@ def test_slice_without_any_within_window():
         value_col_name="is_null",
     )
 
-    result = process_spec._slice_frame(
+    result = process_spec._mask_outside_lookperiod(
         timedelta_frame=timedelta_frame,
         lookperiod=LookPeriod(first=dt.timedelta(days=-2), last=dt.timedelta(days=0)),
         column_prefix="pred",
@@ -150,7 +150,7 @@ def test_multiple_aggregators():
         value_col_name="value",
     )
 
-    aggregated_values = process_spec._aggregate_within_slice(
+    aggregated_values = process_spec._aggregate_masked_frame(
         sliced_frame=sliced_frame, aggregators=[MeanAggregator(), MaxAggregator()], fallback=0
     )
 
