@@ -116,9 +116,11 @@ def test_slice_without_any_within_window():
                     dt.timedelta(days=-2.1),  # Outside the lookbehind
                 ],
                 "is_null": [None, 0, None, None],
+                "value_timestamp": ["2021-01-01", "2021-01-02", "2021-01-03", "2021-01-04"],
             }
         ),
         value_col_name="is_null",
+        value_timestamp_col_name="value_timestamp",
     )
 
     result = process_spec._mask_outside_lookperiod(

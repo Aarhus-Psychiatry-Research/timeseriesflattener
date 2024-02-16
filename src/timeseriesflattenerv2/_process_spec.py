@@ -35,7 +35,12 @@ def _get_timedelta_frame(
         ).alias("time_from_prediction_to_value")
     )
 
-    return TimedeltaFrame(timedelta_frame, value_col_name=value_frame.value_col_name)
+    return TimedeltaFrame(
+        timedelta_frame,
+        value_col_name=value_frame.value_col_name,
+        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        value_timestamp_col_name=value_frame.value_timestamp_col_name,
+    )
 
 
 def _null_values_outside_lookwindow(
@@ -78,6 +83,7 @@ def _mask_outside_lookperiod(
         init_df=masked_frame.rename({timedelta_frame.value_col_name: new_colname}),
         pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
         value_col_name=new_colname,
+        timestamp_col_name=timedelta_frame.value_timestamp_col_name,
     )
 
 

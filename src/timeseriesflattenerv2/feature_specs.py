@@ -5,6 +5,7 @@ from typing import Literal, NewType, Sequence, Union
 
 import pandas as pd
 import polars as pl
+from iterpy.iter import Iter
 
 ValueType = Union[int, float, str, None]
 LookDistance = dt.timedelta
@@ -39,6 +40,22 @@ class PredictionTimeFrame:
             .str.strip_chars()
             .alias(self.pred_time_uuid_col_name)
         )
+
+        self._validate_columns_exist()
+
+    def _validate_columns_exist(self):
+        missing_columns = (
+            Iter(dir(self))
+            .filter(lambda attr_name: attr_name.endswith("_col_name"))
+            .map(lambda attr_name: getattr(self, attr_name))
+            .filter(lambda col_name: col_name not in self.df.columns)
+        )
+
+        if missing_columns.count() > 0:
+            raise SpecColumnError(
+                f"""Missing columns: {missing_columns} in dataframe.
+                Current columns are: {self.df.columns}."""
+            )
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
@@ -95,6 +112,7 @@ class TimeMaskedFrame:
 
     init_df: pl.LazyFrame
     value_col_name: str
+    timestamp_col_name: str = default_timestamp_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
 
     @property
@@ -210,6 +228,7 @@ class OutcomeSpec:
 class TimedeltaFrame:
     df: pl.LazyFrame
     value_col_name: str
+    value_timestamp_col_name: str
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
     timedelta_col_name: str = "time_from_prediction_to_value"
 
