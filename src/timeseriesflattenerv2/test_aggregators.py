@@ -6,7 +6,7 @@ import polars as pl
 import pytest
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-from ._process_spec import _aggregate_within_slice
+from ._process_spec import _aggregate_masked_frame
 from .aggregators import (
     CountAggregator,
     EarliestAggregator,
@@ -110,7 +110,7 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
     ids=lambda example: example.aggregator.__class__.__name__,
 )
 def test_aggregator(example: AggregatorExampleType):
-    result = _aggregate_within_slice(
+    result = _aggregate_masked_frame(
         sliced_frame=TimeMaskedFrame(
             init_df=example.input, value_col_name="value", pred_time_uuid_col_name="pred_time_uuid"
         ),
