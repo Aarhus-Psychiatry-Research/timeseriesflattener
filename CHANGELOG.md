@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.31.0 (2024-02-19)
+
+### Feature
+
+* **#439:** Support static features ([`e8d1977`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e8d19773837be3b5894bf90e509beb7d9a938759))
+
 ## v1.30.0 (2024-02-19)
 
 ### Feature
