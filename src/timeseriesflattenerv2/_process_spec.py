@@ -8,10 +8,14 @@ from iterpy.iter import Iter
 from ._horisontally_concat import horizontally_concatenate_dfs
 from .feature_specs import (
     Aggregator,
+    BooleanOutcomeSpec,
     LookPeriod,
+    OutcomeSpec,
     PredictionTimeFrame,
+    PredictorSpec,
     ProcessedFrame,
     TimedeltaFrame,
+    TimeFromEventSpec,
     TimeMaskedFrame,
     ValueFrame,
     ValueSpecification,
@@ -121,8 +125,11 @@ def _slice_and_aggregate_spec(
     return masked_aggregator(sliced_frame)
 
 
-def process_spec(
-    spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
+TemporalSpec = PredictorSpec | OutcomeSpec | BooleanOutcomeSpec
+
+
+def process_temporal_spec(
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     aggregated_value_frames = (
         Iter(spec.normalised_lookperiod)
@@ -152,3 +159,39 @@ def process_spec(
         ),
         pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
     )
+
+
+def process_time_from_event_spec(
+    spec: TimeFromEventSpec, predictiontime_frame: PredictionTimeFrame
+) -> ProcessedFrame:
+    new_col_name = f"{spec.column_prefix}_{spec.output_name}_fallback_{spec.fallback}"
+    prediction_times_with_time_from_event = (
+        predictiontime_frame.df.join(
+            spec.df.rename({spec.init_frame.value_timestamp_col_name: "_event_time"}),
+            on=predictiontime_frame.entity_id_col_name,
+            how="left",
+        )
+        .with_columns(
+            (
+                (pl.col(predictiontime_frame.timestamp_col_name) - pl.col("_event_time")).dt.days()
+                / 365
+            )
+            .fill_null(spec.fallback)
+            .alias(new_col_name)
+        )
+        .select(predictiontime_frame.pred_time_uuid_col_name, new_col_name)
+    )
+
+    return ProcessedFrame(
+        df=prediction_times_with_time_from_event,
+        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+    )
+
+
+def process_spec(
+    spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
+) -> ProcessedFrame:
+    if isinstance(spec, (PredictorSpec, OutcomeSpec, BooleanOutcomeSpec)):
+        return process_temporal_spec(spec=spec, predictiontime_frame=predictiontime_frame)
+    elif isinstance(spec, TimeFromEventSpec):
+        return process_time_from_event_spec(spec, predictiontime_frame)

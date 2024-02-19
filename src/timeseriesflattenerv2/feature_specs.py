@@ -28,7 +28,7 @@ def _anyframe_to_lazyframe(init_df: InitDF_T) -> pl.LazyFrame:
     raise ValueError(f"Unsupported type: {type(init_df)}.")
 
 
-FrameTypes: TypeAlias = "PredictionTimeFrame | ValueFrame | TimeMaskedFrame | AggregatedValueFrame | TimedeltaFrame | TimestampValueFrame | PredictorSpec | OutcomeSpec | BooleanOutcomeSpec"
+FrameTypes: TypeAlias = "PredictionTimeFrame | ValueFrame | TimeMaskedFrame | AggregatedValueFrame | TimedeltaFrame | TimestampValueFrame | PredictorSpec | OutcomeSpec | BooleanOutcomeSpec | TimeFromEventSpec"
 
 
 def _validate_col_name_columns_exist(obj: FrameTypes):
@@ -230,6 +230,31 @@ class PredictorSpec:
     @property
     def df(self) -> pl.LazyFrame:
         return self.value_frame.df
+
+
+@dataclass
+class TimeFromEventSpec:
+    init_frame: TimestampValueFrame
+    fallback: ValueType
+    output_name: str
+    column_prefix: str = "pred"
+
+    def __post_init__(self):
+        _validate_col_name_columns_exist(obj=self)
+        max_values_per_id = (
+            self.init_frame.collect()
+            .get_column(self.init_frame.entity_id_col_name)
+            .unique_counts()
+            .max()
+        )
+        if max_values_per_id > 1:  # type: ignore
+            raise ValueError(
+                f"Expected only one value per {self.init_frame.entity_id_col_name} in the TimestampValueFrame, but found up to {max_values_per_id}."
+            )
+
+    @property
+    def df(self) -> pl.LazyFrame:
+        return self.init_frame.df
 
 
 @dataclass
