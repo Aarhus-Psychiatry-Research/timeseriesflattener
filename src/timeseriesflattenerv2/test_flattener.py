@@ -1,5 +1,6 @@
 import datetime as dt
 from dataclasses import dataclass
+from typing import Sequence
 
 import numpy as np
 import polars as pl
@@ -36,8 +37,15 @@ FakePredictorSpec = PredictorSpec(
 )
 
 
-def assert_frame_equal(result: pl.DataFrame, expected: pl.DataFrame):
-    polars_testing.assert_frame_equal(result, expected, check_dtype=False, check_column_order=False)
+def assert_frame_equal(
+    result: pl.DataFrame, expected: pl.DataFrame, ignore_colums: Sequence[str] = ()
+):
+    polars_testing.assert_frame_equal(
+        result.drop(ignore_colums),
+        expected.drop(ignore_colums),
+        check_dtype=False,
+        check_column_order=False,
+    )
 
 
 @dataclass(frozen=True)
@@ -85,8 +93,8 @@ def test_flattener(example: FlattenerExample):
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
-1-2021-01-03 00:00:00.000000,3.0"""
+        """entity_id,pred_timestamp,pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
+1,2021-01-03 00:00:00.000000,1-2021-01-03 00:00:00.000000,3.0"""
     )
 
     assert_frame_equal(result.collect(), expected)
@@ -124,7 +132,7 @@ def test_keep_prediction_times_without_predictors():
         }
     )
 
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_flattener_multiple_features():
@@ -170,7 +178,7 @@ def test_flattener_multiple_features():
 1-2021-01-03 00:00:00.000000,3.0,3.0"""
     )
 
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_error_if_conflicting_value_col_names():
@@ -229,7 +237,7 @@ def test_predictor_with_interval_lookperiod():
         """pred_time_uuid,pred_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_outcome_with_interval_lookperiod():
@@ -258,7 +266,7 @@ def test_outcome_with_interval_lookperiod():
         """pred_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_add_static_spec():
@@ -287,4 +295,4 @@ def test_add_static_spec():
         """pred_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
