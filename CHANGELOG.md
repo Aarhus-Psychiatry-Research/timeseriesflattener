@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.31.2 (2024-02-19)
+
+### Fix
+
+* **#440:** Type of AggregatedDataframe.df should always be LazyFrame ([`ab9be64`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ab9be64876f81bd30cca6a18711112b1d72f8491))
+
 ## v1.31.1 (2024-02-19)
 
 ### Fix
