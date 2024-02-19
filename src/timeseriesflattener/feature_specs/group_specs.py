@@ -14,6 +14,17 @@ class NamedDataframe:
     name: str
 
 
+from typing import Protocol
+
+
+class V1PGSProtocol(Protocol):
+    lookbehind_days: Sequence[Union[float, Tuple[float, float]]]
+    named_dataframes: Sequence[NamedDataframe]
+    aggregation_fns: Sequence[AggregationFunType]
+    fallback: Sequence[Union[int, float, str]]
+    prefix: str = "pred"
+
+
 class PredictorGroupSpec(BaseModel):
     """A group of predictor specifications.
 
@@ -28,11 +39,11 @@ class PredictorGroupSpec(BaseModel):
     """
 
     # Shared attributes from GroupSpec
-    prefix: str = "pred"
     lookbehind_days: Sequence[Union[float, Tuple[float, float]]]
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[AggregationFunType]
     fallback: Sequence[Union[int, float, str]]
+    prefix: str = "pred"
 
     def create_combinations(self) -> List[PredictorSpec]:
         """Create all combinations from the group spec."""

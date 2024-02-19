@@ -89,6 +89,8 @@ rye = { dev-dependencies = [
     "pytest-benchmark==4.0.0",
     "pytest-codspeed==2.2.0",
     "invoke==2.1.1",
+    "pyright==1.1.330.post0",
+    "pandas-stubs>=2.0.3.230814",
 ] }
 
 [tool.pyright]
