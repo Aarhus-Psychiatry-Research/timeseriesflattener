@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.28.0 (2024-02-19)
+
+### Feature
+
+* Initial rye support ([`aaf06ae`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/aaf06ae7804bc43071b14d1f869601366ce5a0ce))
+
 ## v1.27.0 (2024-02-16)
 
 ### Feature
