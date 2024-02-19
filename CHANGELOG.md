@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.31.1 (2024-02-19)
+
+### Fix
+
+* **#441:** Return entity_id in aggregated column ([`d7f9cfb`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/d7f9cfb3490cb97737dd96bafaa390d56ce52471))
+
 ## v1.31.0 (2024-02-19)
 
 ### Feature
