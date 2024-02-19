@@ -8,8 +8,8 @@ import tqdm
 from iterpy.iter import Iter
 from rich.progress import track
 
-from timeseriesflattenerv2._process_spec import process_spec
 from timeseriesflattenerv2.frame_utilities._horisontally_concat import horizontally_concatenate_dfs
+from timeseriesflattenerv2.process_spec import process_spec
 
 from ._intermediary_frames import AggregatedFrame
 

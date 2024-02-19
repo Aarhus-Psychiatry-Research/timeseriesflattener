@@ -15,12 +15,14 @@ if TYPE_CHECKING:
     from timeseriesflattenerv2.feature_specs.predictor import PredictorSpec
     from timeseriesflattenerv2.feature_specs.timedelta import TimeDeltaSpec
 
+    from .static import StaticSpec
+
 ValueType: TypeAlias = Union[int, float, str, None]
 InitDF_T = pl.LazyFrame | pl.DataFrame | pd.DataFrame
 
 
 ValueSpecification: TypeAlias = (
-    "Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec]"
+    "Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec]"
 )
 LookDistance: TypeAlias = dt.timedelta
 
