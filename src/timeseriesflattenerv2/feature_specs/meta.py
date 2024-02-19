@@ -8,7 +8,7 @@ import polars as pl
 from timeseriesflattenerv2.feature_specs.default_column_names import default_entity_id_col_name
 
 from .._frame_validator import _validate_col_name_columns_exist
-from ..frame_utilities._anyframe_to_lazyframe import _anyframe_to_lazyframe
+from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 if TYPE_CHECKING:
     from timeseriesflattenerv2.feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
@@ -21,9 +21,9 @@ ValueType: TypeAlias = Union[int, float, str, None]
 InitDF_T = pl.LazyFrame | pl.DataFrame | pd.DataFrame
 
 
-ValueSpecification: TypeAlias = (
-    "Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec]"
-)
+ValueSpecification: (
+    TypeAlias
+) = "Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec]"
 LookDistance: TypeAlias = dt.timedelta
 
 

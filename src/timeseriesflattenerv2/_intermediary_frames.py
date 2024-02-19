@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING, Sequence
 
 import polars as pl
@@ -8,6 +8,7 @@ from .feature_specs.default_column_names import (
     default_pred_time_uuid_col_name,
     default_timestamp_col_name,
 )
+from .frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 if TYPE_CHECKING:
     from .feature_specs.meta import ValueType
@@ -84,12 +85,15 @@ class TimeDeltaFrame:
         return self.df.collect()
 
 
-@dataclass(frozen=True)
+@dataclass
 class AggregatedFrame:
-    df: pl.LazyFrame
+    init_df: InitVar[pl.LazyFrame]
     entity_id_col_name: str
     timestamp_col_name: str
     pred_time_uuid_col_name: str
+
+    def __post_init__(self, init_df: pl.LazyFrame):
+        self.df = _anyframe_to_lazyframe(init_df)
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
