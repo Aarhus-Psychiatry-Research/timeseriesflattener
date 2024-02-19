@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
 
-from invoke import Context, Result, task
+from invoke import Context, Result, task  # type: ignore
 
 
 def echo_header(msg: str):
