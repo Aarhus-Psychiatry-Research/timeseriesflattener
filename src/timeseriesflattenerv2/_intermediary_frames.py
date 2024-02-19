@@ -87,8 +87,9 @@ class TimeDeltaFrame:
 @dataclass(frozen=True)
 class AggregatedFrame:
     df: pl.LazyFrame
-    pred_time_uuid_col_name: str
+    entity_id_col_name: str
     timestamp_col_name: str
+    pred_time_uuid_col_name: str
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
