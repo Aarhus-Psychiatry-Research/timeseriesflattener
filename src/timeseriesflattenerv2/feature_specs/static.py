@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 
 from .._frame_validator import _validate_col_name_columns_exist
-from ..frame_utilities._anyframe_to_lazyframe import _anyframe_to_lazyframe
+from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 from .default_column_names import default_entity_id_col_name
 from .meta import ValueType
 
