@@ -19,7 +19,7 @@ class SpecError(Exception):
     description: str
 
 
-def _specs_are_without_conflicts(specs: Sequence[ValueSpecification]) -> Iter[SpecError]:
+def _get_spec_conflicts(specs: Sequence[ValueSpecification]) -> Iter[SpecError]:
     conflicting_value_col_names = (
         Iter(specs)
         .map(lambda s: s.value_frame.value_col_name)
@@ -88,7 +88,7 @@ class Flattener:
             )
 
         # Check for conflicts in the specs
-        conflicting_specs = _specs_are_without_conflicts(specs)
+        conflicting_specs = _get_spec_conflicts(specs)
         underspecified_specs = _specs_contain_required_columns(
             specs=specs, predictiontime_frame=self.predictiontime_frame
         )
