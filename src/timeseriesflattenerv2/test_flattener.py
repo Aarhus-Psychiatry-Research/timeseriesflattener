@@ -261,3 +261,32 @@ def test_outcome_with_interval_lookperiod():
 1-2022-01-01 00:00:00.000000,1"""
     )
     assert_frame_equal(result.collect(), expected)
+
+
+def test_add_static_spec():
+    prediction_times_df_str = """entity_id,pred_timestamp,
+                            1,2022-01-01 00:00:00
+                            """
+    outcome_df_str = """entity_id,timestamp,value,
+                        1,2022-01-02 00:00:01, 2
+                        1,2022-01-15 00:00:00, 1
+                        """
+    result = flattener.Flattener(
+        predictiontime_frame=PredictionTimeFrame(init_df=str_to_pl_df(prediction_times_df_str))
+    ).aggregate_timeseries(
+        specs=[
+            OutcomeSpec(
+                value_frame=ValueFrame(
+                    init_df=str_to_pl_df(outcome_df_str), value_col_name="value"
+                ),
+                lookahead_distances=[(dt.timedelta(days=5), dt.timedelta(days=30))],
+                fallback=np.NaN,
+                aggregators=[MeanAggregator()],
+            )
+        ]
+    )
+    expected = str_to_pl_df(
+        """pred_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
+1-2022-01-01 00:00:00.000000,1"""
+    )
+    assert_frame_equal(result.collect(), expected)
