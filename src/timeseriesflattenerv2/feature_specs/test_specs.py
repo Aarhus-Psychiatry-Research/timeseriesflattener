@@ -5,13 +5,11 @@ import pytest
 
 from timeseriesflattenerv2.aggregators import MeanAggregator
 
-from .feature_specs import (
-    OutcomeSpec,
-    PredictorSpec,
-    TimeDeltaSpec,
-    TimestampValueFrame,
-    ValueFrame,
-)
+from .meta import ValueFrame
+from .outcome import OutcomeSpec
+from .predictor import PredictorSpec
+from .timedelta import TimeDeltaSpec
+from .timestamp_frame import TimestampValueFrame
 
 MockValueFrame = ValueFrame(
     init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"], "entity_id": [1]}),

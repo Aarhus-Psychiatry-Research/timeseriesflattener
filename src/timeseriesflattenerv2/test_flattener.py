@@ -10,13 +10,11 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 from timeseriesflattenerv2.aggregators import EarliestAggregator, MeanAggregator
 
 from . import flattener
-from .feature_specs import (
-    OutcomeSpec,
-    PredictionTimeFrame,
-    PredictorSpec,
-    SpecColumnError,
-    ValueFrame,
-)
+from ._frame_validator import SpecColumnError
+from .feature_specs.meta import ValueFrame
+from .feature_specs.outcome import OutcomeSpec
+from .feature_specs.prediction_times import PredictionTimeFrame
+from .feature_specs.predictor import PredictorSpec
 
 FakePredictiontimeFrame = PredictionTimeFrame(
     init_df=pl.LazyFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})

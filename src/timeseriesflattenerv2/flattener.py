@@ -1,17 +1,21 @@
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import polars as pl
 import tqdm
 from iterpy.iter import Iter
 from rich.progress import track
 
-from timeseriesflattenerv2._horisontally_concat import horizontally_concatenate_dfs
 from timeseriesflattenerv2._process_spec import process_spec
+from timeseriesflattenerv2.frame_utilities._horisontally_concat import horizontally_concatenate_dfs
 
-from .feature_specs import AggregatedFrame, PredictionTimeFrame, ValueSpecification
+from ._intermediary_frames import AggregatedFrame
+
+if TYPE_CHECKING:
+    from .feature_specs.meta import ValueSpecification
+    from .feature_specs.prediction_times import PredictionTimeFrame
 
 
 @dataclass(frozen=True)
@@ -19,7 +23,7 @@ class SpecError(Exception):
     description: str
 
 
-def _get_spec_conflicts(specs: Sequence[ValueSpecification]) -> Iter[SpecError]:
+def _get_spec_conflicts(specs: Sequence["ValueSpecification"]) -> Iter[SpecError]:
     conflicting_value_col_names = (
         Iter(specs)
         .map(lambda s: s.value_frame.value_col_name)
@@ -43,7 +47,7 @@ class MissingColumnNameError(Exception):
 @dataclass(frozen=True)
 class SpecRequirementPair:
     required_columns: Sequence[str]
-    spec: ValueSpecification
+    spec: "ValueSpecification"
 
     def missing_columns(self) -> Iter[str]:
         return Iter(self.required_columns).filter(
@@ -52,7 +56,7 @@ class SpecRequirementPair:
 
 
 def _specs_contain_required_columns(
-    specs: Sequence[ValueSpecification], predictiontime_frame: PredictionTimeFrame
+    specs: Sequence["ValueSpecification"], predictiontime_frame: "PredictionTimeFrame"
 ) -> Iter[MissingColumnNameError]:
     missing_col_names = (
         Iter(specs)
@@ -75,13 +79,13 @@ def _specs_contain_required_columns(
 
 @dataclass
 class Flattener:
-    predictiontime_frame: PredictionTimeFrame
+    predictiontime_frame: "PredictionTimeFrame"
     compute_lazily: bool = False
     n_workers: int | None = None
     drop_pred_times_with_insufficient_lookahead_distance: bool = False
     drop_pred_times_with_insufficient_lookbehind_distance: bool = False
 
-    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedFrame:
+    def aggregate_timeseries(self, specs: Sequence["ValueSpecification"]) -> AggregatedFrame:
         if self.compute_lazily:
             print(
                 "We have encountered performance issues on Windows when using lazy evaluation. If you encounter performance issues, try setting lazy=False."

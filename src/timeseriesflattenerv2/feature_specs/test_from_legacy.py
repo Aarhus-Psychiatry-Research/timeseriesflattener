@@ -13,8 +13,8 @@ from timeseriesflattener.aggregation_fns import (
 )
 from timeseriesflattener.feature_specs.group_specs import NamedDataframe
 
-from .feature_specs import PredictorSpec
 from .from_legacy import PredictorGroupSpec
+from .predictor import PredictorSpec
 
 
 def test_create_predictorspec_from_legacy():

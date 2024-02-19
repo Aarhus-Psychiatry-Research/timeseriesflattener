@@ -1,8 +1,7 @@
 import datetime as dt
 from dataclasses import dataclass
-from typing import Mapping, Sequence, Tuple, Union
+from typing import TYPE_CHECKING, Mapping, Sequence, Tuple, Union
 
-import pandas as pd
 from iterpy.iter import Iter
 from timeseriesflattener.aggregation_fns import (
     AggregationFunType,
@@ -19,9 +18,10 @@ from timeseriesflattener.aggregation_fns import (
 )
 from timeseriesflattener.feature_specs.group_specs import NamedDataframe, V1PGSProtocol
 
-import timeseriesflattenerv2.feature_specs as v2_specs
+import timeseriesflattenerv2.feature_specs.predictor as v2_specs
 
-from .aggregators import (
+from ..aggregators import (
+    Aggregator,
     CountAggregator,
     EarliestAggregator,
     HasValuesAggregator,
@@ -32,7 +32,10 @@ from .aggregators import (
     SumAggregator,
     VarianceAggregator,
 )
-from .feature_specs import Aggregator, ValueFrame
+from .meta import ValueFrame
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 @dataclass
@@ -43,7 +46,7 @@ class PredictorGroupSpec(V1PGSProtocol):
     fallback: Sequence[Union[int, float, str]]
     prefix: str = "pred"
 
-    def _infer_entity_id_col_name(self, df: pd.DataFrame) -> str:
+    def _infer_entity_id_col_name(self, df: "pd.DataFrame") -> str:
         return next(c for c in df.columns if "entity" in c.lower() or "borger" in c.lower())
 
     def create_combinations(self) -> Sequence[v2_specs.PredictorSpec]:

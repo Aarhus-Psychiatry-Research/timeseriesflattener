@@ -3,19 +3,16 @@ import datetime as dt
 import polars as pl
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-import timeseriesflattenerv2._process_spec as process_spec
+import timeseriesflattenerv2.spec_processors.temporal as process_spec
+import timeseriesflattenerv2.spec_processors.timedelta
 
-from .aggregators import MaxAggregator, MeanAggregator
-from .feature_specs import (
-    LookPeriod,
-    PredictionTimeFrame,
-    TimedeltaFrame,
-    TimeDeltaSpec,
-    TimeMaskedFrame,
-    TimestampValueFrame,
-    ValueFrame,
-)
-from .test_flattener import assert_frame_equal
+from .._intermediary_frames import TimeDeltaFrame, TimeMaskedFrame
+from ..aggregators import MaxAggregator, MeanAggregator
+from ..feature_specs.meta import LookPeriod, ValueFrame
+from ..feature_specs.prediction_times import PredictionTimeFrame
+from ..feature_specs.timedelta import TimeDeltaSpec
+from ..feature_specs.timestamp_frame import TimestampValueFrame
+from ..test_flattener import assert_frame_equal
 
 
 def test_aggregate_over_fallback():
@@ -118,7 +115,7 @@ def test_get_timedelta_frame():
 
 
 def test_slice_without_any_within_window():
-    timedelta_frame = TimedeltaFrame(
+    timedelta_frame = TimeDeltaFrame(
         df=pl.LazyFrame(
             {
                 "pred_time_uuid": [1, 1, 2, 2],
@@ -192,7 +189,7 @@ def test_process_time_from_event_spec():
         1,2020-01-01"""
     )
 
-    result = process_spec.process_time_from_event_spec(
+    result = timeseriesflattenerv2.spec_processors.timedelta.process_timedelta_spec(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
         spec=TimeDeltaSpec(
             init_frame=TimestampValueFrame(init_df=value_frame),

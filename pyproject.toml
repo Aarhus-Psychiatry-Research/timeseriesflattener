@@ -30,7 +30,8 @@ dependencies = [
   "catalogue>=2.0.0",
   "numpy>=1.23.3",
   "pyarrow>=8.0.0",
-  "protobuf<=4.24.4",      # Other versions give errors with pytest, super weird!
+  "protobuf<=4.24.4",
+  # Other versions give errors with pytest, super weird!
   "frozendict>=2.3.4",
   "coloredlogs>14.0.0",
   "tqdm>4.1.0",
@@ -81,16 +82,17 @@ documentation = "https://aarhus-psychiatry-research.github.io/timeseriesflattene
 
 [tool]
 rye = { dev-dependencies = [
-    "pytest>=7.1.3, <7.3.0",
-    "pytest-cov>=3.0.0, <3.1.0",
-    "pytest-xdist>=3.0.0, <3.2.0",
-    "pytest-sugar>=0.9.4, <0.10.0",
-    "pytest-testmon==2.1.0",
-    "pytest-benchmark==4.0.0",
-    "pytest-codspeed==2.2.0",
-    "invoke==2.1.1",
-    "pyright==1.1.330.post0",
-    "pandas-stubs>=2.0.3.230814",
+  "pytest>=7.1.3, <7.3.0",
+  "pytest-cov>=3.0.0, <3.1.0",
+  "pytest-xdist>=3.0.0, <3.2.0",
+  "pytest-sugar>=0.9.4, <0.10.0",
+  "pytest-testmon==2.1.0",
+  "pytest-benchmark==4.0.0",
+  "pytest-codspeed==2.2.0",
+  "invoke==2.1.1",
+  "pyright==1.1.330.post0",
+  "pandas-stubs>=2.0.3.230814",
+  "ruff>=0.2.2",
 ] }
 
 [tool.pyright]
@@ -131,6 +133,7 @@ select = [
   "RET",
   "RUF",
   "SIM",
+  "TCH",
   "W",
 ]
 ignore = [
@@ -176,7 +179,6 @@ exclude = [
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-
 [tool.ruff.lint.flake8-annotations]
 mypy-init-return = true
 suppress-none-returning = true
@@ -187,6 +189,12 @@ known-third-party = ["wandb"]
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+  "pydantic.BaseModel",
+  "timeseriesflattener.utils.pydantic_basemodel",
+]
 
 [tool.semantic_release]
 branch = "main"
