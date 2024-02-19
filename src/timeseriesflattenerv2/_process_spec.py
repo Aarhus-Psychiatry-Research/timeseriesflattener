@@ -191,7 +191,6 @@ def process_time_from_event_spec(
 def process_spec(
     spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
-    if isinstance(spec, (PredictorSpec, OutcomeSpec, BooleanOutcomeSpec)):
-        return process_temporal_spec(spec=spec, predictiontime_frame=predictiontime_frame)
-    elif isinstance(spec, TimeFromEventSpec):
+    if isinstance(spec, TimeFromEventSpec):
         return process_time_from_event_spec(spec, predictiontime_frame)
+    return process_temporal_spec(spec=spec, predictiontime_frame=predictiontime_frame)
