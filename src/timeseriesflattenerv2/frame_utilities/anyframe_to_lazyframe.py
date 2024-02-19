@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import pandas as pd
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
     from ..feature_specs.meta import InitDF_T
 
 
-def _anyframe_to_lazyframe(init_df: "InitDF_T") -> pl.LazyFrame:
+def _anyframe_to_lazyframe(init_df: InitDF_T) -> pl.LazyFrame:
     if isinstance(init_df, pl.LazyFrame):
         return init_df
     if isinstance(init_df, pl.DataFrame):

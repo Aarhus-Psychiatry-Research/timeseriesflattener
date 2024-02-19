@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 import polars as pl
 
@@ -7,6 +9,8 @@ from .._frame_validator import _validate_col_name_columns_exist
 from .meta import LookDistances, ValueFrame, ValueType, _lookdistance_to_normalised_lookperiod
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from ..aggregators import Aggregator
     from .timestamp_frame import TimestampValueFrame
 
@@ -15,7 +19,7 @@ if TYPE_CHECKING:
 class OutcomeSpec:
     value_frame: ValueFrame
     lookahead_distances: InitVar[LookDistances]
-    aggregators: Sequence["Aggregator"]
+    aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "outc"
 
@@ -33,13 +37,13 @@ class OutcomeSpec:
 
 @dataclass
 class BooleanOutcomeSpec:
-    init_frame: InitVar["TimestampValueFrame"]
+    init_frame: InitVar[TimestampValueFrame]
     lookahead_distances: LookDistances
-    aggregators: Sequence["Aggregator"]
+    aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "outc"
 
-    def __post_init__(self, init_frame: "TimestampValueFrame"):
+    def __post_init__(self, init_frame: TimestampValueFrame):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in self.lookahead_distances

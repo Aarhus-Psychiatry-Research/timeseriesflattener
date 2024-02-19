@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import datetime as dt
+from collections.abc import Sequence
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Literal, Sequence, TypeAlias, Union
+from typing import TYPE_CHECKING, Literal, Union
 
 import pandas as pd
 import polars as pl
@@ -11,23 +14,17 @@ from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 if TYPE_CHECKING:
-    from timeseriesflattenerv2.feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
-    from timeseriesflattenerv2.feature_specs.predictor import PredictorSpec
-    from timeseriesflattenerv2.feature_specs.timedelta import TimeDeltaSpec
-
-    from .static import StaticSpec
-
-ValueType: TypeAlias = Union[int, float, str, None]
-InitDF_T = pl.LazyFrame | pl.DataFrame | pd.DataFrame
+    from typing_extensions import TypeAlias
 
 
-ValueSpecification: (
-    TypeAlias
-) = "Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec]"
-LookDistance: TypeAlias = dt.timedelta
+ValueType = Union[int, float, str, None]
+InitDF_T = Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]
 
 
-LookDistances = Sequence[LookDistance | tuple[LookDistance, LookDistance]]
+LookDistance = dt.timedelta
+
+
+LookDistances: TypeAlias = Sequence[Union[LookDistance, tuple[LookDistance, LookDistance]]]
 
 
 @dataclass

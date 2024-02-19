@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
@@ -15,11 +17,11 @@ if TYPE_CHECKING:
 class TimestampValueFrame:
     """A frame that contains the values of a time series."""
 
-    init_df: InitVar["InitDF_T"]
+    init_df: InitVar[InitDF_T]
     value_timestamp_col_name: str = "timestamp"
     entity_id_col_name: str = default_entity_id_col_name
 
-    def __post_init__(self, init_df: "InitDF_T"):
+    def __post_init__(self, init_df: InitDF_T):
         self.df = _anyframe_to_lazyframe(init_df)
         _validate_col_name_columns_exist(obj=self)
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from .feature_specs.static import StaticSpec
@@ -8,13 +10,13 @@ from .spec_processors.timedelta import process_timedelta_spec
 
 if TYPE_CHECKING:
     from ._intermediary_frames import ProcessedFrame
-    from .feature_specs.meta import ValueSpecification
     from .feature_specs.prediction_times import PredictionTimeFrame
+    from .flattener import ValueSpecification
 
 
 def process_spec(
-    spec: "ValueSpecification", predictiontime_frame: "PredictionTimeFrame"
-) -> "ProcessedFrame":
+    spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
+) -> ProcessedFrame:
     if isinstance(spec, TimeDeltaSpec):
         return process_timedelta_spec(spec, predictiontime_frame)
     if isinstance(spec, StaticSpec):

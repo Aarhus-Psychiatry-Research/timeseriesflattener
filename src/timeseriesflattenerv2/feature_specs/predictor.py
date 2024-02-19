@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 from .._frame_validator import _validate_col_name_columns_exist
 from .meta import LookDistances, ValueFrame, ValueType, _lookdistance_to_normalised_lookperiod
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import polars as pl
 
     from ..aggregators import Aggregator
@@ -14,7 +18,7 @@ if TYPE_CHECKING:
 class PredictorSpec:
     value_frame: ValueFrame
     lookbehind_distances: InitVar[LookDistances]
-    aggregators: Sequence["Aggregator"]
+    aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "pred"
 
@@ -26,5 +30,5 @@ class PredictorSpec:
         _validate_col_name_columns_exist(obj=self)
 
     @property
-    def df(self) -> "pl.LazyFrame":
+    def df(self) -> pl.LazyFrame:
         return self.value_frame.df

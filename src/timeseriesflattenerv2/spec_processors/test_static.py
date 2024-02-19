@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
 from ..feature_specs.prediction_times import PredictionTimeFrame

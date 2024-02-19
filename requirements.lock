@@ -18,7 +18,7 @@ frozendict==2.4.0
     # via timeseriesflattener
 humanfriendly==10.0
     # via coloredlogs
-iterpy==1.5.1
+iterpy==1.6.0
     # via timeseriesflattener
 joblib==1.3.2
     # via scikit-learn

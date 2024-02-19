@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 import polars as pl
 
@@ -12,17 +14,19 @@ from .default_column_names import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from .meta import InitDF_T
 
 
 @dataclass
 class PredictionTimeFrame:
-    init_df: InitVar["InitDF_T"]
+    init_df: InitVar[InitDF_T]
     entity_id_col_name: str = default_entity_id_col_name
     timestamp_col_name: str = default_pred_time_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
 
-    def __post_init__(self, init_df: "InitDF_T"):
+    def __post_init__(self, init_df: InitDF_T):
         self.df = _anyframe_to_lazyframe(init_df)
         self.df = self.df.with_columns(
             pl.concat_str(

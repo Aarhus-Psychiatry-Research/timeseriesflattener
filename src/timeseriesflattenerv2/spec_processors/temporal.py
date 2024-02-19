@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import datetime as dt
-from typing import TYPE_CHECKING, Callable, Sequence
+from typing import TYPE_CHECKING, Callable, Union
 
 import polars as pl
 import polars.selectors as cs
@@ -11,33 +13,11 @@ from ..feature_specs.predictor import PredictorSpec
 from ..frame_utilities._horisontally_concat import horizontally_concatenate_dfs
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from ..aggregators import Aggregator
     from ..feature_specs.meta import LookPeriod, ValueFrame, ValueType
     from ..feature_specs.prediction_times import PredictionTimeFrame
-
-
-def _get_timedelta_frame(
-    predictiontime_frame: "PredictionTimeFrame", value_frame: "ValueFrame"
-) -> TimeDeltaFrame:
-    # Join the prediction time dataframe
-    joined_frame = predictiontime_frame.df.join(
-        value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left"
-    )
-
-    # Get timedelta
-    timedelta_frame = joined_frame.with_columns(
-        (
-            pl.col(value_frame.value_timestamp_col_name)
-            - pl.col(predictiontime_frame.timestamp_col_name)
-        ).alias("time_from_prediction_to_value")
-    )
-
-    return TimeDeltaFrame(
-        timedelta_frame,
-        value_col_name=value_frame.value_col_name,
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
-        value_timestamp_col_name=value_frame.value_timestamp_col_name,
-    )
 
 
 def _null_values_outside_lookwindow(
@@ -51,10 +31,7 @@ def _null_values_outside_lookwindow(
 
 
 def _mask_outside_lookperiod(
-    timedelta_frame: TimeDeltaFrame,
-    lookperiod: "LookPeriod",
-    column_prefix: str,
-    value_col_name: str,
+    timedelta_frame: TimeDeltaFrame, lookperiod: LookPeriod, column_prefix: str, value_col_name: str
 ) -> TimeMaskedFrame:
     timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
 
@@ -76,7 +53,6 @@ def _mask_outside_lookperiod(
     else:
         lookperiod_string = f"{lookperiod.first.days}_to_{lookperiod.last.days}_days"
 
-    # TODO: #436 base suffix on the type of timedelta (days, hours, minutes)
     new_colname = f"{column_prefix}_{value_col_name}_within_{lookperiod_string}"
 
     return TimeMaskedFrame(
@@ -88,7 +64,7 @@ def _mask_outside_lookperiod(
 
 
 def _aggregate_masked_frame(
-    masked_frame: TimeMaskedFrame, aggregators: Sequence["Aggregator"], fallback: "ValueType"
+    masked_frame: TimeMaskedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
 ) -> pl.LazyFrame:
     aggregator_expressions = [aggregator(masked_frame.value_col_name) for aggregator in aggregators]
 
@@ -121,11 +97,35 @@ def _slice_and_aggregate_spec(
     return masked_aggregator(sliced_frame)
 
 
-TemporalSpec = PredictorSpec | OutcomeSpec | BooleanOutcomeSpec
+TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
+
+
+def _get_timedelta_frame(
+    predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
+) -> TimeDeltaFrame:
+    # Join the prediction time dataframe
+    joined_frame = predictiontime_frame.df.join(
+        value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left"
+    )
+
+    # Get timedelta
+    timedelta_frame = joined_frame.with_columns(
+        (
+            pl.col(value_frame.value_timestamp_col_name)
+            - pl.col(predictiontime_frame.timestamp_col_name)
+        ).alias("time_from_prediction_to_value")
+    )
+
+    return TimeDeltaFrame(
+        timedelta_frame,
+        value_col_name=value_frame.value_col_name,
+        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        value_timestamp_col_name=value_frame.value_timestamp_col_name,
+    )
 
 
 def process_temporal_spec(
-    spec: TemporalSpec, predictiontime_frame: "PredictionTimeFrame"
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     aggregated_value_frames = (
         Iter(spec.normalised_lookperiod)

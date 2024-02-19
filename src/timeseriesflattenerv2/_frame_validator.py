@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING
 
 from iterpy.iter import Iter
 
@@ -13,15 +15,25 @@ if TYPE_CHECKING:
     from .feature_specs.timedelta import TimeDeltaSpec
     from .feature_specs.timestamp_frame import TimestampValueFrame
 
-FrameTypes: TypeAlias = "PredictionTimeFrame | ValueFrame | TimeMaskedFrame | AggregatedValueFrame | TimeDeltaFrame | TimestampValueFrame | PredictorSpec | OutcomeSpec | BooleanOutcomeSpec | TimeDeltaSpec | StaticFrame"
-
 
 @dataclass(frozen=True)
 class SpecColumnError(Exception):
     description: str
 
 
-def _validate_col_name_columns_exist(obj: FrameTypes):
+def _validate_col_name_columns_exist(
+    obj: PredictionTimeFrame
+    | ValueFrame
+    | TimeMaskedFrame
+    | AggregatedValueFrame
+    | TimeDeltaFrame
+    | TimestampValueFrame
+    | PredictorSpec
+    | OutcomeSpec
+    | BooleanOutcomeSpec
+    | TimeDeltaSpec
+    | StaticFrame,
+):
     missing_columns = (
         Iter(dir(obj))
         .filter(lambda attr_name: attr_name.endswith("_col_name"))
