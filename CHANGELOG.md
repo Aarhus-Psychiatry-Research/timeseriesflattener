@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.29.0 (2024-02-19)
+
+### Feature
+
+* **#425:** Support from_legacy api interface ([`e0f3160`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e0f31609f47088fb7def3a59c63f868fb64e3609))
+
 ## v1.28.0 (2024-02-19)
 
 ### Feature
