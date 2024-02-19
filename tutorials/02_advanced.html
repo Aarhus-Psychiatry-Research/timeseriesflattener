@@ -375,34 +375,34 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 14:49:35 [INFO] There were unprocessed specs, computing...
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 15:20:11 [INFO] There were unprocessed specs, computing...
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 14:49:35 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 6053 (60.53%) rows
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 15:20:11 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 6053 (60.53%) rows
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 14:49:35 [INFO] Processing 6 temporal features in parallel with 4 workers. Chunksize is 2. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 15:20:11 [INFO] Processing 6 temporal features in parallel with 4 workers. Chunksize is 2. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/6 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 17%|█▋        | 1/6 [00:00&lt;00:00,  7.40it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 17%|█▋        | 1/6 [00:00&lt;00:00,  8.12it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 6/6 [00:00&lt;00:00, 36.94it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 6/6 [00:00&lt;00:00, 43.10it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 14:49:36 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 15:20:11 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 14:49:36 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 15:20:11 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 14:49:36 [INFO] Concatenation took 0.007 seconds
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 15:20:11 [INFO] Concatenation took 0.006 seconds
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 14:49:36 [INFO] Merging with original df
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-19 15:20:11 [INFO] Merging with original df
 </pre></div>
 </div>
 </div>
@@ -431,25 +431,25 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
 │ ┃<span style="font-weight: bold"> column_name             </span>┃<span style="font-weight: bold"> NA   </span>┃<span style="font-weight: bold"> NA %   </span>┃<span style="font-weight: bold"> mean  </span>┃<span style="font-weight: bold"> sd    </span>┃<span style="font-weight: bold"> p0      </span>┃<span style="font-weight: bold"> p25   </span>┃<span style="font-weight: bold"> p50   </span>┃<span style="font-weight: bold"> p75   </span>┃<span style="font-weight: bold"> p100  </span>┃<span style="font-weight: bold"> hist   </span>┃  │
 │ ┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━┩  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">entity_id              </span> │ <span style="color: #008080; text-decoration-color: #008080">   0</span> │ <span style="color: #008080; text-decoration-color: #008080">     0</span> │ <span style="color: #008080; text-decoration-color: #008080"> 5000</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2900</span> │ <span style="color: #008080; text-decoration-color: #008080">      0</span> │ <span style="color: #008080; text-decoration-color: #008080"> 2600</span> │ <span style="color: #008080; text-decoration-color: #008080"> 4900</span> │ <span style="color: #008080; text-decoration-color: #008080"> 7400</span> │ <span style="color: #008080; text-decoration-color: #008080">10000</span> │ <span style="color: #008000; text-decoration-color: #008000">▇▇▇▇▇▇</span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080">   7</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.18</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.4</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.5</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.29</span> │ <span style="color: #008080; text-decoration-color: #008080">  7.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.9</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.5</span> │ <span style="color: #008080; text-decoration-color: #008080">   10</span> │ <span style="color: #008000; text-decoration-color: #008000">   ▁▃▇</span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_1095_days_ma</span> │      │        │       │       │         │       │       │       │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">ximum_fallback_nan     </span> │      │        │       │       │         │       │       │       │       │        │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080"> 533</span> │ <span style="color: #008080; text-decoration-color: #008080">  13.5</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.1</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.0084</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.6</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.4</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.9</span> │ <span style="color: #008000; text-decoration-color: #008000">▂▅▇▇▅▂</span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_365_days_mea</span> │      │        │       │       │         │       │       │       │       │        │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">n_fallback_nan         </span> │      │        │       │       │         │       │       │       │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080"> 533</span> │ <span style="color: #008080; text-decoration-color: #008080">  13.5</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.6</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.0084</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  7.3</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.8</span> │ <span style="color: #008080; text-decoration-color: #008080">   10</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▂▃▃▆▇</span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_365_days_max</span> │      │        │       │       │         │       │       │       │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">imum_fallback_nan      </span> │      │        │       │       │         │       │       │       │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080">   7</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.18</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.3</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.29</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.1</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">  5.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.9</span> │ <span style="color: #008000; text-decoration-color: #008000"> ▂▇▇▁ </span> │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_1095_days_me</span> │      │        │       │       │         │       │       │       │       │        │  │
+│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">an_fallback_nan        </span> │      │        │       │       │         │       │       │       │       │        │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080"> 506</span> │ <span style="color: #008080; text-decoration-color: #008080"> 12.82</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.024</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  7.3</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.8</span> │ <span style="color: #008080; text-decoration-color: #008080">   10</span> │ <span style="color: #008000; text-decoration-color: #008000">▂▂▃▃▆▇</span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_365_to_730_d</span> │      │        │       │       │         │       │       │       │       │        │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">ays_maximum_fallback_na</span> │      │        │       │       │         │       │       │       │       │        │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">n                      </span> │      │        │       │       │         │       │       │       │       │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080">   7</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.18</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.3</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.29</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.1</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">  5.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.9</span> │ <span style="color: #008000; text-decoration-color: #008000"> ▂▇▇▁ </span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_1095_days_me</span> │      │        │       │       │         │       │       │       │       │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">an_fallback_nan        </span> │      │        │       │       │         │       │       │       │       │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080"> 533</span> │ <span style="color: #008080; text-decoration-color: #008080">  13.5</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.6</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.6</span> │ <span style="color: #008080; text-decoration-color: #008080"> 0.0084</span> │ <span style="color: #008080; text-decoration-color: #008080">  4.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  7.3</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.8</span> │ <span style="color: #008080; text-decoration-color: #008080">   10</span> │ <span style="color: #008000; text-decoration-color: #008000">▁▂▃▃▆▇</span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_365_days_max</span> │      │        │       │       │         │       │       │       │       │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">imum_fallback_nan      </span> │      │        │       │       │         │       │       │       │       │        │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080"> 506</span> │ <span style="color: #008080; text-decoration-color: #008080"> 12.82</span> │ <span style="color: #008080; text-decoration-color: #008080">  5.1</span> │ <span style="color: #008080; text-decoration-color: #008080">  2.2</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.024</span> │ <span style="color: #008080; text-decoration-color: #008080">  3.6</span> │ <span style="color: #008080; text-decoration-color: #008080">    5</span> │ <span style="color: #008080; text-decoration-color: #008080">  6.5</span> │ <span style="color: #008080; text-decoration-color: #008080">   10</span> │ <span style="color: #008000; text-decoration-color: #008000">▂▅▇▇▅▂</span> │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_365_to_730_d</span> │      │        │       │       │         │       │       │       │       │        │  │
 │ │ <span style="color: #af87ff; text-decoration-color: #af87ff">ays_mean_fallback_nan  </span> │      │        │       │       │         │       │       │       │       │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">pred_synth_predictor_fl</span> │ <span style="color: #008080; text-decoration-color: #008080">   7</span> │ <span style="color: #008080; text-decoration-color: #008080">  0.18</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.4</span> │ <span style="color: #008080; text-decoration-color: #008080">  1.5</span> │ <span style="color: #008080; text-decoration-color: #008080">   0.29</span> │ <span style="color: #008080; text-decoration-color: #008080">  7.8</span> │ <span style="color: #008080; text-decoration-color: #008080">  8.9</span> │ <span style="color: #008080; text-decoration-color: #008080">  9.5</span> │ <span style="color: #008080; text-decoration-color: #008080">   10</span> │ <span style="color: #008000; text-decoration-color: #008000">   ▁▃▇</span> │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">oat_within_1095_days_ma</span> │      │        │       │       │         │       │       │       │       │        │  │
-│ │ <span style="color: #af87ff; text-decoration-color: #af87ff">ximum_fallback_nan     </span> │      │        │       │       │         │       │       │       │       │        │  │
 │ └─────────────────────────┴──────┴────────┴───────┴───────┴─────────┴───────┴───────┴───────┴───────┴────────┘  │
 │ <span style="font-style: italic">                                                   datetime                                                   </span>  │
 │ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │
@@ -468,12 +468,12 @@ In this tutorial, we’ll expand on that, covering how to effectively add many f
 </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;entity_id&#39;,
  &#39;timestamp&#39;,
  &#39;prediction_time_uuid&#39;,
+ &#39;pred_synth_predictor_float_within_1095_days_maximum_fallback_nan&#39;,
  &#39;pred_synth_predictor_float_within_365_days_mean_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_365_to_730_days_maximum_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_1095_days_mean_fallback_nan&#39;,
  &#39;pred_synth_predictor_float_within_365_days_maximum_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_365_to_730_days_mean_fallback_nan&#39;,
- &#39;pred_synth_predictor_float_within_1095_days_maximum_fallback_nan&#39;]
+ &#39;pred_synth_predictor_float_within_1095_days_mean_fallback_nan&#39;,
+ &#39;pred_synth_predictor_float_within_365_to_730_days_maximum_fallback_nan&#39;,
+ &#39;pred_synth_predictor_float_within_365_to_730_days_mean_fallback_nan&#39;]
 </pre></div>
 </div>
 </div>
