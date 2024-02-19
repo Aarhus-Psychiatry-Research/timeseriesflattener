@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.30.0 (2024-02-19)
+
+### Feature
+
+* Age / time from event spec ([`1856cb1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1856cb1e339e7bb0e88a21d46077185aba85f197))
+
 ## v1.29.0 (2024-02-19)
 
 ### Feature
