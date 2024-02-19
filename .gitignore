@@ -166,3 +166,4 @@ poetry.lock
 
 *nbconvert*
 .testmondata*
+.benchmark_cache/*

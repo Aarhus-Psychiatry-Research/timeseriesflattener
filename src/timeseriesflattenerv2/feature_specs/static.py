@@ -6,6 +6,7 @@ import polars as pl
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities._anyframe_to_lazyframe import _anyframe_to_lazyframe
 from .default_column_names import default_entity_id_col_name
+from .meta import ValueType
 
 if TYPE_CHECKING:
     from .meta import InitDF_T
@@ -25,3 +26,10 @@ class StaticFrame:
         if isinstance(self.df, pl.DataFrame):
             return self.df
         return self.df.collect()
+
+
+@dataclass(frozen=True)
+class StaticSpec:
+    value_frame: StaticFrame
+    column_prefix: str
+    fallback: ValueType
