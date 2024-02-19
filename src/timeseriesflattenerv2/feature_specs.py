@@ -28,7 +28,7 @@ def _anyframe_to_lazyframe(init_df: InitDF_T) -> pl.LazyFrame:
     raise ValueError(f"Unsupported type: {type(init_df)}.")
 
 
-FrameTypes: TypeAlias = "PredictionTimeFrame | ValueFrame | TimeMaskedFrame | AggregatedValueFrame | TimedeltaFrame | TimestampValueFrame | PredictorSpec | OutcomeSpec | BooleanOutcomeSpec | TimeFromEventSpec"
+FrameTypes: TypeAlias = "PredictionTimeFrame | ValueFrame | TimeMaskedFrame | AggregatedValueFrame | TimedeltaFrame | TimestampValueFrame | PredictorSpec | OutcomeSpec | BooleanOutcomeSpec | TimeDeltaSpec"
 
 
 def _validate_col_name_columns_exist(obj: FrameTypes):
@@ -233,7 +233,7 @@ class PredictorSpec:
 
 
 @dataclass
-class TimeFromEventSpec:
+class TimeDeltaSpec:
     init_frame: TimestampValueFrame
     fallback: ValueType
     output_name: str
@@ -251,6 +251,14 @@ class TimeFromEventSpec:
             raise ValueError(
                 f"Expected only one value per {self.init_frame.entity_id_col_name} in the TimestampValueFrame, but found up to {max_values_per_id}."
             )
+        self.value_frame = ValueFrame(
+            init_df=self.init_frame.df.rename(
+                {self.init_frame.value_timestamp_col_name: self.output_name}
+            ),
+            value_col_name=self.output_name,
+            entity_id_col_name=self.init_frame.entity_id_col_name,
+            value_timestamp_col_name=self.output_name,
+        )
 
     @property
     def df(self) -> pl.LazyFrame:
@@ -321,7 +329,7 @@ class TimedeltaFrame:
         return self.df.collect()
 
 
-ValueSpecification = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
+ValueSpecification = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec]
 
 
 @dataclass(frozen=True)

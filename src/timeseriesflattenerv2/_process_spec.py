@@ -15,7 +15,7 @@ from .feature_specs import (
     PredictorSpec,
     ProcessedFrame,
     TimedeltaFrame,
-    TimeFromEventSpec,
+    TimeDeltaSpec,
     TimeMaskedFrame,
     ValueFrame,
     ValueSpecification,
@@ -162,7 +162,7 @@ def process_temporal_spec(
 
 
 def process_time_from_event_spec(
-    spec: TimeFromEventSpec, predictiontime_frame: PredictionTimeFrame
+    spec: TimeDeltaSpec, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     new_col_name = f"{spec.column_prefix}_{spec.output_name}_fallback_{spec.fallback}"
     prediction_times_with_time_from_event = (
@@ -191,6 +191,6 @@ def process_time_from_event_spec(
 def process_spec(
     spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
-    if isinstance(spec, TimeFromEventSpec):
+    if isinstance(spec, TimeDeltaSpec):
         return process_time_from_event_spec(spec, predictiontime_frame)
     return process_temporal_spec(spec=spec, predictiontime_frame=predictiontime_frame)

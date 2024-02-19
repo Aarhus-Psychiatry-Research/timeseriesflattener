@@ -10,7 +10,7 @@ from .feature_specs import (
     LookPeriod,
     PredictionTimeFrame,
     TimedeltaFrame,
-    TimeFromEventSpec,
+    TimeDeltaSpec,
     TimeMaskedFrame,
     TimestampValueFrame,
     ValueFrame,
@@ -194,7 +194,7 @@ def test_process_time_from_event_spec():
 
     result = process_spec.process_time_from_event_spec(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
-        spec=TimeFromEventSpec(
+        spec=TimeDeltaSpec(
             init_frame=TimestampValueFrame(init_df=value_frame),
             output_name="age_in_years",
             fallback=0,
