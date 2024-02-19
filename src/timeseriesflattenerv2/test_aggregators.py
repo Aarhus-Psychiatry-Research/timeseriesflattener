@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import numpy as np
 import polars as pl
 import pytest
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-from ._process_spec import _aggregate_masked_frame
+from ._intermediary_frames import TimeMaskedFrame
 from .aggregators import (
     CountAggregator,
     EarliestAggregator,
@@ -19,25 +19,28 @@ from .aggregators import (
     SumAggregator,
     VarianceAggregator,
 )
-from .feature_specs import Aggregator, TimeMaskedFrame
+from .spec_processors.temporal import _aggregate_masked_frame
 from .test_flattener import assert_frame_equal
+
+if TYPE_CHECKING:
+    from .aggregators import Aggregator
 
 
 @dataclass(frozen=True)
 class ComplexAggregatorExample:
-    aggregator: Aggregator
-    input: pl.LazyFrame
+    aggregator: "Aggregator"
+    input_frame: pl.LazyFrame
     expected_output: pl.DataFrame
 
 
 @dataclass(frozen=True)
 class SingleVarAggregatorExample:
-    aggregator: Aggregator
+    aggregator: "Aggregator"
     input_values: Sequence[float | None]
     expected_output_values: Sequence[float]
 
     @property
-    def input(self) -> pl.LazyFrame:
+    def input_frame(self) -> pl.LazyFrame:
         return pl.LazyFrame(
             {
                 "pred_time_uuid": [1] * len(self.input_values),
@@ -92,7 +95,7 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
         ),
         ComplexAggregatorExample(
             aggregator=SlopeAggregator(timestamp_col_name="timestamp"),
-            input=str_to_pl_df(
+            input_frame=str_to_pl_df(
                 """pred_time_uuid,timestamp,value
 1,2013-01-01,1
 1,2013-01-02,3
@@ -106,7 +109,7 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
         ),
         ComplexAggregatorExample(
             aggregator=EarliestAggregator(timestamp_col_name="timestamp"),
-            input=str_to_pl_df(
+            input_frame=str_to_pl_df(
                 """pred_time_uuid,timestamp,value
 1,2013-01-01,1, # Kept, first value in 1
 1,2013-01-02,2, # Dropped, second value in 1
@@ -121,7 +124,7 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
         ),
         ComplexAggregatorExample(
             aggregator=LatestAggregator(timestamp_col_name="timestamp"),
-            input=str_to_pl_df(
+            input_frame=str_to_pl_df(
                 """pred_time_uuid,timestamp,value
 1,2013-01-01,1, # Dropped, first value in 1
 1,2013-01-02,2, # Kept, second value in 1
@@ -140,7 +143,7 @@ AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
 def test_aggregator(example: AggregatorExampleType):
     result = _aggregate_masked_frame(
         masked_frame=TimeMaskedFrame(
-            init_df=example.input,
+            init_df=example.input_frame,
             value_col_name="value",
             pred_time_uuid_col_name="pred_time_uuid",
             timestamp_col_name="timestamp",

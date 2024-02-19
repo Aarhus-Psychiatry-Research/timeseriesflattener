@@ -1,9 +1,19 @@
 import datetime as dt
+from abc import ABC, abstractmethod
 
 import polars as pl
 from attr import dataclass
 
-from timeseriesflattenerv2.feature_specs import Aggregator
+
+class Aggregator(ABC):
+    name: str
+
+    @abstractmethod
+    def __call__(self, column_name: str) -> pl.Expr:
+        ...
+
+    def new_col_name(self, previous_col_name: str) -> str:
+        return f"{previous_col_name}_{self.name}"
 
 
 class MinAggregator(Aggregator):
