@@ -10,7 +10,9 @@ from .feature_specs import (
     LookPeriod,
     PredictionTimeFrame,
     TimedeltaFrame,
+    TimeDeltaSpec,
     TimeMaskedFrame,
+    TimestampValueFrame,
     ValueFrame,
 )
 from .test_flattener import assert_frame_equal
@@ -175,3 +177,35 @@ def test_multiple_aggregators():
     )
 
     assert_frame_equal(aggregated_values.collect(), expected)
+
+
+def test_process_time_from_event_spec():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+        1,2021-01-01
+        2,2021-01-01
+        """
+    )
+
+    value_frame = str_to_pl_df(
+        """entity_id,timestamp
+        1,2020-01-01"""
+    )
+
+    result = process_spec.process_time_from_event_spec(
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
+        spec=TimeDeltaSpec(
+            init_frame=TimestampValueFrame(init_df=value_frame),
+            output_name="age_in_years",
+            fallback=0,
+        ),
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_age_in_years_fallback_0
+1-2021-01-01 00:00:00.000000,1.00274
+2-2021-01-01 00:00:00.000000,0
+       """
+    )
+
+    assert_frame_equal(result.collect(), expected)

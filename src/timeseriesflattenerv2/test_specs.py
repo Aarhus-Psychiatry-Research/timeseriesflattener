@@ -1,10 +1,17 @@
 import datetime as dt
 
 import polars as pl
+import pytest
 
 from timeseriesflattenerv2.aggregators import MeanAggregator
 
-from .feature_specs import OutcomeSpec, PredictorSpec, ValueFrame
+from .feature_specs import (
+    OutcomeSpec,
+    PredictorSpec,
+    TimeDeltaSpec,
+    TimestampValueFrame,
+    ValueFrame,
+)
 
 MockValueFrame = ValueFrame(
     init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"], "entity_id": [1]}),
@@ -40,3 +47,17 @@ def test_outcome_spec_post_init():
 
     assert outcome_spec.normalised_lookperiod[0].first == lookdistance_start
     assert outcome_spec.normalised_lookperiod[0].last == lookdistance_end
+
+
+def test_timedelta_spec_error_if_non_unique_ids():
+    with pytest.raises(ValueError, match=".*Expected only one value.*"):
+        TimeDeltaSpec(
+            init_frame=TimestampValueFrame(
+                init_df=pl.LazyFrame(
+                    {"timestamp": ["2021-01-01", "2021-01-02"], "entity_id": [1, 1]}
+                ),
+                value_timestamp_col_name="timestamp",
+            ),
+            fallback=0,
+            output_name="timedelta",
+        )
