@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.36.1 (2024-02-22)
+
+### Fix
+
+* Bug in `_get_timedelta_frame` if timestamp col names were the same ([`3ade969`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3ade969b3db28aba52690afefa855b8cc8c9cc2f))
+* **#480:** Pure NaNs when flattening with lookbehind-tuple in 01_basic ([`6d1122b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6d1122be2a25cbd726536ac92061156fd7a9a0b4))
+
 ## v1.36.0 (2024-02-22)
 
 ### Feature
