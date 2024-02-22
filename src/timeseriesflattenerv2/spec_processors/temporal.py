@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 
 def _get_timedelta_frame(
-    predictiontime_frame: "PredictionTimeFrame", value_frame: "ValueFrame"
+    predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
 ) -> TimeDeltaFrame:
     # Join the prediction time dataframe
     joined_frame = predictiontime_frame.df.join(
@@ -56,10 +56,9 @@ def _null_values_outside_lookwindow(
 
 def _mask_outside_lookperiod(
     timedelta_frame: TimeDeltaFrame,
-    lookperiod: "LookPeriod",
+    lookperiod: LookPeriod,
     column_prefix: str,
     value_col_names: Sequence[str],
-
 ) -> TimeMaskedFrame:
     timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
 
@@ -86,7 +85,6 @@ def _mask_outside_lookperiod(
         f"{column_prefix}_{value_col_name}_within_{lookperiod_string}"
         for value_col_name in value_col_names
     ]
-
 
     return TimeMaskedFrame(
         init_df=masked_frame.rename(dict(zip(value_col_names, new_colnames))),

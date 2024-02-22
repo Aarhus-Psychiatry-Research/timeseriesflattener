@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class StaticFrame:
-    init_df: InitVar["InitDF_T"]
+    init_df: InitVar[InitDF_T]
 
     entity_id_col_name: str = default_entity_id_col_name
 
