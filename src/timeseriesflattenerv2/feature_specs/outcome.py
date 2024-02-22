@@ -40,7 +40,6 @@ class BooleanOutcomeSpec:
     init_frame: InitVar[TimestampValueFrame]
     lookahead_distances: LookDistances
     aggregators: Sequence[Aggregator]
-    fallback: ValueType
     column_prefix: str = "outc"
 
     def __post_init__(self, init_frame: TimestampValueFrame):
@@ -48,6 +47,8 @@ class BooleanOutcomeSpec:
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in self.lookahead_distances
         ]
+
+        self.fallback = 0
 
         self.value_frame = ValueFrame(
             init_df=init_frame.df.with_columns((pl.lit(1)).alias("value")),
