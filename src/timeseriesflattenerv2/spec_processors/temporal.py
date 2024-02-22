@@ -139,30 +139,6 @@ def _slice_and_aggregate_spec(
 TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
 
 
-def _get_timedelta_frame(
-    predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
-) -> TimeDeltaFrame:
-    # Join the prediction time dataframe
-    joined_frame = predictiontime_frame.df.join(
-        value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left"
-    )
-
-    # Get timedelta
-    timedelta_frame = joined_frame.with_columns(
-        (
-            pl.col(value_frame.value_timestamp_col_name)
-            - pl.col(predictiontime_frame.timestamp_col_name)
-        ).alias("time_from_prediction_to_value")
-    )
-
-    return TimeDeltaFrame(
-        timedelta_frame,
-        value_col_name=value_frame.value_col_name,
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
-        value_timestamp_col_name=value_frame.value_timestamp_col_name,
-    )
-
-
 def process_temporal_spec(
     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
