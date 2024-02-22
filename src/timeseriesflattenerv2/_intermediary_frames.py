@@ -22,7 +22,7 @@ class TimeMaskedFrame:
     """A frame that has had all values outside its lookbehind and lookahead distances masked."""
 
     init_df: pl.LazyFrame
-    value_col_name: str
+    value_col_names: Sequence[str]
     timestamp_col_name: str = default_timestamp_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
     validate_cols_exist: bool = True
@@ -70,7 +70,7 @@ class AggregatedValueFrame:
 @dataclass
 class TimeDeltaFrame:
     df: pl.LazyFrame
-    value_col_name: str
+    value_col_names: Sequence[str]
     value_timestamp_col_name: str
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
     timedelta_col_name: str = "time_from_prediction_to_value"

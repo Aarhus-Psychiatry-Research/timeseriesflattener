@@ -47,7 +47,6 @@ class BooleanOutcomeSpec:
 
         self.value_frame = ValueFrame(
             init_df=init_frame.df.with_columns((pl.lit(1)).alias("value")),
-            value_col_name="value",
             entity_id_col_name=init_frame.entity_id_col_name,
             value_timestamp_col_name=init_frame.value_timestamp_col_name,
         )

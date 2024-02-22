@@ -26,7 +26,8 @@ class SpecError(Exception):
 def _get_spec_conflicts(specs: Sequence["ValueSpecification"]) -> Iter[SpecError]:
     conflicting_value_col_names = (
         Iter(specs)
-        .map(lambda s: s.value_frame.value_col_name)
+        .map(lambda s: s.value_frame.value_col_names)
+        .flatten()
         .groupby(lambda value_col_name: value_col_name)
         .filter(lambda val: len(val[1]) > 1)
         .map(
@@ -69,7 +70,7 @@ def _specs_contain_required_columns(
         .flatten()
         .map(
             lambda pair: MissingColumnNameError(
-                description=f"{pair.missing_columns().to_list()} is missing in the {pair.spec.value_frame.value_col_name} specification."
+                description=f"{pair.missing_columns().to_list()} is missing in the {pair.spec.value_frame.value_col_names} specification."
             )
         )
     )
@@ -111,7 +112,7 @@ class Flattener:
         dfs: Sequence[pl.LazyFrame] = []
         if self.n_workers is None:
             for spec in track(specs, description="Processing specs..."):
-                print(f"Processing spec: {spec.value_frame.value_col_name}")
+                print(f"Processing spec: {spec.value_frame.value_col_names}")
                 processed_spec = process_spec(
                     predictiontime_frame=self.predictiontime_frame, spec=spec
                 )

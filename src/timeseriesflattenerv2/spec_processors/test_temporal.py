@@ -5,6 +5,7 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
 import timeseriesflattenerv2.spec_processors.temporal as process_spec
 import timeseriesflattenerv2.spec_processors.timedelta
+from timeseriesflattenerv2.feature_specs.predictor import PredictorSpec
 
 from .._intermediary_frames import TimeDeltaFrame, TimeMaskedFrame
 from ..aggregators import MaxAggregator, MeanAggregator
@@ -25,7 +26,7 @@ def test_aggregate_over_fallback():
                 "timestamp": ["2021-01-01", "2021-01-02"],
             }
         ),
-        value_col_name="value",
+        value_col_names=["value"],
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
@@ -50,7 +51,7 @@ def test_aggregate_with_null():
                 "timestamp": ["2021-01-01", "2021-01-02"],
             }
         ),
-        value_col_name="value",
+        value_col_names=["value"],
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
@@ -75,7 +76,7 @@ def test_aggregate_within_slice():
 2-2021-01-03,2
 2-2021-01-03,4"""
         ).lazy(),
-        value_col_name="value",
+        value_col_names=["value"],
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
@@ -108,7 +109,7 @@ def test_get_timedelta_frame():
 
     result = process_spec._get_timedelta_frame(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
-        value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
+        value_frame=ValueFrame(init_df=value_frame.lazy()),
     )
 
     assert result.get_timedeltas() == expected_timedeltas
@@ -129,7 +130,7 @@ def test_slice_without_any_within_window():
                 "value_timestamp": ["2021-01-01", "2021-01-02", "2021-01-03", "2021-01-04"],
             }
         ),
-        value_col_name="is_null",
+        value_col_names=["is_null"],
         value_timestamp_col_name="value_timestamp",
     )
 
@@ -137,13 +138,13 @@ def test_slice_without_any_within_window():
         timedelta_frame=timedelta_frame,
         lookperiod=LookPeriod(first=dt.timedelta(days=-2), last=dt.timedelta(days=0)),
         column_prefix="pred",
-        value_col_name="value",
+        value_col_names=["is_null"],
     ).collect()
 
     from polars.testing import assert_series_equal
 
     assert_series_equal(
-        result.get_column("pred_value_within_0_to_2_days"),
+        result.get_column("pred_is_null_within_0_to_2_days"),
         timedelta_frame.df.collect().get_column("is_null"),
         check_names=False,
         check_dtype=False,
@@ -160,7 +161,7 @@ def test_multiple_aggregators():
 2-2021-01-03,2
 2-2021-01-03,4"""
         ).lazy(),
-        value_col_name="value",
+        value_col_names=["value"],
     )
 
     aggregated_values = process_spec._aggregate_masked_frame(
@@ -206,4 +207,31 @@ def test_process_time_from_event_spec():
        """
     )
 
+    assert_frame_equal(result.collect(), expected)
+
+
+def test_process_temporal_spec_multiple_values():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+        1,2021-01-01"""
+    )
+    value_frame = str_to_pl_df(
+        """entity_id,timestamp,value_1,value_2
+        1,2021-01-01,1,2"""
+    )
+
+    result = process_spec.process_temporal_spec(
+        spec=PredictorSpec(
+            value_frame=ValueFrame(init_df=value_frame.lazy()),
+            lookbehind_distances=[dt.timedelta(days=1)],
+            aggregators=[MeanAggregator()],
+            fallback=0,
+        ),
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_0,pred_value_2_within_0_to_1_days_mean_fallback_0
+1-2021-01-01 00:00:00.000000,1,2"""
+    )
     assert_frame_equal(result.collect(), expected)

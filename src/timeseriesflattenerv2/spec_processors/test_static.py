@@ -23,9 +23,7 @@ def test_process_static_spec():
     result = process_spec(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
         spec=StaticSpec(
-            value_frame=StaticFrame(init_df=value_frame, value_col_name="value"),
-            column_prefix="pred",
-            fallback=0,
+            value_frame=StaticFrame(init_df=value_frame), column_prefix="pred", fallback=0
         ),
     )
 
@@ -37,4 +35,32 @@ def test_process_static_spec():
        """
     )
 
+    assert_frame_equal(result.collect(), expected)
+
+
+def test_process_static_spec_multiple_values():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+        1,2021-01-01
+        1,2021-01-01
+        2,2021-01-01"""
+    )
+    value_frame = str_to_pl_df(
+        """entity_id,value_1,value_2
+        1,a,b
+        2,c,d"""
+    )
+    result = process_spec(
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
+        spec=StaticSpec(
+            value_frame=StaticFrame(init_df=value_frame), column_prefix="pred", fallback=0
+        ),
+    )
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_1_fallback_0,pred_value_2_fallback_0
+1-2021-01-01 00:00:00.000000,a,b
+1-2021-01-01 00:00:00.000000,a,b
+2-2021-01-01 00:00:00.000000,c,d
+       """
+    )
     assert_frame_equal(result.collect(), expected)

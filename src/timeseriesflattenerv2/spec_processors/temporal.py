@@ -34,7 +34,7 @@ def _get_timedelta_frame(
 
     return TimeDeltaFrame(
         timedelta_frame,
-        value_col_name=value_frame.value_col_name,
+        value_col_names=value_frame.value_col_names,
         pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
         value_timestamp_col_name=value_frame.value_timestamp_col_name,
     )
@@ -54,7 +54,7 @@ def _mask_outside_lookperiod(
     timedelta_frame: TimeDeltaFrame,
     lookperiod: "LookPeriod",
     column_prefix: str,
-    value_col_name: str,
+    value_col_names: Sequence[str],
 ) -> TimeMaskedFrame:
     timedelta_col = pl.col(timedelta_frame.timedelta_col_name)
 
@@ -65,7 +65,7 @@ def _mask_outside_lookperiod(
     masked_frame = _null_values_outside_lookwindow(
         df=timedelta_frame.df,
         lookwindow_predicate=within_lookwindow,
-        cols_to_null=[timedelta_frame.value_col_name, timedelta_frame.timedelta_col_name],
+        cols_to_null=[*timedelta_frame.value_col_names, timedelta_frame.timedelta_col_name],
     )
 
     is_lookbehind = lookperiod.first < dt.timedelta(0)
@@ -77,12 +77,15 @@ def _mask_outside_lookperiod(
         lookperiod_string = f"{lookperiod.first.days}_to_{lookperiod.last.days}_days"
 
     # TODO: #436 base suffix on the type of timedelta (days, hours, minutes)
-    new_colname = f"{column_prefix}_{value_col_name}_within_{lookperiod_string}"
+    new_colnames = [
+        f"{column_prefix}_{value_col_name}_within_{lookperiod_string}"
+        for value_col_name in value_col_names
+    ]
 
     return TimeMaskedFrame(
-        init_df=masked_frame.rename({timedelta_frame.value_col_name: new_colname}),
+        init_df=masked_frame.rename(dict(zip(value_col_names, new_colnames))),
         pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
-        value_col_name=new_colname,
+        value_col_names=new_colnames,
         timestamp_col_name=timedelta_frame.value_timestamp_col_name,
     )
 
@@ -90,7 +93,11 @@ def _mask_outside_lookperiod(
 def _aggregate_masked_frame(
     masked_frame: TimeMaskedFrame, aggregators: Sequence["Aggregator"], fallback: "ValueType"
 ) -> pl.LazyFrame:
-    aggregator_expressions = [aggregator(masked_frame.value_col_name) for aggregator in aggregators]
+    aggregator_expressions = [
+        aggregator(value_col_name)
+        for aggregator in aggregators
+        for value_col_name in masked_frame.value_col_names
+    ]
 
     grouped_frame = masked_frame.init_df.group_by(
         masked_frame.pred_time_uuid_col_name, maintain_order=True
@@ -98,13 +105,17 @@ def _aggregate_masked_frame(
 
     value_columns = (
         Iter(grouped_frame.columns)
-        .filter(lambda col: masked_frame.value_col_name in col)
+        .filter(
+            lambda col: any(
+                value_col_name in col for value_col_name in masked_frame.value_col_names
+            )
+        )
         .map(lambda old_name: (old_name, f"{old_name}_fallback_{fallback}"))
     )
     rename_mapping = dict(value_columns)
 
     with_fallback = grouped_frame.with_columns(
-        cs.contains(masked_frame.value_col_name).fill_null(fallback)
+        cs.contains(masked_frame.value_col_names).fill_null(fallback)
     ).rename(rename_mapping)
 
     return with_fallback
@@ -141,7 +152,7 @@ def process_temporal_spec(
                     timedelta_frame=timedelta_frame,
                     lookperiod=lookperiod,
                     column_prefix=spec.column_prefix,
-                    value_col_name=spec.value_frame.value_col_name,
+                    value_col_names=spec.value_frame.value_col_names,
                 ),
             )
         )

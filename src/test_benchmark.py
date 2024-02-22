@@ -26,8 +26,7 @@ def _generate_valueframe(n_obseravations: int, feature_name: str) -> ValueFrame:
                     for i in range(n_obseravations)
                 ],
             }
-        ),
-        value_col_name=feature_name,
+        )
     )
 
 
