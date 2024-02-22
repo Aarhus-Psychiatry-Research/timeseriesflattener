@@ -6,7 +6,6 @@ text.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 from timeseriesflattener.testing.synth_data_generator.synth_col_generators import (
@@ -18,8 +17,8 @@ from timeseriesflattener.testing.synth_data_generator.utils import replace_vals_
 def generate_synth_txt_data(
     predictors: dict,
     n_samples: int,
-    na_prob: Optional[float] = 0.1,
-    na_ignore_cols: Optional[list[str]] = None,
+    na_prob: float | None = 0.1,
+    na_ignore_cols: list[str] | None = None,
 ) -> pd.DataFrame:
     """Takes a dict and generates synth data from it.
 
