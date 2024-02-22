@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.33.0 (2024-02-22)
+
+### Feature
+
+* **#363:** Re-add support for Python >=3.9 ([`7d9df0c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/7d9df0ca0630d901b970d85393307bba9492ff90))
+
 ## v1.32.0 (2024-02-22)
 
 ### Feature
