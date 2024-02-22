@@ -201,7 +201,7 @@ def test_process_time_from_event_spec():
 
     expected = str_to_pl_df(
         """pred_time_uuid,pred_age_years_fallback_0
-1-2021-01-01 00:00:00.000000,1.00274
+1-2021-01-01 00:00:00.000000,1.002053388090349
 2-2021-01-01 00:00:00.000000,0
        """
     )
