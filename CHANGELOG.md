@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.32.0 (2024-02-22)
+
+### Feature
+
+* Allow setting format in timedeltaspec ([`8383269`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8383269c7f46d8b7da3d7bbacb8d04788bb8e3ce))
+
 ## v1.31.3 (2024-02-22)
 
 ### Fix
