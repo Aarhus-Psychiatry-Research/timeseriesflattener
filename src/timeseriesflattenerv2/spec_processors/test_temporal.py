@@ -202,6 +202,8 @@ def test_masking_multiple_values_multiple_aggregators():
 2-2021-01-03,3,0,4,0"""
     )
 
+    assert_frame_equal(aggregated_values.collect(), expected)
+
 
 def test_process_time_from_event_spec():
     pred_frame = str_to_pl_df(
