@@ -24,15 +24,20 @@ def _get_timedelta_frame(
     predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
 ) -> TimeDeltaFrame:
     # Join the prediction time dataframe
-    joined_frame = predictiontime_frame.df.join(
-        value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left"
+    # ensure that the timestamp col names are different to avoid conflicts
+    unique_predictiontime_frame_timestamp_col_name = (
+        f"__{predictiontime_frame.timestamp_col_name}__"
     )
+
+    joined_frame = predictiontime_frame.df.rename(
+        {predictiontime_frame.timestamp_col_name: unique_predictiontime_frame_timestamp_col_name}
+    ).join(value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left")
 
     # Get timedelta
     timedelta_frame = joined_frame.with_columns(
         (
             pl.col(value_frame.value_timestamp_col_name)
-            - pl.col(predictiontime_frame.timestamp_col_name)
+            - pl.col(unique_predictiontime_frame_timestamp_col_name)
         ).alias("time_from_prediction_to_value")
     )
 
