@@ -5,7 +5,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Introductory Tutorial"
+    "# Introductory Tutorial\n"
    ]
   },
   {
@@ -25,7 +25,7 @@
     "\n",
     "The simplest case is adding one predictor and one outcome.\n",
     "\n",
-    "First, we'll load the timestamps for every time we want to issue a prediction:"
+    "First, we'll load the timestamps for every time we want to issue a prediction:\n"
    ]
   },
   {
@@ -33,7 +33,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Loading data"
+    "## Loading data\n"
    ]
   },
   {
@@ -42,9 +42,11 @@
    "metadata": {},
    "source": [
     "### Loading prediction times\n",
+    "\n",
     "Predictin times consist of two elements:\n",
+    "\n",
     "1. The entity id. This is the entity about which the prediction is issued. In medical contexts, this is frequently a patient.\n",
-    "2. The timestamp at which the prediction is to be issued."
+    "2. The timestamp at which the prediction is to be issued.\n"
    ]
   },
   {
@@ -52,15 +54,6 @@
    "execution_count": 1,
    "metadata": {},
    "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "/Users/au554730/Desktop/Projects/timeseriesflattener/.venv/lib/python3.10/site-packages/pydantic/_internal/_config.py:269: UserWarning: Valid config keys have changed in V2:\n",
-      "* 'allow_mutation' has been removed\n",
-      "  warnings.warn(message, UserWarning)\n"
-     ]
-    },
     {
      "data": {
       "text/html": [
@@ -73,11 +66,11 @@
        "│ │ Number of columns │ 2      │ │ datetime64  │ 1     │                                                          │\n",
        "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
        "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │\n",
-       "│ ┃<span style=\"font-weight: bold\"> column_name        </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd      </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25     </span>┃<span style=\"font-weight: bold\"> p75     </span>┃<span style=\"font-weight: bold\"> p100      </span>┃<span style=\"font-weight: bold\"> hist      </span>┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id         </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   7400</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> █████▇  </span> │  │\n",
-       "│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
+       "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100    </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7400</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
+       "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
        "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
@@ -97,11 +90,11 @@
        "│ │ Number of columns │ 2      │ │ datetime64  │ 1     │                                                          │\n",
        "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
        "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │\n",
-       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name       \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist     \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │\n",
-       "│ │ \u001b[38;5;141mentity_id         \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   5000\u001b[0m │ \u001b[36m   2900\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m   2500\u001b[0m │ \u001b[36m   7400\u001b[0m │ \u001b[36m    10000\u001b[0m │ \u001b[32m █████▇  \u001b[0m │  │\n",
-       "│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
+       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
+       "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  4900\u001b[0m │ \u001b[36m  7400\u001b[0m │ \u001b[36m  10000\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
+       "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
        "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
@@ -117,104 +110,34 @@
     {
      "data": {
       "text/html": [
-       "<div>\n",
-       "<style scoped>\n",
-       "    .dataframe tbody tr th:only-of-type {\n",
-       "        vertical-align: middle;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe tbody tr th {\n",
-       "        vertical-align: top;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe thead th {\n",
-       "        text-align: right;\n",
-       "    }\n",
+       "<div><style>\n",
+       ".dataframe > thead > tr,\n",
+       ".dataframe > tbody > tr {\n",
+       "  text-align: right;\n",
+       "  white-space: pre-wrap;\n",
+       "}\n",
        "</style>\n",
-       "<table border=\"1\" class=\"dataframe\">\n",
-       "  <thead>\n",
-       "    <tr style=\"text-align: right;\">\n",
-       "      <th></th>\n",
-       "      <th>entity_id</th>\n",
-       "      <th>timestamp</th>\n",
-       "    </tr>\n",
-       "  </thead>\n",
-       "  <tbody>\n",
-       "    <tr>\n",
-       "      <th>628</th>\n",
-       "      <td>0</td>\n",
-       "      <td>1969-01-11 09:55:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>2005</th>\n",
-       "      <td>1</td>\n",
-       "      <td>1965-03-15 07:16:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>4370</th>\n",
-       "      <td>2</td>\n",
-       "      <td>1969-09-13 23:18:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6152</th>\n",
-       "      <td>3</td>\n",
-       "      <td>1968-02-04 16:16:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6873</th>\n",
-       "      <td>4</td>\n",
-       "      <td>1965-01-28 12:33:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>...</th>\n",
-       "      <td>...</td>\n",
-       "      <td>...</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9688</th>\n",
-       "      <td>9996</td>\n",
-       "      <td>1965-07-18 17:12:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>1463</th>\n",
-       "      <td>9996</td>\n",
-       "      <td>1965-01-30 17:19:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>3952</th>\n",
-       "      <td>9997</td>\n",
-       "      <td>1967-06-08 07:52:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>7926</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>1968-02-07 22:24:00</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>5720</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>1965-07-19 14:59:00</td>\n",
-       "    </tr>\n",
-       "  </tbody>\n",
-       "</table>\n",
-       "<p>10000 rows × 2 columns</p>\n",
-       "</div>"
+       "<small>shape: (10_000, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th></tr><tr><td>i64</td><td>datetime[μs]</td></tr></thead><tbody><tr><td>0</td><td>1969-01-11 09:55:00</td></tr><tr><td>1</td><td>1965-03-15 07:16:00</td></tr><tr><td>2</td><td>1969-09-13 23:18:00</td></tr><tr><td>3</td><td>1968-02-04 16:16:00</td></tr><tr><td>4</td><td>1965-01-28 12:33:00</td></tr><tr><td>5</td><td>1967-10-09 06:22:00</td></tr><tr><td>7</td><td>1969-11-17 02:50:00</td></tr><tr><td>8</td><td>1965-12-11 02:17:00</td></tr><tr><td>9</td><td>1965-08-21 22:00:00</td></tr><tr><td>10</td><td>1965-12-26 16:45:00</td></tr><tr><td>11</td><td>1966-07-09 13:54:00</td></tr><tr><td>12</td><td>1968-01-26 22:35:00</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9990</td><td>1965-11-16 21:02:00</td></tr><tr><td>9990</td><td>1967-06-09 02:48:00</td></tr><tr><td>9991</td><td>1966-07-05 03:18:00</td></tr><tr><td>9994</td><td>1965-04-20 06:19:00</td></tr><tr><td>9994</td><td>1967-05-07 04:44:00</td></tr><tr><td>9995</td><td>1968-08-23 11:30:00</td></tr><tr><td>9995</td><td>1965-11-24 05:42:00</td></tr><tr><td>9996</td><td>1965-01-30 17:19:00</td></tr><tr><td>9996</td><td>1965-07-18 17:12:00</td></tr><tr><td>9997</td><td>1967-06-08 07:52:00</td></tr><tr><td>9999</td><td>1965-07-19 14:59:00</td></tr><tr><td>9999</td><td>1968-02-07 22:24:00</td></tr></tbody></table></div>"
       ],
       "text/plain": [
-       "      entity_id           timestamp\n",
-       "628           0 1969-01-11 09:55:00\n",
-       "2005          1 1965-03-15 07:16:00\n",
-       "4370          2 1969-09-13 23:18:00\n",
-       "6152          3 1968-02-04 16:16:00\n",
-       "6873          4 1965-01-28 12:33:00\n",
-       "...         ...                 ...\n",
-       "9688       9996 1965-07-18 17:12:00\n",
-       "1463       9996 1965-01-30 17:19:00\n",
-       "3952       9997 1967-06-08 07:52:00\n",
-       "7926       9999 1968-02-07 22:24:00\n",
-       "5720       9999 1965-07-19 14:59:00\n",
-       "\n",
-       "[10000 rows x 2 columns]"
+       "shape: (10_000, 2)\n",
+       "┌───────────┬─────────────────────┐\n",
+       "│ entity_id ┆ timestamp           │\n",
+       "│ ---       ┆ ---                 │\n",
+       "│ i64       ┆ datetime[μs]        │\n",
+       "╞═══════════╪═════════════════════╡\n",
+       "│ 0         ┆ 1969-01-11 09:55:00 │\n",
+       "│ 1         ┆ 1965-03-15 07:16:00 │\n",
+       "│ 2         ┆ 1969-09-13 23:18:00 │\n",
+       "│ 3         ┆ 1968-02-04 16:16:00 │\n",
+       "│ 4         ┆ 1965-01-28 12:33:00 │\n",
+       "│ …         ┆ …                   │\n",
+       "│ 9996      ┆ 1965-01-30 17:19:00 │\n",
+       "│ 9996      ┆ 1965-07-18 17:12:00 │\n",
+       "│ 9997      ┆ 1967-06-08 07:52:00 │\n",
+       "│ 9999      ┆ 1965-07-19 14:59:00 │\n",
+       "│ 9999      ┆ 1968-02-07 22:24:00 │\n",
+       "└───────────┴─────────────────────┘"
       ]
      },
      "execution_count": 1,
@@ -226,12 +149,12 @@
     "from __future__ import annotations\n",
     "\n",
     "from skimpy import skim\n",
-    "from timeseriesflattener.testing.load_synth_data import load_synth_prediction_times\n",
+    "from timeseriesflattenerv2.testing.load_synth_data import load_synth_prediction_times\n",
     "\n",
     "df_prediction_times = load_synth_prediction_times()\n",
     "\n",
     "skim(df_prediction_times)\n",
-    "df_prediction_times.sort_values(by=[\"entity_id\"])"
+    "df_prediction_times.sort([\"entity_id\"])"
    ]
   },
   {
@@ -239,7 +162,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Here, \"entity_id\" represents a patient ID and “timestamp” refers to the time when we want to issue a prediction. Note that each ID can have multiple prediction times."
+    "Here, \"entity_id\" represents a patient ID and “timestamp” refers to the time when we want to issue a prediction. Note that each ID can have multiple prediction times.\n"
    ]
   },
   {
@@ -248,7 +171,8 @@
    "metadata": {},
    "source": [
     "### Loading a temporal predictor\n",
-    "Then, we'll load the values for our temporal predictor. Temporal predictors are predictors that can have a different value at different timepoints."
+    "\n",
+    "Then, we'll load the values for our temporal predictor. Temporal predictors are predictors that can have a different value at different timepoints.\n"
    ]
   },
   {
@@ -269,12 +193,12 @@
        "│ └───────────────────┴────────┘ │ float64     │ 1     │                                                          │\n",
        "│                                └─────────────┴───────┘                                                          │\n",
        "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-       "│ ┃<span style=\"font-weight: bold\"> column_name       </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0         </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100     </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id        </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">         0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ██████ </span> │  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value            </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2.9</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.00015</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   7.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      10</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ██████ </span> │  │\n",
-       "│ └───────────────────┴──────┴─────────┴─────────┴────────┴────────────┴────────┴────────┴──────────┴──────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━┓  │\n",
+       "│ ┃<span style=\"font-weight: bold\"> column_name     </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %   </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0        </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75   </span>┃<span style=\"font-weight: bold\"> p100   </span>┃<span style=\"font-weight: bold\"> hist    </span>┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id      </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇ </span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value          </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2.9</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.00015</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    10</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇ </span> │  │\n",
+       "│ └─────────────────┴──────┴────────┴────────┴────────┴───────────┴────────┴────────┴───────┴────────┴─────────┘  │\n",
        "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
@@ -295,12 +219,12 @@
        "│ └───────────────────┴────────┘ │ float64     │ 1     │                                                          │\n",
        "│                                └─────────────┴───────┘                                                          │\n",
        "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0        \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-       "│ │ \u001b[38;5;141mentity_id        \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m         0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  7500\u001b[0m │ \u001b[36m   10000\u001b[0m │ \u001b[32m ██████ \u001b[0m │  │\n",
-       "│ │ \u001b[38;5;141mvalue            \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m      5\u001b[0m │ \u001b[36m   2.9\u001b[0m │ \u001b[36m   0.00015\u001b[0m │ \u001b[36m   2.5\u001b[0m │ \u001b[36m   7.5\u001b[0m │ \u001b[36m      10\u001b[0m │ \u001b[32m ██████ \u001b[0m │  │\n",
-       "│ └───────────────────┴──────┴─────────┴─────────┴────────┴────────────┴────────┴────────┴──────────┴──────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━┓  │\n",
+       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0       \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │\n",
+       "│ │ \u001b[38;5;141mentity_id      \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m        0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m 7500\u001b[0m │ \u001b[36m 10000\u001b[0m │ \u001b[32m▇▇▇▇▇▇ \u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mvalue          \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     5\u001b[0m │ \u001b[36m   2.9\u001b[0m │ \u001b[36m  0.00015\u001b[0m │ \u001b[36m   2.5\u001b[0m │ \u001b[36m     5\u001b[0m │ \u001b[36m  7.5\u001b[0m │ \u001b[36m    10\u001b[0m │ \u001b[32m▇▇▇▇▇▇ \u001b[0m │  │\n",
+       "│ └─────────────────┴──────┴────────┴────────┴────────┴───────────┴────────┴────────┴───────┴────────┴─────────┘  │\n",
        "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
@@ -316,116 +240,34 @@
     {
      "data": {
       "text/html": [
-       "<div>\n",
-       "<style scoped>\n",
-       "    .dataframe tbody tr th:only-of-type {\n",
-       "        vertical-align: middle;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe tbody tr th {\n",
-       "        vertical-align: top;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe thead th {\n",
-       "        text-align: right;\n",
-       "    }\n",
+       "<div><style>\n",
+       ".dataframe > thead > tr,\n",
+       ".dataframe > tbody > tr {\n",
+       "  text-align: right;\n",
+       "  white-space: pre-wrap;\n",
+       "}\n",
        "</style>\n",
-       "<table border=\"1\" class=\"dataframe\">\n",
-       "  <thead>\n",
-       "    <tr style=\"text-align: right;\">\n",
-       "      <th></th>\n",
-       "      <th>entity_id</th>\n",
-       "      <th>timestamp</th>\n",
-       "      <th>value</th>\n",
-       "    </tr>\n",
-       "  </thead>\n",
-       "  <tbody>\n",
-       "    <tr>\n",
-       "      <th>95792</th>\n",
-       "      <td>0</td>\n",
-       "      <td>1969-10-19 10:29:00</td>\n",
-       "      <td>0.799246</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>82592</th>\n",
-       "      <td>0</td>\n",
-       "      <td>1965-05-03 05:23:00</td>\n",
-       "      <td>6.630007</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>1377</th>\n",
-       "      <td>0</td>\n",
-       "      <td>1967-06-12 14:06:00</td>\n",
-       "      <td>0.174793</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>28579</th>\n",
-       "      <td>0</td>\n",
-       "      <td>1967-11-26 01:59:00</td>\n",
-       "      <td>2.981185</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>81247</th>\n",
-       "      <td>0</td>\n",
-       "      <td>1967-05-12 12:44:00</td>\n",
-       "      <td>0.970382</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>...</th>\n",
-       "      <td>...</td>\n",
-       "      <td>...</td>\n",
-       "      <td>...</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>10277</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>1967-06-20 00:12:00</td>\n",
-       "      <td>4.304568</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>74701</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>1968-08-19 10:15:00</td>\n",
-       "      <td>0.671907</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>69566</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>1968-01-08 02:41:00</td>\n",
-       "      <td>3.250538</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>40901</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>1966-04-23 02:37:00</td>\n",
-       "      <td>8.924175</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>96881</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>1969-06-24 07:19:00</td>\n",
-       "      <td>4.501553</td>\n",
-       "    </tr>\n",
-       "  </tbody>\n",
-       "</table>\n",
-       "<p>100000 rows × 3 columns</p>\n",
-       "</div>"
+       "<small>shape: (100_000, 3)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>f64</td></tr></thead><tbody><tr><td>0</td><td>1967-06-12 14:06:00</td><td>0.174793</td></tr><tr><td>0</td><td>1968-04-15 01:45:00</td><td>3.072293</td></tr><tr><td>0</td><td>1968-12-09 05:42:00</td><td>1.315754</td></tr><tr><td>0</td><td>1969-06-20 18:07:00</td><td>2.812481</td></tr><tr><td>0</td><td>1967-11-26 01:59:00</td><td>2.981185</td></tr><tr><td>0</td><td>1968-09-07 01:45:00</td><td>0.173205</td></tr><tr><td>0</td><td>1969-02-21 03:29:00</td><td>9.943505</td></tr><tr><td>0</td><td>1967-11-26 13:45:00</td><td>5.470792</td></tr><tr><td>0</td><td>1967-05-12 12:44:00</td><td>0.970382</td></tr><tr><td>0</td><td>1965-05-03 05:23:00</td><td>6.630007</td></tr><tr><td>0</td><td>1969-10-19 10:29:00</td><td>0.799246</td></tr><tr><td>0</td><td>1969-11-25 18:39:00</td><td>2.868688</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9999</td><td>1967-12-11 21:34:00</td><td>5.379503</td></tr><tr><td>9999</td><td>1968-05-26 12:28:00</td><td>9.645746</td></tr><tr><td>9999</td><td>1966-04-23 02:37:00</td><td>8.924175</td></tr><tr><td>9999</td><td>1968-10-24 18:47:00</td><td>2.34615</td></tr><tr><td>9999</td><td>1967-11-12 07:33:00</td><td>4.414524</td></tr><tr><td>9999</td><td>1966-07-15 20:55:00</td><td>0.684468</td></tr><tr><td>9999</td><td>1968-01-08 02:41:00</td><td>3.250538</td></tr><tr><td>9999</td><td>1968-08-19 10:15:00</td><td>0.671907</td></tr><tr><td>9999</td><td>1966-01-03 22:34:00</td><td>4.158796</td></tr><tr><td>9999</td><td>1966-06-27 10:55:00</td><td>4.414455</td></tr><tr><td>9999</td><td>1968-04-02 12:58:00</td><td>1.552491</td></tr><tr><td>9999</td><td>1969-06-24 07:19:00</td><td>4.501553</td></tr></tbody></table></div>"
       ],
       "text/plain": [
-       "       entity_id           timestamp     value\n",
-       "95792          0 1969-10-19 10:29:00  0.799246\n",
-       "82592          0 1965-05-03 05:23:00  6.630007\n",
-       "1377           0 1967-06-12 14:06:00  0.174793\n",
-       "28579          0 1967-11-26 01:59:00  2.981185\n",
-       "81247          0 1967-05-12 12:44:00  0.970382\n",
-       "...          ...                 ...       ...\n",
-       "10277       9999 1967-06-20 00:12:00  4.304568\n",
-       "74701       9999 1968-08-19 10:15:00  0.671907\n",
-       "69566       9999 1968-01-08 02:41:00  3.250538\n",
-       "40901       9999 1966-04-23 02:37:00  8.924175\n",
-       "96881       9999 1969-06-24 07:19:00  4.501553\n",
-       "\n",
-       "[100000 rows x 3 columns]"
+       "shape: (100_000, 3)\n",
+       "┌───────────┬─────────────────────┬──────────┐\n",
+       "│ entity_id ┆ timestamp           ┆ value    │\n",
+       "│ ---       ┆ ---                 ┆ ---      │\n",
+       "│ i64       ┆ datetime[μs]        ┆ f64      │\n",
+       "╞═══════════╪═════════════════════╪══════════╡\n",
+       "│ 0         ┆ 1967-06-12 14:06:00 ┆ 0.174793 │\n",
+       "│ 0         ┆ 1968-04-15 01:45:00 ┆ 3.072293 │\n",
+       "│ 0         ┆ 1968-12-09 05:42:00 ┆ 1.315754 │\n",
+       "│ 0         ┆ 1969-06-20 18:07:00 ┆ 2.812481 │\n",
+       "│ 0         ┆ 1967-11-26 01:59:00 ┆ 2.981185 │\n",
+       "│ …         ┆ …                   ┆ …        │\n",
+       "│ 9999      ┆ 1968-08-19 10:15:00 ┆ 0.671907 │\n",
+       "│ 9999      ┆ 1966-01-03 22:34:00 ┆ 4.158796 │\n",
+       "│ 9999      ┆ 1966-06-27 10:55:00 ┆ 4.414455 │\n",
+       "│ 9999      ┆ 1968-04-02 12:58:00 ┆ 1.552491 │\n",
+       "│ 9999      ┆ 1969-06-24 07:19:00 ┆ 4.501553 │\n",
+       "└───────────┴─────────────────────┴──────────┘"
       ]
      },
      "execution_count": 2,
@@ -434,12 +276,12 @@
     }
    ],
    "source": [
-    "from timeseriesflattener.testing.load_synth_data import load_synth_predictor_float\n",
+    "from timeseriesflattenerv2.testing.load_synth_data import load_synth_predictor_float\n",
     "\n",
     "df_synth_predictors = load_synth_predictor_float()\n",
     "\n",
     "skim(df_synth_predictors)\n",
-    "df_synth_predictors.sort_values(by=[\"entity_id\"])"
+    "df_synth_predictors.sort([\"entity_id\"])"
    ]
   },
   {
@@ -447,7 +289,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Once again, note that there can be multiple values for each ID."
+    "Once again, note that there can be multiple values for each ID.\n"
    ]
   },
   {
@@ -457,7 +299,7 @@
    "source": [
     "### Loading a static predictor\n",
     "\n",
-    "Frequently, you'll have one or more static predictors describing each entity. In this case, an entity is a patient, and an example of a static outcome could be their sex. It doesn't change over time (it's static), but can be used as a predictor for each prediction time. Let's load it in!"
+    "Frequently, you'll have one or more static predictors describing each entity. In this case, an entity is a patient, and an example of a static outcome could be their sex. It doesn't change over time (it's static), but can be used as a predictor for each prediction time. Let's load it in!\n"
    ]
   },
   {
@@ -477,12 +319,12 @@
        "│ │ Number of columns │ 2      │ └─────────────┴───────┘                                                          │\n",
        "│ └───────────────────┴────────┘                                                                                  │\n",
        "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │\n",
-       "│ ┃<span style=\"font-weight: bold\"> column_name        </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd      </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25     </span>┃<span style=\"font-weight: bold\"> p75     </span>┃<span style=\"font-weight: bold\"> p100      </span>┃<span style=\"font-weight: bold\"> hist      </span>┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id         </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ██████  </span> │  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">female            </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> █    █  </span> │  │\n",
-       "│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
+       "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100    </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">female          </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇    ▇ </span> │  │\n",
+       "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
        "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n",
        "</pre>\n"
       ],
@@ -496,12 +338,12 @@
        "│ │ Number of columns │ 2      │ └─────────────┴───────┘                                                          │\n",
        "│ └───────────────────┴────────┘                                                                                  │\n",
        "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │\n",
-       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name       \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist     \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │\n",
-       "│ │ \u001b[38;5;141mentity_id         \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   5000\u001b[0m │ \u001b[36m   2900\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m   2500\u001b[0m │ \u001b[36m   7500\u001b[0m │ \u001b[36m    10000\u001b[0m │ \u001b[32m ██████  \u001b[0m │  │\n",
-       "│ │ \u001b[38;5;141mfemale            \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m    0.5\u001b[0m │ \u001b[36m    0.5\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[36m        1\u001b[0m │ \u001b[32m █    █  \u001b[0m │  │\n",
-       "│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
+       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
+       "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  7500\u001b[0m │ \u001b[36m  10000\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mfemale          \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   0.5\u001b[0m │ \u001b[36m   0.5\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[32m ▇    ▇ \u001b[0m │  │\n",
+       "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
        "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n"
       ]
      },
@@ -511,104 +353,34 @@
     {
      "data": {
       "text/html": [
-       "<div>\n",
-       "<style scoped>\n",
-       "    .dataframe tbody tr th:only-of-type {\n",
-       "        vertical-align: middle;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe tbody tr th {\n",
-       "        vertical-align: top;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe thead th {\n",
-       "        text-align: right;\n",
-       "    }\n",
+       "<div><style>\n",
+       ".dataframe > thead > tr,\n",
+       ".dataframe > tbody > tr {\n",
+       "  text-align: right;\n",
+       "  white-space: pre-wrap;\n",
+       "}\n",
        "</style>\n",
-       "<table border=\"1\" class=\"dataframe\">\n",
-       "  <thead>\n",
-       "    <tr style=\"text-align: right;\">\n",
-       "      <th></th>\n",
-       "      <th>entity_id</th>\n",
-       "      <th>female</th>\n",
-       "    </tr>\n",
-       "  </thead>\n",
-       "  <tbody>\n",
-       "    <tr>\n",
-       "      <th>0</th>\n",
-       "      <td>0</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>1</th>\n",
-       "      <td>1</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>2</th>\n",
-       "      <td>2</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>3</th>\n",
-       "      <td>3</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>4</th>\n",
-       "      <td>4</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>...</th>\n",
-       "      <td>...</td>\n",
-       "      <td>...</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9994</th>\n",
-       "      <td>9995</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9995</th>\n",
-       "      <td>9996</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9996</th>\n",
-       "      <td>9997</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9997</th>\n",
-       "      <td>9998</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9998</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "  </tbody>\n",
-       "</table>\n",
-       "<p>9999 rows × 2 columns</p>\n",
-       "</div>"
+       "<small>shape: (9_999, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>female</th></tr><tr><td>i64</td><td>i64</td></tr></thead><tbody><tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>1</td></tr><tr><td>4</td><td>0</td></tr><tr><td>5</td><td>0</td></tr><tr><td>6</td><td>0</td></tr><tr><td>7</td><td>0</td></tr><tr><td>8</td><td>1</td></tr><tr><td>9</td><td>0</td></tr><tr><td>10</td><td>0</td></tr><tr><td>11</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9988</td><td>1</td></tr><tr><td>9989</td><td>0</td></tr><tr><td>9990</td><td>1</td></tr><tr><td>9991</td><td>0</td></tr><tr><td>9992</td><td>0</td></tr><tr><td>9993</td><td>0</td></tr><tr><td>9994</td><td>1</td></tr><tr><td>9995</td><td>0</td></tr><tr><td>9996</td><td>0</td></tr><tr><td>9997</td><td>1</td></tr><tr><td>9998</td><td>1</td></tr><tr><td>9999</td><td>0</td></tr></tbody></table></div>"
       ],
       "text/plain": [
-       "      entity_id  female\n",
-       "0             0       0\n",
-       "1             1       1\n",
-       "2             2       1\n",
-       "3             3       1\n",
-       "4             4       0\n",
-       "...         ...     ...\n",
-       "9994       9995       0\n",
-       "9995       9996       0\n",
-       "9996       9997       1\n",
-       "9997       9998       1\n",
-       "9998       9999       0\n",
-       "\n",
-       "[9999 rows x 2 columns]"
+       "shape: (9_999, 2)\n",
+       "┌───────────┬────────┐\n",
+       "│ entity_id ┆ female │\n",
+       "│ ---       ┆ ---    │\n",
+       "│ i64       ┆ i64    │\n",
+       "╞═══════════╪════════╡\n",
+       "│ 0         ┆ 0      │\n",
+       "│ 1         ┆ 1      │\n",
+       "│ 2         ┆ 1      │\n",
+       "│ 3         ┆ 1      │\n",
+       "│ 4         ┆ 0      │\n",
+       "│ …         ┆ …      │\n",
+       "│ 9995      ┆ 0      │\n",
+       "│ 9996      ┆ 0      │\n",
+       "│ 9997      ┆ 1      │\n",
+       "│ 9998      ┆ 1      │\n",
+       "│ 9999      ┆ 0      │\n",
+       "└───────────┴────────┘"
       ]
      },
      "execution_count": 3,
@@ -617,7 +389,7 @@
     }
    ],
    "source": [
-    "from timeseriesflattener.testing.load_synth_data import load_synth_sex\n",
+    "from timeseriesflattenerv2.testing.load_synth_data import load_synth_sex\n",
     "\n",
     "df_synth_sex = load_synth_sex()\n",
     "\n",
@@ -630,7 +402,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "As the predictor is static, there should only be a single value for each ID in this dataframe."
+    "As the predictor is static, there should only be a single value for each ID in this dataframe.\n"
    ]
   },
   {
@@ -638,7 +410,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Loading a temporal outcome"
+    "### Loading a temporal outcome\n"
    ]
   },
   {
@@ -646,7 +418,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "And, lastly, our outcome values. We've chosen a binary outcome and only stored values for the timestamps that experience the outcome. From these, we can infer patients that do not experience the outcome, since they do not have a timestamp. We handle this by setting a fallback of 0 - more on that in the following section."
+    "And, lastly, our outcome values. We've chosen a binary outcome and only stored values for the timestamps that experience the outcome. From these, we can infer patients that do not experience the outcome, since they do not have a timestamp. We handle this by setting a fallback of 0 - more on that in the following section.\n"
    ]
   },
   {
@@ -666,12 +438,12 @@
        "│ │ Number of columns │ 3      │ │ datetime64  │ 1     │                                                          │\n",
        "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
        "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │\n",
-       "│ ┃<span style=\"font-weight: bold\"> column_name        </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd      </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25     </span>┃<span style=\"font-weight: bold\"> p75     </span>┃<span style=\"font-weight: bold\"> p100      </span>┃<span style=\"font-weight: bold\"> hist      </span>┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id         </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   4</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   7600</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ██▇███  </span> │  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value             </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">     █   </span> │  │\n",
-       "│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
+       "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100    </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   4</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5100</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7600</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value           </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">     ▇  </span> │  │\n",
+       "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
        "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
@@ -691,12 +463,12 @@
        "│ │ Number of columns │ 3      │ │ datetime64  │ 1     │                                                          │\n",
        "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
        "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓  │\n",
-       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name       \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist     \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━┩  │\n",
-       "│ │ \u001b[38;5;141mentity_id         \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   5000\u001b[0m │ \u001b[36m   2900\u001b[0m │ \u001b[36m   4\u001b[0m │ \u001b[36m   2500\u001b[0m │ \u001b[36m   7600\u001b[0m │ \u001b[36m    10000\u001b[0m │ \u001b[32m ██▇███  \u001b[0m │  │\n",
-       "│ │ \u001b[38;5;141mvalue             \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   1\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[36m        1\u001b[0m │ \u001b[32m     █   \u001b[0m │  │\n",
-       "│ └────────────────────┴──────┴─────────┴─────────┴─────────┴──────┴─────────┴─────────┴───────────┴───────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
+       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
+       "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m   4\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  5100\u001b[0m │ \u001b[36m  7600\u001b[0m │ \u001b[36m  10000\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mvalue           \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m   1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[32m     ▇  \u001b[0m │  │\n",
+       "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
        "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
@@ -712,116 +484,34 @@
     {
      "data": {
       "text/html": [
-       "<div>\n",
-       "<style scoped>\n",
-       "    .dataframe tbody tr th:only-of-type {\n",
-       "        vertical-align: middle;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe tbody tr th {\n",
-       "        vertical-align: top;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe thead th {\n",
-       "        text-align: right;\n",
-       "    }\n",
+       "<div><style>\n",
+       ".dataframe > thead > tr,\n",
+       ".dataframe > tbody > tr {\n",
+       "  text-align: right;\n",
+       "  white-space: pre-wrap;\n",
+       "}\n",
        "</style>\n",
-       "<table border=\"1\" class=\"dataframe\">\n",
-       "  <thead>\n",
-       "    <tr style=\"text-align: right;\">\n",
-       "      <th></th>\n",
-       "      <th>entity_id</th>\n",
-       "      <th>timestamp</th>\n",
-       "      <th>value</th>\n",
-       "    </tr>\n",
-       "  </thead>\n",
-       "  <tbody>\n",
-       "    <tr>\n",
-       "      <th>1</th>\n",
-       "      <td>4</td>\n",
-       "      <td>1965-06-20 16:29:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>3</th>\n",
-       "      <td>7</td>\n",
-       "      <td>1968-10-16 01:46:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6</th>\n",
-       "      <td>12</td>\n",
-       "      <td>1965-04-17 07:17:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>7</th>\n",
-       "      <td>13</td>\n",
-       "      <td>1969-08-10 20:10:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>10</th>\n",
-       "      <td>18</td>\n",
-       "      <td>1969-02-02 09:16:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>...</th>\n",
-       "      <td>...</td>\n",
-       "      <td>...</td>\n",
-       "      <td>...</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6253</th>\n",
-       "      <td>9964</td>\n",
-       "      <td>1966-04-14 09:44:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6255</th>\n",
-       "      <td>9966</td>\n",
-       "      <td>1969-06-05 13:00:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6256</th>\n",
-       "      <td>9968</td>\n",
-       "      <td>1968-09-06 13:15:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6257</th>\n",
-       "      <td>9970</td>\n",
-       "      <td>1967-01-24 08:52:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>6269</th>\n",
-       "      <td>9992</td>\n",
-       "      <td>1966-12-10 14:53:00</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "  </tbody>\n",
-       "</table>\n",
-       "<p>3103 rows × 3 columns</p>\n",
-       "</div>"
+       "<small>shape: (3_103, 3)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>i64</td></tr></thead><tbody><tr><td>1727</td><td>1966-08-01 07:08:00</td><td>1</td></tr><tr><td>2269</td><td>1965-09-07 11:14:00</td><td>1</td></tr><tr><td>6050</td><td>1969-10-28 22:11:00</td><td>1</td></tr><tr><td>2230</td><td>1966-10-06 16:26:00</td><td>1</td></tr><tr><td>6449</td><td>1966-02-06 14:18:00</td><td>1</td></tr><tr><td>3165</td><td>1965-03-03 18:44:00</td><td>1</td></tr><tr><td>9602</td><td>1968-07-01 03:24:00</td><td>1</td></tr><tr><td>9569</td><td>1968-02-07 11:17:00</td><td>1</td></tr><tr><td>12</td><td>1965-04-17 07:17:00</td><td>1</td></tr><tr><td>9224</td><td>1967-12-01 09:23:00</td><td>1</td></tr><tr><td>2638</td><td>1966-12-11 07:07:00</td><td>1</td></tr><tr><td>3415</td><td>1968-06-20 21:58:00</td><td>1</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9679</td><td>1967-12-11 09:25:00</td><td>1</td></tr><tr><td>3376</td><td>1969-03-23 02:20:00</td><td>1</td></tr><tr><td>8348</td><td>1966-02-10 10:22:00</td><td>1</td></tr><tr><td>3370</td><td>1969-07-01 12:05:00</td><td>1</td></tr><tr><td>4576</td><td>1968-02-04 19:26:00</td><td>1</td></tr><tr><td>3623</td><td>1968-02-13 14:43:00</td><td>1</td></tr><tr><td>5591</td><td>1967-03-13 02:57:00</td><td>1</td></tr><tr><td>9563</td><td>1969-03-07 08:20:00</td><td>1</td></tr><tr><td>899</td><td>1967-07-30 06:03:00</td><td>1</td></tr><tr><td>7979</td><td>1967-02-13 12:39:00</td><td>1</td></tr><tr><td>8479</td><td>1965-09-11 10:29:00</td><td>1</td></tr><tr><td>1655</td><td>1966-05-21 13:06:00</td><td>1</td></tr></tbody></table></div>"
       ],
       "text/plain": [
-       "      entity_id           timestamp  value\n",
-       "1             4 1965-06-20 16:29:00      1\n",
-       "3             7 1968-10-16 01:46:00      1\n",
-       "6            12 1965-04-17 07:17:00      1\n",
-       "7            13 1969-08-10 20:10:00      1\n",
-       "10           18 1969-02-02 09:16:00      1\n",
-       "...         ...                 ...    ...\n",
-       "6253       9964 1966-04-14 09:44:00      1\n",
-       "6255       9966 1969-06-05 13:00:00      1\n",
-       "6256       9968 1968-09-06 13:15:00      1\n",
-       "6257       9970 1967-01-24 08:52:00      1\n",
-       "6269       9992 1966-12-10 14:53:00      1\n",
-       "\n",
-       "[3103 rows x 3 columns]"
+       "shape: (3_103, 3)\n",
+       "┌───────────┬─────────────────────┬───────┐\n",
+       "│ entity_id ┆ timestamp           ┆ value │\n",
+       "│ ---       ┆ ---                 ┆ ---   │\n",
+       "│ i64       ┆ datetime[μs]        ┆ i64   │\n",
+       "╞═══════════╪═════════════════════╪═══════╡\n",
+       "│ 1727      ┆ 1966-08-01 07:08:00 ┆ 1     │\n",
+       "│ 2269      ┆ 1965-09-07 11:14:00 ┆ 1     │\n",
+       "│ 6050      ┆ 1969-10-28 22:11:00 ┆ 1     │\n",
+       "│ 2230      ┆ 1966-10-06 16:26:00 ┆ 1     │\n",
+       "│ 6449      ┆ 1966-02-06 14:18:00 ┆ 1     │\n",
+       "│ …         ┆ …                   ┆ …     │\n",
+       "│ 9563      ┆ 1969-03-07 08:20:00 ┆ 1     │\n",
+       "│ 899       ┆ 1967-07-30 06:03:00 ┆ 1     │\n",
+       "│ 7979      ┆ 1967-02-13 12:39:00 ┆ 1     │\n",
+       "│ 8479      ┆ 1965-09-11 10:29:00 ┆ 1     │\n",
+       "│ 1655      ┆ 1966-05-21 13:06:00 ┆ 1     │\n",
+       "└───────────┴─────────────────────┴───────┘"
       ]
      },
      "execution_count": 4,
@@ -830,7 +520,7 @@
     }
    ],
    "source": [
-    "from timeseriesflattener.testing.load_synth_data import load_synth_outcome\n",
+    "from timeseriesflattenerv2.testing.load_synth_data import load_synth_outcome\n",
     "\n",
     "df_synth_outcome = load_synth_outcome()\n",
     "\n",
@@ -845,7 +535,7 @@
    "source": [
     "This dataframe should contain at most 1 row per ID, which is the first time they experience the outcome.\n",
     "\n",
-    "We now have 4 dataframes loaded: df_prediction_times, df_synth_predictors, df_synth_sex and df_synth_outcome."
+    "We now have 4 dataframes loaded: df_prediction_times, df_synth_predictors, df_synth_sex and df_synth_outcome.\n"
    ]
   },
   {
@@ -854,7 +544,8 @@
    "metadata": {},
    "source": [
     "## Specifying how to flatten the data\n",
-    "We'll have to specify how to flatten predictors and outcomes. To do this, we use the feature specification objects as \"recipes\" for each column in our finished dataframe. Firstly, we'll specify the outcome specification."
+    "\n",
+    "We'll have to specify how to flatten predictors and outcomes. To do this, we use the feature specification objects as \"recipes\" for each column in our finished dataframe. Firstly, we'll specify the outcome specification.\n"
    ]
   },
   {
@@ -862,7 +553,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Temporal outcome specification"
+    "### Temporal outcome specification\n"
    ]
   },
   {
@@ -872,8 +563,8 @@
    "source": [
     "![](img/term_a.png)\n",
     "\n",
-    "The main decision to make for outcomes is the size of the **lookahead** window. It determines how far into the future from a given prediction time to look for outcome values. \n",
-    "A **prediction time** indicates at which point the model issues a prediction, and is used as a reference for the *lookahead*.  "
+    "The main decision to make for outcomes is the size of the **lookahead** window. It determines how far into the future from a given prediction time to look for outcome values.\n",
+    "A **prediction time** indicates at which point the model issues a prediction, and is used as a reference for the _lookahead_.\n"
    ]
   },
   {
@@ -883,7 +574,7 @@
    "source": [
     "![](img/term_b.png)\n",
     "\n",
-    "We want labels for prediction times to be 0 if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels should only be 1 if the outcome occurs inside the lookahead window. Let's specify this in code."
+    "We want labels for prediction times to be 0 if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels should only be 1 if the outcome occurs inside the lookahead window. Let's specify this in code.\n"
    ]
   },
   {
@@ -892,19 +583,23 @@
    "metadata": {},
    "outputs": [],
    "source": [
+    "import datetime as dt\n",
+    "\n",
     "import pandas as pd\n",
-    "from timeseriesflattener.aggregation_fns import maximum\n",
-    "from timeseriesflattener.feature_specs.single_specs import OutcomeSpec\n",
+    "from timeseriesflattenerv2.aggregators import MaxAggregator\n",
+    "from timeseriesflattenerv2.feature_specs.meta import ValueFrame\n",
+    "from timeseriesflattenerv2.feature_specs.outcome import BooleanOutcomeSpec\n",
+    "from timeseriesflattenerv2.feature_specs.timestamp_frame import TimestampValueFrame\n",
     "\n",
-    "test_df = pd.DataFrame()\n",
+    "test_df = pd.DataFrame({\"entity_id\": [0], \"timestamp\": [pd.Timestamp(\"2020-01-01\")]})\n",
     "\n",
-    "outcome_spec = OutcomeSpec(\n",
-    "    timeseries_df=df_synth_outcome,\n",
-    "    lookahead_days=365,\n",
-    "    fallback=0,\n",
-    "    aggregation_fn=maximum,\n",
-    "    incident=False,\n",
-    "    feature_base_name=\"outcome_name\",\n",
+    "outcome_spec = BooleanOutcomeSpec(\n",
+    "    init_frame=TimestampValueFrame(\n",
+    "        entity_id_col_name=\"entity_id\", init_df=test_df, value_timestamp_col_name=\"timestamp\"\n",
+    "    ),\n",
+    "    lookahead_distances=[dt.timedelta(days=365)],\n",
+    "    aggregators=[MaxAggregator()],\n",
+    "    column_prefix=\"outc\",\n",
     ")"
    ]
   },
@@ -913,15 +608,15 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Since our outcome is binary, we want each prediction time to be labeled with 0 for the outcome if none is present within lookahead days. To do this, we use the fallback argument, which specifies the default value to use if none are found in `values_df` within `lookahead`. In this case, we set it to 0.\n",
+    "Since our outcome is binary, we want each prediction time to be labeled with 0 for the outcome if none is present within lookahead days. To do this, we use the fallback argument, which specifies the default value to use if none are found in `values_df` within `lookahead`. For the BooleanOutcomeSpec, this is hardcoded to 0.\n",
     "\n",
-    "Your use case determines how you want to handle multiple outcome values within lookahead days. In this case, we decide that any prediction time with at least one outcome (a timestamp in the loaded outcome data with a corresponding value of 1) within the specified lookahead days is \"positive\". I.e., if there is both a 0 and a 1 within lookahead days, the prediction time should be labeled with a 1. We set `aggregation_fn = maximum` to accomplish this.\n",
+    "Your use case determines how you want to handle multiple outcome values within lookahead days. In this case, we decide that any prediction time with at least one outcome (a timestamp in the loaded outcome data with a corresponding value of 1) within the specified lookahead days is \"positive\". I.e., if there is both a 0 and a 1 within lookahead days, the prediction time should be labeled with a 1. We set `aggregators = [MaxAggregator()]` to accomplish this.\n",
     "\n",
     "We also specify that the outcome is not incident. This means that patient ID (dw_ek_borger) can experience the outcome more than once. If the outcome was marked as incident, all prediction times after the patient experiences the outcome are dropped. This is useful for cases where an event is permanent - for example, whether a patient has type 1 diabetes or not.\n",
     "\n",
-    "Here, we specifiy that we want to look 365 days forward from the prediction time to search for outcomes. If we wanted to require a certain period of time from the prediction time before we look for outcome values, we can specify `lookahead_days` as an interval of (min_days, max_days) as a tuple instead. \n",
+    "Here, we specifiy that we want to look 365 days forward from the prediction time to search for outcomes. If we wanted to require a certain period of time from the prediction time before we look for outcome values, we can specify `lookahead` as an interval of (min_days, max_days) as a tuple instead.\n",
     "\n",
-    "Lastly, we specify a name of the outcome which'll be used when generating its column."
+    "Lastly, we specify a name of the outcome which'll be used when generating its column.\n"
    ]
   },
   {
@@ -929,7 +624,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Temporal predictor specification"
+    "### Temporal predictor specification\n"
    ]
   },
   {
@@ -937,7 +632,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Specifying a predictor is almost entirely identical to specifying an outcome. The only exception is that it looks a given number of days into the past from each prediction time instead of ahead."
+    "Specifying a predictor is almost entirely identical to specifying an outcome. The only exception is that it looks a given number of days into the past from each prediction time instead of ahead.\n"
    ]
   },
   {
@@ -947,15 +642,21 @@
    "outputs": [],
    "source": [
     "import numpy as np\n",
-    "from timeseriesflattener.aggregation_fns import mean\n",
-    "from timeseriesflattener.feature_specs.single_specs import PredictorSpec, StaticSpec\n",
+    "from timeseriesflattenerv2.aggregators import MeanAggregator\n",
+    "from timeseriesflattenerv2.feature_specs.predictor import PredictorSpec\n",
+    "from timeseriesflattenerv2.feature_specs.static import StaticSpec\n",
     "\n",
     "temporal_predictor_spec = PredictorSpec(\n",
-    "    timeseries_df=df_synth_predictors,\n",
-    "    lookbehind_days=730,\n",
+    "    value_frame=ValueFrame(\n",
+    "        entity_id_col_name=\"entity_id\",\n",
+    "        init_df=df_synth_predictors.rename({\"value\": \"value_1\"}),\n",
+    "        value_timestamp_col_name=\"timestamp\",\n",
+    "        value_col_name=\"value_1\",\n",
+    "    ),\n",
+    "    aggregators=[MeanAggregator()],\n",
+    "    column_prefix=\"pred\",\n",
     "    fallback=np.nan,\n",
-    "    aggregation_fn=mean,\n",
-    "    feature_base_name=\"predictor_name\",\n",
+    "    lookbehind_distances=[dt.timedelta(days=730)],\n",
     ")"
    ]
   },
@@ -966,16 +667,23 @@
    "source": [
     "![](img/term_c.png)\n",
     "\n",
-    "Values within the *lookbehind* window are aggregated using `aggregation_fn`, for example the mean as shown in this example, or max/min etc. "
+    "Values within the _lookbehind_ window are aggregated using `aggregators`, for example the mean as shown in this example, or max/min etc.\n"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Temporal predictors can also be specified to look for values within a certain time range from the prediction time, similar to outcome specifications. For instance, you might want to create multiple predictors, where one looks for values within (0, 30) days, and another within (31, 182) days.  \n",
+    "Note that we rename the value column to value_1. The value column's name determines the name of the output column after aggregation. To avoid multiple output columns with the same name, all input value columns must have unique names.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Temporal predictors can also be specified to look for values within a certain time range from the prediction time, similar to outcome specifications. For instance, you might want to create multiple predictors, where one looks for values within (0, 30) days, and another within (31, 182) days.\n",
     "\n",
-    "This can easily be specified by passing a tuple[min_days, max_days] to the lookbehind_days parameter."
+    "This can easily be specified by passing a tuple[min_days, max_days] to the lookbehind_days parameter.\n"
    ]
   },
   {
@@ -985,11 +693,16 @@
    "outputs": [],
    "source": [
     "temporal_interval_predictor_spec = PredictorSpec(\n",
-    "    timeseries_df=df_synth_predictors,\n",
-    "    lookbehind_days=(30, 90),\n",
+    "    value_frame=ValueFrame(\n",
+    "        entity_id_col_name=\"entity_id\",\n",
+    "        init_df=df_synth_predictors.rename({\"value\": \"value_2\"}),\n",
+    "        value_timestamp_col_name=\"timestamp\",\n",
+    "        value_col_name=\"value_2\",\n",
+    "    ),\n",
+    "    aggregators=[MeanAggregator()],\n",
+    "    column_prefix=\"pred\",\n",
     "    fallback=np.nan,\n",
-    "    aggregation_fn=mean,\n",
-    "    feature_base_name=\"predictor_interval_name\",\n",
+    "    lookbehind_distances=[(dt.timedelta(days=10), dt.timedelta(days=365))],\n",
     ")"
    ]
   },
@@ -999,8 +712,9 @@
    "metadata": {},
    "source": [
     "### Static predictor specification\n",
-    "Static features should be specified using `StaticSpec` as they are handled slightly differently. As in the previous specifications, we provide a `values_df` containing the values and we set the feature name. However, now we also add a prefix. By default, `PredictorSpec` prefixes columns with “pred” and `OutcomeSpec` prefixes columns with “outc” to make filtering easy. \n",
-    "As `StaticSpec` can be used for both generating predictors and outcomes, we manually set the prefix to be “pred”, as sex is used as predictor in this case."
+    "\n",
+    "Static features should be specified using `StaticSpec` as they are handled slightly differently. As in the previous specifications, we provide a `values_df` containing the values and we set the feature name. However, now we also add a prefix. By default, `PredictorSpec` prefixes columns with “pred” and `OutcomeSpec` prefixes columns with “outc” to make filtering easy.\n",
+    "As `StaticSpec` can be used for both generating predictors and outcomes, we manually set the prefix to be “pred”, as sex is used as predictor in this case.\n"
    ]
   },
   {
@@ -1011,104 +725,34 @@
     {
      "data": {
       "text/html": [
-       "<div>\n",
-       "<style scoped>\n",
-       "    .dataframe tbody tr th:only-of-type {\n",
-       "        vertical-align: middle;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe tbody tr th {\n",
-       "        vertical-align: top;\n",
-       "    }\n",
-       "\n",
-       "    .dataframe thead th {\n",
-       "        text-align: right;\n",
-       "    }\n",
+       "<div><style>\n",
+       ".dataframe > thead > tr,\n",
+       ".dataframe > tbody > tr {\n",
+       "  text-align: right;\n",
+       "  white-space: pre-wrap;\n",
+       "}\n",
        "</style>\n",
-       "<table border=\"1\" class=\"dataframe\">\n",
-       "  <thead>\n",
-       "    <tr style=\"text-align: right;\">\n",
-       "      <th></th>\n",
-       "      <th>entity_id</th>\n",
-       "      <th>female</th>\n",
-       "    </tr>\n",
-       "  </thead>\n",
-       "  <tbody>\n",
-       "    <tr>\n",
-       "      <th>0</th>\n",
-       "      <td>0</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>1</th>\n",
-       "      <td>1</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>2</th>\n",
-       "      <td>2</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>3</th>\n",
-       "      <td>3</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>4</th>\n",
-       "      <td>4</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>...</th>\n",
-       "      <td>...</td>\n",
-       "      <td>...</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9994</th>\n",
-       "      <td>9995</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9995</th>\n",
-       "      <td>9996</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9996</th>\n",
-       "      <td>9997</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9997</th>\n",
-       "      <td>9998</td>\n",
-       "      <td>1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th>9998</th>\n",
-       "      <td>9999</td>\n",
-       "      <td>0</td>\n",
-       "    </tr>\n",
-       "  </tbody>\n",
-       "</table>\n",
-       "<p>9999 rows × 2 columns</p>\n",
-       "</div>"
+       "<small>shape: (9_999, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>female</th></tr><tr><td>i64</td><td>i64</td></tr></thead><tbody><tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>1</td></tr><tr><td>4</td><td>0</td></tr><tr><td>5</td><td>0</td></tr><tr><td>6</td><td>0</td></tr><tr><td>7</td><td>0</td></tr><tr><td>8</td><td>1</td></tr><tr><td>9</td><td>0</td></tr><tr><td>10</td><td>0</td></tr><tr><td>11</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9988</td><td>1</td></tr><tr><td>9989</td><td>0</td></tr><tr><td>9990</td><td>1</td></tr><tr><td>9991</td><td>0</td></tr><tr><td>9992</td><td>0</td></tr><tr><td>9993</td><td>0</td></tr><tr><td>9994</td><td>1</td></tr><tr><td>9995</td><td>0</td></tr><tr><td>9996</td><td>0</td></tr><tr><td>9997</td><td>1</td></tr><tr><td>9998</td><td>1</td></tr><tr><td>9999</td><td>0</td></tr></tbody></table></div>"
       ],
       "text/plain": [
-       "      entity_id  female\n",
-       "0             0       0\n",
-       "1             1       1\n",
-       "2             2       1\n",
-       "3             3       1\n",
-       "4             4       0\n",
-       "...         ...     ...\n",
-       "9994       9995       0\n",
-       "9995       9996       0\n",
-       "9996       9997       1\n",
-       "9997       9998       1\n",
-       "9998       9999       0\n",
-       "\n",
-       "[9999 rows x 2 columns]"
+       "shape: (9_999, 2)\n",
+       "┌───────────┬────────┐\n",
+       "│ entity_id ┆ female │\n",
+       "│ ---       ┆ ---    │\n",
+       "│ i64       ┆ i64    │\n",
+       "╞═══════════╪════════╡\n",
+       "│ 0         ┆ 0      │\n",
+       "│ 1         ┆ 1      │\n",
+       "│ 2         ┆ 1      │\n",
+       "│ 3         ┆ 1      │\n",
+       "│ 4         ┆ 0      │\n",
+       "│ …         ┆ …      │\n",
+       "│ 9995      ┆ 0      │\n",
+       "│ 9996      ┆ 0      │\n",
+       "│ 9997      ┆ 1      │\n",
+       "│ 9998      ┆ 1      │\n",
+       "│ 9999      ┆ 0      │\n",
+       "└───────────┴────────┘"
       ]
      },
      "execution_count": 8,
@@ -1117,8 +761,12 @@
     }
    ],
    "source": [
+    "from timeseriesflattenerv2.feature_specs.static import StaticFrame\n",
+    "\n",
     "sex_predictor_spec = StaticSpec(\n",
-    "    timeseries_df=df_synth_sex, feature_base_name=\"female\", prefix=\"pred\"\n",
+    "    value_frame=StaticFrame(init_df=df_synth_sex, value_col_name=\"female\"),\n",
+    "    column_prefix=\"pred\",\n",
+    "    fallback=np.nan,\n",
     ")\n",
     "\n",
     "df_synth_sex"
@@ -1129,7 +777,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Note that we also specify the \"input_col_name_override\", because the df_synth_sex df has its values in the \"female\" column. By default, tsflattener looks for a column names \"value\"."
+    "Note that we also specify the \"value_col_name\", because the df_synth_sex df has its values in the \"female\" column. By default, tsflattener looks for a column names \"value\".\n"
    ]
   },
   {
@@ -1137,7 +785,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Now we're ready to flatten our dataset!"
+    "Now we're ready to flatten our dataset!\n"
    ]
   },
   {
@@ -1146,7 +794,8 @@
    "metadata": {},
    "source": [
     "## Flattening\n",
-    "Flattening is as easy as instantiating the `TimeseriesFlattener` class with the prediction times df along with dataset specific metadata and calling the `add_*` functions. `n_workers` can be set to parallelize operations across multiple cores. "
+    "\n",
+    "Flattening is as easy as instantiating the `TimeseriesFlattener` class with the prediction times df along with dataset specific metadata and calling the `add_*` functions. `n_workers` can be set to parallelize operations across multiple cores.\n"
    ]
   },
   {
@@ -1155,61 +804,119 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "from timeseriesflattener import TimeseriesFlattener\n",
+    "from timeseriesflattenerv2.feature_specs.prediction_times import PredictionTimeFrame\n",
+    "from timeseriesflattenerv2.flattener import Flattener\n",
     "\n",
-    "ts_flattener = TimeseriesFlattener(\n",
-    "    prediction_times_df=df_prediction_times,\n",
-    "    entity_id_col_name=\"entity_id\",\n",
-    "    timestamp_col_name=\"timestamp\",\n",
-    "    n_workers=1,\n",
-    "    drop_pred_times_with_insufficient_look_distance=True,\n",
-    ")"
-   ]
-  },
-  {
-   "attachments": {},
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "We set `drop_pred_times_with_insufficient_look_distance` to true. This means prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. \n",
-    "\n",
-    "![](img/term_d.png)\n",
-    "\n",
-    "\n",
-    "For most applications, this should be true - you do not want features to say they're looking a year into the future, if you only have a month of data. This would compromise generalisability. However, there are some edge cases where you might want this to be false - see the advanced tutorial for a brief discussion on this."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 10,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "ts_flattener.add_spec(\n",
-    "    [sex_predictor_spec, temporal_predictor_spec, temporal_interval_predictor_spec, outcome_spec]\n",
+    "flattener = Flattener(\n",
+    "    predictiontime_frame=PredictionTimeFrame(\n",
+    "        init_df=df_prediction_times, entity_id_col_name=\"entity_id\", timestamp_col_name=\"timestamp\"\n",
+    "    )\n",
     ")"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 16,
    "metadata": {},
    "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">/Users/au484925/Desktop/Git/timeseriesflattener/.venv/lib/python3.9/site-packages/rich/live.py:231: UserWarning: \n",
+       "install \"ipywidgets\" for Jupyter support\n",
+       "  warnings.warn('install \"ipywidgets\" for Jupyter support')\n",
+       "</pre>\n"
+      ],
+      "text/plain": [
+       "/Users/au484925/Desktop/Git/timeseriesflattener/.venv/lib/python3.9/site-packages/rich/live.py:231: UserWarning: \n",
+       "install \"ipywidgets\" for Jupyter support\n",
+       "  warnings.warn('install \"ipywidgets\" for Jupyter support')\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: female\n",
+       "</pre>\n"
+      ],
+      "text/plain": [
+       "Processing spec: female\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: value_1\n",
+       "</pre>\n"
+      ],
+      "text/plain": [
+       "Processing spec: value_1\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: value_2\n",
+       "</pre>\n"
+      ],
+      "text/plain": [
+       "Processing spec: value_2\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: value\n",
+       "</pre>\n"
+      ],
+      "text/plain": [
+       "Processing spec: value\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\"></pre>\n"
+      ],
+      "text/plain": []
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">\n",
+       "</pre>\n"
+      ],
+      "text/plain": [
+       "\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
     {
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "2024-01-18 11:34:22 [INFO] There were unprocessed specs, computing...\n",
-      "2024-01-18 11:34:22 [INFO] _drop_pred_time_if_insufficient_look_distance: Dropped 5999 (59.99%) rows\n",
-      "2024-01-18 11:34:22 [INFO] Processing 3 temporal features in parallel with 1 workers. Chunksize is 3. If this is above 1, it may take some time for the progress bar to move, as processing is batched. However, this makes for much faster total performance.\n",
-      "  0%|          | 0/3 [00:00<?, ?it/s]/Users/au554730/Desktop/Projects/timeseriesflattener/.venv/lib/python3.10/site-packages/pydantic/_internal/_config.py:269: UserWarning: Valid config keys have changed in V2:\n",
-      "* 'allow_mutation' has been removed\n",
-      "  warnings.warn(message, UserWarning)\n",
-      "100%|██████████| 3/3 [00:01<00:00,  2.11it/s]\n",
-      "2024-01-18 11:34:24 [INFO] Checking alignment of dataframes - this might take a little while (~2 minutes for 1.000 dataframes with 2.000.000 rows).\n",
-      "2024-01-18 11:34:24 [INFO] Starting concatenation. Will take some time on performant systems, e.g. 30s for 100 features and 2_000_000 prediction times. This is normal.\n",
-      "2024-01-18 11:34:24 [INFO] Concatenation took 0.005 seconds\n",
-      "2024-01-18 11:34:24 [INFO] Merging with original df\n"
+      "/Users/au484925/Desktop/Git/timeseriesflattener/.venv/lib/python3.9/site-packages/numpy/lib/histograms.py:885: RuntimeWarning: invalid value encountered in divide\n",
+      "  return n/db/n.sum(), bin_edges\n"
      ]
     },
     {
@@ -1220,33 +927,39 @@
        "│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │\n",
        "│ ┃<span style=\"color: #008080; text-decoration-color: #008080; font-weight: bold\"> dataframe         </span>┃<span style=\"color: #008080; text-decoration-color: #008080; font-weight: bold\"> Values </span>┃ ┃<span style=\"color: #008080; text-decoration-color: #008080; font-weight: bold\"> Column Type </span>┃<span style=\"color: #008080; text-decoration-color: #008080; font-weight: bold\"> Count </span>┃                                                          │\n",
        "│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │\n",
-       "│ │ Number of rows    │ 4001   │ │ float64     │ 3     │                                                          │\n",
-       "│ │ Number of columns │ 7      │ │ int64       │ 2     │                                                          │\n",
+       "│ │ Number of rows    │ 10000  │ │ int64       │ 3     │                                                          │\n",
+       "│ │ Number of columns │ 7      │ │ float64     │ 2     │                                                          │\n",
        "│ └───────────────────┴────────┘ │ datetime64  │ 1     │                                                          │\n",
        "│                                │ string      │ 1     │                                                          │\n",
        "│                                └─────────────┴───────┘                                                          │\n",
        "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┓  │\n",
-       "│ ┃<span style=\"font-weight: bold\"> column_name               </span>┃<span style=\"font-weight: bold\"> NA     </span>┃<span style=\"font-weight: bold\"> NA %   </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0      </span>┃<span style=\"font-weight: bold\"> p25   </span>┃<span style=\"font-weight: bold\"> p75   </span>┃<span style=\"font-weight: bold\"> p100   </span>┃<span style=\"font-weight: bold\"> hist   </span>┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━┩  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id                </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      3</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2600</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">█████▇</span> │  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_predictor_name_     </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    72</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1.8</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1.6</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.097</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  3.9</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    6</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   9.9</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▁▃██▃▁</span> │  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_predictor_inter     </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    72</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2.8</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.02</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2.6</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7.4</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    10</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇██▇</span> │  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">outc_outcome_name_wi     </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.064</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.25</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">█    ▁</span> │  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_female              </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.49</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">█    █</span> │  │\n",
-       "│ └───────────────────────────┴────────┴────────┴─────────┴────────┴─────────┴───────┴───────┴────────┴────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
+       "│ ┃<span style=\"font-weight: bold\"> column_name             </span>┃<span style=\"font-weight: bold\"> NA     </span>┃<span style=\"font-weight: bold\"> NA %  </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd    </span>┃<span style=\"font-weight: bold\"> p0    </span>┃<span style=\"font-weight: bold\"> p25   </span>┃<span style=\"font-weight: bold\"> p50   </span>┃<span style=\"font-weight: bold\"> p75  </span>┃<span style=\"font-weight: bold\"> p100  </span>┃<span style=\"font-weight: bold\"> hist   </span>┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id              </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 4900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">7400</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇</span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_female_fallback_na</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.49</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇    ▇</span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">n                      </span> │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_value_1_within_0_t</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.97</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.66</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4.3</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 5.6</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    9</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▁▇▇▂ </span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">o_730_days_mean_fallbac</span> │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">k_nan                  </span> │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_value_2_within_10_</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 10000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  100</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">      </span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">to_365_days_mean_fallba</span> │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">ck_nan                 </span> │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">outc_value_within_0_to_</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.0001</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.01</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">  ▇   </span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">365_days_max_fallback_0</span> │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ └─────────────────────────┴────────┴───────┴─────────┴───────┴───────┴───────┴───────┴──────┴───────┴────────┘  │\n",
        "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
        "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">timestamp       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #800000; text-decoration-color: #800000\">   1967-01-02 01:16:00    </span> │ <span style=\"color: #800000; text-decoration-color: #800000\">   1968-12-31 04:39:00    </span> │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">None        </span> │  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">timestamp       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #800000; text-decoration-color: #800000\">   1965-01-02 09:35:00    </span> │ <span style=\"color: #800000; text-decoration-color: #800000\">   1969-12-31 21:42:00    </span> │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">None        </span> │  │\n",
        "│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │\n",
        "│ <span style=\"font-style: italic\">                                                    string                                                    </span>  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓  │\n",
-       "│ ┃<span style=\"font-weight: bold\"> column_name                           </span>┃<span style=\"font-weight: bold\"> NA    </span>┃<span style=\"font-weight: bold\"> NA %      </span>┃<span style=\"font-weight: bold\"> words per row            </span>┃<span style=\"font-weight: bold\"> total words         </span>┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩  │\n",
-       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">prediction_time_uuid                 </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">                       1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">               4000</span> │  │\n",
-       "│ └───────────────────────────────────────┴───────┴───────────┴──────────────────────────┴─────────────────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓  │\n",
+       "│ ┃<span style=\"font-weight: bold\"> column_name                   </span>┃<span style=\"font-weight: bold\"> NA     </span>┃<span style=\"font-weight: bold\"> NA %       </span>┃<span style=\"font-weight: bold\"> words per row               </span>┃<span style=\"font-weight: bold\"> total words            </span>┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩  │\n",
+       "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_time_uuid               </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">         0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">                          2</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">                 20000</span> │  │\n",
+       "│ └───────────────────────────────┴────────┴────────────┴─────────────────────────────┴────────────────────────┘  │\n",
        "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n",
        "</pre>\n"
       ],
@@ -1256,33 +969,39 @@
        "│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │\n",
        "│ ┃\u001b[1;36m \u001b[0m\u001b[1;36mdataframe        \u001b[0m\u001b[1;36m \u001b[0m┃\u001b[1;36m \u001b[0m\u001b[1;36mValues\u001b[0m\u001b[1;36m \u001b[0m┃ ┃\u001b[1;36m \u001b[0m\u001b[1;36mColumn Type\u001b[0m\u001b[1;36m \u001b[0m┃\u001b[1;36m \u001b[0m\u001b[1;36mCount\u001b[0m\u001b[1;36m \u001b[0m┃                                                          │\n",
        "│ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                                                          │\n",
-       "│ │ Number of rows    │ 4001   │ │ float64     │ 3     │                                                          │\n",
-       "│ │ Number of columns │ 7      │ │ int64       │ 2     │                                                          │\n",
+       "│ │ Number of rows    │ 10000  │ │ int64       │ 3     │                                                          │\n",
+       "│ │ Number of columns │ 7      │ │ float64     │ 2     │                                                          │\n",
        "│ └───────────────────┴────────┘ │ datetime64  │ 1     │                                                          │\n",
        "│                                │ string      │ 1     │                                                          │\n",
        "│                                └─────────────┴───────┘                                                          │\n",
        "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┓  │\n",
-       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name              \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist  \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━┩  │\n",
-       "│ │ \u001b[38;5;141mentity_id                \u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m   5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m      3\u001b[0m │ \u001b[36m 2600\u001b[0m │ \u001b[36m 7500\u001b[0m │ \u001b[36m 10000\u001b[0m │ \u001b[32m█████▇\u001b[0m │  │\n",
-       "│ │ \u001b[38;5;141mpred_predictor_name_     \u001b[0m │ \u001b[36m    72\u001b[0m │ \u001b[36m   1.8\u001b[0m │ \u001b[36m      5\u001b[0m │ \u001b[36m   1.6\u001b[0m │ \u001b[36m  0.097\u001b[0m │ \u001b[36m  3.9\u001b[0m │ \u001b[36m    6\u001b[0m │ \u001b[36m   9.9\u001b[0m │ \u001b[32m▁▃██▃▁\u001b[0m │  │\n",
-       "│ │ \u001b[38;5;141mpred_predictor_inter     \u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m    72\u001b[0m │ \u001b[36m      5\u001b[0m │ \u001b[36m   2.8\u001b[0m │ \u001b[36m   0.02\u001b[0m │ \u001b[36m  2.6\u001b[0m │ \u001b[36m  7.4\u001b[0m │ \u001b[36m    10\u001b[0m │ \u001b[32m▇▇▇██▇\u001b[0m │  │\n",
-       "│ │ \u001b[38;5;141moutc_outcome_name_wi     \u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m  0.064\u001b[0m │ \u001b[36m  0.25\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[32m█    ▁\u001b[0m │  │\n",
-       "│ │ \u001b[38;5;141mpred_female              \u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m   0.49\u001b[0m │ \u001b[36m   0.5\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[32m█    █\u001b[0m │  │\n",
-       "│ └───────────────────────────┴────────┴────────┴─────────┴────────┴─────────┴───────┴───────┴────────┴────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
+       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name            \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA % \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75 \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100 \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist  \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
+       "│ │ \u001b[38;5;141mentity_id              \u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   5000\u001b[0m │ \u001b[36m 2900\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m 2500\u001b[0m │ \u001b[36m 4900\u001b[0m │ \u001b[36m7400\u001b[0m │ \u001b[36m10000\u001b[0m │ \u001b[32m▇▇▇▇▇▇\u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mpred_female_fallback_na\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   0.49\u001b[0m │ \u001b[36m  0.5\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   1\u001b[0m │ \u001b[36m    1\u001b[0m │ \u001b[32m▇    ▇\u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mn                      \u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ \u001b[38;5;141mpred_value_1_within_0_t\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m      5\u001b[0m │ \u001b[36m 0.97\u001b[0m │ \u001b[36m 0.66\u001b[0m │ \u001b[36m  4.3\u001b[0m │ \u001b[36m    5\u001b[0m │ \u001b[36m 5.6\u001b[0m │ \u001b[36m    9\u001b[0m │ \u001b[32m ▁▇▇▂ \u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mo_730_days_mean_fallbac\u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ \u001b[38;5;141mk_nan                  \u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ \u001b[38;5;141mpred_value_2_within_10_\u001b[0m │ \u001b[36m 10000\u001b[0m │ \u001b[36m  100\u001b[0m │ \u001b[36m    nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[32m      \u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mto_365_days_mean_fallba\u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ \u001b[38;5;141mck_nan                 \u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ │ \u001b[38;5;141moutc_value_within_0_to_\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m 0.0001\u001b[0m │ \u001b[36m 0.01\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m    1\u001b[0m │ \u001b[32m  ▇   \u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141m365_days_max_fallback_0\u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
+       "│ └─────────────────────────┴────────┴───────┴─────────┴───────┴───────┴───────┴───────┴──────┴───────┴────────┘  │\n",
        "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
        "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
        "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
        "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩  │\n",
-       "│ │ \u001b[38;5;141mtimestamp       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[31m   1967-01-02 01:16:00    \u001b[0m │ \u001b[31m   1968-12-31 04:39:00    \u001b[0m │ \u001b[38;5;141mNone        \u001b[0m │  │\n",
+       "│ │ \u001b[38;5;141mtimestamp       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[31m   1965-01-02 09:35:00    \u001b[0m │ \u001b[31m   1969-12-31 21:42:00    \u001b[0m │ \u001b[38;5;141mNone        \u001b[0m │  │\n",
        "│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │\n",
        "│ \u001b[3m                                                    string                                                    \u001b[0m  │\n",
-       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓  │\n",
-       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name                          \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mwords per row           \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mtotal words        \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩  │\n",
-       "│ │ \u001b[38;5;141mprediction_time_uuid                 \u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m        0\u001b[0m │ \u001b[36m                       1\u001b[0m │ \u001b[36m               4000\u001b[0m │  │\n",
-       "│ └───────────────────────────────────────┴───────┴───────────┴──────────────────────────┴─────────────────────┘  │\n",
+       "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓  │\n",
+       "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name                  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mwords per row              \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mtotal words           \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+       "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩  │\n",
+       "│ │ \u001b[38;5;141mpred_time_uuid               \u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m         0\u001b[0m │ \u001b[36m                          2\u001b[0m │ \u001b[36m                 20000\u001b[0m │  │\n",
+       "│ └───────────────────────────────┴────────┴────────────┴─────────────────────────────┴────────────────────────┘  │\n",
        "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n"
       ]
      },
@@ -1294,20 +1013,27 @@
       "text/plain": [
        "['entity_id',\n",
        " 'timestamp',\n",
-       " 'prediction_time_uuid',\n",
-       " 'pred_predictor_name_within_0_to_730_days_mean_fallback_nan',\n",
-       " 'pred_predictor_interval_name_within_30_to_90_days_mean_fallback_nan',\n",
-       " 'outc_outcome_name_within_0_to_365_days_maximum_fallback_0_dichotomous',\n",
-       " 'pred_female']"
+       " 'pred_time_uuid',\n",
+       " 'pred_female_fallback_nan',\n",
+       " 'pred_value_1_within_0_to_730_days_mean_fallback_nan',\n",
+       " 'pred_value_2_within_10_to_365_days_mean_fallback_nan',\n",
+       " 'outc_value_within_0_to_365_days_max_fallback_0']"
       ]
      },
-     "execution_count": 11,
+     "execution_count": 16,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
-    "df = ts_flattener.get_df()\n",
+    "df = flattener.aggregate_timeseries(\n",
+    "    specs=[\n",
+    "        sex_predictor_spec,\n",
+    "        temporal_predictor_spec,\n",
+    "        temporal_interval_predictor_spec,\n",
+    "        outcome_spec,\n",
+    "    ]\n",
+    ").df.collect()\n",
     "\n",
     "skim(df)\n",
     "\n",
@@ -1316,156 +1042,82 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 17,
    "metadata": {},
    "outputs": [
     {
      "data": {
       "text/html": [
-       "<style type=\"text/css\">\n",
+       "<div><style>\n",
+       ".dataframe > thead > tr,\n",
+       ".dataframe > tbody > tr {\n",
+       "  text-align: right;\n",
+       "  white-space: pre-wrap;\n",
+       "}\n",
        "</style>\n",
-       "<table id=\"T_4dbad\" style=\"font-size: 14px\">\n",
-       "  <thead>\n",
-       "    <tr>\n",
-       "      <th class=\"blank level0\" >&nbsp;</th>\n",
-       "      <th id=\"T_4dbad_level0_col0\" class=\"col_heading level0 col0\" >entity_id</th>\n",
-       "      <th id=\"T_4dbad_level0_col1\" class=\"col_heading level0 col1\" >timestamp</th>\n",
-       "      <th id=\"T_4dbad_level0_col2\" class=\"col_heading level0 col2\" >prediction_time_uuid</th>\n",
-       "      <th id=\"T_4dbad_level0_col3\" class=\"col_heading level0 col3\" >pred_X</th>\n",
-       "      <th id=\"T_4dbad_level0_col4\" class=\"col_heading level0 col4\" >pred_X_30_to_90</th>\n",
-       "      <th id=\"T_4dbad_level0_col5\" class=\"col_heading level0 col5\" >outc_Y</th>\n",
-       "      <th id=\"T_4dbad_level0_col6\" class=\"col_heading level0 col6\" >pred_female</th>\n",
-       "    </tr>\n",
-       "  </thead>\n",
-       "  <tbody>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row0\" class=\"row_heading level0 row0\" >0</th>\n",
-       "      <td id=\"T_4dbad_row0_col0\" class=\"data row0 col0\" >9903</td>\n",
-       "      <td id=\"T_4dbad_row0_col1\" class=\"data row0 col1\" >1968-05-09 21:24:00</td>\n",
-       "      <td id=\"T_4dbad_row0_col2\" class=\"data row0 col2\" >9903-1968-05-09-21-24-00</td>\n",
-       "      <td id=\"T_4dbad_row0_col3\" class=\"data row0 col3\" >0.990763</td>\n",
-       "      <td id=\"T_4dbad_row0_col4\" class=\"data row0 col4\" >nan</td>\n",
-       "      <td id=\"T_4dbad_row0_col5\" class=\"data row0 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row0_col6\" class=\"data row0 col6\" >0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row1\" class=\"row_heading level0 row1\" >1</th>\n",
-       "      <td id=\"T_4dbad_row1_col0\" class=\"data row1 col0\" >6447</td>\n",
-       "      <td id=\"T_4dbad_row1_col1\" class=\"data row1 col1\" >1967-09-25 18:08:00</td>\n",
-       "      <td id=\"T_4dbad_row1_col2\" class=\"data row1 col2\" >6447-1967-09-25-18-08-00</td>\n",
-       "      <td id=\"T_4dbad_row1_col3\" class=\"data row1 col3\" >5.582745</td>\n",
-       "      <td id=\"T_4dbad_row1_col4\" class=\"data row1 col4\" >7.577100</td>\n",
-       "      <td id=\"T_4dbad_row1_col5\" class=\"data row1 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row1_col6\" class=\"data row1 col6\" >1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row2\" class=\"row_heading level0 row2\" >2</th>\n",
-       "      <td id=\"T_4dbad_row2_col0\" class=\"data row2 col0\" >4927</td>\n",
-       "      <td id=\"T_4dbad_row2_col1\" class=\"data row2 col1\" >1968-06-30 12:13:00</td>\n",
-       "      <td id=\"T_4dbad_row2_col2\" class=\"data row2 col2\" >4927-1968-06-30-12-13-00</td>\n",
-       "      <td id=\"T_4dbad_row2_col3\" class=\"data row2 col3\" >4.957251</td>\n",
-       "      <td id=\"T_4dbad_row2_col4\" class=\"data row2 col4\" >nan</td>\n",
-       "      <td id=\"T_4dbad_row2_col5\" class=\"data row2 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row2_col6\" class=\"data row2 col6\" >0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row3\" class=\"row_heading level0 row3\" >3</th>\n",
-       "      <td id=\"T_4dbad_row3_col0\" class=\"data row3 col0\" >5475</td>\n",
-       "      <td id=\"T_4dbad_row3_col1\" class=\"data row3 col1\" >1967-01-09 03:09:00</td>\n",
-       "      <td id=\"T_4dbad_row3_col2\" class=\"data row3 col2\" >5475-1967-01-09-03-09-00</td>\n",
-       "      <td id=\"T_4dbad_row3_col3\" class=\"data row3 col3\" >5.999336</td>\n",
-       "      <td id=\"T_4dbad_row3_col4\" class=\"data row3 col4\" >9.497229</td>\n",
-       "      <td id=\"T_4dbad_row3_col5\" class=\"data row3 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row3_col6\" class=\"data row3 col6\" >0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row4\" class=\"row_heading level0 row4\" >4</th>\n",
-       "      <td id=\"T_4dbad_row4_col0\" class=\"data row4 col0\" >9793</td>\n",
-       "      <td id=\"T_4dbad_row4_col1\" class=\"data row4 col1\" >1968-12-15 12:59:00</td>\n",
-       "      <td id=\"T_4dbad_row4_col2\" class=\"data row4 col2\" >9793-1968-12-15-12-59-00</td>\n",
-       "      <td id=\"T_4dbad_row4_col3\" class=\"data row4 col3\" >7.294038</td>\n",
-       "      <td id=\"T_4dbad_row4_col4\" class=\"data row4 col4\" >8.182348</td>\n",
-       "      <td id=\"T_4dbad_row4_col5\" class=\"data row4 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row4_col6\" class=\"data row4 col6\" >0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row5\" class=\"row_heading level0 row5\" >5</th>\n",
-       "      <td id=\"T_4dbad_row5_col0\" class=\"data row5 col0\" >9768</td>\n",
-       "      <td id=\"T_4dbad_row5_col1\" class=\"data row5 col1\" >1967-07-04 23:09:00</td>\n",
-       "      <td id=\"T_4dbad_row5_col2\" class=\"data row5 col2\" >9768-1967-07-04-23-09-00</td>\n",
-       "      <td id=\"T_4dbad_row5_col3\" class=\"data row5 col3\" >4.326286</td>\n",
-       "      <td id=\"T_4dbad_row5_col4\" class=\"data row5 col4\" >nan</td>\n",
-       "      <td id=\"T_4dbad_row5_col5\" class=\"data row5 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row5_col6\" class=\"data row5 col6\" >1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row6\" class=\"row_heading level0 row6\" >6</th>\n",
-       "      <td id=\"T_4dbad_row6_col0\" class=\"data row6 col0\" >7916</td>\n",
-       "      <td id=\"T_4dbad_row6_col1\" class=\"data row6 col1\" >1968-12-20 03:38:00</td>\n",
-       "      <td id=\"T_4dbad_row6_col2\" class=\"data row6 col2\" >7916-1968-12-20-03-38-00</td>\n",
-       "      <td id=\"T_4dbad_row6_col3\" class=\"data row6 col3\" >4.629502</td>\n",
-       "      <td id=\"T_4dbad_row6_col4\" class=\"data row6 col4\" >nan</td>\n",
-       "      <td id=\"T_4dbad_row6_col5\" class=\"data row6 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row6_col6\" class=\"data row6 col6\" >0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row7\" class=\"row_heading level0 row7\" >7</th>\n",
-       "      <td id=\"T_4dbad_row7_col0\" class=\"data row7 col0\" >33</td>\n",
-       "      <td id=\"T_4dbad_row7_col1\" class=\"data row7 col1\" >1967-07-28 03:16:00</td>\n",
-       "      <td id=\"T_4dbad_row7_col2\" class=\"data row7 col2\" >33-1967-07-28-03-16-00</td>\n",
-       "      <td id=\"T_4dbad_row7_col3\" class=\"data row7 col3\" >4.628500</td>\n",
-       "      <td id=\"T_4dbad_row7_col4\" class=\"data row7 col4\" >nan</td>\n",
-       "      <td id=\"T_4dbad_row7_col5\" class=\"data row7 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row7_col6\" class=\"data row7 col6\" >0</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row8\" class=\"row_heading level0 row8\" >8</th>\n",
-       "      <td id=\"T_4dbad_row8_col0\" class=\"data row8 col0\" >2883</td>\n",
-       "      <td id=\"T_4dbad_row8_col1\" class=\"data row8 col1\" >1968-01-28 21:50:00</td>\n",
-       "      <td id=\"T_4dbad_row8_col2\" class=\"data row8 col2\" >2883-1968-01-28-21-50-00</td>\n",
-       "      <td id=\"T_4dbad_row8_col3\" class=\"data row8 col3\" >8.257742</td>\n",
-       "      <td id=\"T_4dbad_row8_col4\" class=\"data row8 col4\" >nan</td>\n",
-       "      <td id=\"T_4dbad_row8_col5\" class=\"data row8 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row8_col6\" class=\"data row8 col6\" >1</td>\n",
-       "    </tr>\n",
-       "    <tr>\n",
-       "      <th id=\"T_4dbad_level0_row9\" class=\"row_heading level0 row9\" >9</th>\n",
-       "      <td id=\"T_4dbad_row9_col0\" class=\"data row9 col0\" >1515</td>\n",
-       "      <td id=\"T_4dbad_row9_col1\" class=\"data row9 col1\" >1968-07-18 08:28:00</td>\n",
-       "      <td id=\"T_4dbad_row9_col2\" class=\"data row9 col2\" >1515-1968-07-18-08-28-00</td>\n",
-       "      <td id=\"T_4dbad_row9_col3\" class=\"data row9 col3\" >2.973084</td>\n",
-       "      <td id=\"T_4dbad_row9_col4\" class=\"data row9 col4\" >0.671010</td>\n",
-       "      <td id=\"T_4dbad_row9_col5\" class=\"data row9 col5\" >0.000000</td>\n",
-       "      <td id=\"T_4dbad_row9_col6\" class=\"data row9 col6\" >0</td>\n",
-       "    </tr>\n",
-       "  </tbody>\n",
-       "</table>\n"
+       "<small>shape: (10_000, 7)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>pred_time_uuid</th><th>pred_female_fallback_nan</th><th>predX</th><th>predX_30_to_90</th><th>outc_Y</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>str</td><td>i64</td><td>f64</td><td>f64</td><td>i32</td></tr></thead><tbody><tr><td>9903</td><td>1968-05-09 21:24:00</td><td>&quot;9903-1968-05-0…</td><td>0</td><td>3.197213</td><td>NaN</td><td>0</td></tr><tr><td>7465</td><td>1966-05-24 01:23:00</td><td>&quot;7465-1966-05-2…</td><td>1</td><td>4.243969</td><td>NaN</td><td>0</td></tr><tr><td>6447</td><td>1967-09-25 18:08:00</td><td>&quot;6447-1967-09-2…</td><td>1</td><td>5.260492</td><td>NaN</td><td>0</td></tr><tr><td>2121</td><td>1966-05-05 20:52:00</td><td>&quot;2121-1966-05-0…</td><td>0</td><td>4.798062</td><td>NaN</td><td>0</td></tr><tr><td>4927</td><td>1968-06-30 12:13:00</td><td>&quot;4927-1968-06-3…</td><td>0</td><td>4.040067</td><td>NaN</td><td>0</td></tr><tr><td>5475</td><td>1967-01-09 03:09:00</td><td>&quot;5475-1967-01-0…</td><td>0</td><td>5.953548</td><td>NaN</td><td>0</td></tr><tr><td>3157</td><td>1969-10-07 05:01:00</td><td>&quot;3157-1969-10-0…</td><td>1</td><td>5.068696</td><td>NaN</td><td>0</td></tr><tr><td>9793</td><td>1968-12-15 12:59:00</td><td>&quot;9793-1968-12-1…</td><td>0</td><td>6.93591</td><td>NaN</td><td>0</td></tr><tr><td>5962</td><td>1965-11-08 17:03:00</td><td>&quot;5962-1965-11-0…</td><td>0</td><td>4.112929</td><td>NaN</td><td>0</td></tr><tr><td>9768</td><td>1967-07-04 23:09:00</td><td>&quot;9768-1967-07-0…</td><td>1</td><td>5.053019</td><td>NaN</td><td>0</td></tr><tr><td>9861</td><td>1969-01-22 17:34:00</td><td>&quot;9861-1969-01-2…</td><td>0</td><td>3.828896</td><td>NaN</td><td>0</td></tr><tr><td>657</td><td>1969-04-14 15:47:00</td><td>&quot;657-1969-04-14…</td><td>0</td><td>5.124361</td><td>NaN</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>6542</td><td>1967-04-15 14:37:00</td><td>&quot;6542-1967-04-1…</td><td>1</td><td>6.099213</td><td>NaN</td><td>0</td></tr><tr><td>5607</td><td>1966-02-14 02:15:00</td><td>&quot;5607-1966-02-1…</td><td>0</td><td>4.235413</td><td>NaN</td><td>0</td></tr><tr><td>4228</td><td>1967-02-26 05:45:00</td><td>&quot;4228-1967-02-2…</td><td>0</td><td>5.181058</td><td>NaN</td><td>0</td></tr><tr><td>8337</td><td>1965-07-14 08:14:00</td><td>&quot;8337-1965-07-1…</td><td>0</td><td>5.184373</td><td>NaN</td><td>0</td></tr><tr><td>9745</td><td>1969-02-04 01:18:00</td><td>&quot;9745-1969-02-0…</td><td>1</td><td>6.005186</td><td>NaN</td><td>0</td></tr><tr><td>7222</td><td>1966-06-07 16:10:00</td><td>&quot;7222-1966-06-0…</td><td>0</td><td>4.666051</td><td>NaN</td><td>0</td></tr><tr><td>3385</td><td>1967-07-17 19:18:00</td><td>&quot;3385-1967-07-1…</td><td>1</td><td>6.98234</td><td>NaN</td><td>0</td></tr><tr><td>7159</td><td>1966-12-12 16:32:00</td><td>&quot;7159-1966-12-1…</td><td>0</td><td>5.022668</td><td>NaN</td><td>0</td></tr><tr><td>147</td><td>1965-03-12 05:32:00</td><td>&quot;147-1965-03-12…</td><td>1</td><td>5.927239</td><td>NaN</td><td>0</td></tr><tr><td>1421</td><td>1968-04-15 15:53:00</td><td>&quot;1421-1968-04-1…</td><td>0</td><td>6.061767</td><td>NaN</td><td>0</td></tr><tr><td>3353</td><td>1966-01-15 10:04:00</td><td>&quot;3353-1966-01-1…</td><td>0</td><td>6.108344</td><td>NaN</td><td>0</td></tr><tr><td>1940</td><td>1968-05-17 10:49:00</td><td>&quot;1940-1968-05-1…</td><td>0</td><td>4.909043</td><td>NaN</td><td>0</td></tr></tbody></table></div>"
       ],
       "text/plain": [
-       "<pandas.io.formats.style.Styler at 0x13b5dd9f0>"
+       "shape: (10_000, 7)\n",
+       "┌───────────┬────────────────┬────────────────┬────────────────┬──────────┬───────────────┬────────┐\n",
+       "│ entity_id ┆ timestamp      ┆ pred_time_uuid ┆ pred_female_fa ┆ predX    ┆ predX_30_to_9 ┆ outc_Y │\n",
+       "│ ---       ┆ ---            ┆ ---            ┆ llback_nan     ┆ ---      ┆ 0             ┆ ---    │\n",
+       "│ i64       ┆ datetime[μs]   ┆ str            ┆ ---            ┆ f64      ┆ ---           ┆ i32    │\n",
+       "│           ┆                ┆                ┆ i64            ┆          ┆ f64           ┆        │\n",
+       "╞═══════════╪════════════════╪════════════════╪════════════════╪══════════╪═══════════════╪════════╡\n",
+       "│ 9903      ┆ 1968-05-09     ┆ 9903-1968-05-0 ┆ 0              ┆ 3.197213 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 21:24:00       ┆ 9 21:24:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ 7465      ┆ 1966-05-24     ┆ 7465-1966-05-2 ┆ 1              ┆ 4.243969 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 01:23:00       ┆ 4 01:23:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ 6447      ┆ 1967-09-25     ┆ 6447-1967-09-2 ┆ 1              ┆ 5.260492 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 18:08:00       ┆ 5 18:08:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ 2121      ┆ 1966-05-05     ┆ 2121-1966-05-0 ┆ 0              ┆ 4.798062 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 20:52:00       ┆ 5 20:52:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ 4927      ┆ 1968-06-30     ┆ 4927-1968-06-3 ┆ 0              ┆ 4.040067 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 12:13:00       ┆ 0 12:13:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ …         ┆ …              ┆ …              ┆ …              ┆ …        ┆ …             ┆ …      │\n",
+       "│ 7159      ┆ 1966-12-12     ┆ 7159-1966-12-1 ┆ 0              ┆ 5.022668 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 16:32:00       ┆ 2 16:32:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ 147       ┆ 1965-03-12     ┆ 147-1965-03-12 ┆ 1              ┆ 5.927239 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 05:32:00       ┆ 05:32:00.00000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 0              ┆                ┆          ┆               ┆        │\n",
+       "│ 1421      ┆ 1968-04-15     ┆ 1421-1968-04-1 ┆ 0              ┆ 6.061767 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 15:53:00       ┆ 5 15:53:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ 3353      ┆ 1966-01-15     ┆ 3353-1966-01-1 ┆ 0              ┆ 6.108344 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 10:04:00       ┆ 5 10:04:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "│ 1940      ┆ 1968-05-17     ┆ 1940-1968-05-1 ┆ 0              ┆ 4.909043 ┆ NaN           ┆ 0      │\n",
+       "│           ┆ 10:49:00       ┆ 7 10:49:00.000 ┆                ┆          ┆               ┆        │\n",
+       "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+       "└───────────┴────────────────┴────────────────┴────────────────┴──────────┴───────────────┴────────┘"
       ]
      },
-     "execution_count": 12,
+     "execution_count": 17,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
     "# For displayability, shorten col names\n",
-    "shortened_pred = \"pred_X\"\n",
-    "shortened_pred_interval = \"pred_X_30_to_90\"\n",
+    "shortened_pred = \"predX\"\n",
+    "shortened_predinterval = \"predX_30_to_90\"\n",
     "shortened_outcome = \"outc_Y\"\n",
     "\n",
-    "df = df.rename(\n",
+    "display_df = df.rename(\n",
     "    {\n",
-    "        \"pred_predictor_name_within_0_to_730_days_mean_fallback_nan\": shortened_pred,\n",
-    "        \"pred_predictor_interval_name_within_30_to_90_days_mean_fallback_nan\": shortened_pred_interval,\n",
-    "        \"outc_outcome_name_within_0_to_365_days_maximum_fallback_0_dichotomous\": shortened_outcome,\n",
-    "    },\n",
-    "    axis=1,\n",
+    "        \"pred_value_1_within_0_to_730_days_mean_fallback_nan\": shortened_pred,\n",
+    "        \"pred_value_2_within_10_to_365_days_mean_fallback_nan\": shortened_predinterval,\n",
+    "        \"outc_value_within_0_to_365_days_max_fallback_0\": shortened_outcome,\n",
+    "    }\n",
     ")\n",
-    "\n",
-    "df[0:10].style.set_table_attributes('style=\"font-size: 14px\"')"
+    "display_df"
    ]
   },
   {
@@ -1474,11 +1126,12 @@
    "metadata": {},
    "source": [
     "And there we go! A dataframe ready for classification, containing:\n",
+    "\n",
     "1. The citizen IDs\n",
     "2. Timestamps for each prediction time\n",
     "3. A unique identifier for each prediciton-time\n",
     "4. Our predictor columns, prefixed with `pred_` and\n",
-    "5. Our outcome columns, prefixed with `outc_`"
+    "5. Our outcome columns, prefixed with `outc_`\n"
    ]
   },
   {
@@ -1503,7 +1156,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.10.13"
+   "version": "3.9.18"
   },
   "orig_nbformat": 4,
   "vscode": {
