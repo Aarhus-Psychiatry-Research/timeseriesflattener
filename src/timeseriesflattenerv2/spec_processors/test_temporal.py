@@ -179,6 +179,30 @@ def test_multiple_aggregators():
     assert_frame_equal(aggregated_values.collect(), expected)
 
 
+def test_masking_multiple_values_multiple_aggregators():
+    masked_frame = TimeMaskedFrame(
+        validate_cols_exist=False,
+        init_df=str_to_pl_df(
+            """pred_time_uuid,value_1,value_2
+1-2021-01-03,1,np.nan
+1-2021-01-03,2,np.nan
+2-2021-01-03,2,np.nan
+2-2021-01-03,4,np.nan"""
+        ).lazy(),
+        value_col_names=["value_1", "value_2"],
+    )
+
+    aggregated_values = process_spec._aggregate_masked_frame(
+        masked_frame=masked_frame, aggregators=[MeanAggregator(), MaxAggregator()], fallback=0
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,value_1_mean_fallback_0,value_2_mean_fallback_0,value_1_max_fallback_0,value_2_max_fallback_0
+1-2021-01-03,1.5,0,2,0
+2-2021-01-03,3,0,4,0"""
+    )
+
+
 def test_process_time_from_event_spec():
     pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp
