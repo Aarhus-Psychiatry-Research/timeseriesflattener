@@ -44,7 +44,7 @@ def _get_spec_conflicts(specs: Sequence[ValueSpecification]) -> Iter[SpecError]:
         .filter(lambda val: len(val[1]) > 1)
         .map(
             lambda error: SpecError(
-                description=f"{error[0]} occurs in {len(error[1])} specs. All input value column names must be unique to avoid conflicts in the output."
+                description=f"The value column '{error[0]}' is specified in {len(error[1])} specs. All value column names must be unique to avoid conflicts in the output."
             )
         )
     )
