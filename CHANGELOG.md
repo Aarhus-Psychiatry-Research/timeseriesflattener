@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v1.34.0 (2024-02-22)
+
+### Feature
+
+* **#479:** Improve value column conflict error ([`4c33465`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4c33465ce0d6bbffc3f3cb648a09fd3eef8da3f9))
+
+### Documentation
+
+* **#474:** Update 01_basic ([`cc74a82`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cc74a826507f113b966487bfb2c5a7f3e0a239c3))
+
 ## v1.33.0 (2024-02-22)
 
 ### Feature
