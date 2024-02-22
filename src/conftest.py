@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 from pandas import DataFrame
 from timeseriesflattener.feature_specs.group_specs import NamedDataframe

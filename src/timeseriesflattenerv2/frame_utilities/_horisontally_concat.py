@@ -1,7 +1,12 @@
-from typing import Sequence
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import polars as pl
 from iterpy.iter import Iter
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def horizontally_concatenate_dfs(

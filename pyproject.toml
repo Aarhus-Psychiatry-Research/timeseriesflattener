@@ -36,7 +36,7 @@ dependencies = [
   "coloredlogs>14.0.0",
   "tqdm>4.1.0",
   "polars>0.18.0",
-  "iterpy==1.5.1",
+  "iterpy==1.6.0",
   "rich>=13.0.0",
 ]
 
@@ -96,11 +96,17 @@ rye = { dev-dependencies = [
 ] }
 
 [tool.pyright]
-exclude = [".*venv*/", ".venv38/", ".tox", ".benchmark_cache"]
+exclude = [
+  ".*venv*/",
+  ".venv38/",
+  ".tox",
+  ".benchmark_cache",
+  "src/timeseriesflattener",
+]
 
 [tool.ruff]
 line-length = 100
-target-version = "py38"
+target-version = "py39"
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 
 [tool.ruff.format]
@@ -175,6 +181,7 @@ exclude = [
   "__init__.py",
   "docs/conf.py",
   ".benchmark_cache/*",
+  "src/timeseriesflattener/*",
 ]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
@@ -185,6 +192,8 @@ suppress-none-returning = true
 
 [tool.ruff.lint.isort]
 known-third-party = ["wandb"]
+required-imports = ["from __future__ import annotations"]
+
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
