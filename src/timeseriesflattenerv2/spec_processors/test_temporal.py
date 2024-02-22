@@ -193,13 +193,14 @@ def test_process_time_from_event_spec():
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
         spec=TimeDeltaSpec(
             init_frame=TimestampValueFrame(init_df=value_frame),
-            output_name="age_in_years",
+            output_name="age",
             fallback=0,
+            time_format="years",
         ),
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_age_in_years_fallback_0
+        """pred_time_uuid,pred_age_years_fallback_0
 1-2021-01-01 00:00:00.000000,1.00274
 2-2021-01-01 00:00:00.000000,0
        """

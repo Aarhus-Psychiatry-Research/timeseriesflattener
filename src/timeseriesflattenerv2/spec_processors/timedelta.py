@@ -9,10 +9,16 @@ if TYPE_CHECKING:
     from ..feature_specs.timedelta import TimeDeltaSpec
 
 
+_days_to_format_division = {"minutes": 1 / (60 * 24), "hours": 1 / 24, "days": 1, "years": 365}
+
+
 def process_timedelta_spec(
     spec: "TimeDeltaSpec", predictiontime_frame: "PredictionTimeFrame"
 ) -> ProcessedFrame:
-    new_col_name = f"{spec.column_prefix}_{spec.output_name}_fallback_{spec.fallback}"
+    new_col_name = (
+        f"{spec.column_prefix}_{spec.output_name}_{spec.time_format}_fallback_{spec.fallback}"
+    )
+
     prediction_times_with_time_from_event = (
         predictiontime_frame.df.join(
             spec.df.rename({spec.init_frame.value_timestamp_col_name: "_event_time"}),
@@ -21,8 +27,10 @@ def process_timedelta_spec(
         )
         .with_columns(
             (
-                (pl.col(predictiontime_frame.timestamp_col_name) - pl.col("_event_time")).dt.days()
-                / 365
+                (
+                    pl.col(predictiontime_frame.timestamp_col_name) - pl.col("_event_time")
+                ).dt.total_days()
+                / _days_to_format_division[spec.time_format]
             )
             .fill_null(spec.fallback)
             .alias(new_col_name)
