@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v1.35.0 (2024-02-22)
+
+### Feature
+
+* **#479:** Improve value column conflict error ([#483](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/483)) ([`89e63ce`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/89e63ce47f1708943f95a50a0225a87fd64de658))
+
+### Documentation
+
+* **#475:** Delete 02_advanced.ipynb ([#486](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/486)) ([`6e2b685`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6e2b685a52667d68aab5e185bcd14272243b091e))
+* **#475:** Delete 02_advanced.ipynb ([`eb3006c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/eb3006cd588be01919beb48dcd6751783cc21c2f))
+
 ## v1.34.0 (2024-02-22)
 
 ### Feature
