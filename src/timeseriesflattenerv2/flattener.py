@@ -82,8 +82,6 @@ class Flattener:
     predictiontime_frame: "PredictionTimeFrame"
     compute_lazily: bool = False
     n_workers: int | None = None
-    drop_pred_times_with_insufficient_lookahead_distance: bool = False
-    drop_pred_times_with_insufficient_lookbehind_distance: bool = False
 
     def aggregate_timeseries(self, specs: Sequence["ValueSpecification"]) -> AggregatedFrame:
         if self.compute_lazily:
