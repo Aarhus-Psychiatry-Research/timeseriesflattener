@@ -9,7 +9,13 @@ if TYPE_CHECKING:
     from ..feature_specs.timedelta import TimeDeltaSpec
 
 
-_days_to_format_division = {"minutes": 1 / (60 * 24), "hours": 1 / 24, "days": 1, "years": 365}
+_days_to_format_division = {
+    "seconds": 1 / (60 * 24 * 60),
+    "minutes": 1 / (60 * 24),
+    "hours": 1 / 24,
+    "days": 1,
+    "years": 365.25,
+}
 
 
 def process_timedelta_spec(

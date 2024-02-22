@@ -16,7 +16,7 @@ class TimeDeltaSpec:
     fallback: ValueType
     output_name: str
     column_prefix: str = "pred"
-    time_format: Literal["minutes", "hours", "days", "years"] = "days"
+    time_format: Literal["seconds", "minutes", "hours", "days", "years"] = "days"
 
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
