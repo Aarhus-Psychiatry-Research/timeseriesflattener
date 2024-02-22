@@ -26,15 +26,13 @@ FakePredictiontimeFrame = PredictionTimeFrame(
     init_df=pl.LazyFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})
 )
 FakeValueFrame = ValueFrame(
-    init_df=pl.LazyFrame({"entity_id": [1], "value": [1], "timestamp": ["2021-01-01"]}),
-    value_col_name="value",
+    init_df=pl.LazyFrame({"entity_id": [1], "value": [1], "timestamp": ["2021-01-01"]})
 )
 FakePredictorSpec = PredictorSpec(
     value_frame=ValueFrame(
         init_df=pl.LazyFrame(
             {"entity_id": [1], "FakeValueColName": [1], "timestamp": ["2021-01-01"]}
-        ),
-        value_col_name="FakeValueColName",
+        )
     ),
     lookbehind_distances=[dt.timedelta(days=1)],
     aggregators=[MeanAggregator()],
@@ -89,7 +87,7 @@ def test_flattener(example: FlattenerExample):
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
+                value_frame=ValueFrame(init_df=value_frame.lazy()),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
@@ -121,7 +119,7 @@ def test_keep_prediction_times_without_predictors():
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.lazy(), value_col_name="value"),
+                value_frame=ValueFrame(init_df=value_frame.lazy()),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator(), EarliestAggregator(timestamp_col_name="timestamp")],
                 fallback=123,
@@ -158,19 +156,13 @@ def test_flattener_multiple_features():
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(
-                    init_df=value_frame.rename({"value": "value_1"}).lazy(),
-                    value_col_name="value_1",
-                ),
+                value_frame=ValueFrame(init_df=value_frame.rename({"value": "value_1"}).lazy()),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
             ),
             PredictorSpec(
-                value_frame=ValueFrame(
-                    init_df=value_frame.rename({"value": "value_2"}).lazy(),
-                    value_col_name="value_2",
-                ),
+                value_frame=ValueFrame(init_df=value_frame.rename({"value": "value_2"}).lazy()),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
@@ -210,10 +202,7 @@ def test_error_if_missing_entity_id_column():
 
 def test_error_if_missing_column_in_valueframe():
     with pytest.raises(SpecColumnError, match="Missing columns: *"):
-        ValueFrame(
-            init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"]}),
-            value_col_name="value",
-        )
+        ValueFrame(init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"]}))
 
 
 def test_predictor_with_interval_lookperiod():
@@ -229,9 +218,7 @@ def test_predictor_with_interval_lookperiod():
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(
-                    init_df=str_to_pl_df(predictor_df_str), value_col_name="value"
-                ),
+                value_frame=ValueFrame(init_df=str_to_pl_df(predictor_df_str)),
                 lookbehind_distances=[(dt.timedelta(days=5), dt.timedelta(days=30))],
                 fallback=np.NaN,
                 aggregators=[MeanAggregator()],
@@ -258,9 +245,7 @@ def test_outcome_with_interval_lookperiod():
     ).aggregate_timeseries(
         specs=[
             OutcomeSpec(
-                value_frame=ValueFrame(
-                    init_df=str_to_pl_df(outcome_df_str), value_col_name="value"
-                ),
+                value_frame=ValueFrame(init_df=str_to_pl_df(outcome_df_str)),
                 lookahead_distances=[(dt.timedelta(days=5), dt.timedelta(days=30))],
                 fallback=np.NaN,
                 aggregators=[MeanAggregator()],
@@ -287,9 +272,7 @@ def test_add_static_spec():
     ).aggregate_timeseries(
         specs=[
             OutcomeSpec(
-                value_frame=ValueFrame(
-                    init_df=str_to_pl_df(outcome_df_str), value_col_name="value"
-                ),
+                value_frame=ValueFrame(init_df=str_to_pl_df(outcome_df_str)),
                 lookahead_distances=[(dt.timedelta(days=5), dt.timedelta(days=30))],
                 fallback=np.NaN,
                 aggregators=[MeanAggregator()],

@@ -148,7 +148,7 @@ def test_aggregator(example: AggregatorExampleType):
     result = _aggregate_masked_frame(
         masked_frame=TimeMaskedFrame(
             init_df=example.input_frame,
-            value_col_name="value",
+            value_col_names=["value"],
             pred_time_uuid_col_name="pred_time_uuid",
             timestamp_col_name="timestamp",
         ),

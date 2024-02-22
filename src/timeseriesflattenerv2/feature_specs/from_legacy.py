@@ -92,8 +92,7 @@ class PredictorGroupSpec(V1PGSProtocol):
                                     self._infer_entity_id_col_name(ndf.df): "entity_id",
                                 },
                                 axis=1,
-                            ),
-                            value_col_name=ndf.name,
+                            )
                         ),
                         lookbehind_distances=lookbehind_days,
                         fallback=fallback,  # noqa: B023

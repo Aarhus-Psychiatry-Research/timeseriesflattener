@@ -36,10 +36,10 @@ class TimeDeltaSpec:
             init_df=self.init_frame.df.rename(
                 {self.init_frame.value_timestamp_col_name: self.output_name}
             ),
-            value_col_name=self.output_name,
             entity_id_col_name=self.init_frame.entity_id_col_name,
             value_timestamp_col_name=self.output_name,
         )
+        self.value_frame.value_col_names = [self.output_name]
 
     @property
     def df(self) -> pl.LazyFrame:

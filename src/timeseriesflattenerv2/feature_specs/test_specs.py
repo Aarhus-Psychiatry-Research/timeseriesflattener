@@ -14,8 +14,7 @@ from .timedelta import TimeDeltaSpec
 from .timestamp_frame import TimestampValueFrame
 
 MockValueFrame = ValueFrame(
-    init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"], "entity_id": [1]}),
-    value_col_name="value",
+    init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"], "entity_id": [1]})
 )
 
 
