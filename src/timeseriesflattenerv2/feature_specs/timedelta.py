@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
 
@@ -12,7 +14,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class TimeDeltaSpec:
-    init_frame: "TimestampValueFrame"
+    init_frame: TimestampValueFrame
     fallback: ValueType
     output_name: str
     column_prefix: str = "pred"
@@ -40,5 +42,5 @@ class TimeDeltaSpec:
         self.value_frame.value_col_names = [self.output_name]
 
     @property
-    def df(self) -> "pl.LazyFrame":
+    def df(self) -> pl.LazyFrame:
         return self.init_frame.df

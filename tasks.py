@@ -14,13 +14,12 @@ inv --list
 
 If you do not wish to use invoke you can simply delete this file.
 """
-
+from __future__ import annotations
 
 import platform
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
 
 from invoke import Context, Result, task  # type: ignore
 
@@ -71,7 +70,7 @@ def setup_venv(c: Context, python_version: str) -> str:
     return venv_name
 
 
-def _add_commit(c: Context, msg: Optional[str] = None):
+def _add_commit(c: Context, msg: str | None = None):
     print("🔨 Adding and committing changes")
     c.run("git add .")
 
@@ -89,7 +88,7 @@ def is_uncommitted_changes(c: Context) -> bool:
     return uncommitted_changes
 
 
-def add_and_commit(c: Context, msg: Optional[str] = None):
+def add_and_commit(c: Context, msg: str | None = None):
     """Add and commit all changes."""
     if is_uncommitted_changes(c):
         uncommitted_changes_descr = c.run("git status --porcelain", pty=True, hide=True).stdout
@@ -198,7 +197,7 @@ def update(c: Context):
 @task(iterable="pytest_args")
 def test(
     c: Context,
-    pytest_args: List[str] = [],  # noqa
+    pytest_args: list[str] = [],  # noqa
     testmon: bool = True,
 ):
     """Run tests"""

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Union
 
 import polars as pl
 import tqdm
@@ -12,10 +14,21 @@ from timeseriesflattenerv2.frame_utilities._horisontally_concat import horizonta
 from timeseriesflattenerv2.process_spec import process_spec
 
 from ._intermediary_frames import AggregatedFrame
+from .feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
+from .feature_specs.predictor import PredictorSpec
+from .feature_specs.static import StaticSpec
+from .feature_specs.timedelta import TimeDeltaSpec
 
 if TYPE_CHECKING:
-    from .feature_specs.meta import ValueSpecification
+    from collections.abc import Sequence
+
+    from typing_extensions import TypeAlias
+
     from .feature_specs.prediction_times import PredictionTimeFrame
+
+ValueSpecification: TypeAlias = Union[
+    PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec
+]
 
 
 @dataclass(frozen=True)
@@ -23,7 +36,7 @@ class SpecError(Exception):
     description: str
 
 
-def _get_spec_conflicts(specs: Sequence["ValueSpecification"]) -> Iter[SpecError]:
+def _get_spec_conflicts(specs: Sequence[ValueSpecification]) -> Iter[SpecError]:
     conflicting_value_col_names = (
         Iter(specs)
         .map(lambda s: s.value_frame.value_col_names)
@@ -48,7 +61,7 @@ class MissingColumnNameError(Exception):
 @dataclass(frozen=True)
 class SpecRequirementPair:
     required_columns: Sequence[str]
-    spec: "ValueSpecification"
+    spec: ValueSpecification
 
     def missing_columns(self) -> Iter[str]:
         return Iter(self.required_columns).filter(
@@ -57,7 +70,7 @@ class SpecRequirementPair:
 
 
 def _specs_contain_required_columns(
-    specs: Sequence["ValueSpecification"], predictiontime_frame: "PredictionTimeFrame"
+    specs: Sequence[ValueSpecification], predictiontime_frame: PredictionTimeFrame
 ) -> Iter[MissingColumnNameError]:
     missing_col_names = (
         Iter(specs)
@@ -80,11 +93,11 @@ def _specs_contain_required_columns(
 
 @dataclass
 class Flattener:
-    predictiontime_frame: "PredictionTimeFrame"
+    predictiontime_frame: PredictionTimeFrame
     compute_lazily: bool = False
     n_workers: int | None = None
 
-    def aggregate_timeseries(self, specs: Sequence["ValueSpecification"]) -> AggregatedFrame:
+    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedFrame:
         if self.compute_lazily:
             print(
                 "We have encountered performance issues on Windows when using lazy evaluation. If you encounter performance issues, try setting lazy=False."

@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import datetime as dt
 from dataclasses import dataclass
-from typing import Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
 import polars as pl
@@ -16,6 +18,9 @@ from .feature_specs.meta import ValueFrame
 from .feature_specs.outcome import OutcomeSpec
 from .feature_specs.prediction_times import PredictionTimeFrame
 from .feature_specs.predictor import PredictorSpec
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 FakePredictiontimeFrame = PredictionTimeFrame(
     init_df=pl.LazyFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})

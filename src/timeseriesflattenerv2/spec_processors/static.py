@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from .._intermediary_frames import ProcessedFrame
-from ..feature_specs.static import StaticSpec
 
 if TYPE_CHECKING:
     from ..feature_specs.prediction_times import PredictionTimeFrame
+    from ..feature_specs.static import StaticSpec
 
 
 def process_static_spec(
-    spec: StaticSpec, predictiontime_frame: "PredictionTimeFrame"
+    spec: StaticSpec, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     new_col_names = [
         f"{spec.column_prefix}_{value_col_name}_fallback_{spec.fallback}"

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 import polars as pl
 
@@ -11,6 +13,8 @@ from .feature_specs.default_column_names import (
 from .frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from .feature_specs.meta import ValueType
 
 if TYPE_CHECKING:
@@ -48,7 +52,7 @@ class AggregatedValueFrame:
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
 
-    def fill_nulls(self, fallback: "ValueType") -> "AggregatedValueFrame":
+    def fill_nulls(self, fallback: ValueType) -> AggregatedValueFrame:
         filled = self.df.with_columns(
             pl.col(self.value_col_name)
             .fill_null(fallback)
@@ -78,7 +82,7 @@ class TimeDeltaFrame:
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
 
-    def get_timedeltas(self) -> Sequence["dt.datetime"]:
+    def get_timedeltas(self) -> Sequence[dt.datetime]:
         return self.collect().get_column(self.timedelta_col_name).to_list()
 
     def collect(self) -> pl.DataFrame:

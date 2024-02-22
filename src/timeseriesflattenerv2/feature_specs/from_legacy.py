@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import datetime as dt
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Mapping, Sequence, Tuple, Union
+from typing import TYPE_CHECKING
 
 from iterpy.iter import Iter
 from timeseriesflattener.aggregation_fns import (
@@ -35,22 +37,24 @@ from ..aggregators import (
 from .meta import ValueFrame
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+
     import pandas as pd
 
 
 @dataclass
 class PredictorGroupSpec(V1PGSProtocol):
-    lookbehind_days: Sequence[Union[float, Tuple[float, float]]]
+    lookbehind_days: Sequence[float | tuple[float, float]]
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[AggregationFunType]
-    fallback: Sequence[Union[int, float, str]]
+    fallback: Sequence[int | float | str]
     prefix: str = "pred"
 
-    def _infer_entity_id_col_name(self, df: "pd.DataFrame") -> str:
+    def _infer_entity_id_col_name(self, df: pd.DataFrame) -> str:
         return next(c for c in df.columns if "entity" in c.lower() or "borger" in c.lower())
 
     def create_combinations(self) -> Sequence[v2_specs.PredictorSpec]:
-        if isinstance(self.lookbehind_days[0], Tuple):
+        if isinstance(self.lookbehind_days[0], tuple):
             lookbehind_days = [
                 (dt.timedelta(days=day[0]), dt.timedelta(days=day[1]))  # type: ignore
                 for day in self.lookbehind_days

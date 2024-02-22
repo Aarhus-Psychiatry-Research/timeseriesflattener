@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import polars as pl
@@ -19,7 +21,7 @@ _days_to_format_division = {
 
 
 def process_timedelta_spec(
-    spec: "TimeDeltaSpec", predictiontime_frame: "PredictionTimeFrame"
+    spec: TimeDeltaSpec, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     new_col_name = (
         f"{spec.column_prefix}_{spec.output_name}_{spec.time_format}_fallback_{spec.fallback}"

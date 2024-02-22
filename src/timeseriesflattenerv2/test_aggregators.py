@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Union
 
 import numpy as np
 import polars as pl
@@ -23,19 +25,21 @@ from .spec_processors.temporal import _aggregate_masked_frame
 from .test_flattener import assert_frame_equal
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from .aggregators import Aggregator
 
 
 @dataclass(frozen=True)
 class ComplexAggregatorExample:
-    aggregator: "Aggregator"
+    aggregator: Aggregator
     input_frame: pl.LazyFrame
     expected_output: pl.DataFrame
 
 
 @dataclass(frozen=True)
 class SingleVarAggregatorExample:
-    aggregator: "Aggregator"
+    aggregator: Aggregator
     input_values: Sequence[float | None]
     expected_output_values: Sequence[float]
 
@@ -59,7 +63,7 @@ class SingleVarAggregatorExample:
         )
 
 
-AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
+AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExample]
 
 # TODO: Write integration tests with Earliest and Latest aggregators, since they will depend on sorting
 
