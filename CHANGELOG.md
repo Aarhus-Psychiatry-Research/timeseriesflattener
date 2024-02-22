@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v1.36.0 (2024-02-22)
+
+### Feature
+
+* Text tutorial ([`b761131`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b76113187181b14fdd801991932c419adb789dfb))
+
+### Documentation
+
+* Update tutorials to not use value_col_name ([`872cd1f`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/872cd1f7000a7f0bf5694af6872c65d7e15ca317))
+
 ## v1.35.0 (2024-02-22)
 
 ### Feature
