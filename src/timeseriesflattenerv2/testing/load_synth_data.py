@@ -101,7 +101,5 @@ def load_synth_text() -> pl.DataFrame:
     Returns:
         pl.DataFrame
     """
-    df = load_raw_test_csv("synth_text_data.csv")
-    df["value"] = df["text"]
-    df = df.drop(["text"])
+    df = load_raw_test_csv("synth_text_data.csv").rename({"text": "value"})
     return df
