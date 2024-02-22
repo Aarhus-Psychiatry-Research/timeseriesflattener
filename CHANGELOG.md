@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v1.31.3 (2024-02-22)
+
+### Fix
+
+* Remove unused args in flattener ([`82e4cc3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/82e4cc3c50046126426238ff9f4a76565b94b848))
+
 ## v1.31.2 (2024-02-19)
 
 ### Fix
