@@ -117,6 +117,31 @@ def test_get_timedelta_frame():
     assert result.get_timedeltas() == expected_timedeltas
 
 
+def test_get_timedelta_frame_same_timestamp_col_names():
+    pred_frame = str_to_pl_df(
+        """entity_id,timestamp
+            1,2021-01-03"""
+    )
+
+    value_frame = str_to_pl_df(
+        """entity_id,value,timestamp
+        1,1,2021-01-01
+        1,2,2021-01-02
+        1,3,2021-01-03"""
+    )
+
+    expected_timedeltas = [dt.timedelta(days=-2), dt.timedelta(days=-1), dt.timedelta(days=0)]
+
+    result = process_spec._get_timedelta_frame(
+        predictiontime_frame=PredictionTimeFrame(
+            init_df=pred_frame.lazy(), timestamp_col_name="timestamp"
+        ),
+        value_frame=ValueFrame(init_df=value_frame.lazy()),
+    )
+
+    assert result.get_timedeltas() == expected_timedeltas
+
+
 def test_slice_without_any_within_window():
     timedelta_frame = TimeDeltaFrame(
         df=pl.LazyFrame(
