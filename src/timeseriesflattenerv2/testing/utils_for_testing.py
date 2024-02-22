@@ -1,9 +1,8 @@
 """Utilities for testing."""
 from __future__ import annotations
 
-from collections.abc import Sequence
 from io import StringIO
-from typing import Any, List, Optional, Union
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -11,8 +10,12 @@ import polars as pl
 from pandas import DataFrame
 from pandas.testing import assert_series_equal
 from timeseriesflattener import TimeseriesFlattener
-from timeseriesflattener.feature_specs.single_specs import AnySpec
 from timeseriesflattener.testing.load_synth_data import synth_predictor_binary
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from timeseriesflattener.feature_specs.single_specs import AnySpec
 
 
 def convert_cols_with_matching_colnames_to_datetime(
@@ -85,7 +88,7 @@ def str_to_df(
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
-def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: AnySpec) -> Union[str, List[str]]:
+def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: AnySpec) -> str | list[str]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_base_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
@@ -97,10 +100,10 @@ def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: AnySpec) -> Union[str,
 
 
 def assert_flattened_data_as_expected(
-    prediction_times_df: Union[pd.DataFrame, str],
+    prediction_times_df: pd.DataFrame | str,
     output_spec: AnySpec,
-    expected_df: Optional[pd.DataFrame] = None,
-    expected_values: Optional[Sequence[Any]] = None,
+    expected_df: pd.DataFrame | None = None,
+    expected_values: Sequence[Any] | None = None,
     drop_pred_times_with_insufficient_look_distance: bool = False,
 ):
     """Flatten spec and assert that flattened data is as expected."""
