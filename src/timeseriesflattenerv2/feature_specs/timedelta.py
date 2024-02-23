@@ -43,4 +43,4 @@ class TimeDeltaSpec:
 
     @property
     def df(self) -> pl.LazyFrame:
-        return self.init_frame.df
+        return self.value_frame.df
