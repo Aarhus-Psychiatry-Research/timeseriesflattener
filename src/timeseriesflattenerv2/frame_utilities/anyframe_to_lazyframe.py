@@ -17,3 +17,7 @@ def _anyframe_to_lazyframe(init_df: InitDF_T) -> pl.LazyFrame:
     if isinstance(init_df, pd.DataFrame):
         return pl.from_pandas(init_df).lazy()
     raise ValueError(f"Unsupported type: {type(init_df)}.")
+
+
+def _anyframe_to_eagerframe(init_df: InitDF_T) -> pl.DataFrame:
+    return _anyframe_to_lazyframe(init_df).collect()

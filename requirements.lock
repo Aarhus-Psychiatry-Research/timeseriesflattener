@@ -99,7 +99,7 @@ platformdirs==4.2.0
     # via jupyter-core
 plum-dispatch==1.7.4
     # via quartodoc
-polars==0.20.9
+polars==0.20.10
     # via skimpy
     # via timeseriesflattener
 prompt-toolkit==3.0.43
