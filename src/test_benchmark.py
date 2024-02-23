@@ -143,6 +143,14 @@ def test_bench(
 
     flattener = Flattener(predictiontime_frame=dataset.pred_time_frame, compute_lazily=False)
 
-    @benchmark
-    def flatten():
-        flattener.aggregate_timeseries(specs=dataset.predictor_specs)
+    try:
+
+        @benchmark
+        def flatten():
+            flattener.aggregate_timeseries(specs=dataset.predictor_specs)
+    except Exception as e:
+        print(
+            f"""Exception for benchmark tests. If only the benchmark-tests are failing, it is likely due to changes that the benchmark_dataset depend on. To fix this, delete the `.benchmark_cache` folder to regenerate the dataset.
+
+              {e}"""
+        )
