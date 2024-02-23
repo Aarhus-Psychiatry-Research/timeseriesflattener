@@ -24,20 +24,24 @@ def _get_timedelta_frame(
     predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
 ) -> TimeDeltaFrame:
     # Join the prediction time dataframe
-    # ensure that the timestamp col names are different to avoid conflicts
-    unique_predictiontime_frame_timestamp_col_name = (
-        f"__{predictiontime_frame.timestamp_col_name}__"
-    )
+    if predictiontime_frame.timestamp_col_name == value_frame.value_timestamp_col_name:
+        """If the timestamp col names are the same, they cause conflicts when joining."""
+        predictiontime_timestamp_col_name = f"_{predictiontime_frame.timestamp_col_name}"
+        join_patient_times = predictiontime_frame.df.rename(
+            {predictiontime_frame.timestamp_col_name: predictiontime_timestamp_col_name}
+        )
+    else:
+        predictiontime_timestamp_col_name = predictiontime_frame.timestamp_col_name
+        join_patient_times = predictiontime_frame.df
 
-    joined_frame = predictiontime_frame.df.rename(
-        {predictiontime_frame.timestamp_col_name: unique_predictiontime_frame_timestamp_col_name}
-    ).join(value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left")
+    joined_frame = join_patient_times.join(
+        value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left"
+    )
 
     # Get timedelta
     timedelta_frame = joined_frame.with_columns(
         (
-            pl.col(value_frame.value_timestamp_col_name)
-            - pl.col(unique_predictiontime_frame_timestamp_col_name)
+            pl.col(value_frame.value_timestamp_col_name) - pl.col(predictiontime_timestamp_col_name)
         ).alias("time_from_prediction_to_value")
     )
 

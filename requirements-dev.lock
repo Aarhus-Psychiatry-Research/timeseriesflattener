@@ -34,7 +34,7 @@ coloredlogs==15.0.1
     # via timeseriesflattener
 comm==0.2.1
     # via ipykernel
-coverage==7.4.1
+coverage==7.4.2
     # via pytest-cov
     # via pytest-testmon
 debugpy==1.8.1
@@ -121,7 +121,7 @@ pluggy==1.4.0
     # via pytest
 plum-dispatch==1.7.4
     # via quartodoc
-polars==0.20.9
+polars==0.20.10
     # via skimpy
     # via timeseriesflattener
 prompt-toolkit==3.0.43

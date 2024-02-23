@@ -28,6 +28,7 @@ class PredictionTimeFrame:
 
     def __post_init__(self, init_df: InitDF_T):
         self.df = _anyframe_to_lazyframe(init_df)
+
         self.df = self.df.with_columns(
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
