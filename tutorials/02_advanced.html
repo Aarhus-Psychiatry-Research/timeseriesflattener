@@ -1,0 +1,620 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<meta property="og:title" content="Doing multiple things at once!" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="tutorials/02_advanced.html" />
+<meta property="og:site_name" content="timeseriesflattener" />
+<meta property="og:description" content="In the first tutorial, we applied 1 aggregation function with 1 lookperiod to 1 value at a time. In reality, you’d likely want to create features for the same value at multiple lookbehind intervals..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/_images/social_previews/summary_tutorials_02_advanced_989d94d3.png" />
+<meta property="og:image:alt" content="In the first tutorial, we applied 1 aggregation function with 1 lookperiod to 1 value at a time. In reality, you’d likely want to create features for the sam..." />
+<meta name="description" content="In the first tutorial, we applied 1 aggregation function with 1 lookperiod to 1 value at a time. In reality, you’d likely want to create features for the same value at multiple lookbehind intervals..." />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Adding text features" href="03_text.html" /><link rel="prev" title="Introductory Tutorial" href="01_basic.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
+        <title>Doing multiple things at once! - Timeseriesflattener</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-brand-primary: #ff5454;
+  --color-brand-content: #ff7575;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #ff8f8f;
+  --color-brand-content: #ff8f8f;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #ff8f8f;
+  --color-brand-content: #ff8f8f;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Timeseriesflattener</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/icon_dark.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Timeseriesflattener</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../tutorials.html">Tutorials</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_basic.html">Introductory Tutorial</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Doing multiple things at once!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_text.html">Adding text features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../feature_specifications.html">Feature specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../timeseriesflattener.html">Timeseriesflattener</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/CHANGELOG.md">Changelog</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">GitHub</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener">GitHub Repository</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/edit/main/docs/tutorials/02_advanced.ipynb" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="doing-multiple-things-at-once">
+<h1>Doing multiple things at once!<a class="headerlink" href="#doing-multiple-things-at-once" title="Permalink to this heading">#</a></h1>
+<p>In the first tutorial, we applied 1 aggregation function with 1 lookperiod to 1 value at a time. In reality, you’d likely want to create features for the same value at multiple lookbehind intervals and with multiple aggregation functions. Additionally, some common features, such as the current age, require slightly different handling than what we’ve covered so far.</p>
+<p>Luckily, <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code> makes all of this extremely simple.</p>
+<p>This tutorial covers:</p>
+<ul class="simple">
+<li><p><strong>Multiple aggregations, lookdistances, and features at once.</strong></p></li>
+<li><p><strong>Creating features based on a timedelta.</strong></p></li>
+</ul>
+<section id="multiple-aggregation-functions-and-lookperiods">
+<h2>Multiple aggregation functions and lookperiods<a class="headerlink" href="#multiple-aggregation-functions-and-lookperiods" title="Permalink to this heading">#</a></h2>
+<p>To apply multiple aggregation functions across all combinations of lookperiods, you just have to supply more aggregators and lookperiods to the list! Let’s see an example. We start off by loading the prediction times and a dataframe containing the values we wish to aggregate.</p>
+<p><strong>Note</strong>: The interface for creating multiple featuers at once works in exactly the same way for <code class="docutils literal notranslate"><span class="pre">StaticSpec</span></code> as for <code class="docutils literal notranslate"><span class="pre">PredictorSpec</span></code>. We will use <code class="docutils literal notranslate"><span class="pre">PredictorSpec</span></code> for illustration.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the prediction times</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">timeseriesflattenerv2.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_prediction_times</span>
+
+<span class="n">df_prediction_times</span> <span class="o">=</span> <span class="n">load_synth_prediction_times</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load values for a temporal predictor</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattenerv2.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_predictor_float</span>
+
+<span class="n">df_synth_predictors</span> <span class="o">=</span> <span class="n">load_synth_predictor_float</span><span class="p">()</span>
+<span class="n">df_synth_predictors</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 3)</small><table border="1" class="dataframe"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>f64</td></tr></thead><tbody><tr><td>9476</td><td>1969-03-05 08:08:00</td><td>0.816995</td></tr><tr><td>4631</td><td>1967-04-10 22:48:00</td><td>4.818074</td></tr><tr><td>3890</td><td>1969-12-15 14:07:00</td><td>2.503789</td></tr><tr><td>1098</td><td>1965-11-19 03:53:00</td><td>3.515041</td></tr><tr><td>1626</td><td>1966-05-03 14:07:00</td><td>4.353115</td></tr></tbody></table></div></div></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">df_synth_predictors</span></code> is not sorted by <code class="docutils literal notranslate"><span class="pre">entity_id</span></code>, but there are multiple values per id.</p>
+<p>Time to make a spec.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattenerv2</span> <span class="kn">import</span> <span class="n">PredictorSpec</span><span class="p">,</span> <span class="n">ValueFrame</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattenerv2.aggregators</span> <span class="kn">import</span> <span class="n">LatestAggregator</span><span class="p">,</span> <span class="n">MeanAggregator</span>
+
+
+<span class="c1"># helper function to create tuples of timedelta interval</span>
+<span class="k">def</span> <span class="nf">make_timedelta_interval</span><span class="p">(</span><span class="n">start_days</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_days</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">start_days</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">end_days</span><span class="p">))</span>
+
+
+<span class="n">predictor_spec</span> <span class="o">=</span> <span class="n">PredictorSpec</span><span class="p">(</span>
+    <span class="n">value_frame</span><span class="o">=</span><span class="n">ValueFrame</span><span class="p">(</span>
+        <span class="n">init_df</span><span class="o">=</span><span class="n">df_synth_predictors</span><span class="p">,</span>
+        <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
+        <span class="n">value_timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">aggregators</span><span class="o">=</span><span class="p">[</span><span class="n">MeanAggregator</span><span class="p">(),</span> <span class="n">LatestAggregator</span><span class="p">(</span><span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">)],</span>
+    <span class="n">lookbehind_distances</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">make_timedelta_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="n">make_timedelta_interval</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">365</span><span class="p">),</span>
+        <span class="n">make_timedelta_interval</span><span class="p">(</span><span class="mi">365</span><span class="p">,</span> <span class="mi">730</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s break it down. We supply two aggregators, <code class="docutils literal notranslate"><span class="pre">MeanAggregator</span></code> and <code class="docutils literal notranslate"><span class="pre">LatestAggregator</span></code> which will be applied across all lookbehind distances, which we specified as 3 intervals: 0-30 days, 30-365 days, and 365-730 days. We therefore expected to make <code class="docutils literal notranslate"><span class="pre">n_aggregators</span> <span class="pre">*</span> <span class="pre">n_lookbehind_distances</span> <span class="pre">=</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">3</span> <span class="pre">=</span> <span class="pre">6</span></code> features from this single column. Let’s flatten the data and see!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattenerv2</span> <span class="kn">import</span> <span class="n">Flattener</span><span class="p">,</span> <span class="n">PredictionTimeFrame</span>
+
+<span class="n">flattener</span> <span class="o">=</span> <span class="n">Flattener</span><span class="p">(</span>
+    <span class="n">predictiontime_frame</span><span class="o">=</span><span class="n">PredictionTimeFrame</span><span class="p">(</span>
+        <span class="n">init_df</span><span class="o">=</span><span class="n">df_prediction_times</span><span class="p">,</span> <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span> <span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">flattener</span><span class="o">.</span><span class="n">aggregate_timeseries</span><span class="p">(</span><span class="n">specs</span><span class="o">=</span><span class="p">[</span><span class="n">predictor_spec</span><span class="p">])</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "918cd9132c1e4f0c8e38c792e559e80e"}</script><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Processing spec: ['value']
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+</pre>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 9)</small><table border="1" class="dataframe"><thead><tr><th>entity_id</th><th>timestamp</th><th>pred_time_uuid</th><th>pred_value_within_0_to_30_days_mean_fallback_nan</th><th>pred_value_within_0_to_30_days_latest_fallback_nan</th><th>pred_value_within_30_to_365_days_mean_fallback_nan</th><th>pred_value_within_30_to_365_days_latest_fallback_nan</th><th>pred_value_within_365_to_730_days_mean_fallback_nan</th><th>pred_value_within_365_to_730_days_latest_fallback_nan</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>str</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td></tr></thead><tbody><tr><td>9903</td><td>1968-05-09 21:24:00</td><td>&quot;9903-1968-05-0…</td><td>NaN</td><td>NaN</td><td>0.154981</td><td>NaN</td><td>1.408655</td><td>NaN</td></tr><tr><td>7465</td><td>1966-05-24 01:23:00</td><td>&quot;7465-1966-05-2…</td><td>NaN</td><td>NaN</td><td>0.819872</td><td>NaN</td><td>NaN</td><td>NaN</td></tr><tr><td>6447</td><td>1967-09-25 18:08:00</td><td>&quot;6447-1967-09-2…</td><td>NaN</td><td>NaN</td><td>5.396017</td><td>NaN</td><td>5.9562</td><td>NaN</td></tr><tr><td>2121</td><td>1966-05-05 20:52:00</td><td>&quot;2121-1966-05-0…</td><td>NaN</td><td>NaN</td><td>7.62719</td><td>NaN</td><td>NaN</td><td>NaN</td></tr><tr><td>4927</td><td>1968-06-30 12:13:00</td><td>&quot;4927-1968-06-3…</td><td>NaN</td><td>NaN</td><td>4.957251</td><td>NaN</td><td>NaN</td><td>NaN</td></tr></tbody></table></div></div></div>
+</div>
+<p>And that’s what we get!</p>
+</section>
+<section id="multiple-values-from-the-same-dataframe">
+<h2>Multiple values from the same dataframe<a class="headerlink" href="#multiple-values-from-the-same-dataframe" title="Permalink to this heading">#</a></h2>
+<p>Sometimes, you might have values measured at the same time which you want to aggregate in the same manner. In <code class="docutils literal notranslate"><span class="pre">timeseriesflattener</span></code> this is handled by simply having multiple columns in the dataframe you pass to <code class="docutils literal notranslate"><span class="pre">ValueFrame</span></code>. Let’s see an example.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># add a new column to df_synth_predictors to simulate a new predictor measured at the same time</span>
+<span class="n">df_synth_predictors</span> <span class="o">=</span> <span class="n">df_synth_predictors</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+    <span class="n">new_predictor</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">df_synth_predictors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="p">)</span>  <span class="c1"># type: ignore</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_synth_predictors</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th><th>new_predictor</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>f64</td><td>f64</td></tr></thead><tbody><tr><td>9476</td><td>1969-03-05 08:08:00</td><td>0.816995</td><td>0.918013</td></tr><tr><td>4631</td><td>1967-04-10 22:48:00</td><td>4.818074</td><td>0.584601</td></tr><tr><td>3890</td><td>1969-12-15 14:07:00</td><td>2.503789</td><td>0.882959</td></tr><tr><td>1098</td><td>1965-11-19 03:53:00</td><td>3.515041</td><td>0.493577</td></tr><tr><td>1626</td><td>1966-05-03 14:07:00</td><td>4.353115</td><td>0.258481</td></tr></tbody></table></div></div></div>
+</div>
+<p>We make a <code class="docutils literal notranslate"><span class="pre">PredictorSpec</span></code> similar to above. Let’s try some new aggregators.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattenerv2.aggregators</span> <span class="kn">import</span> <span class="n">MinAggregator</span><span class="p">,</span> <span class="n">SlopeAggregator</span>
+
+<span class="c1"># create a new predictor spec</span>
+<span class="n">predictor_spec</span> <span class="o">=</span> <span class="n">PredictorSpec</span><span class="p">(</span>
+    <span class="n">value_frame</span><span class="o">=</span><span class="n">ValueFrame</span><span class="p">(</span>
+        <span class="n">init_df</span><span class="o">=</span><span class="n">df_synth_predictors</span><span class="p">,</span>
+        <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
+        <span class="n">value_timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">aggregators</span><span class="o">=</span><span class="p">[</span><span class="n">MinAggregator</span><span class="p">(),</span> <span class="n">SlopeAggregator</span><span class="p">(</span><span class="n">timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">)],</span>
+    <span class="n">lookbehind_distances</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">make_timedelta_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="n">make_timedelta_interval</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">365</span><span class="p">),</span>
+        <span class="n">make_timedelta_interval</span><span class="p">(</span><span class="mi">365</span><span class="p">,</span> <span class="mi">730</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, all allgregators will be applied to each predictor column for each lookbehind distance. Therefore, we expect to make <code class="docutils literal notranslate"><span class="pre">n_predictors</span> <span class="pre">*</span> <span class="pre">n_aggregators</span> <span class="pre">*</span> <span class="pre">n_lookbehind_distances</span> <span class="pre">=</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">3</span> <span class="pre">=</span> <span class="pre">12</span></code> features with this spec.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">flattener</span><span class="o">.</span><span class="n">aggregate_timeseries</span><span class="p">(</span><span class="n">specs</span><span class="o">=</span><span class="p">[</span><span class="n">predictor_spec</span><span class="p">])</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "bc1c349b31154742804f528e27719fde"}</script><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Processing spec: ['value', 'new_predictor']
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+</pre>
+</div><div class="output text_html"><div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 15)</small><table border="1" class="dataframe"><thead><tr><th>entity_id</th><th>timestamp</th><th>pred_time_uuid</th><th>pred_value_within_0_to_30_days_min_fallback_nan</th><th>pred_new_predictor_within_0_to_30_days_min_fallback_nan</th><th>pred_value_within_0_to_30_days_slope_fallback_nan</th><th>pred_new_predictor_within_0_to_30_days_slope_fallback_nan</th><th>pred_value_within_30_to_365_days_min_fallback_nan</th><th>pred_new_predictor_within_30_to_365_days_min_fallback_nan</th><th>pred_value_within_30_to_365_days_slope_fallback_nan</th><th>pred_new_predictor_within_30_to_365_days_slope_fallback_nan</th><th>pred_value_within_365_to_730_days_min_fallback_nan</th><th>pred_new_predictor_within_365_to_730_days_min_fallback_nan</th><th>pred_value_within_365_to_730_days_slope_fallback_nan</th><th>pred_new_predictor_within_365_to_730_days_slope_fallback_nan</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>str</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td></tr></thead><tbody><tr><td>9903</td><td>1968-05-09 21:24:00</td><td>&quot;9903-1968-05-0…</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>0.154981</td><td>0.448611</td><td>NaN</td><td>NaN</td><td>0.62299</td><td>0.359874</td><td>-0.002354</td><td>-0.000866</td></tr><tr><td>7465</td><td>1966-05-24 01:23:00</td><td>&quot;7465-1966-05-2…</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>0.819872</td><td>0.978651</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td></tr><tr><td>6447</td><td>1967-09-25 18:08:00</td><td>&quot;6447-1967-09-2…</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>0.403485</td><td>0.148523</td><td>0.004291</td><td>0.000068</td><td>1.308313</td><td>0.346419</td><td>0.003735</td><td>-0.000593</td></tr><tr><td>2121</td><td>1966-05-05 20:52:00</td><td>&quot;2121-1966-05-0…</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>7.62719</td><td>0.21061</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td></tr><tr><td>4927</td><td>1968-06-30 12:13:00</td><td>&quot;4927-1968-06-3…</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td><td>1.742601</td><td>0.234075</td><td>0.004035</td><td>0.000277</td><td>NaN</td><td>NaN</td><td>NaN</td><td>NaN</td></tr></tbody></table></div></div></div>
+</div>
+</section>
+<section id="timedelta-features">
+<h2>TimeDelta features<a class="headerlink" href="#timedelta-features" title="Permalink to this heading">#</a></h2>
+<p>An example of a commonly used feature that requires slightly different handling than what we’ve seen so far is age. Calculating the age at the prediction time requires us to calculate a <em>time delta</em> between the prediction time and a dataframe containing birthdate timestamps. To do this, we can use the <code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec</span></code>. First, we load a dataframe containing the date of birth for each entity in our dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattenerv2.testing.load_synth_data</span> <span class="kn">import</span> <span class="n">load_synth_birthdays</span>
+
+<span class="n">df_birthdays</span> <span class="o">=</span> <span class="n">load_synth_birthdays</span><span class="p">()</span>
+<span class="n">df_birthdays</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 2)</small><table border="1" class="dataframe"><thead><tr><th>entity_id</th><th>birthday</th></tr><tr><td>i64</td><td>datetime[μs]</td></tr></thead><tbody><tr><td>9045</td><td>1932-10-24 03:16:00</td></tr><tr><td>5532</td><td>1920-12-09 09:41:00</td></tr><tr><td>2242</td><td>1917-03-20 17:00:00</td></tr><tr><td>789</td><td>1930-02-15 06:51:00</td></tr><tr><td>9715</td><td>1926-08-18 08:35:00</td></tr></tbody></table></div></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">df_birthdays</span></code> is a dataframe containing a single value for each <code class="docutils literal notranslate"><span class="pre">entity_id</span></code> with is their date of birth. Time to make a spec.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattenerv2</span> <span class="kn">import</span> <span class="n">TimeDeltaSpec</span><span class="p">,</span> <span class="n">TimestampValueFrame</span>
+
+<span class="n">age_spec</span> <span class="o">=</span> <span class="n">TimeDeltaSpec</span><span class="p">(</span>
+    <span class="n">init_frame</span><span class="o">=</span><span class="n">TimestampValueFrame</span><span class="p">(</span>
+        <span class="n">init_df</span><span class="o">=</span><span class="n">df_birthdays</span><span class="p">,</span> <span class="n">entity_id_col_name</span><span class="o">=</span><span class="s2">&quot;entity_id&quot;</span><span class="p">,</span> <span class="n">value_timestamp_col_name</span><span class="o">=</span><span class="s2">&quot;birthday&quot;</span>
+    <span class="p">),</span>
+    <span class="n">fallback</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="n">output_name</span><span class="o">=</span><span class="s2">&quot;age&quot;</span><span class="p">,</span>
+    <span class="n">time_format</span><span class="o">=</span><span class="s2">&quot;years&quot;</span><span class="p">,</span>  <span class="c1"># can be [&quot;seconds&quot;, &quot;minutes&quot;, &quot;hours&quot;, &quot;days&quot;, &quot;years&quot;]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To make the <code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec</span></code>, we define a <code class="docutils literal notranslate"><span class="pre">TimestampValueFrame</span></code> where we specify the column containing the entity id, and column containing the timestamps. Fallback is used to set the value for entities without an entry in the <code class="docutils literal notranslate"><span class="pre">TimestampValueFrame</span></code>, <code class="docutils literal notranslate"><span class="pre">output_name</span></code> determines the name of the output column, and <code class="docutils literal notranslate"><span class="pre">time_format</span></code> specifies which format the output should take. Time to make features!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">flattener</span><span class="o">.</span><span class="n">aggregate_timeseries</span><span class="p">(</span><span class="n">specs</span><span class="o">=</span><span class="p">[</span><span class="n">age_spec</span><span class="p">])</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3658f6d61c59456097b1b62c28101d93"}</script><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Processing spec: ['age']
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">
+</pre>
+</div><div class="output text_html"><div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 4)</small><table border="1" class="dataframe"><thead><tr><th>entity_id</th><th>timestamp</th><th>pred_time_uuid</th><th>pred_age_years_fallback_nan</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>str</td><td>f64</td></tr></thead><tbody><tr><td>9903</td><td>1968-05-09 21:24:00</td><td>&quot;9903-1968-05-0…</td><td>39.154004</td></tr><tr><td>7465</td><td>1966-05-24 01:23:00</td><td>&quot;7465-1966-05-2…</td><td>47.874059</td></tr><tr><td>6447</td><td>1967-09-25 18:08:00</td><td>&quot;6447-1967-09-2…</td><td>28.52293</td></tr><tr><td>2121</td><td>1966-05-05 20:52:00</td><td>&quot;2121-1966-05-0…</td><td>56.347707</td></tr><tr><td>4927</td><td>1968-06-30 12:13:00</td><td>&quot;4927-1968-06-3…</td><td>44.70089</td></tr></tbody></table></div></div></div>
+</div>
+<p>Let’s see the values for a random entity to make sure they differ by the timestamp of the prediction time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;entity_id&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9903</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 4)</small><table border="1" class="dataframe"><thead><tr><th>entity_id</th><th>timestamp</th><th>pred_time_uuid</th><th>pred_age_years_fallback_nan</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>str</td><td>f64</td></tr></thead><tbody><tr><td>9903</td><td>1968-05-09 21:24:00</td><td>&quot;9903-1968-05-0…</td><td>39.154004</td></tr><tr><td>9903</td><td>1965-11-14 00:33:00</td><td>&quot;9903-1965-11-1…</td><td>36.670773</td></tr></tbody></table></div></div></div>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="03_text.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Adding text features</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="01_basic.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Introductory Tutorial</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Doing multiple things at once!</a><ul>
+<li><a class="reference internal" href="#multiple-aggregation-functions-and-lookperiods">Multiple aggregation functions and lookperiods</a></li>
+<li><a class="reference internal" href="#multiple-values-from-the-same-dataframe">Multiple values from the same dataframe</a></li>
+<li><a class="reference internal" href="#timedelta-features">TimeDelta features</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/design-tabs.js"></script>
+    <script type="application/vnd.jupyter.widget-state+json">{"state": {"2702989cb71e41738c10662c5739d1cc": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "918cd9132c1e4f0c8e38c792e559e80e": {"model_name": "OutputModel", "model_module": "@jupyter-widgets/output", "model_module_version": "1.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/output", "_model_module_version": "1.0.0", "_model_name": "OutputModel", "_view_count": null, "_view_module": "@jupyter-widgets/output", "_view_module_version": "1.0.0", "_view_name": "OutputView", "layout": "IPY_MODEL_2702989cb71e41738c10662c5739d1cc", "msg_id": "", "outputs": [{"output_type": "display_data", "metadata": {}, "data": {"text/plain": "Processing specs... \u001b[38;2;114;156;31m\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u001b[0m \u001b[35m100%\u001b[0m \u001b[33m0:00:00\u001b[0m\n", "text/html": "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing specs... <span style=\"color: #729c1f; text-decoration-color: #729c1f\">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span> <span style=\"color: #800080; text-decoration-color: #800080\">100%</span> <span style=\"color: #808000; text-decoration-color: #808000\">0:00:00</span>\n</pre>\n"}}], "tabbable": null, "tooltip": null}}, "34a89d409420408389b96b481fbb0545": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "bc1c349b31154742804f528e27719fde": {"model_name": "OutputModel", "model_module": "@jupyter-widgets/output", "model_module_version": "1.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/output", "_model_module_version": "1.0.0", "_model_name": "OutputModel", "_view_count": null, "_view_module": "@jupyter-widgets/output", "_view_module_version": "1.0.0", "_view_name": "OutputView", "layout": "IPY_MODEL_34a89d409420408389b96b481fbb0545", "msg_id": "", "outputs": [{"output_type": "display_data", "metadata": {}, "data": {"text/plain": "Processing specs... \u001b[38;2;114;156;31m\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u001b[0m \u001b[35m100%\u001b[0m \u001b[33m0:00:00\u001b[0m\n", "text/html": "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing specs... <span style=\"color: #729c1f; text-decoration-color: #729c1f\">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span> <span style=\"color: #800080; text-decoration-color: #800080\">100%</span> <span style=\"color: #808000; text-decoration-color: #808000\">0:00:00</span>\n</pre>\n"}}], "tabbable": null, "tooltip": null}}, "baa2006a3d81454c81644458cb5caf70": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "3658f6d61c59456097b1b62c28101d93": {"model_name": "OutputModel", "model_module": "@jupyter-widgets/output", "model_module_version": "1.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/output", "_model_module_version": "1.0.0", "_model_name": "OutputModel", "_view_count": null, "_view_module": "@jupyter-widgets/output", "_view_module_version": "1.0.0", "_view_name": "OutputView", "layout": "IPY_MODEL_baa2006a3d81454c81644458cb5caf70", "msg_id": "", "outputs": [{"output_type": "display_data", "metadata": {}, "data": {"text/plain": "Processing specs... \u001b[38;2;114;156;31m\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u001b[0m \u001b[35m100%\u001b[0m \u001b[33m0:00:00\u001b[0m\n", "text/html": "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing specs... <span style=\"color: #729c1f; text-decoration-color: #729c1f\">\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501</span> <span style=\"color: #800080; text-decoration-color: #800080\">100%</span> <span style=\"color: #808000; text-decoration-color: #808000\">0:00:00</span>\n</pre>\n"}}], "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}</script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script crossorigin="anonymous" data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/" src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@1.0.6/dist/embed-amd.js"></script>
+    </body>
+</html>
