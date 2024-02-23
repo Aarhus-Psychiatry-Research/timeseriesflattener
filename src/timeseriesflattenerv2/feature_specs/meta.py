@@ -29,7 +29,12 @@ LookDistances: TypeAlias = Sequence[Union[LookDistance, tuple[LookDistance, Look
 
 @dataclass
 class ValueFrame:
-    """A frame that contains the values of a time series."""
+    """A frame that contains the values of a time series.
+
+    Must contain columns:
+        entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
+        value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column's values must be datetimes.
+    """
 
     init_df: InitVar[InitDF_T]
     entity_id_col_name: str = default_entity_id_col_name

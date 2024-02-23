@@ -91,6 +91,15 @@ class TimeDeltaFrame:
 
 @dataclass
 class AggregatedFrame:
+    """A frame that contains the resulting values after aggregation.
+
+    Contains:
+        init_df: The initial dataframe.
+        entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
+        timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column's values must be datetimes which are unique.
+        pred_time_uuid_col_name: The name of the column containing the prediction time uuids. Must be a string, and the column's values must be strings which are unique.
+    """
+
     init_df: InitVar[pl.LazyFrame]
     entity_id_col_name: str
     timestamp_col_name: str

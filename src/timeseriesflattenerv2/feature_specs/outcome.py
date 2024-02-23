@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 @dataclass
 class OutcomeSpec:
+    """Specification for an outcome. If your outcome is binary/boolean, use BooleanOutcomeSpec instead."""
+
     value_frame: ValueFrame
     lookahead_distances: InitVar[LookDistances]
     aggregators: Sequence[Aggregator]

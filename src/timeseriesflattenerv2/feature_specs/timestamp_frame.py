@@ -15,11 +15,16 @@ if TYPE_CHECKING:
 
 @dataclass
 class TimestampValueFrame:
-    """A frame that contains the values of a time series."""
+    """Timestamps, useful for computing e.g. age.
+
+    Must contain columns:
+        entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
+        value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column's values must be datetimes.
+    """
 
     init_df: InitVar[InitDF_T]
-    value_timestamp_col_name: str = "timestamp"
     entity_id_col_name: str = default_entity_id_col_name
+    value_timestamp_col_name: str = "timestamp"
 
     def __post_init__(self, init_df: InitDF_T):
         self.df = _anyframe_to_lazyframe(init_df)
