@@ -34,9 +34,9 @@ class StaticFrame:
 class StaticSpec:
     """Specification for a static feature, e.g. the sex of a person.
 
-    Must contain columns:
+    The value_frame must contain columns:
         entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
-        value_col_name: The name of the column containing the values. Must be a string, but the column's values can be of any type.
+        additional columns containing the values of the static feature. The name of the columns will be used for feature naming.
     """
 
     value_frame: StaticFrame

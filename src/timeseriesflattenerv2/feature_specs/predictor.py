@@ -16,6 +16,14 @@ if TYPE_CHECKING:
 
 @dataclass
 class PredictorSpec:
+    """Specification for a predictor.
+
+    The value_frame must contain columns:
+        entity_id_col_name: The name of the column containing the entity ids.
+        value_timestamp_col_name: The name of the column containing the timestamps for each value.
+        additional columns containing values to aggregate. The name of the columns will be used for feature naming.
+    """
+
     value_frame: ValueFrame
     lookbehind_distances: InitVar[LookDistances]
     aggregators: Sequence[Aggregator]
