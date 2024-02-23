@@ -1,9 +1,14 @@
 """Column generators for synthetic data."""
-from collections.abc import Iterable
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 from scipy import stats  # type: ignore
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def create_outcome_values(

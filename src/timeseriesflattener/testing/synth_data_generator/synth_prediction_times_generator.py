@@ -1,6 +1,7 @@
 """Generator for synth prediction data."""
-from collections.abc import Iterable
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -10,6 +11,9 @@ from timeseriesflattener.testing.synth_data_generator.synth_col_generators impor
 )
 from timeseriesflattener.testing.synth_data_generator.utils import replace_vals_with_na
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
 
 def generate_synth_data(
     predictors: Iterable[dict],
@@ -17,9 +21,9 @@ def generate_synth_data(
     n_samples: int,
     logistic_outcome_model: str,
     intercept: float = 0,
-    na_prob: Optional[float] = 0.1,
-    na_ignore_cols: Optional[list[str]] = None,
-    prob_outcome: Optional[float] = 0.08,
+    na_prob: float | None = 0.1,
+    na_ignore_cols: list[str] | None = None,
+    prob_outcome: float | None = 0.08,
     noise_mean_sd: tuple[float, float] = (0, 1),
 ) -> pd.DataFrame:
     """Takes a dict and generates synth data from it.

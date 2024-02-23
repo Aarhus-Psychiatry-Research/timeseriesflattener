@@ -1,4 +1,5 @@
 """Generate raw float dataframe."""
+from __future__ import annotations
 
 from timeseriesflattener.misc_utils import PROJECT_ROOT
 from timeseriesflattener.testing.synth_data_generator.synth_col_generators import (
