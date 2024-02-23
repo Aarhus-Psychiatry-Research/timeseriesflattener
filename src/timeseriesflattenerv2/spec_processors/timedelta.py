@@ -29,7 +29,7 @@ def process_timedelta_spec(
 
     prediction_times_with_time_from_event = (
         predictiontime_frame.df.join(
-            spec.df.rename({spec.init_frame.value_timestamp_col_name: "_event_time"}),
+            spec.df.rename({spec.value_frame.value_timestamp_col_name: "_event_time"}),
             on=predictiontime_frame.entity_id_col_name,
             how="left",
         )
