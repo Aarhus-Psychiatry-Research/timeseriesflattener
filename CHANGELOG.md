@@ -2,6 +2,19 @@
 
 <!--next-version-placeholder-->
 
+## v1.36.2 (2024-02-23)
+
+### Fix
+
+* Bux in timedelta ([`92b90b3`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/92b90b36a514f434cccad1c19c3ffafb4fcbb68f))
+
+### Documentation
+
+* **#496:** Add some docstrings to user facing specs on the expected type of input and general usage (#499) ([#500](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/500)) ([`cf30e04`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/cf30e04614ab9f02bf84ceb09264b2783721c71e))
+* **#496:** Add some docstrings to user facing specs on the expected type of input and general usage ([#499](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/499)) ([`3cfa8d5`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/3cfa8d593b8ad52e61561a59c121c47ad2a8645b))
+* **#496:** Add some docstrings to user facing specs on the expected type of input and general usage ([`ae0f04a`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/ae0f04a5be378c9f22bc51c42b3717507f773c4d))
+* **#485:** Update readme to use v2 ([`37dc2ad`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/37dc2ad498b4639992074b9eaab01850ea623442))
+
 ## v1.36.1 (2024-02-22)
 
 ### Fix
