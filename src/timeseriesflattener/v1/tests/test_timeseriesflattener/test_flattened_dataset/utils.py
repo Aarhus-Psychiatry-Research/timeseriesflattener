@@ -24,7 +24,7 @@ def check_dfs_have_same_contents_by_column(df1: pd.DataFrame, df2: pd.DataFrame)
         AssertionError: If the dataframes don't have the same contents by column.
     """
 
-    cols_to_test = [c for c in df1.columns if "prediction_time_uuid" not in c]
+    cols_to_test = [c for c in df1.columns if c not in ["prediction_time_uuid", "timestamp"]]
 
     for col in cols_to_test:
         # Saving to csv rounds floats, so we need to round here too

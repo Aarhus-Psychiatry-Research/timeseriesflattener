@@ -16,7 +16,7 @@ data_loaders = catalogue.create("timeseriesflattener", "data_loaders")
 split_dfs: Dict[str, pd.DataFrame] = {}  #
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 def split_df_and_register_to_dict(

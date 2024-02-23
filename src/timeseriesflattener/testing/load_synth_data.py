@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 
 import polars as pl
-from timeseriesflattener.misc_utils import PROJECT_ROOT
 
 log = logging.getLogger(__name__)
+
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 TEST_DATA_PATH = PROJECT_ROOT / "src" / "timeseriesflattener" / "testing" / "test_data"
 

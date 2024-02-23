@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
-from timeseriesflattener.aggregation_fns import (
+from timeseriesflattener.v1.aggregation_fns import (
     boolean,
     change_per_day,
     count,
@@ -13,7 +13,7 @@ from timeseriesflattener.aggregation_fns import (
     summed,
     variance,
 )
-from timeseriesflattener.feature_specs.group_specs import NamedDataframe
+from timeseriesflattener.v1.feature_specs.group_specs import NamedDataframe
 
 from .from_legacy import PredictorGroupSpec
 from .predictor import PredictorSpec

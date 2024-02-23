@@ -1,3 +1,4 @@
+"""Fixtures for v1 testing. Delete when v1 is deprecated."""
 from __future__ import annotations
 
 import pytest
