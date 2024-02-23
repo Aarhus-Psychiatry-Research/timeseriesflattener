@@ -173,7 +173,7 @@ def types(c: Context):
 def install(c: Context):
     """Install the project in editable mode using pip install"""
     echo_header(f"{Emo.DO} Installing project")
-    c.run("pip install -e '.[dev,test,docs,tutorials,text]'")
+    c.run("pip install -e '.[dev,test,docs,tutorials]'")
 
 
 @task
