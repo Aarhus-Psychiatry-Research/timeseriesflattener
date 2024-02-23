@@ -34,6 +34,7 @@ class ValueFrame:
     Must contain columns:
         entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
         value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column's values must be datetimes.
+        Additional columns containing the values of the time series. The name of the columns will be used for feature naming.
     """
 
     init_df: InitVar[InitDF_T]

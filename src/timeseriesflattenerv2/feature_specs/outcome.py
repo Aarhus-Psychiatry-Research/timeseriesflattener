@@ -39,6 +39,13 @@ class OutcomeSpec:
 
 @dataclass
 class BooleanOutcomeSpec:
+    """Specification for a boolean outcome, e.g. whether a patient received a treatment or not.
+
+    The init_frame must contain columns:
+        entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
+        value_timestamp_col_name: The name of the column containing the timestamps of when the event occurs. Must be a string, and the column's values must be datetimes.
+    """
+
     init_frame: InitVar[TimestampValueFrame]
     lookahead_distances: LookDistances
     aggregators: Sequence[Aggregator]

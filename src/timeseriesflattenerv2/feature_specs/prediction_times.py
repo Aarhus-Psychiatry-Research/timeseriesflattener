@@ -21,6 +21,13 @@ if TYPE_CHECKING:
 
 @dataclass
 class PredictionTimeFrame:
+    """Specification for prediction times, i.e. the times for which predictions are made.
+
+    init_df must be a dataframe (pandas or polars) containing columns:
+        entity_id_col_name: The name of the column containing the entity ids.
+        timestamp_col_name: The name of the column containing the timestamps for when to make a prediction.
+    """
+
     init_df: InitVar[InitDF_T]
     entity_id_col_name: str = default_entity_id_col_name
     timestamp_col_name: str = default_pred_time_col_name

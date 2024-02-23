@@ -19,6 +19,16 @@ class TimeDeltaSpec:
     output_name: str
     column_prefix: str = "pred"
     time_format: Literal["seconds", "minutes", "hours", "days", "years"] = "days"
+    """Specification for a time delta feature, i.e. the time between a prediction timestamp and a value timestamp.
+    Useful for e.g. calculating age or the time since a certain event.
+
+    init_frame must contain columns:
+        entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
+        value_timestamp_col_name: The name of the column containing the timestamps of when the event occurs. Must be a string, and the column's values must be datetimes.
+
+    output_name: the desired name of the feature column.
+    time_format:
+        """
 
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
