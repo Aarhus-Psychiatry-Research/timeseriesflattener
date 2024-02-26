@@ -47,7 +47,7 @@ predictor_df = pl.DataFrame(
 outcome_df = pl.DataFrame({"id": [1], "date": ["2020-03-01"], "value": [1]})
 
 # Specify how to aggregate the predictors and define the outcome
-from timeseriesflattenerv2 import (
+from timeseriesflattener import (
     MaxAggregator,
     MinAggregator,
     OutcomeSpec,
@@ -77,7 +77,7 @@ outcome_spec = OutcomeSpec(
 )
 
 # Instantiate TimeseriesFlattener and add the specifications
-from timeseriesflattenerv2 import Flattener
+from timeseriesflattener import Flattener
 
 result = Flattener(
     predictiontime_frame=PredictionTimeFrame(

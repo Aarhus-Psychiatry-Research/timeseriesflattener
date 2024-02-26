@@ -1,13 +1,16 @@
 """Utilites for generating synthetic data."""
+from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
-import pandas as pd
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 def replace_vals_with_na(
-    df: pd.DataFrame, na_prob: float, na_ignore_cols: Optional[list[str]] = None
+    df: pd.DataFrame, na_prob: float, na_ignore_cols: list[str] | None = None
 ) -> pd.DataFrame:
     """Replace values with NAs.
 
