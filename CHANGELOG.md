@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.0 (2024-02-26)
+
+### Feature
+
+* Update major version, deprecate v1 ([`1dda823`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1dda823f49e60b9942f0871238a25f01812ba587))
+
+### Breaking
+
+* update major version, deprecate v1 ([`1dda823`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/1dda823f49e60b9942f0871238a25f01812ba587))
+
 ## v1.36.2 (2024-02-23)
 
 ### Fix
