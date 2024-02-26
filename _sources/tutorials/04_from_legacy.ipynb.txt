@@ -40,7 +40,7 @@
     "from __future__ import annotations\n",
     "\n",
     "import pandas as pd\n",
-    "from timeseriesflattener.aggregation_fns import (\n",
+    "from timeseriesflattener.v1.aggregation_fns import (\n",
     "    boolean,\n",
     "    change_per_day,\n",
     "    count,\n",
@@ -60,8 +60,8 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "from timeseriesflattener.feature_specs.group_specs import NamedDataframe, PredictorGroupSpec\n",
-    "from timeseriesflattener.feature_specs.single_specs import PredictorSpec as Version1PredictorSpec\n",
+    "from timeseriesflattener.v1.feature_specs.group_specs import NamedDataframe, PredictorGroupSpec\n",
+    "from timeseriesflattener.v1.feature_specs.single_specs import PredictorSpec as Version1PredictorSpec\n",
     "\n",
     "legacy_spec = PredictorGroupSpec(\n",
     "    lookbehind_days=((1, 2), (3, 4)),\n",
@@ -115,8 +115,8 @@
     }
    ],
    "source": [
-    "from timeseriesflattenerv2.feature_specs.from_legacy import PredictorGroupSpec\n",
-    "from timeseriesflattenerv2.feature_specs.predictor import PredictorSpec as Version2PredictorSpec\n",
+    "from timeseriesflattener import PredictorSpec as Version2PredictorSpec\n",
+    "from timeseriesflattener.feature_specs.from_legacy import PredictorGroupSpec\n",
     "\n",
     "new_specs = PredictorGroupSpec(\n",
     "    lookbehind_days=((1, 2), (3, 4)),\n",

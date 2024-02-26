@@ -252,7 +252,7 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.aggregation_fns</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.v1.aggregation_fns</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">boolean</span><span class="p">,</span>
     <span class="n">change_per_day</span><span class="p">,</span>
     <span class="n">count</span><span class="p">,</span>
@@ -270,8 +270,8 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.group_specs</span> <span class="kn">import</span> <span class="n">NamedDataframe</span><span class="p">,</span> <span class="n">PredictorGroupSpec</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.single_specs</span> <span class="kn">import</span> <span class="n">PredictorSpec</span> <span class="k">as</span> <span class="n">Version1PredictorSpec</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener.v1.feature_specs.group_specs</span> <span class="kn">import</span> <span class="n">NamedDataframe</span><span class="p">,</span> <span class="n">PredictorGroupSpec</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.v1.feature_specs.single_specs</span> <span class="kn">import</span> <span class="n">PredictorSpec</span> <span class="k">as</span> <span class="n">Version1PredictorSpec</span>
 
 <span class="n">legacy_spec</span> <span class="o">=</span> <span class="n">PredictorGroupSpec</span><span class="p">(</span>
     <span class="n">lookbehind_days</span><span class="o">=</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
@@ -313,8 +313,8 @@
 <p>If you want the output feature specifications to be compatible with version 2, all you have to do is replace the <code class="docutils literal notranslate"><span class="pre">PredictorGroupSpec</span></code> import:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattenerv2.feature_specs.from_legacy</span> <span class="kn">import</span> <span class="n">PredictorGroupSpec</span>
-<span class="kn">from</span> <span class="nn">timeseriesflattenerv2.feature_specs.predictor</span> <span class="kn">import</span> <span class="n">PredictorSpec</span> <span class="k">as</span> <span class="n">Version2PredictorSpec</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener</span> <span class="kn">import</span> <span class="n">PredictorSpec</span> <span class="k">as</span> <span class="n">Version2PredictorSpec</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.from_legacy</span> <span class="kn">import</span> <span class="n">PredictorGroupSpec</span>
 
 <span class="n">new_specs</span> <span class="o">=</span> <span class="n">PredictorGroupSpec</span><span class="p">(</span>
     <span class="n">lookbehind_days</span><span class="o">=</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
