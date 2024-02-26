@@ -316,7 +316,10 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">timeseriesflattener</span> <span class="kn">import</span> <span class="n">PredictorSpec</span> <span class="k">as</span> <span class="n">Version2PredictorSpec</span>
+<span class="c1"># IMPORT CHANGED BELOW #</span>
+<span class="c1"># from timeseriesflattener.v1.feature_specs.single_specs import PredictorSpec as Version1PredictorSpec</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.from_legacy</span> <span class="kn">import</span> <span class="n">PredictorGroupSpec</span>
+<span class="c1"># IMPORT CHANGED ABOVE #</span>
 
 <span class="n">new_specs</span> <span class="o">=</span> <span class="n">PredictorGroupSpec</span><span class="p">(</span>
     <span class="n">lookbehind_days</span><span class="o">=</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
