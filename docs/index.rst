@@ -35,9 +35,7 @@ The above figure graphically represents the terminology used in the package.
 
 **C)** Values within the *lookbehind* window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. 
 
-**D)** Prediction times are dropped if the *lookbehind* extends further back in time than the start of the dataset or if the *lookahead* extends further than the end of the dataset. This behaviour is optional.
-
-Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the [tutorials](placeholder) for example use cases.
+Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the `tutorials <https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html>`__ for example use cases.
 
 
 Where to ask questions?
