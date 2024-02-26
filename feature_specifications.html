@@ -7,14 +7,14 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="feature_specifications.html" />
 <meta property="og:site_name" content="timeseriesflattener" />
-<meta property="og:description" content="timeseriesflattener.feature_specs.single_specs:" />
+<meta property="og:description" content="timeseriesflattener.feature_specs:" />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/_images/social_previews/summary_feature_specifications_5e9c5e04.png" />
-<meta property="og:image:alt" content="timeseriesflattener.feature_specs.single_specs:" />
-<meta name="description" content="timeseriesflattener.feature_specs.single_specs:" />
+<meta property="og:image" content="/_images/social_previews/summary_feature_specifications_21b36f1f.png" />
+<meta property="og:image:alt" content="timeseriesflattener.feature_specs:" />
+<meta name="description" content="timeseriesflattener.feature_specs:" />
 <meta name="twitter:card" content="summary_large_image" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Timeseriesflattener" href="timeseriesflattener.html" /><link rel="prev" title="Frequently Asked Questions" href="faq.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Aggregators" href="aggregators.html" /><link rel="prev" title="Frequently Asked Questions" href="faq.html" />
 
     <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
         <title>Feature specifications - Timeseriesflattener</title>
@@ -185,6 +185,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/01_basic.html">Introductory Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/02_advanced.html">Doing multiple things at once and time deltas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/03_text.html">Adding text features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/04_from_legacy.html">Creating features from legacy feature specifications</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
@@ -192,7 +193,8 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Feature specifications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseriesflattener.html">Timeseriesflattener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregators.html">Aggregators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flattener.html">Timeseriesflattener</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
@@ -245,8 +247,341 @@
         <article role="main">
           <section id="feature-specifications">
 <h1>Feature specifications<a class="headerlink" href="#feature-specifications" title="Permalink to this heading">#</a></h1>
-<section id="timeseriesflattener-feature-specs-single-specs">
-<h2>timeseriesflattener.feature_specs.single_specs<a class="headerlink" href="#timeseriesflattener-feature-specs-single-specs" title="Permalink to this heading">#</a></h2>
+<section id="module-timeseriesflattener.feature_specs.predictor">
+<span id="timeseriesflattener-feature-specs"></span><h2>timeseriesflattener.feature_specs<a class="headerlink" href="#module-timeseriesflattener.feature_specs.predictor" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.predictor.PredictorSpec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PredictorSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame" title="timeseriesflattener.feature_specs.meta.ValueFrame"><span class="pre">ValueFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookbehind_distances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">LookDistances</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="aggregators.html#timeseriesflattener.aggregators.Aggregator" title="timeseriesflattener.aggregators.Aggregator"><span class="pre">Aggregator</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ValueType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/predictor.html#PredictorSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Specification for a predictor.</p>
+<dl class="simple">
+<dt>The value_frame must contain columns:</dt><dd><p>entity_id_col_name: The name of the column containing the entity ids.
+value_timestamp_col_name: The name of the column containing the timestamps for each value.
+additional columns containing values to aggregate. The name of the columns will be used for feature naming.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.predictor.PredictorSpec.aggregators">
+<span class="sig-name descname"><span class="pre">aggregators</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="aggregators.html#timeseriesflattener.aggregators.Aggregator" title="timeseriesflattener.aggregators.Aggregator"><span class="pre">Aggregator</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.aggregators" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.predictor.PredictorSpec.column_prefix">
+<span class="sig-name descname"><span class="pre">column_prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.column_prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.predictor.PredictorSpec.df">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pl.LazyFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.predictor.PredictorSpec.fallback">
+<span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ValueType</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.fallback" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.predictor.PredictorSpec.lookbehind_distances">
+<span class="sig-name descname"><span class="pre">lookbehind_distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">LookDistances</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.lookbehind_distances" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.predictor.PredictorSpec.value_frame">
+<span class="sig-name descname"><span class="pre">value_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame" title="timeseriesflattener.feature_specs.meta.ValueFrame"><span class="pre">ValueFrame</span></a></em><a class="headerlink" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.value_frame" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-timeseriesflattener.feature_specs.prediction_times"></span><dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PredictionTimeFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">InitDF_T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'entity_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred_timestamp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_time_uuid_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred_time_uuid'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/prediction_times.html#PredictionTimeFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Specification for prediction times, i.e. the times for which predictions are made.</p>
+<dl class="simple">
+<dt>init_df must be a dataframe (pandas or polars) containing columns:</dt><dd><p>entity_id_col_name: The name of the column containing the entity ids.
+timestamp_col_name: The name of the column containing the timestamps for when to make a prediction.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.collect">
+<span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/prediction_times.html#PredictionTimeFrame.collect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.collect" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.entity_id_col_name">
+<span class="sig-name descname"><span class="pre">entity_id_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'entity_id'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.entity_id_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.init_df">
+<span class="sig-name descname"><span class="pre">init_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">InitDF_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.init_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.pred_time_uuid_col_name">
+<span class="sig-name descname"><span class="pre">pred_time_uuid_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred_time_uuid'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.pred_time_uuid_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.required_columns">
+<span class="sig-name descname"><span class="pre">required_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/prediction_times.html#PredictionTimeFrame.required_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.required_columns" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.timestamp_col_name">
+<span class="sig-name descname"><span class="pre">timestamp_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred_timestamp'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.timestamp_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-timeseriesflattener.feature_specs.meta"></span><dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.LookPeriod">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LookPeriod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'LookDistance'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'LookDistance'</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/meta.html#LookPeriod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.LookPeriod" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.LookPeriod.first">
+<span class="sig-name descname"><span class="pre">first</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">timedelta</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.LookPeriod.first" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.LookPeriod.last">
+<span class="sig-name descname"><span class="pre">last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">timedelta</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.LookPeriod.last" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.ValueFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ValueFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dataclasses.InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">polars.lazyframe.frame.LazyFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">polars.dataframe.frame.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'entity_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_timestamp_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'timestamp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/meta.html#ValueFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.ValueFrame" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A frame that contains the values of a time series.</p>
+<dl class="simple">
+<dt>Must contain columns:</dt><dd><p>entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column’s values must be strings which are unique.
+value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column’s values must be datetimes.
+Additional columns containing the values of the time series. The name of the columns will be used for feature naming.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.ValueFrame.collect">
+<span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/meta.html#ValueFrame.collect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.ValueFrame.collect" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.ValueFrame.entity_id_col_name">
+<span class="sig-name descname"><span class="pre">entity_id_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'entity_id'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.ValueFrame.entity_id_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.ValueFrame.init_df">
+<span class="sig-name descname"><span class="pre">init_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dataclasses.InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">polars.lazyframe.frame.LazyFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">polars.dataframe.frame.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.ValueFrame.init_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.meta.ValueFrame.value_timestamp_col_name">
+<span class="sig-name descname"><span class="pre">value_timestamp_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'timestamp'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.meta.ValueFrame.value_timestamp_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-timeseriesflattener.feature_specs.outcome"></span><dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BooleanOutcomeSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame" title="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame"><span class="pre">TimestampValueFrame</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookahead_distances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LookDistances</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="aggregators.html#timeseriesflattener.aggregators.Aggregator" title="timeseriesflattener.aggregators.Aggregator"><span class="pre">Aggregator</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'outc'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/outcome.html#BooleanOutcomeSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Specification for a boolean outcome, e.g. whether a patient received a treatment or not.</p>
+<dl class="simple">
+<dt>The init_frame must contain columns:</dt><dd><p>entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column’s values must be strings which are unique.
+value_timestamp_col_name: The name of the column containing the timestamps of when the event occurs. Must be a string, and the column’s values must be datetimes.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.aggregators">
+<span class="sig-name descname"><span class="pre">aggregators</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="aggregators.html#timeseriesflattener.aggregators.Aggregator" title="timeseriesflattener.aggregators.Aggregator"><span class="pre">Aggregator</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.aggregators" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.column_prefix">
+<span class="sig-name descname"><span class="pre">column_prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'outc'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.column_prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.df">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">LazyFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.init_frame">
+<span class="sig-name descname"><span class="pre">init_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame" title="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame"><span class="pre">TimestampValueFrame</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.init_frame" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.lookahead_distances">
+<span class="sig-name descname"><span class="pre">lookahead_distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">LookDistances</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.lookahead_distances" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.OutcomeSpec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OutcomeSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame" title="timeseriesflattener.feature_specs.meta.ValueFrame"><span class="pre">ValueFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookahead_distances</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">LookDistances</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="aggregators.html#timeseriesflattener.aggregators.Aggregator" title="timeseriesflattener.aggregators.Aggregator"><span class="pre">Aggregator</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ValueType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'outc'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/outcome.html#OutcomeSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Specification for an outcome. If your outcome is binary/boolean, use BooleanOutcomeSpec instead.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.OutcomeSpec.aggregators">
+<span class="sig-name descname"><span class="pre">aggregators</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="aggregators.html#timeseriesflattener.aggregators.Aggregator" title="timeseriesflattener.aggregators.Aggregator"><span class="pre">Aggregator</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.aggregators" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.OutcomeSpec.column_prefix">
+<span class="sig-name descname"><span class="pre">column_prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'outc'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.column_prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.OutcomeSpec.df">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">LazyFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.OutcomeSpec.fallback">
+<span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ValueType</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.fallback" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.OutcomeSpec.lookahead_distances">
+<span class="sig-name descname"><span class="pre">lookahead_distances</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">LookDistances</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.lookahead_distances" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.outcome.OutcomeSpec.value_frame">
+<span class="sig-name descname"><span class="pre">value_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame" title="timeseriesflattener.feature_specs.meta.ValueFrame"><span class="pre">ValueFrame</span></a></em><a class="headerlink" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.value_frame" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-timeseriesflattener.feature_specs.static"></span><dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StaticFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'InitVar[InitDF_T]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'entity_id'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/static.html#StaticFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticFrame" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticFrame.collect">
+<span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/static.html#StaticFrame.collect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticFrame.collect" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticFrame.entity_id_col_name">
+<span class="sig-name descname"><span class="pre">entity_id_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'entity_id'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticFrame.entity_id_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticFrame.init_df">
+<span class="sig-name descname"><span class="pre">init_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">InitDF_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticFrame.init_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticSpec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StaticSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticFrame" title="timeseriesflattener.feature_specs.static.StaticFrame"><span class="pre">StaticFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ValueType</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/static.html#StaticSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticSpec" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Specification for a static feature, e.g. the sex of a person.</p>
+<dl class="simple">
+<dt>The value_frame must contain columns:</dt><dd><p>entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column’s values must be strings which are unique.
+additional columns containing the values of the static feature. The name of the columns will be used for feature naming.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticSpec.column_prefix">
+<span class="sig-name descname"><span class="pre">column_prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticSpec.column_prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticSpec.fallback">
+<span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ValueType</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticSpec.fallback" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.static.StaticSpec.value_frame">
+<span class="sig-name descname"><span class="pre">value_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticFrame" title="timeseriesflattener.feature_specs.static.StaticFrame"><span class="pre">StaticFrame</span></a></em><a class="headerlink" href="#timeseriesflattener.feature_specs.static.StaticSpec.value_frame" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-timeseriesflattener.feature_specs.timedelta"></span><dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TimeDeltaSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'TimestampValueFrame'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'ValueType'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">&quot;Literal['seconds',</span> <span class="pre">'minutes',</span> <span class="pre">'hours',</span> <span class="pre">'days',</span> <span class="pre">'years']&quot;</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'days'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/timedelta.html#TimeDeltaSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.column_prefix">
+<span class="sig-name descname"><span class="pre">column_prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pred'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.column_prefix" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.df">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pl.LazyFrame</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.fallback">
+<span class="sig-name descname"><span class="pre">fallback</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ValueType</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.fallback" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.init_frame">
+<span class="sig-name descname"><span class="pre">init_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame" title="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame"><span class="pre">TimestampValueFrame</span></a></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.init_frame" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.output_name">
+<span class="sig-name descname"><span class="pre">output_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.output_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.time_format">
+<span class="sig-name descname"><span class="pre">time_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'seconds'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'minutes'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'hours'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'days'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'years'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'days'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.time_format" title="Permalink to this definition">#</a></dt>
+<dd><p>Specification for a time delta feature, i.e. the time between a prediction timestamp and a value timestamp.
+Useful for e.g. calculating age or the time since a certain event.</p>
+<dl class="simple">
+<dt>init_frame must contain columns:</dt><dd><p>entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column’s values must be strings which are unique.
+value_timestamp_col_name: The name of the column containing the timestamps of when the event occurs. Must be a string, and the column’s values must be datetimes.</p>
+</dd>
+</dl>
+<p>output_name: the desired name of the feature column.
+time_format:</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-timeseriesflattener.feature_specs.timestamp_frame"></span><dl class="py class">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TimestampValueFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">InitDF_T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_id_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'entity_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_timestamp_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'timestamp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/timestamp_frame.html#TimestampValueFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Timestamps, useful for computing e.g. age.</p>
+<dl class="simple">
+<dt>Must contain columns:</dt><dd><p>entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column’s values must be strings which are unique.
+value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column’s values must be datetimes.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.collect">
+<span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/feature_specs/timestamp_frame.html#TimestampValueFrame.collect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.collect" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.entity_id_col_name">
+<span class="sig-name descname"><span class="pre">entity_id_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'entity_id'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.entity_id_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.init_df">
+<span class="sig-name descname"><span class="pre">init_df</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">InitVar</span><span class="p"><span class="pre">[</span></span><span class="pre">InitDF_T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.init_df" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.value_timestamp_col_name">
+<span class="sig-name descname"><span class="pre">value_timestamp_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'timestamp'</span></em><a class="headerlink" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.value_timestamp_col_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -255,12 +590,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="timeseriesflattener.html">
+          <a class="next-page" href="aggregators.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Timeseriesflattener</div>
+                <div class="title">Aggregators</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -313,7 +648,84 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Feature specifications</a><ul>
-<li><a class="reference internal" href="#timeseriesflattener-feature-specs-single-specs">timeseriesflattener.feature_specs.single_specs</a></li>
+<li><a class="reference internal" href="#module-timeseriesflattener.feature_specs.predictor">timeseriesflattener.feature_specs</a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec"><code class="docutils literal notranslate"><span class="pre">PredictorSpec</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.aggregators"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.aggregators</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.column_prefix"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.column_prefix</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.df"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.fallback"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.fallback</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.lookbehind_distances"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.lookbehind_distances</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.predictor.PredictorSpec.value_frame"><code class="docutils literal notranslate"><span class="pre">PredictorSpec.value_frame</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame"><code class="docutils literal notranslate"><span class="pre">PredictionTimeFrame</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.collect"><code class="docutils literal notranslate"><span class="pre">PredictionTimeFrame.collect()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.entity_id_col_name"><code class="docutils literal notranslate"><span class="pre">PredictionTimeFrame.entity_id_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.init_df"><code class="docutils literal notranslate"><span class="pre">PredictionTimeFrame.init_df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.pred_time_uuid_col_name"><code class="docutils literal notranslate"><span class="pre">PredictionTimeFrame.pred_time_uuid_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.required_columns"><code class="docutils literal notranslate"><span class="pre">PredictionTimeFrame.required_columns()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.timestamp_col_name"><code class="docutils literal notranslate"><span class="pre">PredictionTimeFrame.timestamp_col_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.LookPeriod"><code class="docutils literal notranslate"><span class="pre">LookPeriod</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.LookPeriod.first"><code class="docutils literal notranslate"><span class="pre">LookPeriod.first</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.LookPeriod.last"><code class="docutils literal notranslate"><span class="pre">LookPeriod.last</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame"><code class="docutils literal notranslate"><span class="pre">ValueFrame</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame.collect"><code class="docutils literal notranslate"><span class="pre">ValueFrame.collect()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame.entity_id_col_name"><code class="docutils literal notranslate"><span class="pre">ValueFrame.entity_id_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame.init_df"><code class="docutils literal notranslate"><span class="pre">ValueFrame.init_df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.meta.ValueFrame.value_timestamp_col_name"><code class="docutils literal notranslate"><span class="pre">ValueFrame.value_timestamp_col_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec"><code class="docutils literal notranslate"><span class="pre">BooleanOutcomeSpec</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.aggregators"><code class="docutils literal notranslate"><span class="pre">BooleanOutcomeSpec.aggregators</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.column_prefix"><code class="docutils literal notranslate"><span class="pre">BooleanOutcomeSpec.column_prefix</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.df"><code class="docutils literal notranslate"><span class="pre">BooleanOutcomeSpec.df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.init_frame"><code class="docutils literal notranslate"><span class="pre">BooleanOutcomeSpec.init_frame</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.lookahead_distances"><code class="docutils literal notranslate"><span class="pre">BooleanOutcomeSpec.lookahead_distances</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.aggregators"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.aggregators</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.column_prefix"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.column_prefix</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.df"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.fallback"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.fallback</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.lookahead_distances"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.lookahead_distances</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.outcome.OutcomeSpec.value_frame"><code class="docutils literal notranslate"><span class="pre">OutcomeSpec.value_frame</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticFrame"><code class="docutils literal notranslate"><span class="pre">StaticFrame</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticFrame.collect"><code class="docutils literal notranslate"><span class="pre">StaticFrame.collect()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticFrame.entity_id_col_name"><code class="docutils literal notranslate"><span class="pre">StaticFrame.entity_id_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticFrame.init_df"><code class="docutils literal notranslate"><span class="pre">StaticFrame.init_df</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticSpec"><code class="docutils literal notranslate"><span class="pre">StaticSpec</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticSpec.column_prefix"><code class="docutils literal notranslate"><span class="pre">StaticSpec.column_prefix</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticSpec.fallback"><code class="docutils literal notranslate"><span class="pre">StaticSpec.fallback</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.static.StaticSpec.value_frame"><code class="docutils literal notranslate"><span class="pre">StaticSpec.value_frame</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec"><code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.column_prefix"><code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec.column_prefix</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.df"><code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec.df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.fallback"><code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec.fallback</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.init_frame"><code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec.init_frame</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.output_name"><code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec.output_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.time_format"><code class="docutils literal notranslate"><span class="pre">TimeDeltaSpec.time_format</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame"><code class="docutils literal notranslate"><span class="pre">TimestampValueFrame</span></code></a><ul>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.collect"><code class="docutils literal notranslate"><span class="pre">TimestampValueFrame.collect()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.entity_id_col_name"><code class="docutils literal notranslate"><span class="pre">TimestampValueFrame.entity_id_col_name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.init_df"><code class="docutils literal notranslate"><span class="pre">TimestampValueFrame.init_df</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.value_timestamp_col_name"><code class="docutils literal notranslate"><span class="pre">TimestampValueFrame.value_timestamp_col_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

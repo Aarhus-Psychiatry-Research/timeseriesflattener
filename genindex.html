@@ -172,6 +172,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/01_basic.html">Introductory Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/02_advanced.html">Doing multiple things at once and time deltas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/03_text.html">Adding text features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/04_from_legacy.html">Creating features from legacy feature specifications</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
@@ -179,7 +180,8 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="feature_specifications.html">Feature specifications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseriesflattener.html">Timeseriesflattener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregators.html">Aggregators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flattener.html">Timeseriesflattener</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
@@ -224,8 +226,470 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"></div>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#V"><strong>V</strong></a></div>
 </section>
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="flattener.html#timeseriesflattener.flattener.Flattener.aggregate_timeseries">aggregate_timeseries() (Flattener method)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.Aggregator">Aggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.aggregators">aggregators (BooleanOutcomeSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec.aggregators">(OutcomeSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.predictor.PredictorSpec.aggregators">(PredictorSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec">BooleanOutcomeSpec (class in timeseriesflattener.feature_specs.outcome)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.collect">collect() (PredictionTimeFrame method)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticFrame.collect">(StaticFrame method)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.collect">(TimestampValueFrame method)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.ValueFrame.collect">(ValueFrame method)</a>
+</li>
+        </ul></li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.column_prefix">column_prefix (BooleanOutcomeSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec.column_prefix">(OutcomeSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.predictor.PredictorSpec.column_prefix">(PredictorSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticSpec.column_prefix">(StaticSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.column_prefix">(TimeDeltaSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="flattener.html#timeseriesflattener.flattener.Flattener.compute_lazily">compute_lazily (Flattener attribute)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.CountAggregator">CountAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="flattener.html#timeseriesflattener.flattener.MissingColumnNameError.description">description (MissingColumnNameError attribute)</a>
+
+        <ul>
+          <li><a href="flattener.html#timeseriesflattener.flattener.SpecError.description">(SpecError attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.df">df (BooleanOutcomeSpec property)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec.df">(OutcomeSpec property)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.predictor.PredictorSpec.df">(PredictorSpec property)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.df">(TimeDeltaSpec property)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.EarliestAggregator">EarliestAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.entity_id_col_name">entity_id_col_name (PredictionTimeFrame attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticFrame.entity_id_col_name">(StaticFrame attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.entity_id_col_name">(TimestampValueFrame attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.ValueFrame.entity_id_col_name">(ValueFrame attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec.fallback">fallback (OutcomeSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.predictor.PredictorSpec.fallback">(PredictorSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticSpec.fallback">(StaticSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.fallback">(TimeDeltaSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.LookPeriod.first">first (LookPeriod attribute)</a>
+</li>
+        <li><a href="flattener.html#timeseriesflattener.flattener.Flattener">Flattener (class in timeseriesflattener.flattener)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.HasValuesAggregator">HasValuesAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.init_df">init_df (PredictionTimeFrame attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticFrame.init_df">(StaticFrame attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.init_df">(TimestampValueFrame attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.ValueFrame.init_df">(ValueFrame attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.init_frame">init_frame (BooleanOutcomeSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.init_frame">(TimeDeltaSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.LookPeriod.last">last (LookPeriod attribute)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.LatestAggregator">LatestAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec.lookahead_distances">lookahead_distances (BooleanOutcomeSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec.lookahead_distances">(OutcomeSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.predictor.PredictorSpec.lookbehind_distances">lookbehind_distances (PredictorSpec attribute)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.LookPeriod">LookPeriod (class in timeseriesflattener.feature_specs.meta)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.MaxAggregator">MaxAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.MeanAggregator">MeanAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.MinAggregator">MinAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+        <li><a href="flattener.html#timeseriesflattener.flattener.SpecRequirementPair.missing_columns">missing_columns() (SpecRequirementPair method)</a>
+</li>
+        <li><a href="flattener.html#timeseriesflattener.flattener.MissingColumnNameError">MissingColumnNameError</a>
+</li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="aggregators.html#module-timeseriesflattener.aggregators">timeseriesflattener.aggregators</a>
+</li>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.meta">timeseriesflattener.feature_specs.meta</a>
+</li>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.outcome">timeseriesflattener.feature_specs.outcome</a>
+</li>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.prediction_times">timeseriesflattener.feature_specs.prediction_times</a>
+</li>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.predictor">timeseriesflattener.feature_specs.predictor</a>
+</li>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.static">timeseriesflattener.feature_specs.static</a>
+</li>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.timedelta">timeseriesflattener.feature_specs.timedelta</a>
+</li>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.timestamp_frame">timeseriesflattener.feature_specs.timestamp_frame</a>
+</li>
+          <li><a href="flattener.html#module-timeseriesflattener.flattener">timeseriesflattener.flattener</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="flattener.html#timeseriesflattener.flattener.Flattener.n_workers">n_workers (Flattener attribute)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.Aggregator.name">name (Aggregator attribute)</a>
+
+        <ul>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.CountAggregator.name">(CountAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.EarliestAggregator.name">(EarliestAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.HasValuesAggregator.name">(HasValuesAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.LatestAggregator.name">(LatestAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.MaxAggregator.name">(MaxAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.MeanAggregator.name">(MeanAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.MinAggregator.name">(MinAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.SlopeAggregator.name">(SlopeAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.SumAggregator.name">(SumAggregator attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.VarianceAggregator.name">(VarianceAggregator attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.Aggregator.new_col_name">new_col_name() (Aggregator method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec">OutcomeSpec (class in timeseriesflattener.feature_specs.outcome)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.output_name">output_name (TimeDeltaSpec attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.pred_time_uuid_col_name">pred_time_uuid_col_name (PredictionTimeFrame attribute)</a>
+</li>
+        <li><a href="flattener.html#timeseriesflattener.flattener.Flattener.predictiontime_frame">predictiontime_frame (Flattener attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame">PredictionTimeFrame (class in timeseriesflattener.feature_specs.prediction_times)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.predictor.PredictorSpec">PredictorSpec (class in timeseriesflattener.feature_specs.predictor)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="flattener.html#timeseriesflattener.flattener.SpecRequirementPair.required_columns">required_columns (SpecRequirementPair attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.required_columns">required_columns() (PredictionTimeFrame method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.SlopeAggregator">SlopeAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+        <li><a href="flattener.html#timeseriesflattener.flattener.SpecRequirementPair.spec">spec (SpecRequirementPair attribute)</a>
+</li>
+        <li><a href="flattener.html#timeseriesflattener.flattener.SpecError">SpecError</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="flattener.html#timeseriesflattener.flattener.SpecRequirementPair">SpecRequirementPair (class in timeseriesflattener.flattener)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticFrame">StaticFrame (class in timeseriesflattener.feature_specs.static)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticSpec">StaticSpec (class in timeseriesflattener.feature_specs.static)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.SumAggregator">SumAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec.time_format">time_format (TimeDeltaSpec attribute)</a>
+</li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec">TimeDeltaSpec (class in timeseriesflattener.feature_specs.timedelta)</a>
+</li>
+        <li>
+    timeseriesflattener.aggregators
+
+        <ul>
+          <li><a href="aggregators.html#module-timeseriesflattener.aggregators">module</a>
+</li>
+        </ul></li>
+        <li>
+    timeseriesflattener.feature_specs.meta
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.meta">module</a>
+</li>
+        </ul></li>
+        <li>
+    timeseriesflattener.feature_specs.outcome
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.outcome">module</a>
+</li>
+        </ul></li>
+        <li>
+    timeseriesflattener.feature_specs.prediction_times
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.prediction_times">module</a>
+</li>
+        </ul></li>
+        <li>
+    timeseriesflattener.feature_specs.predictor
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.predictor">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    timeseriesflattener.feature_specs.static
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.static">module</a>
+</li>
+        </ul></li>
+        <li>
+    timeseriesflattener.feature_specs.timedelta
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.timedelta">module</a>
+</li>
+        </ul></li>
+        <li>
+    timeseriesflattener.feature_specs.timestamp_frame
+
+        <ul>
+          <li><a href="feature_specifications.html#module-timeseriesflattener.feature_specs.timestamp_frame">module</a>
+</li>
+        </ul></li>
+        <li>
+    timeseriesflattener.flattener
+
+        <ul>
+          <li><a href="flattener.html#module-timeseriesflattener.flattener">module</a>
+</li>
+        </ul></li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.EarliestAggregator.timestamp_col_name">timestamp_col_name (EarliestAggregator attribute)</a>
+
+        <ul>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.LatestAggregator.timestamp_col_name">(LatestAggregator attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.timestamp_col_name">(PredictionTimeFrame attribute)</a>
+</li>
+          <li><a href="aggregators.html#timeseriesflattener.aggregators.SlopeAggregator.timestamp_col_name">(SlopeAggregator attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame">TimestampValueFrame (class in timeseriesflattener.feature_specs.timestamp_frame)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec.value_frame">value_frame (OutcomeSpec attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.predictor.PredictorSpec.value_frame">(PredictorSpec attribute)</a>
+</li>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.static.StaticSpec.value_frame">(StaticSpec attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.timestamp_frame.TimestampValueFrame.value_timestamp_col_name">value_timestamp_col_name (TimestampValueFrame attribute)</a>
+
+        <ul>
+          <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.ValueFrame.value_timestamp_col_name">(ValueFrame attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="feature_specifications.html#timeseriesflattener.feature_specs.meta.ValueFrame">ValueFrame (class in timeseriesflattener.feature_specs.meta)</a>
+</li>
+        <li><a href="aggregators.html#timeseriesflattener.aggregators.VarianceAggregator">VarianceAggregator (class in timeseriesflattener.aggregators)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
 
         </article>
       </div>

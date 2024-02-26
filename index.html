@@ -185,6 +185,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/01_basic.html">Introductory Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/02_advanced.html">Doing multiple things at once and time deltas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/03_text.html">Adding text features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/04_from_legacy.html">Creating features from legacy feature specifications</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
@@ -192,7 +193,8 @@
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="feature_specifications.html">Feature specifications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseriesflattener.html">Timeseriesflattener</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregators.html">Aggregators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flattener.html">Timeseriesflattener</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
 <ul>
@@ -259,7 +261,7 @@ methods for aggregating time series data into features.</p>
 <li><p>Which method to use for aggregation if multiple values exist in the lookbehind.</p></li>
 <li><p>Which value to use if there are no data points in the lookbehind.</p></li>
 </ol>
-<img alt="Terminology: A: Lookbehind determines how far back in time to look for values for predictors, whereas lookahead determines how far into the future to look for outcome values. A prediction time indicates at which point the model issues a prediction, and is used as a reference for the lookbehind and lookahead. B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the lookbehind window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the lookbehind extends further back in time than the start of the dataset or if the lookahead extends further than the end of the dataset. This behaviour is optional" class="align-center" src="https://user-images.githubusercontent.com/23191638/207274283-1207e2ce-86c7-4ee8-82a5-d81617c8bb77.png" />
+<img alt="Terminology: A: Lookbehind determines how far back in time to look for values for predictors, whereas lookahead determines how far into the future to look for outcome values. A prediction time indicates at which point the model issues a prediction, and is used as a reference for the lookbehind and lookahead. B: Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window. C) Values within the lookbehind window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc. D) Prediction times are dropped if the lookbehind extends further back in time than the start of the dataset or if the lookahead extends further than the end of the dataset. This behaviour is optional" class="align-center" src="https://raw.githubusercontent.com/Aarhus-Psychiatry-Research/timeseriesflattener/main/docs/_static/terminology_figure.png" />
 <p>The above figure graphically represents the terminology used in the package.</p>
 <p><strong>A)</strong> <em>Lookbehind</em> determines how far back in time to look for values for predictors, whereas <em>lookahead</em> determines how far into the future to look for outcome values. A <em>prediction time</em> indicates at which point the model issues a prediction, and is used as a reference for the <em>lookbehind</em> and <em>lookahead</em>.</p>
 <p><strong>B)</strong> Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window.</p>
