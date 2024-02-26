@@ -1,13 +1,13 @@
-Timeseriesflattener
+Aggregators
 --------------------------------------------------
 
 .. FlattenedDataset
 
 
-timeseriesflattener.flattened_dataset 
+timeseriesflattener.aggregators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: timeseriesflattener.flattened_dataset
+.. automodule:: timeseriesflattener.aggregators
    :members:
    :undoc-members:
    :show-inheritance:
