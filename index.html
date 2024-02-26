@@ -183,7 +183,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="tutorials.html">Tutorials</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/01_basic.html">Introductory Tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/02_advanced.html">Doing multiple things at once!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/02_advanced.html">Doing multiple things at once and time deltas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/03_text.html">Adding text features</a></li>
 </ul>
 </li>
@@ -264,8 +264,7 @@ methods for aggregating time series data into features.</p>
 <p><strong>A)</strong> <em>Lookbehind</em> determines how far back in time to look for values for predictors, whereas <em>lookahead</em> determines how far into the future to look for outcome values. A <em>prediction time</em> indicates at which point the model issues a prediction, and is used as a reference for the <em>lookbehind</em> and <em>lookahead</em>.</p>
 <p><strong>B)</strong> Labels for prediction times are true negatives if the outcome never occurs, or if the outcome happens outside the lookahead window. Labels are only true positives if the outcome occurs inside the lookahead window.</p>
 <p><strong>C)</strong> Values within the <em>lookbehind</em> window are aggregated using a specified function, for example the mean as shown in this example, or max/min etc.</p>
-<p><strong>D)</strong> Prediction times are dropped if the <em>lookbehind</em> extends further back in time than the start of the dataset or if the <em>lookahead</em> extends further than the end of the dataset. This behaviour is optional.</p>
-<p>Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the [tutorials](placeholder) for example use cases.</p>
+<p>Multiple lookbehind windows and aggregation functions can be specified for each feature to obtain a rich representation of the data. See the <a class="reference external" href="https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html">tutorials</a> for example use cases.</p>
 </section>
 <section id="where-to-ask-questions">
 <h2>Where to ask questions?<a class="headerlink" href="#where-to-ask-questions" title="Permalink to this heading">#</a></h2>
