@@ -246,6 +246,8 @@
 
 
 <div class="viewcode-block" id="MinAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.MinAggregator">[docs]</a><span class="k">class</span> <span class="nc">MinAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the minimum value in the look window.&quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
@@ -253,6 +255,8 @@
 
 
 <div class="viewcode-block" id="MaxAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.MaxAggregator">[docs]</a><span class="k">class</span> <span class="nc">MaxAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the maximum value in the look window.&quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
@@ -260,6 +264,8 @@
 
 
 <div class="viewcode-block" id="MeanAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.MeanAggregator">[docs]</a><span class="k">class</span> <span class="nc">MeanAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the mean value in the look window.&quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
@@ -267,6 +273,8 @@
 
 
 <div class="viewcode-block" id="CountAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.CountAggregator">[docs]</a><span class="k">class</span> <span class="nc">CountAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the count of non-null values in the look window.&quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;count&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
@@ -275,6 +283,8 @@
 
 <div class="viewcode-block" id="EarliestAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.EarliestAggregator">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">EarliestAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the earliest value in the look window.&quot;&quot;&quot;</span>
+
     <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;earliest&quot;</span>
 
@@ -289,6 +299,8 @@
 
 <div class="viewcode-block" id="LatestAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.LatestAggregator">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">LatestAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the latest value in the look window&quot;&quot;&quot;</span>
+
     <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span>
 
@@ -302,6 +314,8 @@
 
 
 <div class="viewcode-block" id="SumAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.SumAggregator">[docs]</a><span class="k">class</span> <span class="nc">SumAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the sum of all values in the look window.&quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sum&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
@@ -309,6 +323,8 @@
 
 
 <div class="viewcode-block" id="VarianceAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.VarianceAggregator">[docs]</a><span class="k">class</span> <span class="nc">VarianceAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the variance of the values in the look window&quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;var&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
@@ -333,6 +349,8 @@
 
 <div class="viewcode-block" id="SlopeAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.SlopeAggregator">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">SlopeAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the slope (i.e. the correlation between the timestamp and the value) in the look window.&quot;&quot;&quot;</span>
+
     <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;slope&quot;</span>
 
