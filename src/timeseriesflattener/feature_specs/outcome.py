@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class OutcomeSpec:
-    """Specification for an outcome. If your outcome is binary/boolean, use BooleanOutcomeSpec instead."""
+    """Specification for an outcome. If your outcome is binary/boolean, you can use BooleanOutcomeSpec instead."""
 
     value_frame: ValueFrame
     lookahead_distances: InitVar[LookDistances]
@@ -49,6 +49,7 @@ class BooleanOutcomeSpec:
     init_frame: InitVar[TimestampValueFrame]
     lookahead_distances: LookDistances
     aggregators: Sequence[Aggregator]
+    output_name: str
     column_prefix: str = "outc"
 
     def __post_init__(self, init_frame: TimestampValueFrame):
@@ -60,7 +61,7 @@ class BooleanOutcomeSpec:
         self.fallback = 0
 
         self.value_frame = ValueFrame(
-            init_df=init_frame.df.with_columns((pl.lit(1)).alias("value")),
+            init_df=init_frame.df.with_columns((pl.lit(1)).alias(self.output_name)),
             entity_id_col_name=init_frame.entity_id_col_name,
             value_timestamp_col_name=init_frame.value_timestamp_col_name,
         )
