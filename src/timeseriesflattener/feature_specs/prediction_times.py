@@ -39,9 +39,7 @@ class PredictionTimeFrame:
         self.df = self.df.with_columns(
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
-            )
-            .str.strip_chars()
-            .alias(self.pred_time_uuid_col_name)
+            ).alias(self.pred_time_uuid_col_name)
         )
 
         _validate_col_name_columns_exist(obj=self)
