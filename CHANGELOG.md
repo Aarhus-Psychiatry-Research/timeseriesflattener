@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v2.0.2 (2024-02-27)
+
+### Fix
+
+* Require polars >= 0.19.0 ([`c70ca84`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c70ca8476d688ef03c1d147784fa5b11b96f45d4))
+
+### Documentation
+
+* Docstrings for aggregators ([`32b6698`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/32b6698b869711906ea955af7438efa25d3a3003))
+
 ## v2.0.1 (2024-02-26)
 
 ### Fix
