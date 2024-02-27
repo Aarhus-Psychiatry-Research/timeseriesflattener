@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.0 (2024-02-27)
+
+### Feature
+
+* **#515:** Make the output col name of BooleanOutcomeSpec user-definable ([#522](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues/522)) ([`2082d01`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2082d010c21d7dd0567b4aa29f615476e979c4e4))
+
+### Fix
+
+* Specify outcome colname in boolean ([`70cb724`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/70cb724ac38e116a7b8aa077fc4c3eba92d34887))
+
 ## v2.0.2 (2024-02-27)
 
 ### Fix
