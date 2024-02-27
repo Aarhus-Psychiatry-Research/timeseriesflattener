@@ -19,6 +19,8 @@ class Aggregator(ABC):
 
 
 class MinAggregator(Aggregator):
+    """Returns the minimum value in the look window."""
+
     name: str = "min"
 
     def __call__(self, column_name: str) -> pl.Expr:
@@ -26,6 +28,8 @@ class MinAggregator(Aggregator):
 
 
 class MaxAggregator(Aggregator):
+    """Returns the maximum value in the look window."""
+
     name: str = "max"
 
     def __call__(self, column_name: str) -> pl.Expr:
@@ -33,6 +37,8 @@ class MaxAggregator(Aggregator):
 
 
 class MeanAggregator(Aggregator):
+    """Returns the mean value in the look window."""
+
     name: str = "mean"
 
     def __call__(self, column_name: str) -> pl.Expr:
@@ -40,6 +46,8 @@ class MeanAggregator(Aggregator):
 
 
 class CountAggregator(Aggregator):
+    """Returns the count of non-null values in the look window."""
+
     name: str = "count"
 
     def __call__(self, column_name: str) -> pl.Expr:
@@ -48,6 +56,8 @@ class CountAggregator(Aggregator):
 
 @dataclass(frozen=True)
 class EarliestAggregator(Aggregator):
+    """Returns the earliest value in the look window."""
+
     timestamp_col_name: str
     name: str = "earliest"
 
@@ -62,6 +72,8 @@ class EarliestAggregator(Aggregator):
 
 @dataclass(frozen=True)
 class LatestAggregator(Aggregator):
+    """Returns the latest value in the look window"""
+
     timestamp_col_name: str
     name: str = "latest"
 
@@ -75,6 +87,8 @@ class LatestAggregator(Aggregator):
 
 
 class SumAggregator(Aggregator):
+    """Returns the sum of all values in the look window."""
+
     name: str = "sum"
 
     def __call__(self, column_name: str) -> pl.Expr:
@@ -82,6 +96,8 @@ class SumAggregator(Aggregator):
 
 
 class VarianceAggregator(Aggregator):
+    """Returns the variance of the values in the look window"""
+
     name: str = "var"
 
     def __call__(self, column_name: str) -> pl.Expr:
@@ -106,6 +122,8 @@ class HasValuesAggregator(Aggregator):
 
 @dataclass(frozen=True)
 class SlopeAggregator(Aggregator):
+    """Returns the slope (i.e. the correlation between the timestamp and the value) in the look window."""
+
     timestamp_col_name: str
     name: str = "slope"
 
