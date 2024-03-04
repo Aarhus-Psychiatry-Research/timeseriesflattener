@@ -57,7 +57,7 @@ test = [
   "pytest-cov>=3.0.0,<3.1.0",
   "pytest-xdist>=3.0.0,<3.2.0",
   "pytest-sugar>=0.9.4,<0.10.0",
-  "pytest-testmon==2.1.0",
+  "pytest-testmon==2.1.1",
   "pytest-benchmark==4.0.0",
   "pytest-codspeed==2.2.0",
 ]
@@ -86,7 +86,7 @@ rye = { dev-dependencies = [
   "pytest-cov>=3.0.0, <3.1.0",
   "pytest-xdist>=3.0.0, <3.2.0",
   "pytest-sugar>=0.9.4, <0.10.0",
-  "pytest-testmon==2.1.0",
+  "pytest-testmon==2.1.1",
   "pytest-benchmark==4.0.0",
   "pytest-codspeed==2.2.0",
   "invoke==2.1.1",
