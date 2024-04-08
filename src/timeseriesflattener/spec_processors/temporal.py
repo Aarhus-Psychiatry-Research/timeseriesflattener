@@ -174,7 +174,7 @@ def process_temporal_spec(
 
     return ProcessedFrame(
         df=horizontally_concatenate_dfs(
-            aggregated_value_frames.to_list(),
+            dfs=aggregated_value_frames.to_list(),
             pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
         ),
         pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
