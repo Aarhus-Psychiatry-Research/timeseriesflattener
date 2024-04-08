@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 
+import numpy as np
 import polars as pl
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
@@ -288,3 +289,61 @@ def test_process_temporal_spec_multiple_values():
 1-2021-01-01 00:00:00.000000,1,2"""
     )
     assert_frame_equal(result.collect(), expected)
+
+
+def test_sliding_window():
+    pred_frame = str_to_pl_df(
+        """entity_id,pred_timestamp
+                              1,2011-01-01,
+                              1,2013-01-01,
+                              1,2014-01-01,
+                              1,2015-01-01,
+                              1,2016-01-01,
+                              1,2017-01-01,
+                              1,2018-01-01,
+                              1,2019-01-01,
+                              1,2020-01-01,
+                              1,2021-01-01, 
+                              1,2022-01-01,"""  # 2012 year without prediction times
+    )
+
+    value_frame = str_to_pl_df(
+        """entity_id,timestamp,value
+                                1,2011-01-01,1
+                                1,2012-01-01,2
+                                1,2013-01-01,3
+                                1,2014-01-01,4
+                                1,2015-01-01,5
+                                1,2016-01-01,6
+                                1,2017-01-01,7
+                                1,2018-01-01,8
+                                1,2019-01-01,9
+                                1,2020-01-01,10
+                                1,2021-01-01,11 
+                                1,2021-01-01,12"""  # 2021 year with multiple values
+    )  # 2022 year with no values
+
+    result = process_spec.process_temporal_spec(
+        spec=PredictorSpec(
+            value_frame=ValueFrame(init_df=value_frame),
+            lookbehind_distances=[dt.timedelta(days=1)],
+            aggregators=[MeanAggregator()],
+            fallback=np.nan,
+        ),
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
+    )
+
+    expected = str_to_pl_df(
+        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
+                            1,2011-01-01,1
+                            1,2013-01-01,3
+                            1,2014-01-01,4
+                            1,2015-01-01,5
+                            1,2016-01-01,6
+                            1,2017-01-01,7
+                            1,2018-01-01,8
+                            1,2019-01-01,9
+                            1,2020-01-01,10
+                            1,2021-01-01,11.5
+                            1,2022-01-01,nan"""
+    )
