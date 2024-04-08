@@ -325,12 +325,12 @@ def test_sliding_window():
 
     result = process_spec.process_temporal_spec(
         spec=PredictorSpec(
-            value_frame=ValueFrame(init_df=value_frame),
+            value_frame=ValueFrame(init_df=value_frame.lazy()),
             lookbehind_distances=[dt.timedelta(days=1)],
             aggregators=[MeanAggregator()],
             fallback=np.nan,
         ),
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
     )
 
     expected = str_to_pl_df(

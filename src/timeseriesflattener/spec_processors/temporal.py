@@ -154,16 +154,15 @@ def process_temporal_spec(
     year_start: int = 2011,
     year_end: int = 2022,
 ) -> ProcessedFrame:
-    # TODO: slice by year (2012-2021?)
-    test = list()
+    aggregated_value_frames = list()
+
     for year in range(year_start, year_end + 1):
-        year_df = predictiontime_frame.df.filter(pl.col("pred_timestamp").dt.year() == year)
+        year_df = predictiontime_frame.df.filter(
+            pl.col(predictiontime_frame.timestamp_col_name).dt.year() == year
+        )
         year_frame = PredictionTimeFrame(init_df=year_df)
 
-        if year_df.collect().height == 0:
-            continue
-
-        aggregated_value_frames = (
+        aggregated_value_frames += (
             Iter(spec.normalised_lookperiod)
             .map(
                 lambda lookperiod: _slice_and_aggregate_spec(
@@ -184,17 +183,13 @@ def process_temporal_spec(
                 )
             )
             .flatten()
-        )
+        ).to_list()
 
-    #     test += [aggregated_value_frames.to_list()]
-
-    # # TODO: concat
-    # concatenated_aggregated_values_frame = pl.concat(test)
+    concatenated_aggregated_values_frame = pl.concat(aggregated_value_frames)
 
     return ProcessedFrame(
         df=horizontally_concatenate_dfs(
-            aggregated_value_frames.to_list(),
-            # [concatenated_aggregated_values_frame],
+            [concatenated_aggregated_values_frame],
             pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
         ),
         pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
