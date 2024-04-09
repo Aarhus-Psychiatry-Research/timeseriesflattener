@@ -295,15 +295,10 @@ def test_sliding_window():
     pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp
                               1,2011-01-01,
-                              1,2013-01-01,
                               1,2014-01-01,
-                              1,2015-01-01,
                               1,2016-01-01,
-                              1,2017-01-01,
                               1,2018-01-01,
-                              1,2019-01-01,
                               1,2020-01-01,
-                              1,2021-01-01, 
                               1,2022-01-01,"""  # 2012 year without prediction times
     )
 
@@ -315,10 +310,7 @@ def test_sliding_window():
                                 1,2014-01-01,4
                                 1,2015-01-01,5
                                 1,2016-01-01,6
-                                1,2017-01-01,7
-                                1,2018-01-01,8
                                 1,2019-01-01,9
-                                1,2020-01-01,10
                                 1,2021-01-01,11 
                                 1,2021-01-01,12"""  # 2021 year with multiple values
     )  # 2022 year with no values
@@ -326,24 +318,21 @@ def test_sliding_window():
     result = process_spec.process_temporal_spec(
         spec=PredictorSpec(
             value_frame=ValueFrame(init_df=value_frame.lazy()),
-            lookbehind_distances=[dt.timedelta(days=1)],
+            lookbehind_distances=[dt.timedelta(days=365)],
             aggregators=[MeanAggregator()],
-            fallback=np.nan,
+            fallback=0,
         ),
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
-                            1,2011-01-01,1
-                            1,2013-01-01,3
-                            1,2014-01-01,4
-                            1,2015-01-01,5
-                            1,2016-01-01,6
-                            1,2017-01-01,7
-                            1,2018-01-01,8
-                            1,2019-01-01,9
-                            1,2020-01-01,10
-                            1,2021-01-01,11.5
-                            1,2022-01-01,nan"""
+        """pred_time_uuid,pred_value_within_0_to_365_days_mean_fallback_0
+1-2011-01-01 00:00:00.000000,1
+1-2014-01-01 00:00:00.000000,3.5
+1-2016-01-01 00:00:00.000000,5.5
+1-2018-01-01 00:00:00.000000,0
+1-2020-01-01 00:00:00.000000,9
+1-2022-01-01 00:00:00.000000,11.5"""
     )
+
+    assert_frame_equal(result.collect(), expected)

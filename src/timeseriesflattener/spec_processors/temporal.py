@@ -12,12 +12,13 @@ from ..feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
 from ..feature_specs.predictor import PredictorSpec
 from ..frame_utilities._horisontally_concat import horizontally_concatenate_dfs
 from ..feature_specs.prediction_times import PredictionTimeFrame
+from ..feature_specs.meta import ValueFrame
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from ..feature_specs.meta import LookPeriod, ValueFrame, ValueType
+    from ..feature_specs.meta import LookPeriod, ValueType
 
 
 def _get_timedelta_frame(
@@ -149,25 +150,48 @@ TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
 
 
 def process_temporal_spec(
-    spec: TemporalSpec,
-    predictiontime_frame: PredictionTimeFrame,
-    year_start: int = 2011,
-    year_end: int = 2022,
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame
 ) -> ProcessedFrame:
     aggregated_value_frames = list()
 
+    year_start = (
+        predictiontime_frame.df.select(pl.col(predictiontime_frame.timestamp_col_name).min())
+        .collect()
+        .item()
+        .year
+    )
+    year_end = (
+        predictiontime_frame.df.select(pl.col(predictiontime_frame.timestamp_col_name).max())
+        .collect()
+        .item()
+        .year
+    )
+
+    lookperiod_years = int(
+        (spec.normalised_lookperiod[0].first - spec.normalised_lookperiod[0].last).days / 365
+    )
+
     for year in range(year_start, year_end + 1):
-        year_df = predictiontime_frame.df.filter(
+        year_predictiontime_df = predictiontime_frame.df.filter(
             pl.col(predictiontime_frame.timestamp_col_name).dt.year() == year
         )
-        year_frame = PredictionTimeFrame(init_df=year_df)
+        year_predictiontime_frame = PredictionTimeFrame(init_df=year_predictiontime_df)
+
+        year_value_df = spec.value_frame.df.filter(
+            (pl.col(spec.value_frame.value_timestamp_col_name).dt.year() == year)
+            | (
+                pl.col(spec.value_frame.value_timestamp_col_name).dt.year()
+                == year + lookperiod_years
+            )
+        )
+        year_value_frame = ValueFrame(year_value_df)
 
         aggregated_value_frames += (
             Iter(spec.normalised_lookperiod)
             .map(
                 lambda lookperiod: _slice_and_aggregate_spec(
                     timedelta_frame=_get_timedelta_frame(
-                        predictiontime_frame=year_frame, value_frame=spec.value_frame
+                        predictiontime_frame=year_predictiontime_frame, value_frame=year_value_frame
                     ),
                     masked_aggregator=lambda sliced_frame: _aggregate_masked_frame(
                         aggregators=spec.aggregators,
