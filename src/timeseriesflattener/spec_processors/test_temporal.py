@@ -299,7 +299,8 @@ def test_sliding_window():
                               1,2016-01-01,
                               1,2018-01-01,
                               1,2020-01-01,
-                              1,2022-01-01,"""  # 2012 year without prediction times
+                              1,2022-01-01,
+                              1,2022-06-01"""  # 2012 year without prediction times
     )
 
     value_frame = str_to_pl_df(
