@@ -23,21 +23,21 @@ classifiers = [
 ]
 requires-python = ">=3.8.0,<3.13.0"
 dependencies = [
-    "scipy>=1.8.0",
-    "scikit-learn>=1.1.2",
-    "pydantic>=2.0.0",
-    "pandas>=1.4.0,<=2.1.3",
-    "catalogue>=2.0.0",
-    "numpy>=1.23.3",
-    "pyarrow>=8.0.0",
-    "protobuf<=4.24.4",
-    # Other versions give errors with pytest, super weird!
-    "frozendict>=2.3.4",
-    "coloredlogs>14.0.0",
-    "tqdm>4.1.0",
-    "polars>0.19.0",
-    "iterpy>=1.6.0",
-    "rich>=13.0.0",
+  "scipy>=1.8.0",
+  "scikit-learn>=1.1.2",
+  "pydantic>=2.0.0",
+  "pandas>=1.4.0,<=2.1.3",
+  "catalogue>=2.0.0",
+  "numpy>=1.23.3",
+  "pyarrow>=8.0.0",
+  "protobuf<=4.24.4",
+  # Other versions give errors with pytest, super weird!
+  "frozendict>=2.3.4",
+  "coloredlogs>14.0.0",
+  "tqdm>4.1.0",
+  "polars>0.19.0",
+  "iterpy==1.6.0",
+  "rich>=13.0.0",
 ]
 
 [project.license]
@@ -47,16 +47,15 @@ file = "LICENSE"
 dev = [
   "pyright==1.1.330.post0",
   "pre-commit==3.4.0",
-  "ruff==0.2.1",            # important that these match the pre-commit hooks
-  "pandas-stubs",           # type stubs for pandas
+  "ruff==0.2.1",                # important that these match the pre-commit hooks
+  "pandas-stubs==2.2.0.240218", # type stubs for pandas
   "invoke==2.1.1",
-  "lumberman",
 ]
 test = [
-  "pytest>=7.1.3,<7.3.0",
-  "pytest-cov>=3.0.0,<3.1.0",
-  "pytest-xdist>=3.0.0,<3.2.0",
-  "pytest-sugar>=0.9.4,<0.10.0",
+  "pytest==7.2.2",
+  "pytest-cov==3.0.0",
+  "pytest-xdist==3.1.0",
+  "pytest-sugar==0.9.7",
   "pytest-testmon==2.1.0",
   "pytest-benchmark==4.0.0",
   "pytest-codspeed==2.2.0",
