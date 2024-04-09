@@ -160,6 +160,7 @@ def process_temporal_spec(
         .item()
         .year
     )
+
     year_end = (
         predictiontime_frame.df.select(pl.col(predictiontime_frame.timestamp_col_name).max())
         .collect()
