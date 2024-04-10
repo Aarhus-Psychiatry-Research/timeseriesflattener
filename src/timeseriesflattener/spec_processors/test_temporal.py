@@ -299,8 +299,7 @@ def test_sliding_window():
                               1,2016-01-01,
                               1,2018-01-01,
                               1,2020-01-01,
-                              1,2022-01-01,
-                              1,2022-06-01"""  # 2012 year without prediction times
+                              1,2022-01-01,"""  # 2012 year without prediction times
     )
 
     value_frame = str_to_pl_df(
@@ -319,7 +318,10 @@ def test_sliding_window():
     result = process_spec.process_temporal_spec(
         spec=PredictorSpec(
             value_frame=ValueFrame(init_df=value_frame.lazy()),
-            lookbehind_distances=[dt.timedelta(days=365)],
+            lookbehind_distances=[
+                dt.timedelta(days=10),
+                dt.timedelta(days=365),
+            ],  # test multiple lookperiods
             aggregators=[MeanAggregator()],
             fallback=0,
         ),
@@ -327,13 +329,13 @@ def test_sliding_window():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_0_to_365_days_mean_fallback_0
-1-2011-01-01 00:00:00.000000,1
-1-2014-01-01 00:00:00.000000,3.5
-1-2016-01-01 00:00:00.000000,5.5
-1-2018-01-01 00:00:00.000000,0
-1-2020-01-01 00:00:00.000000,9
-1-2022-01-01 00:00:00.000000,11.5"""
+        """pred_time_uuid,pred_value_within_0_to_10_days_mean_fallback_0,pred_value_within_0_to_365_days_mean_fallback_0
+1-2011-01-01 00:00:00.000000,1.0,1.0
+1-2014-01-01 00:00:00.000000,4.0,3.5
+1-2016-01-01 00:00:00.000000,6.0,5.5
+1-2018-01-01 00:00:00.000000,0.0,0.0
+1-2020-01-01 00:00:00.000000,0.0,9.0
+1-2022-01-01 00:00:00.000000,0.0,11.5"""
     )
 
     assert_frame_equal(result.collect(), expected)
