@@ -149,7 +149,7 @@ def _slice_and_aggregate_spec(
 TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
 
 
-def _get_min_max_from_predictiontime_frame(
+def _get_min_max_date_from_predictiontime_frame(
     frame: PredictionTimeFrame,
 ) -> tuple[dt.datetime, dt.datetime]:
     if isinstance(frame.df, pl.LazyFrame):
@@ -176,10 +176,10 @@ def _get_longest_lookperiod(lookperiods: list[LookPeriod]) -> dt.timedelta:
 
 
 def _create_date_range(
-    start_date: dt.datetime, end_date: dt.datetime, timedelta: int
+    start_date: dt.datetime, end_date: dt.datetime, timedelta_days: int
 ) -> list[dt.datetime]:
-    n = int((end_date - start_date).days / timedelta)
-    return [start_date + dt.timedelta(timedelta * i) for i in range(n + 2)]
+    n = int((end_date - start_date).days / timedelta_days)
+    return [start_date + dt.timedelta(timedelta_days * i) for i in range(n + 2)]
 
 
 def _create_stride_chunks(
@@ -216,11 +216,11 @@ def _create_stride_chunks(
 
 
 def process_temporal_spec(
-    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, timedelta: int = 365
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, timedelta_days: int = 365
 ) -> ProcessedFrame:
-    start_date, end_date = _get_min_max_from_predictiontime_frame(predictiontime_frame)
+    start_date, end_date = _get_min_max_date_from_predictiontime_frame(predictiontime_frame)
 
-    date_range = _create_date_range(start_date, end_date, timedelta)
+    date_range = _create_date_range(start_date, end_date, timedelta_days)
 
     result_frames = list()
     for step in range(len(date_range) - 1):
