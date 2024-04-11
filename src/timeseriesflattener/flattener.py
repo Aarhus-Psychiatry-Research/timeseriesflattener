@@ -120,6 +120,10 @@ class Flattener:
             self.predictiontime_frame.df = self.predictiontime_frame.collect()  # type: ignore
             for spec in specs:
                 spec.value_frame.df = spec.value_frame.collect()  # type: ignore
+        else:
+            self.predictiontime_frame.df = self.predictiontime_frame.df.lazy()
+            for spec in specs:
+                spec.value_frame.df = spec.value_frame.df.lazy()
 
         # Process and collect the specs. One-by-one, to get feedback on progress.
         dfs: Sequence[pl.LazyFrame] = []
