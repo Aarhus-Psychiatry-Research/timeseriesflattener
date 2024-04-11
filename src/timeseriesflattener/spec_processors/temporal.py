@@ -176,24 +176,18 @@ def _get_longest_lookperiod(lookperiods: list[LookPeriod]) -> dt.timedelta:
 
 
 def _create_date_range(
-    start_date: dt.datetime, end_date: dt.datetime, timedelta: str = "1y"
-) -> pl.Series:
-    return pl.date_range(
-        start_date,
-        pl.datetime(
-            end_date.year, end_date.month, end_date.day, end_date.hour, end_date.minute
-        ).dt.offset_by(timedelta),
-        timedelta,
-        eager=True,
-    )
+    start_date: dt.datetime, end_date: dt.datetime, timedelta: int
+) -> list[dt.datetime]:
+    n = int((end_date - start_date).days / timedelta)
+    return [start_date + dt.timedelta(timedelta * i) for i in range(n + 2)]
 
 
 def _create_stride_chunks(
-    predictiontime_frame: PredictionTimeFrame, spec: TemporalSpec, date_series: pl.Series, step: int
+    predictiontime_frame: PredictionTimeFrame, spec: TemporalSpec, date_range: list, step: int
 ) -> tuple[PredictionTimeFrame, ValueFrame]:
     step_predictiontime_df = predictiontime_frame.df.filter(
-        (pl.col(predictiontime_frame.timestamp_col_name) >= date_series[step])
-        & (pl.col(predictiontime_frame.timestamp_col_name) < date_series[step + 1])
+        (pl.col(predictiontime_frame.timestamp_col_name) >= date_range[step])
+        & (pl.col(predictiontime_frame.timestamp_col_name) < date_range[step + 1])
     )
 
     lookperiod = _get_longest_lookperiod(spec.normalised_lookperiod)
@@ -202,19 +196,19 @@ def _create_stride_chunks(
         step_value_df = spec.value_frame.df.filter(
             (
                 pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
-                >= date_series[step] + lookperiod
+                >= date_range[step] + lookperiod
             )
             & (
                 pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
-                < date_series[step + 1]
+                < date_range[step + 1]
             )
         )
     else:
         step_value_df = spec.value_frame.df.filter(
-            (pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime() >= date_series[step])
+            (pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime() >= date_range[step])
             & (
                 pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
-                < date_series[step + 1] + lookperiod
+                < date_range[step + 1] + lookperiod
             )
         )
 
@@ -222,16 +216,16 @@ def _create_stride_chunks(
 
 
 def process_temporal_spec(
-    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, timedelta: str = "1y"
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, timedelta: int = 365
 ) -> ProcessedFrame:
     start_date, end_date = _get_min_max_from_predictiontime_frame(predictiontime_frame)
 
-    date_series = _create_date_range(start_date, end_date, timedelta)
+    date_range = _create_date_range(start_date, end_date, timedelta)
 
     result_frames = list()
-    for step in range(len(date_series) - 1):
+    for step in range(len(date_range) - 1):
         step_predictiontime_frame, step_value_frame = _create_stride_chunks(
-            predictiontime_frame, spec, date_series, step
+            predictiontime_frame, spec, date_range, step
         )
 
         aggregated_value_frames = list()
