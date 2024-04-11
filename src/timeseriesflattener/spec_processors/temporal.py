@@ -175,12 +175,10 @@ def _get_longest_lookperiod(lookperiods: list[LookPeriod]) -> dt.timedelta:
     return dt.timedelta(max_lookperiod[0])
 
 
-def process_temporal_spec(
-    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, timedelta: str = "1y"
-) -> ProcessedFrame:
-    start_date, end_date = _get_min_max_from_predictiontime_frame(predictiontime_frame)
-
-    date_series = pl.date_range(
+def _create_date_range(
+    start_date: dt.datetime, end_date: dt.datetime, timedelta: str = "1y"
+) -> pl.Series:
+    return pl.date_range(
         start_date,
         pl.datetime(
             end_date.year, end_date.month, end_date.day, end_date.hour, end_date.minute
@@ -189,41 +187,54 @@ def process_temporal_spec(
         eager=True,
     )
 
+
+def _create_stride_chunks(
+    predictiontime_frame: PredictionTimeFrame, spec: TemporalSpec, date_series: pl.Series, step: int
+) -> tuple[PredictionTimeFrame, ValueFrame]:
+    step_predictiontime_df = predictiontime_frame.df.filter(
+        (pl.col(predictiontime_frame.timestamp_col_name) >= date_series[step])
+        & (pl.col(predictiontime_frame.timestamp_col_name) < date_series[step + 1])
+    )
+
+    lookperiod = _get_longest_lookperiod(spec.normalised_lookperiod)
+
+    if lookperiod < dt.timedelta(days=0):
+        step_value_df = spec.value_frame.df.filter(
+            (
+                pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
+                >= date_series[step] + lookperiod
+            )
+            & (
+                pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
+                < date_series[step + 1]
+            )
+        )
+    else:
+        step_value_df = spec.value_frame.df.filter(
+            (pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime() >= date_series[step])
+            & (
+                pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
+                < date_series[step + 1] + lookperiod
+            )
+        )
+
+    return PredictionTimeFrame(init_df=step_predictiontime_df), ValueFrame(step_value_df)
+
+
+def process_temporal_spec(
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, timedelta: str = "1y"
+) -> ProcessedFrame:
+    start_date, end_date = _get_min_max_from_predictiontime_frame(predictiontime_frame)
+
+    date_series = _create_date_range(start_date, end_date, timedelta)
+
     result_frames = list()
     for step in range(len(date_series) - 1):
-        aggregated_value_frames = list()
-
-        step_predictiontime_df = predictiontime_frame.df.filter(
-            (pl.col(predictiontime_frame.timestamp_col_name) >= date_series[step])
-            & (pl.col(predictiontime_frame.timestamp_col_name) < date_series[step + 1])
+        step_predictiontime_frame, step_value_frame = _create_stride_chunks(
+            predictiontime_frame, spec, date_series, step
         )
-        step_predictiontime_frame = PredictionTimeFrame(init_df=step_predictiontime_df)
 
-        lookperiod = _get_longest_lookperiod(spec.normalised_lookperiod)
-
-        if lookperiod < dt.timedelta(days=0):
-            step_value_df = spec.value_frame.df.filter(
-                (
-                    pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
-                    >= date_series[step] + lookperiod
-                )
-                & (
-                    pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
-                    < date_series[step + 1]
-                )
-            )
-        else:
-            step_value_df = spec.value_frame.df.filter(
-                (
-                    pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
-                    >= date_series[step]
-                )
-                & (
-                    pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
-                    < date_series[step + 1] + lookperiod
-                )
-            )
-        step_value_frame = ValueFrame(step_value_df)
+        aggregated_value_frames = list()
 
         aggregated_value_frames += (
             Iter(spec.normalised_lookperiod)
