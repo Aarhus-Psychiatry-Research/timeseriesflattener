@@ -212,7 +212,17 @@ def _create_stride_chunks(
             )
         )
 
-    return PredictionTimeFrame(init_df=step_predictiontime_df), ValueFrame(step_value_df)
+    vf = spec.value_frame
+    return PredictionTimeFrame(
+        init_df=step_predictiontime_df,
+        entity_id_col_name=predictiontime_frame.entity_id_col_name,
+        timestamp_col_name=predictiontime_frame.timestamp_col_name,
+        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+    ), ValueFrame(
+        init_df=step_value_df,
+        entity_id_col_name=vf.entity_id_col_name,
+        value_timestamp_col_name=vf.value_timestamp_col_name,
+    )
 
 
 def process_temporal_spec(
