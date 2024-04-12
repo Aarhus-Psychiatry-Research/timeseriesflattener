@@ -97,7 +97,9 @@ class Flattener:
     compute_lazily: bool = False
     n_workers: int | None = None
 
-    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedFrame:
+    def aggregate_timeseries(
+        self, specs: Sequence[ValueSpecification], timedelta_days: int
+    ) -> AggregatedFrame:
         if self.compute_lazily:
             print(
                 "We have encountered performance issues on Windows when using lazy evaluation. If you encounter performance issues, try setting lazy=False."
@@ -131,7 +133,9 @@ class Flattener:
             for spec in track(specs, description="Processing specs..."):
                 print(f"Processing spec: {spec.value_frame.value_col_names}")
                 processed_spec = process_spec(
-                    predictiontime_frame=self.predictiontime_frame, spec=spec
+                    predictiontime_frame=self.predictiontime_frame,
+                    spec=spec,
+                    timedelta_days=timedelta_days,
                 )
 
                 if isinstance(processed_spec.df, pl.LazyFrame):
