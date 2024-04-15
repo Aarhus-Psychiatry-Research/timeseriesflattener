@@ -36,7 +36,7 @@ dependencies = [
   "coloredlogs>14.0.0",
   "tqdm>4.1.0",
   "polars>0.19.0",
-  "iterpy==1.6.0",
+  "iterpy==1.9.0",
   "rich>=13.0.0",
 ]
 
