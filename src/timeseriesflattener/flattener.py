@@ -159,9 +159,6 @@ class Flattener:
             dfs, pred_time_uuid_col_name=self.predictiontime_frame.pred_time_uuid_col_name
         )
 
-        if not self.compute_lazily:
-            feature_dfs = feature_dfs.collect()
-
         return AggregatedFrame(
             init_df=horizontally_concatenate_dfs(
                 [self.predictiontime_frame.df, feature_dfs],  # type: ignore

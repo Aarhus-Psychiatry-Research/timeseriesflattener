@@ -40,9 +40,14 @@ class ValueFrame:
     init_df: InitVar[InitDF_T]
     entity_id_col_name: str = default_entity_id_col_name
     value_timestamp_col_name: str = "timestamp"
+    coerce_to_lazy: InitVar[bool] = True
 
-    def __post_init__(self, init_df: InitDF_T):
-        self.df = _anyframe_to_lazyframe(init_df)
+    def __post_init__(self, init_df: InitDF_T, coerce_to_lazy: bool):
+        if coerce_to_lazy:
+            self.df = _anyframe_to_lazyframe(init_df)
+        else:
+            self.df: pl.LazyFrame = init_df
+
         _validate_col_name_columns_exist(obj=self)
         self.value_col_names = [
             col
