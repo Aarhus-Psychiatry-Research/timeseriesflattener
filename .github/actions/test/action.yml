@@ -9,7 +9,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout (GitHub)
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Replace python version in Dockerfile
       shell: bash
