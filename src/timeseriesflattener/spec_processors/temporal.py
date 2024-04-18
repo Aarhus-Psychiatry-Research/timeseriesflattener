@@ -166,7 +166,7 @@ def _slice_datetime_interval(
     start: dt.datetime, end: dt.datetime, step_size: dt.timedelta
 ) -> list[dt.datetime]:
     n = int((end - start) / step_size)
-    return [start + step_size * i for i in range(n + 1)]
+    return [start + step_size * i for i in range(n + 2)]
 
 
 def _create_step_frames(
@@ -183,7 +183,7 @@ def _create_step_frames(
     )
 
     lookdistance = max(
-        [lookperiod.first - lookperiod.last for lookperiod in spec.normalised_lookperiod]
+        [lookperiod.first - lookperiod.last for lookperiod in spec.normalised_lookperiod], key=abs
     )
 
     is_lookbehind = lookdistance < dt.timedelta(days=0)
