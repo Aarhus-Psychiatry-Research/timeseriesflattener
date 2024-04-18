@@ -49,6 +49,7 @@ class PredictorGroupSpec(V1PGSProtocol):
     aggregation_fns: Sequence[AggregationFunType]
     fallback: Sequence[int | float | str]
     prefix: str = "pred"
+    entity_id_col_name_out: str = "entity_id"
 
     def _infer_entity_id_col_name(self, df: pd.DataFrame) -> str:
         return next(c for c in df.columns if "entity" in c.lower() or "borger" in c.lower())
@@ -89,7 +90,9 @@ class PredictorGroupSpec(V1PGSProtocol):
                             init_df=ndf.df.rename(
                                 {
                                     "value": ndf.name,
-                                    self._infer_entity_id_col_name(ndf.df): "entity_id",
+                                    self._infer_entity_id_col_name(
+                                        ndf.df
+                                    ): self.entity_id_col_name_out,
                                 },
                                 axis=1,
                             )
