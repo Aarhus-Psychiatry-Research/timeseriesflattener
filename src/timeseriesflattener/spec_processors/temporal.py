@@ -183,15 +183,15 @@ def _create_step_frames(
     )
 
     lookdistance = max(
-        [lookperiod.first - lookperiod.last for lookperiod in spec.normalised_lookperiod], key=abs
+        [lookperiod.last - lookperiod.first for lookperiod in spec.normalised_lookperiod]
     )
 
-    is_lookbehind = lookdistance < dt.timedelta(days=0)
+    is_lookbehind = isinstance(spec, PredictorSpec)
     value_timestamps = pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
 
     if is_lookbehind:
         step_value_df = spec.value_frame.df.filter(
-            (value_timestamps >= step_first_pred_time + lookdistance)
+            (value_timestamps >= step_first_pred_time - lookdistance)
             & (value_timestamps < step_last_pred_time)
         )
     else:
