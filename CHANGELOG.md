@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.1 (2024-04-18)
+
+### Fix
+
+* Add option to set entity_id_col_name_out in legacy predictor group spec ([`4094dc1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/4094dc103fb7b2ed18143c8104504f897e8f37fa))
+
+### Documentation
+
+* Update pre-commit.yml highlight legacy spec change ([`fcff53e`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/fcff53efe2417ee65c7f97452bcd201f1f0d0dc0))
+
 ## v2.1.0 (2024-02-27)
 
 ### Feature
