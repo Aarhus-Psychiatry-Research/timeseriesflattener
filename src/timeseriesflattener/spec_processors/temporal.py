@@ -166,9 +166,7 @@ def _slice_datetime_interval(
     start: dt.datetime, end: dt.datetime, step_size: dt.timedelta
 ) -> list[dt.datetime]:
     n = int((end - start) / step_size)
-    return [
-        start + step_size * i for i in range(n + 2)
-    ]  # +2 to include the last step, since e.g., the average year is not 365 days
+    return [start + step_size * i for i in range(n + 1)]
 
 
 def _create_step_frames(
@@ -248,7 +246,17 @@ def process_temporal_spec(
     predictiontime_frame: PredictionTimeFrame,
     step_size: dt.timedelta | None = None,
 ) -> ProcessedFrame:
-    if step_size:
+    if step_size is None:
+        aggregated_value_frames = _flatten_temporal_spec(
+            spec, predictiontime_frame, spec.value_frame
+        )
+
+        result_frame = horizontally_concatenate_dfs(
+            dfs=aggregated_value_frames,
+            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        )
+
+    else:
         first_pred_time, last_pred_time = _get_pred_time_range(predictiontime_frame)
         step_date_ranges = _slice_datetime_interval(first_pred_time, last_pred_time, step_size)
 
@@ -270,16 +278,6 @@ def process_temporal_spec(
             ]
 
         result_frame = pl.concat(step_result_frames, how="vertical")
-
-    else:
-        aggregated_value_frames = _flatten_temporal_spec(
-            spec, predictiontime_frame, spec.value_frame
-        )
-
-        result_frame = horizontally_concatenate_dfs(
-            dfs=aggregated_value_frames,
-            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
-        )
 
     return ProcessedFrame(
         df=result_frame, pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name
