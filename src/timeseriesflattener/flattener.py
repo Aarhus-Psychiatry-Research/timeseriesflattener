@@ -99,7 +99,7 @@ class Flattener:
     n_workers: int | None = None
 
     def aggregate_timeseries(
-        self, specs: Sequence[ValueSpecification], timedelta_days: Union[dt.timedelta, None] = None
+        self, specs: Sequence[ValueSpecification], step_size: dt.timedelta | None = None
     ) -> AggregatedFrame:
         if self.compute_lazily:
             print(
@@ -134,9 +134,7 @@ class Flattener:
             for spec in track(specs, description="Processing specs..."):
                 print(f"Processing spec: {spec.value_frame.value_col_names}")
                 processed_spec = process_spec(
-                    predictiontime_frame=self.predictiontime_frame,
-                    spec=spec,
-                    timedelta_days=timedelta_days,
+                    predictiontime_frame=self.predictiontime_frame, spec=spec, step_size=step_size
                 )
 
                 if isinstance(processed_spec.df, pl.LazyFrame):
