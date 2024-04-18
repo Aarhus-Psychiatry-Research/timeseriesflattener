@@ -31,4 +31,10 @@ jobs:
         id: pre_commit
         continue-on-error: true
         run: |
-          pre-commit run --color always --all-files
+            if pre-commit run --color always --all-files; then
+              echo "Succeeded check passed"
+            else
+              echo "Failed, exiting"
+              exit 1
+            fi
+          
