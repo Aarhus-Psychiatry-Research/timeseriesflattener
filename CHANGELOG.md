@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.2 (2024-04-18)
+
+### Fix
+
+* Ensure entity col name is passed to the valueframe in legacy spec ([`6702cb9`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6702cb9b03c857a864100b7552540f3f60fe8968))
+
 ## v2.1.1 (2024-04-18)
 
 ### Fix
