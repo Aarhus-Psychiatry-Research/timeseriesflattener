@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
+import datetime as dt
 
 from .feature_specs.static import StaticSpec
 from .feature_specs.timedelta import TimeDeltaSpec
@@ -15,11 +16,15 @@ if TYPE_CHECKING:
 
 
 def process_spec(
-    spec: ValueSpecification, predictiontime_frame: PredictionTimeFrame
+    spec: ValueSpecification,
+    predictiontime_frame: PredictionTimeFrame,
+    step_size: dt.timedelta | None = None,
 ) -> ProcessedFrame:
     if isinstance(spec, TimeDeltaSpec):
         return process_timedelta_spec(spec, predictiontime_frame)
     if isinstance(spec, StaticSpec):
         return process_static_spec(spec, predictiontime_frame)
 
-    return process_temporal_spec(spec=spec, predictiontime_frame=predictiontime_frame)
+    return process_temporal_spec(
+        spec=spec, predictiontime_frame=predictiontime_frame, step_size=step_size
+    )

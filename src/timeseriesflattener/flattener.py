@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
 from typing import TYPE_CHECKING, Union
+import datetime as dt
 
 import polars as pl
 import tqdm
@@ -97,7 +98,9 @@ class Flattener:
     compute_lazily: bool = False
     n_workers: int | None = None
 
-    def aggregate_timeseries(self, specs: Sequence[ValueSpecification]) -> AggregatedFrame:
+    def aggregate_timeseries(
+        self, specs: Sequence[ValueSpecification], step_size: dt.timedelta | None = None
+    ) -> AggregatedFrame:
         if self.compute_lazily:
             print(
                 "We have encountered performance issues on Windows when using lazy evaluation. If you encounter performance issues, try setting lazy=False."
@@ -120,6 +123,10 @@ class Flattener:
             self.predictiontime_frame.df = self.predictiontime_frame.collect()  # type: ignore
             for spec in specs:
                 spec.value_frame.df = spec.value_frame.collect()  # type: ignore
+        else:
+            self.predictiontime_frame.df = self.predictiontime_frame.df.lazy()
+            for spec in specs:
+                spec.value_frame.df = spec.value_frame.df.lazy()
 
         # Process and collect the specs. One-by-one, to get feedback on progress.
         dfs: Sequence[pl.LazyFrame] = []
@@ -127,7 +134,7 @@ class Flattener:
             for spec in track(specs, description="Processing specs..."):
                 print(f"Processing spec: {spec.value_frame.value_col_names}")
                 processed_spec = process_spec(
-                    predictiontime_frame=self.predictiontime_frame, spec=spec
+                    predictiontime_frame=self.predictiontime_frame, spec=spec, step_size=step_size
                 )
 
                 if isinstance(processed_spec.df, pl.LazyFrame):

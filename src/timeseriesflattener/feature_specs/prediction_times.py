@@ -32,9 +32,13 @@ class PredictionTimeFrame:
     entity_id_col_name: str = default_entity_id_col_name
     timestamp_col_name: str = default_pred_time_col_name
     pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+    coerce_to_lazy: InitVar[bool] = True
 
-    def __post_init__(self, init_df: InitDF_T):
-        self.df = _anyframe_to_lazyframe(init_df)
+    def __post_init__(self, init_df: InitDF_T, coerce_to_lazy: bool):
+        if coerce_to_lazy:
+            self.df = _anyframe_to_lazyframe(init_df)
+        else:
+            self.df: pl.LazyFrame = init_df
 
         self.df = self.df.with_columns(
             pl.concat_str(

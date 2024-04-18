@@ -11,13 +11,14 @@ from .._intermediary_frames import ProcessedFrame, TimeDeltaFrame, TimeMaskedFra
 from ..feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
 from ..feature_specs.predictor import PredictorSpec
 from ..frame_utilities._horisontally_concat import horizontally_concatenate_dfs
+from ..feature_specs.prediction_times import PredictionTimeFrame
+from ..feature_specs.meta import ValueFrame, InitDF_T
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from ..feature_specs.meta import LookPeriod, ValueFrame, ValueType
-    from ..feature_specs.prediction_times import PredictionTimeFrame
+    from ..feature_specs.meta import LookPeriod, ValueType
 
 
 def _get_timedelta_frame(
@@ -148,15 +149,81 @@ def _slice_and_aggregate_spec(
 TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
 
 
-def process_temporal_spec(
-    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame
-) -> ProcessedFrame:
-    aggregated_value_frames = (
+def _get_pred_time_range(frame: PredictionTimeFrame) -> tuple[dt.datetime, dt.datetime]:
+    if isinstance(frame.df, pl.LazyFrame):
+        df = frame.df.collect()
+    else:
+        df = frame.df
+
+    start = df.select(pl.col(frame.timestamp_col_name).min()).item()
+
+    end = df.select(pl.col(frame.timestamp_col_name).max()).item()
+
+    return start, end
+
+
+def _slice_datetime_interval(
+    start: dt.datetime, end: dt.datetime, step_size: dt.timedelta
+) -> list[dt.datetime]:
+    n = int((end - start) / step_size)
+    return [start + step_size * i for i in range(n + 1)]
+
+
+def _create_step_frames(
+    predictiontime_frame: PredictionTimeFrame,
+    spec: TemporalSpec,
+    date_range: list[dt.datetime],
+    step_i: int,
+) -> tuple[PredictionTimeFrame, ValueFrame]:
+    step_first_pred_time, step_last_pred_time = (date_range[step_i], date_range[step_i + 1])
+
+    step_predictiontime_df = predictiontime_frame.df.filter(
+        (pl.col(predictiontime_frame.timestamp_col_name) >= step_first_pred_time)
+        & (pl.col(predictiontime_frame.timestamp_col_name) < step_last_pred_time)
+    )
+
+    lookdistance = max(
+        [lookperiod.first - lookperiod.last for lookperiod in spec.normalised_lookperiod]
+    )
+
+    is_lookbehind = lookdistance < dt.timedelta(days=0)
+    value_timestamps = pl.col(spec.value_frame.value_timestamp_col_name).dt.datetime()
+
+    if is_lookbehind:
+        step_value_df = spec.value_frame.df.filter(
+            (value_timestamps >= step_first_pred_time + lookdistance)
+            & (value_timestamps < step_last_pred_time)
+        )
+    else:
+        step_value_df = spec.value_frame.df.filter(
+            (value_timestamps >= step_first_pred_time)
+            & (value_timestamps < step_last_pred_time + lookdistance)
+        )
+
+    vf = spec.value_frame
+    return PredictionTimeFrame(
+        init_df=step_predictiontime_df,
+        entity_id_col_name=predictiontime_frame.entity_id_col_name,
+        timestamp_col_name=predictiontime_frame.timestamp_col_name,
+        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        coerce_to_lazy=False,
+    ), ValueFrame(
+        init_df=step_value_df,
+        entity_id_col_name=vf.entity_id_col_name,
+        value_timestamp_col_name=vf.value_timestamp_col_name,
+        coerce_to_lazy=False,
+    )
+
+
+def _flatten_temporal_spec(
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
+) -> list[pl.LazyFrame]:
+    return (
         Iter(spec.normalised_lookperiod)
         .map(
             lambda lookperiod: _slice_and_aggregate_spec(
                 timedelta_frame=_get_timedelta_frame(
-                    predictiontime_frame=predictiontime_frame, value_frame=spec.value_frame
+                    predictiontime_frame=predictiontime_frame, value_frame=value_frame
                 ),
                 masked_aggregator=lambda sliced_frame: _aggregate_masked_frame(
                     aggregators=spec.aggregators, fallback=spec.fallback, masked_frame=sliced_frame
@@ -170,12 +237,48 @@ def process_temporal_spec(
             )
         )
         .flatten()
+        .to_list()
     )
 
-    return ProcessedFrame(
-        df=horizontally_concatenate_dfs(
-            dfs=aggregated_value_frames.to_list(),
+
+def process_temporal_spec(
+    spec: TemporalSpec,
+    predictiontime_frame: PredictionTimeFrame,
+    step_size: dt.timedelta | None = None,
+) -> ProcessedFrame:
+    if step_size is None:
+        aggregated_value_frames = _flatten_temporal_spec(
+            spec, predictiontime_frame, spec.value_frame
+        )
+
+        result_frame = horizontally_concatenate_dfs(
+            dfs=aggregated_value_frames,
             pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
-        ),
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        )
+
+    else:
+        first_pred_time, last_pred_time = _get_pred_time_range(predictiontime_frame)
+        step_date_ranges = _slice_datetime_interval(first_pred_time, last_pred_time, step_size)
+
+        step_result_frames = list()
+        for step in range(len(step_date_ranges) - 1):
+            step_predictiontime_frame, step_value_frame = _create_step_frames(
+                predictiontime_frame, spec, step_date_ranges, step
+            )
+
+            step_aggregated_value_frames = _flatten_temporal_spec(
+                spec, step_predictiontime_frame, step_value_frame
+            )
+
+            step_result_frames += [
+                horizontally_concatenate_dfs(
+                    dfs=step_aggregated_value_frames,
+                    pred_time_uuid_col_name=step_predictiontime_frame.pred_time_uuid_col_name,
+                )
+            ]
+
+        result_frame = pl.concat(step_result_frames, how="vertical")
+
+    return ProcessedFrame(
+        df=result_frame, pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name
     )
