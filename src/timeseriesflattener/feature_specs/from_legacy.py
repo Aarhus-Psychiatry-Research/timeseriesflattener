@@ -95,7 +95,8 @@ class PredictorGroupSpec(V1PGSProtocol):
                                     ): self.entity_id_col_name_out,
                                 },
                                 axis=1,
-                            )
+                            ),
+                            entity_id_col_name=self.entity_id_col_name_out,
                         ),
                         lookbehind_distances=lookbehind_days,
                         fallback=fallback,  # noqa: B023
