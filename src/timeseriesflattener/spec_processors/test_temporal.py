@@ -326,6 +326,7 @@ def test_sliding_window():
             fallback=0,
         ),
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
+        step_size=dt.timedelta(days=365),
     )
 
     expected = str_to_pl_df(
