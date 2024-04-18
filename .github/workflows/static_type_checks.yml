@@ -15,7 +15,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout (GitHub)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create github hosts file
         run: | # If this file is not created, the dev container fails because of non-existent mount
