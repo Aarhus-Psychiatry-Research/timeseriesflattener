@@ -231,6 +231,7 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 
 <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
 <span class="kn">import</span> <span class="nn">tqdm</span>
@@ -324,7 +325,9 @@
     <span class="n">compute_lazily</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">n_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Flattener.aggregate_timeseries"><a class="viewcode-back" href="../../flattener.html#timeseriesflattener.flattener.Flattener.aggregate_timeseries">[docs]</a>    <span class="k">def</span> <span class="nf">aggregate_timeseries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ValueSpecification</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AggregatedFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="Flattener.aggregate_timeseries"><a class="viewcode-back" href="../../flattener.html#timeseriesflattener.flattener.Flattener.aggregate_timeseries">[docs]</a>    <span class="k">def</span> <span class="nf">aggregate_timeseries</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">specs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ValueSpecification</span><span class="p">],</span> <span class="n">step_size</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AggregatedFrame</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_lazily</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="s2">&quot;We have encountered performance issues on Windows when using lazy evaluation. If you encounter performance issues, try setting lazy=False.&quot;</span>
@@ -347,6 +350,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">predictiontime_frame</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictiontime_frame</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">:</span>
                 <span class="n">spec</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">predictiontime_frame</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictiontime_frame</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">lazy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">:</span>
+                <span class="n">spec</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">lazy</span><span class="p">()</span>
 
         <span class="c1"># Process and collect the specs. One-by-one, to get feedback on progress.</span>
         <span class="n">dfs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -354,7 +361,7 @@
             <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">track</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Processing specs...&quot;</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing spec: </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">value_col_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">processed_spec</span> <span class="o">=</span> <span class="n">process_spec</span><span class="p">(</span>
-                    <span class="n">predictiontime_frame</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">predictiontime_frame</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span>
+                    <span class="n">predictiontime_frame</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">predictiontime_frame</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">processed_spec</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">):</span>

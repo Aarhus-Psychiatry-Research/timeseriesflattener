@@ -267,9 +267,14 @@
     <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">InitDF_T</span><span class="p">]</span>
     <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">default_entity_id_col_name</span>
     <span class="n">value_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;timestamp&quot;</span>
+    <span class="n">coerce_to_lazy</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">InitDF_T</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">_anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">InitDF_T</span><span class="p">,</span> <span class="n">coerce_to_lazy</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">coerce_to_lazy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">_anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">=</span> <span class="n">init_df</span>
+
         <span class="n">_validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value_col_names</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">col</span>
