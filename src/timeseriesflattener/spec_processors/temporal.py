@@ -163,10 +163,10 @@ def _get_pred_time_range(frame: PredictionTimeFrame) -> tuple[dt.datetime, dt.da
 
 
 def _slice_datetime_interval(
-    start_date: dt.datetime, end_date: dt.datetime, timedelta_days: int
+    start_date: dt.datetime, end_date: dt.datetime, timedelta_days: dt.timedelta
 ) -> list[dt.datetime]:
-    n = int((end_date - start_date).days / timedelta_days)
-    return [start_date + dt.timedelta(timedelta_days * i) for i in range(n + 2)]
+    n = int((end_date - start_date).days / timedelta_days.days)
+    return [start_date + dt.timedelta(timedelta_days.days * i) for i in range(n + 2)]
 
 
 def _create_step_frames(
@@ -215,50 +215,72 @@ def _create_step_frames(
     )
 
 
-def process_temporal_spec(
-    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, timedelta_days: int = 365
-) -> ProcessedFrame:
-    first_pred_time, last_pred_time = _get_pred_time_range(predictiontime_frame)
-    step_date_ranges = _slice_datetime_interval(first_pred_time, last_pred_time, timedelta_days)
-
-    result_frames = list()
-    for step in range(len(step_date_ranges) - 1):
-        step_predictiontime_frame, step_value_frame = _create_step_frames(
-            predictiontime_frame, spec, step_date_ranges, step
-        )
-
-        step_aggregated_value_frames = (
-            Iter(spec.normalised_lookperiod)
-            .map(
-                lambda lookperiod: _slice_and_aggregate_spec(
-                    timedelta_frame=_get_timedelta_frame(
-                        predictiontime_frame=step_predictiontime_frame, value_frame=step_value_frame
-                    ),
-                    masked_aggregator=lambda sliced_frame: _aggregate_masked_frame(
-                        aggregators=spec.aggregators,
-                        fallback=spec.fallback,
-                        masked_frame=sliced_frame,
-                    ),
-                    time_masker=lambda timedelta_frame: _mask_outside_lookperiod(
-                        timedelta_frame=timedelta_frame,
-                        lookperiod=lookperiod,
-                        column_prefix=spec.column_prefix,
-                        value_col_names=spec.value_frame.value_col_names,
-                    ),
-                )
+def _process_temporal_spec(
+    spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
+) -> list[pl.LazyFrame]:
+    return (
+        Iter(spec.normalised_lookperiod)
+        .map(
+            lambda lookperiod: _slice_and_aggregate_spec(
+                timedelta_frame=_get_timedelta_frame(
+                    predictiontime_frame=predictiontime_frame, value_frame=value_frame
+                ),
+                masked_aggregator=lambda sliced_frame: _aggregate_masked_frame(
+                    aggregators=spec.aggregators, fallback=spec.fallback, masked_frame=sliced_frame
+                ),
+                time_masker=lambda timedelta_frame: _mask_outside_lookperiod(
+                    timedelta_frame=timedelta_frame,
+                    lookperiod=lookperiod,
+                    column_prefix=spec.column_prefix,
+                    value_col_names=spec.value_frame.value_col_names,
+                ),
             )
-            .flatten()
-            .to_list()
         )
-
-        result_frames += [
-            horizontally_concatenate_dfs(
-                step_aggregated_value_frames,
-                pred_time_uuid_col_name=step_predictiontime_frame.pred_time_uuid_col_name,
-            )
-        ]
-
-    return ProcessedFrame(
-        df=pl.concat(result_frames, how="vertical"),
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        .flatten()
+        .to_list()
     )
+
+
+def process_temporal_spec(
+    spec: TemporalSpec,
+    predictiontime_frame: PredictionTimeFrame,
+    timedelta_days: Union[dt.timedelta, None] = None,
+) -> ProcessedFrame:
+    if timedelta_days:
+        first_pred_time, last_pred_time = _get_pred_time_range(predictiontime_frame)
+        step_date_ranges = _slice_datetime_interval(first_pred_time, last_pred_time, timedelta_days)
+
+        result_frames = list()
+        for step in range(len(step_date_ranges) - 1):
+            step_predictiontime_frame, step_value_frame = _create_step_frames(
+                predictiontime_frame, spec, step_date_ranges, step
+            )
+
+            step_aggregated_value_frames = _process_temporal_spec(
+                spec, step_predictiontime_frame, step_value_frame
+            )
+
+            result_frames += [
+                horizontally_concatenate_dfs(
+                    step_aggregated_value_frames,
+                    pred_time_uuid_col_name=step_predictiontime_frame.pred_time_uuid_col_name,
+                )
+            ]
+
+        return ProcessedFrame(
+            df=pl.concat(result_frames, how="vertical"),
+            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        )
+
+    else:
+        aggregated_value_frames = _process_temporal_spec(
+            spec, predictiontime_frame, spec.value_frame
+        )
+
+        return ProcessedFrame(
+            df=horizontally_concatenate_dfs(
+                dfs=aggregated_value_frames,
+                pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+            ),
+            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        )

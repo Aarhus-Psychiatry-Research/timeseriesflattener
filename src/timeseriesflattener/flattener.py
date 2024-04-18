@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
 from typing import TYPE_CHECKING, Union
+import datetime as dt
 
 import polars as pl
 import tqdm
@@ -98,7 +99,7 @@ class Flattener:
     n_workers: int | None = None
 
     def aggregate_timeseries(
-        self, specs: Sequence[ValueSpecification], timedelta_days: int
+        self, specs: Sequence[ValueSpecification], timedelta_days: Union[dt.timedelta, None] = None
     ) -> AggregatedFrame:
         if self.compute_lazily:
             print(
