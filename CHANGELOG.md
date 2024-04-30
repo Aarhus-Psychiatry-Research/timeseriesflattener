@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.0 (2024-04-30)
+
+### Feature
+
+* Bump release ([`879e752`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/879e752928808f8c3927808cab6a2f9a80a85610))
+
 ## v2.1.2 (2024-04-18)
 
 ### Fix
