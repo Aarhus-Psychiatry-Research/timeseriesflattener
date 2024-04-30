@@ -40,11 +40,11 @@ predictor_df = pl.DataFrame(
     {
         "id": [1, 1, 1, 2],
         "date": ["2020-01-15", "2019-12-10", "2019-12-15", "2020-01-02"],
-        "value": [1, 2, 3, 4],
+        "predictor_value": [1, 2, 3, 4],
     }
 )
 # Load a dataframe specifying when the outcome occurs
-outcome_df = pl.DataFrame({"id": [1], "date": ["2020-03-01"], "value": [1]})
+outcome_df = pl.DataFrame({"id": [1], "date": ["2020-03-01"], "outcome_value": [1]})
 
 # Specify how to aggregate the predictors and define the outcome
 from timeseriesflattener import (
