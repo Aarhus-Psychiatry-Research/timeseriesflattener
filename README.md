@@ -14,7 +14,7 @@ Time series from e.g. electronic health records often have a large number of var
 
 In essence, the time series need to be *flattened* so that each prediction time is represented by a set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window. 
 
-`timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series. 
+`timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series.  
 
 ## 🔧 Installation
 To get started using timeseriesflattener simply install it using pip by running the following line in your terminal:
