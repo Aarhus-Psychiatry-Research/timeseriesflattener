@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import datetime as dt
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
 from typing import TYPE_CHECKING, Union
-import datetime as dt
 
 import polars as pl
 import tqdm
@@ -127,6 +127,10 @@ class Flattener:
             self.predictiontime_frame.df = self.predictiontime_frame.df.lazy()
             for spec in specs:
                 spec.value_frame.df = spec.value_frame.df.lazy()
+
+        self.predictiontime_frame.df = self.predictiontime_frame.df.sort(
+            self.predictiontime_frame.timestamp_col_name
+        )  # type: ignore
 
         # Process and collect the specs. One-by-one, to get feedback on progress.
         dfs: Sequence[pl.LazyFrame] = []
