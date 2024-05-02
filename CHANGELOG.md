@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.1 (2024-05-02)
+
+### Fix
+
+* Scrambled features with step size ([`6bdddbd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6bdddbdf975b25cee0e37398ea58ac6ba86f2e77))
+
 ## v2.2.0 (2024-04-30)
 
 ### Feature
