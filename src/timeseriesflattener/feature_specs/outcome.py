@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import polars as pl
+import datetime as dt
 
 from .._frame_validator import _validate_col_name_columns_exist
-from .meta import LookDistances, ValueFrame, ValueType, _lookdistance_to_normalised_lookperiod
+from .meta import ValueFrame, ValueType, _lookdistance_to_normalised_lookperiod
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -20,12 +21,12 @@ class OutcomeSpec:
     """Specification for an outcome. If your outcome is binary/boolean, you can use BooleanOutcomeSpec instead."""
 
     value_frame: ValueFrame
-    lookahead_distances: InitVar[LookDistances]
+    lookahead_distances: InitVar[Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "outc"
 
-    def __post_init__(self, lookahead_distances: LookDistances):
+    def __post_init__(self, lookahead_distances: Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in lookahead_distances
@@ -47,7 +48,7 @@ class BooleanOutcomeSpec:
     """
 
     init_frame: InitVar[TimestampValueFrame]
-    lookahead_distances: LookDistances
+    lookahead_distances: Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]
     aggregators: Sequence[Aggregator]
     output_name: str
     column_prefix: str = "outc"

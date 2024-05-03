@@ -10,8 +10,9 @@ import numpy as np
 import polars as pl
 import pytest
 from iterpy.iter import Iter
+
 from timeseriesflattener.aggregators import Aggregator, MaxAggregator, MeanAggregator
-from timeseriesflattener.feature_specs.meta import LookDistance, ValueFrame
+from timeseriesflattener.feature_specs.meta import ValueFrame
 from timeseriesflattener.feature_specs.prediction_times import PredictionTimeFrame
 from timeseriesflattener.feature_specs.predictor import PredictorSpec
 from timeseriesflattener.flattener import Flattener
@@ -50,7 +51,7 @@ def _generate_benchmark_dataset(
     n_features: int,
     n_observations_per_pred_time: int,
     aggregations: Sequence[Literal["max", "mean"]],
-    lookbehinds: Sequence[LookDistance | tuple[LookDistance, LookDistance]],
+    lookbehinds: Sequence[dt.timedelta | tuple[dt.timedelta, dt.timedelta]],
 ) -> BenchmarkDataset:
     pred_time_df = PredictionTimeFrame(
         init_df=pl.LazyFrame(

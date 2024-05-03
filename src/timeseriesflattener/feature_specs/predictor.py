@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from .._frame_validator import _validate_col_name_columns_exist
-from .meta import LookDistances, ValueFrame, ValueType, _lookdistance_to_normalised_lookperiod
+from .meta import ValueFrame, ValueType, _lookdistance_to_normalised_lookperiod
+
+import datetime as dt
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -25,12 +27,12 @@ class PredictorSpec:
     """
 
     value_frame: ValueFrame
-    lookbehind_distances: InitVar[LookDistances]
+    lookbehind_distances: InitVar[Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]]
     aggregators: Sequence[Aggregator]
     fallback: ValueType
     column_prefix: str = "pred"
 
-    def __post_init__(self, lookbehind_distances: LookDistances):
+    def __post_init__(self, lookbehind_distances: Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="behind")
             for lookdistance in lookbehind_distances
