@@ -30,7 +30,7 @@ def test_process_static_spec():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_fallback_0
+        """prediction_time_uuid,pred_value_fallback_0
 1-2021-01-01 00:00:00.000000,a
 1-2021-01-01 00:00:00.000000,a
 2-2021-01-01 00:00:00.000000,b
@@ -59,7 +59,7 @@ def test_process_static_spec_multiple_values():
         ),
     )
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_1_fallback_0,pred_value_2_fallback_0
+        """prediction_time_uuid,pred_value_1_fallback_0,pred_value_2_fallback_0
 1-2021-01-01 00:00:00.000000,a,b
 1-2021-01-01 00:00:00.000000,a,b
 2-2021-01-01 00:00:00.000000,c,d

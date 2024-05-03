@@ -7,7 +7,7 @@ import polars as pl
 
 from ._frame_validator import _validate_col_name_columns_exist
 from .feature_specs.default_column_names import (
-    default_pred_time_uuid_col_name,
+    default_prediction_time_uuid_col_name,
     default_timestamp_col_name,
 )
 from .frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
@@ -28,7 +28,7 @@ class TimeMaskedFrame:
     init_df: pl.LazyFrame
     value_col_names: Sequence[str]
     timestamp_col_name: str = default_timestamp_col_name
-    pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+    prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
     validate_cols_exist: bool = True
 
     def __post_init__(self):
@@ -47,7 +47,7 @@ class TimeMaskedFrame:
 class AggregatedValueFrame:
     df: pl.LazyFrame
     value_col_name: str
-    pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+    prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
 
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
@@ -61,7 +61,7 @@ class AggregatedValueFrame:
 
         return AggregatedValueFrame(
             df=filled,
-            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
+            prediction_time_uuid_col_name=self.prediction_time_uuid_col_name,
             value_col_name=self.value_col_name,
         )
 
@@ -76,7 +76,7 @@ class TimeDeltaFrame:
     df: pl.LazyFrame
     value_col_names: Sequence[str]
     value_timestamp_col_name: str
-    pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+    prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
     timedelta_col_name: str = "time_from_prediction_to_value"
 
     def __post_init__(self):
@@ -97,13 +97,13 @@ class AggregatedFrame:
         init_df: The initial dataframe.
         entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
         timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column's values must be datetimes which are unique.
-        pred_time_uuid_col_name: The name of the column containing the prediction time uuids. Must be a string, and the column's values must be strings which are unique.
+        prediction_time_uuid_col_name: The name of the column containing the prediction time uuids. Must be a string, and the column's values must be strings which are unique.
     """
 
     init_df: InitVar[pl.LazyFrame]
     entity_id_col_name: str
     timestamp_col_name: str
-    pred_time_uuid_col_name: str
+    prediction_time_uuid_col_name: str
 
     def __post_init__(self, init_df: pl.LazyFrame):
         self.df = _anyframe_to_lazyframe(init_df)
@@ -117,7 +117,7 @@ class AggregatedFrame:
 @dataclass(frozen=True)
 class ProcessedFrame:
     df: pl.LazyFrame
-    pred_time_uuid_col_name: str
+    prediction_time_uuid_col_name: str
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):

@@ -97,7 +97,7 @@ def test_flattener(example: FlattenerExample):
     )
 
     expected = str_to_pl_df(
-        """entity_id,pred_timestamp,pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
+        """entity_id,pred_timestamp,prediction_time_uuid,pred_value_within_0_to_1_days_mean_fallback_nan
 1,2021-01-03 00:00:00.000000,1-2021-01-03 00:00:00.000000,3.0"""
     )
 
@@ -106,7 +106,7 @@ def test_flattener(example: FlattenerExample):
 
 def test_keep_prediction_times_without_predictors():
     pred_frame = str_to_pl_df(
-        """entity_id,pred_timestamp,pred_time_uuid
+        """entity_id,pred_timestamp,prediction_time_uuid
         1,2021-01-03"""
     )
 
@@ -130,7 +130,7 @@ def test_keep_prediction_times_without_predictors():
 
     expected = pl.DataFrame(
         {
-            "pred_time_uuid": ["1-2021-01-03 00:00:00.000000"],
+            "prediction_time_uuid": ["1-2021-01-03 00:00:00.000000"],
             "pred_value_within_0_to_1_days_mean_fallback_123": [123],
             "pred_value_within_0_to_1_days_earliest_fallback_123": [123],
         }
@@ -172,7 +172,7 @@ def test_flattener_multiple_features():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_nan,pred_value_2_within_0_to_1_days_mean_fallback_nan
+        """prediction_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_nan,pred_value_2_within_0_to_1_days_mean_fallback_nan
 1-2021-01-03 00:00:00.000000,3.0,3.0"""
     )
 
@@ -227,7 +227,7 @@ def test_predictor_with_interval_lookperiod():
         ]
     )
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_5_to_30_days_mean_fallback_nan
+        """prediction_time_uuid,pred_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
     assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
@@ -254,7 +254,7 @@ def test_outcome_with_interval_lookperiod():
         ]
     )
     expected = str_to_pl_df(
-        """pred_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
+        """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
     assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
@@ -281,7 +281,7 @@ def test_add_static_spec():
         ]
     )
     expected = str_to_pl_df(
-        """pred_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
+        """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
     assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
@@ -312,7 +312,7 @@ def test_add_features_with_non_default_entity_id_col_name():
         ]
     )
     expected = str_to_pl_df(
-        """pred_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
+        """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
     assert_frame_equal(result.collect(), expected, ignore_colums=["dw_ek_borger", "pred_timestamp"])
@@ -351,14 +351,14 @@ def test_multiple_features_with_unordered_prediction_times(step_size):
         step_size=step_size,
     )
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_0_to_1_days_mean_fallback_0,pred_static_fallback_0
+        """prediction_time_uuid,pred_value_within_0_to_1_days_mean_fallback_0,pred_static_fallback_0
 2-2022-01-02 00:00:00.000000,0.0,2
 1-2022-01-01 00:00:00.000000,1.0,1
 1-2020-01-01 00:00:00.000000,0.0,1
 """
-    ).sort("pred_time_uuid")
+    ).sort("prediction_time_uuid")
     assert_frame_equal(
-        result.df.collect().sort("pred_time_uuid"),
+        result.df.collect().sort("prediction_time_uuid"),
         expected,
         ignore_colums=["entity_id", "pred_timestamp"],
     )

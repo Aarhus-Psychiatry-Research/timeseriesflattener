@@ -24,7 +24,7 @@ def test_aggregate_over_fallback():
         validate_cols_exist=False,
         init_df=pl.LazyFrame(
             {
-                "pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
+                "prediction_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
                 "value": [None, None],
                 "timestamp": ["2021-01-01", "2021-01-02"],
             }
@@ -37,7 +37,7 @@ def test_aggregate_over_fallback():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_mean_fallback_0
+        """prediction_time_uuid,value_mean_fallback_0
 1-2021-01-03,0"""
     )
 
@@ -49,7 +49,7 @@ def test_aggregate_with_null():
         validate_cols_exist=False,
         init_df=pl.LazyFrame(
             {
-                "pred_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
+                "prediction_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
                 "value": [1, None],
                 "timestamp": ["2021-01-01", "2021-01-02"],
             }
@@ -62,7 +62,7 @@ def test_aggregate_with_null():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_mean_fallback_0
+        """prediction_time_uuid,value_mean_fallback_0
 1-2021-01-03,1"""
     )
 
@@ -73,7 +73,7 @@ def test_aggregate_within_slice():
     masked_frame = TimeMaskedFrame(
         validate_cols_exist=False,
         init_df=str_to_pl_df(
-            """pred_time_uuid,value
+            """prediction_time_uuid,value
 1-2021-01-03,1
 1-2021-01-03,2
 2-2021-01-03,2
@@ -87,7 +87,7 @@ def test_aggregate_within_slice():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_mean_fallback_0
+        """prediction_time_uuid,value_mean_fallback_0
 1-2021-01-03,1.5
 2-2021-01-03,3"""
     )
@@ -147,7 +147,7 @@ def test_slice_without_any_within_window():
     timedelta_frame = TimeDeltaFrame(
         df=pl.LazyFrame(
             {
-                "pred_time_uuid": [1, 1, 2, 2],
+                "prediction_time_uuid": [1, 1, 2, 2],
                 "time_from_prediction_to_value": [
                     dt.timedelta(days=1),  # Outside the lookbehind
                     dt.timedelta(days=-1),  # Inside the lookbehind
@@ -183,7 +183,7 @@ def test_multiple_aggregators():
     masked_frame = TimeMaskedFrame(
         validate_cols_exist=False,
         init_df=str_to_pl_df(
-            """pred_time_uuid,value
+            """prediction_time_uuid,value
 1-2021-01-03,1
 1-2021-01-03,2
 2-2021-01-03,2
@@ -197,7 +197,7 @@ def test_multiple_aggregators():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_mean_fallback_0,value_max_fallback_0
+        """prediction_time_uuid,value_mean_fallback_0,value_max_fallback_0
 1-2021-01-03,1.5,2
 2-2021-01-03,3,4"""
     )
@@ -209,7 +209,7 @@ def test_masking_multiple_values_multiple_aggregators():
     masked_frame = TimeMaskedFrame(
         validate_cols_exist=False,
         init_df=str_to_pl_df(
-            """pred_time_uuid,value_1,value_2
+            """prediction_time_uuid,value_1,value_2
 1-2021-01-03,1,np.nan
 1-2021-01-03,2,np.nan
 2-2021-01-03,2,np.nan
@@ -223,7 +223,7 @@ def test_masking_multiple_values_multiple_aggregators():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,value_1_mean_fallback_0,value_2_mean_fallback_0,value_1_max_fallback_0,value_2_max_fallback_0
+        """prediction_time_uuid,value_1_mean_fallback_0,value_2_mean_fallback_0,value_1_max_fallback_0,value_2_max_fallback_0
 1-2021-01-03,1.5,0,2,0
 2-2021-01-03,3,0,4,0"""
     )
@@ -255,7 +255,7 @@ def test_process_time_from_event_spec():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_age_years_fallback_0
+        """prediction_time_uuid,pred_age_years_fallback_0
 1-2021-01-01 00:00:00.000000,1.002053388090349
 2-2021-01-01 00:00:00.000000,0
        """
@@ -285,7 +285,7 @@ def test_process_temporal_spec_multiple_values():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_0,pred_value_2_within_0_to_1_days_mean_fallback_0
+        """prediction_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_0,pred_value_2_within_0_to_1_days_mean_fallback_0
 1-2021-01-01 00:00:00.000000,1,2"""
     )
     assert_frame_equal(result.collect(), expected)
@@ -330,7 +330,7 @@ def test_sliding_window():
     )
 
     expected = str_to_pl_df(
-        """pred_time_uuid,pred_value_within_0_to_10_days_mean_fallback_0,pred_value_within_0_to_365_days_mean_fallback_0
+        """prediction_time_uuid,pred_value_within_0_to_10_days_mean_fallback_0,pred_value_within_0_to_365_days_mean_fallback_0
 1-2011-01-01 00:00:00.000000,1.0,1.0
 1-2014-01-01 00:00:00.000000,4.0,3.5
 1-2016-01-01 00:00:00.000000,6.0,5.5

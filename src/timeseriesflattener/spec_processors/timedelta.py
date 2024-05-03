@@ -43,10 +43,10 @@ def process_timedelta_spec(
             .fill_null(spec.fallback)
             .alias(new_col_name)
         )
-        .select(predictiontime_frame.pred_time_uuid_col_name, new_col_name)
+        .select(predictiontime_frame.prediction_time_uuid_col_name, new_col_name)
     )
 
     return ProcessedFrame(
         df=prediction_times_with_time_from_event,
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
     )

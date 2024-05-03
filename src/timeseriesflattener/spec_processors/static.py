@@ -21,10 +21,10 @@ def process_static_spec(
             spec.value_frame.df, on=predictiontime_frame.entity_id_col_name, how="left"
         )
         .rename(old2new_colname)
-        .select(predictiontime_frame.pred_time_uuid_col_name, *old2new_colname.values())
+        .select(predictiontime_frame.prediction_time_uuid_col_name, *old2new_colname.values())
     )
 
     return ProcessedFrame(
         df=prediction_times_with_time_from_event,
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
     )

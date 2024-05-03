@@ -159,15 +159,16 @@ class Flattener:
                 dfs = [value_frame.df for value_frame in value_frames]
 
         feature_dfs = horizontally_concatenate_dfs(
-            dfs, pred_time_uuid_col_name=self.predictiontime_frame.pred_time_uuid_col_name
+            dfs,
+            prediction_time_uuid_col_name=self.predictiontime_frame.prediction_time_uuid_col_name,
         )
 
         return AggregatedFrame(
             init_df=horizontally_concatenate_dfs(
                 [self.predictiontime_frame.df, feature_dfs],  # type: ignore
-                pred_time_uuid_col_name=self.predictiontime_frame.pred_time_uuid_col_name,
+                prediction_time_uuid_col_name=self.predictiontime_frame.prediction_time_uuid_col_name,
             ),
             entity_id_col_name=self.predictiontime_frame.entity_id_col_name,
-            pred_time_uuid_col_name=self.predictiontime_frame.pred_time_uuid_col_name,
+            prediction_time_uuid_col_name=self.predictiontime_frame.prediction_time_uuid_col_name,
             timestamp_col_name=self.predictiontime_frame.timestamp_col_name,
         )

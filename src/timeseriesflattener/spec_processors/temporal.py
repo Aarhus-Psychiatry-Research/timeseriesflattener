@@ -49,7 +49,7 @@ def _get_timedelta_frame(
     return TimeDeltaFrame(
         timedelta_frame,
         value_col_names=value_frame.value_col_names,
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
         value_timestamp_col_name=value_frame.value_timestamp_col_name,
     )
 
@@ -98,7 +98,7 @@ def _mask_outside_lookperiod(
 
     return TimeMaskedFrame(
         init_df=masked_frame.rename(dict(zip(value_col_names, new_colnames))),
-        pred_time_uuid_col_name=timedelta_frame.pred_time_uuid_col_name,
+        prediction_time_uuid_col_name=timedelta_frame.prediction_time_uuid_col_name,
         value_col_names=new_colnames,
         timestamp_col_name=timedelta_frame.value_timestamp_col_name,
     )
@@ -114,7 +114,7 @@ def _aggregate_masked_frame(
     ]
 
     grouped_frame = masked_frame.init_df.group_by(
-        masked_frame.pred_time_uuid_col_name, maintain_order=True
+        masked_frame.prediction_time_uuid_col_name, maintain_order=True
     ).agg(aggregator_expressions)
 
     value_columns = (
@@ -205,7 +205,7 @@ def _create_step_frames(
         init_df=step_predictiontime_df,
         entity_id_col_name=predictiontime_frame.entity_id_col_name,
         timestamp_col_name=predictiontime_frame.timestamp_col_name,
-        pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+        prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
         coerce_to_lazy=False,
     ), ValueFrame(
         init_df=step_value_df,
@@ -253,7 +253,7 @@ def process_temporal_spec(
 
         result_frame = horizontally_concatenate_dfs(
             dfs=aggregated_value_frames,
-            pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name,
+            prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
         )
 
     else:
@@ -273,12 +273,13 @@ def process_temporal_spec(
             step_result_frames += [
                 horizontally_concatenate_dfs(
                     dfs=step_aggregated_value_frames,
-                    pred_time_uuid_col_name=step_predictiontime_frame.pred_time_uuid_col_name,
+                    prediction_time_uuid_col_name=step_predictiontime_frame.prediction_time_uuid_col_name,
                 )
             ]
 
         result_frame = pl.concat(step_result_frames, how="vertical")
 
     return ProcessedFrame(
-        df=result_frame, pred_time_uuid_col_name=predictiontime_frame.pred_time_uuid_col_name
+        df=result_frame,
+        prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
     )

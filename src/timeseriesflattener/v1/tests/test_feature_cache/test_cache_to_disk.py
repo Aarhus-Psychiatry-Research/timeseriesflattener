@@ -15,16 +15,16 @@ def test_write_and_check_feature(tmp_path: Path):
 
     cache = DiskCache(
         feature_cache_dir=tmp_path,
-        pred_time_uuid_col_name="pred_time_uuid",
+        prediction_time_uuid_col_name="prediction_time_uuid",
         entity_id_col_name="entity_id",
         cache_file_suffix="csv",
-        prediction_times_df=pd.DataFrame({"uuid": [1, 2, 3], "pred_time_uuid": [1, 2, 3]}),
+        prediction_times_df=pd.DataFrame({"uuid": [1, 2, 3], "prediction_time_uuid": [1, 2, 3]}),
     )
 
     values_df = pd.DataFrame(
         {
             "entity_id": [1, 2, 3],
-            "pred_time_uuid": [1, 2, 3],
+            "prediction_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             "value": [1, 2, 3],
         }
@@ -41,7 +41,7 @@ def test_write_and_check_feature(tmp_path: Path):
     generated_df = pd.DataFrame(
         {
             "entity_id": [1, 2, 3],
-            "pred_time_uuid": [1, 2, 3],
+            "prediction_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_output_col_name()}": [1, 2, 3],
         }
@@ -67,11 +67,13 @@ def test_read_feature(tmp_path: Path):
     # flattened dataset, and passed along to the cache.
     cache = DiskCache(
         feature_cache_dir=tmp_path,
-        pred_time_uuid_col_name="pred_time_uuid",
+        prediction_time_uuid_col_name="prediction_time_uuid",
         entity_id_col_name="entity_id",
         timestamp_col_name="timestamp",
         cache_file_suffix="csv",
-        prediction_times_df=pd.DataFrame({"pred_time_uuid": [1, 2, 3], "entity_id": [1, 2, 3]}),
+        prediction_times_df=pd.DataFrame(
+            {"prediction_time_uuid": [1, 2, 3], "entity_id": [1, 2, 3]}
+        ),
     )
 
     values_df = pd.DataFrame(
@@ -89,7 +91,7 @@ def test_read_feature(tmp_path: Path):
     generated_df = pd.DataFrame(
         {
             "entity_id": [1, 2, 3],
-            "pred_time_uuid": [1, 2, 3],
+            "prediction_time_uuid": [1, 2, 3],
             "timestamp": [1, 2, 3],
             f"{test_spec.get_output_col_name()}": [1, 2, np.nan],
         }

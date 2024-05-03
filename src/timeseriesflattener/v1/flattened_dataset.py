@@ -63,7 +63,7 @@ class TimeseriesFlattener:
             log.info("Overriding prediction_times_df cache with the one passed to init")
             self.cache.prediction_times_df = prediction_times_df
 
-        for attr in ("pred_time_uuid_col_name", "timestamp_col_name", "entity_id_col_name"):
+        for attr in ("prediction_time_uuid_col_name", "timestamp_col_name", "entity_id_col_name"):
             if (
                 hasattr(self.cache, attr)
                 and getattr(self.cache, attr) is not None
@@ -133,7 +133,7 @@ class TimeseriesFlattener:
         self.entity_id_col_name = entity_id_col_name
         self.predictor_col_name_prefix = predictor_col_name_prefix
         self.outcome_col_name_prefix = outcome_col_name_prefix
-        self.pred_time_uuid_col_name = "prediction_time_uuid"
+        self.prediction_time_uuid_col_name = "prediction_time_uuid"
         self.cache = cache
         self.unprocessed_specs: SpecCollection = SpecCollection()
         self.drop_pred_times_with_insufficient_look_distance = (
@@ -158,8 +158,8 @@ class TimeseriesFlattener:
             entity_id_col_name=self.entity_id_col_name,
         ).validate_dataset()
 
-        # Create pred_time_uuid_columne
-        self._df[self.pred_time_uuid_col_name] = self._df[self.entity_id_col_name].astype(
+        # Create prediction_time_uuid_columne
+        self._df[self.prediction_time_uuid_col_name] = self._df[self.entity_id_col_name].astype(
             str
         ) + pd.to_datetime(self._df[self.timestamp_col_name]).dt.strftime("-%Y-%m-%d-%H-%M-%S")
 
@@ -169,7 +169,7 @@ class TimeseriesFlattener:
 
     @staticmethod
     def _add_back_prediction_times_without_value(
-        df: DataFrame, pred_times_with_uuid: DataFrame, pred_time_uuid_colname: str
+        df: DataFrame, pred_times_with_uuid: DataFrame, prediction_time_uuid_colname: str
     ) -> DataFrame:
         """Ensure all prediction times are represented in the returned
 
@@ -178,20 +178,24 @@ class TimeseriesFlattener:
         Args:
             df (DataFrame): Dataframe with prediction times but without uuid.
             pred_times_with_uuid (DataFrame): Dataframe with prediction times and uuid.
-            pred_time_uuid_colname (str): Name of uuid column in both df and pred_times_with_uuid.
+            prediction_time_uuid_colname (str): Name of uuid column in both df and pred_times_with_uuid.
 
         Returns:
             DataFrame: A merged dataframe with all prediction times.
         """
         return pd.merge(
-            pred_times_with_uuid, df, how="left", on=pred_time_uuid_colname, suffixes=("", "_temp")
+            pred_times_with_uuid,
+            df,
+            how="left",
+            on=prediction_time_uuid_colname,
+            suffixes=("", "_temp"),
         )
 
     @staticmethod
     def _aggregate_values_within_interval_days(
         aggregation: Callable,
         df: DataFrame,
-        pred_time_uuid_colname: str,
+        prediction_time_uuid_colname: str,
         val_timestamp_col_name: str,
     ) -> DataFrame:
         """Apply the aggregation function to prediction_times where there
@@ -201,7 +205,7 @@ class TimeseriesFlattener:
         Args:
             aggregation (Callable): Takes a grouped df and collapses each group to one record (e.g. sum, count etc.).
             df (DataFrame): Source dataframe with all prediction time x val combinations.
-            pred_time_uuid_colname (str): Name of uuid column in df.
+            prediction_time_uuid_colname (str): Name of uuid column in df.
             val_timestamp_col_name (str): Name of timestamp column in df.
 
         Returns:
@@ -217,7 +221,7 @@ class TimeseriesFlattener:
             log.info("All values are NaT, returning empty dataframe")
 
         # Sort by timestamp_pred in case aggregation needs dates
-        grouped_df = df.sort_values(by=val_timestamp_col_name).groupby(pred_time_uuid_colname)
+        grouped_df = df.sort_values(by=val_timestamp_col_name).groupby(prediction_time_uuid_colname)
 
         if callable(aggregation):
             df = aggregation(grouped_df).reset_index()
@@ -278,7 +282,7 @@ class TimeseriesFlattener:
         prediction_times_with_uuid_df: DataFrame,
         output_spec: TemporalSpec,
         entity_id_col_name: str,
-        pred_time_uuid_col_name: str,
+        prediction_time_uuid_col_name: str,
         timestamp_col_name: str,
         verbose: bool = False,
     ) -> DataFrame:
@@ -295,7 +299,7 @@ class TimeseriesFlattener:
             timestamp_col_name (str): Name of timestamp column in
                 prediction_times_with_uuid_df and df. Required because this is a
                 static method.
-            pred_time_uuid_col_name (str): Name of uuid column in
+            prediction_time_uuid_col_name (str): Name of uuid column in
                 prediction_times_with_uuid_df. Required because this is a static method.
             timestamp_col_name (str): Name of timestamp column in. Required because this is a static method.
             verbose (bool, optional): Whether to print progress.
@@ -347,7 +351,7 @@ class TimeseriesFlattener:
         df = TimeseriesFlattener._aggregate_values_within_interval_days(
             aggregation=output_spec.aggregation_fn,  # type: ignore
             df=df,
-            pred_time_uuid_colname=pred_time_uuid_col_name,
+            prediction_time_uuid_colname=prediction_time_uuid_col_name,
             val_timestamp_col_name=timestamp_val_col_name,
         )
         # If aggregation generates empty values,
@@ -372,12 +376,12 @@ class TimeseriesFlattener:
         df = TimeseriesFlattener._add_back_prediction_times_without_value(
             df=df,
             pred_times_with_uuid=prediction_times_with_uuid_df,
-            pred_time_uuid_colname=pred_time_uuid_col_name,
+            prediction_time_uuid_colname=prediction_time_uuid_col_name,
         ).fillna(
             output_spec.fallback  # type: ignore
         )
 
-        return df[[value_col_str_name, pred_time_uuid_col_name]]
+        return df[[value_col_str_name, prediction_time_uuid_col_name]]
 
     def _get_temporal_feature(self, feature_spec: TemporalSpec) -> pd.DataFrame:
         """Get feature. Either load from cache, or generate if necessary.
@@ -392,17 +396,21 @@ class TimeseriesFlattener:
             if self.cache.feature_exists(feature_spec=feature_spec):
                 log.debug(f"Cache hit for {feature_spec.get_output_col_name()}, loading from cache")
                 df = self.cache.read_feature(feature_spec=feature_spec)
-                return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+                return df.set_index(keys=self.prediction_time_uuid_col_name).sort_index()
             log.debug(f"Cache miss for {feature_spec.get_output_col_name()}, generating")
         elif not self.cache:
             log.debug("No cache specified, not attempting load")
 
         df = self._flatten_temporal_values_to_df(
             prediction_times_with_uuid_df=self._df[
-                [self.pred_time_uuid_col_name, self.entity_id_col_name, self.timestamp_col_name]
+                [
+                    self.prediction_time_uuid_col_name,
+                    self.entity_id_col_name,
+                    self.timestamp_col_name,
+                ]
             ],
             entity_id_col_name=self.entity_id_col_name,
-            pred_time_uuid_col_name=self.pred_time_uuid_col_name,
+            prediction_time_uuid_col_name=self.prediction_time_uuid_col_name,
             output_spec=feature_spec,
             timestamp_col_name=self.timestamp_col_name,
         )
@@ -411,7 +419,7 @@ class TimeseriesFlattener:
         if self.cache:
             self.cache.write_feature(feature_spec=feature_spec, df=df)
 
-        return df.set_index(keys=self.pred_time_uuid_col_name).sort_index()
+        return df.set_index(keys=self.prediction_time_uuid_col_name).sort_index()
 
     @staticmethod
     def _check_dfs_are_ready_for_concat(dfs: List[pd.DataFrame]):
@@ -475,7 +483,7 @@ class TimeseriesFlattener:
         log.info(f"Concatenation took {round(end_time - start_time, 3)} seconds")
 
         log.info("Merging with original df")
-        self._df = self._df.merge(right=new_features, on=self.pred_time_uuid_col_name)
+        self._df = self._df.merge(right=new_features, on=self.prediction_time_uuid_col_name)
 
     def _add_temporal_batch(self, temporal_batch: List[TemporalSpec]):
         """Add predictors to the flattened dataframe from a list."""

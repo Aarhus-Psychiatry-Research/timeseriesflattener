@@ -19,7 +19,7 @@ class DiskCache(FeatureCache):
         self,
         feature_cache_dir: Path,
         prediction_times_df: Optional[pd.DataFrame] = None,
-        pred_time_uuid_col_name: str = "pred_time_uuid",
+        prediction_time_uuid_col_name: str = "prediction_time_uuid",
         entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
         cache_file_suffix: str = "parquet",
@@ -31,7 +31,7 @@ class DiskCache(FeatureCache):
             prediction_times_df (Optional[pd.DataFrame], optional): DataFrame containing prediction times.
                 Must be set at some point, but doesn't have to be set at init.
                 Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer. Defaults to None.
-            pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids. Defaults to "pred_time_uuid".
+            prediction_time_uuid_col_name (str, optional): Name of column containing prediction time uuids. Defaults to "prediction_time_uuid".
             entity_id_col_name (str, optional): Name of column containing entity ids. Defaults to "entity_id".
             timestamp_col_name (str, optional): Name of column containing timestamps. Defaults to "timestamp".
             cache_file_suffix (str, optional): File suffix for cache files. Defaults to ".parquet".
@@ -39,7 +39,7 @@ class DiskCache(FeatureCache):
 
         super().__init__(
             prediction_times_df=prediction_times_df,  # type: ignore
-            pred_time_uuid_col_name=pred_time_uuid_col_name,
+            prediction_time_uuid_col_name=prediction_time_uuid_col_name,
         )
 
         self.feature_cache_dir = feature_cache_dir
@@ -112,10 +112,10 @@ class DiskCache(FeatureCache):
 
         # Expand fallback column
         df = pd.merge(
-            left=self.prediction_times_df[self.pred_time_uuid_col_name],
+            left=self.prediction_times_df[self.prediction_time_uuid_col_name],
             right=df,
             how="left",
-            on=self.pred_time_uuid_col_name,
+            on=self.prediction_time_uuid_col_name,
             validate="m:1",
         )
 

@@ -47,7 +47,7 @@ class SingleVarAggregatorExample:
     def input_frame(self) -> pl.LazyFrame:
         return pl.LazyFrame(
             {
-                "pred_time_uuid": [1] * len(self.input_values),
+                "prediction_time_uuid": [1] * len(self.input_values),
                 "value": self.input_values,
                 "timestamp": ["2021-01-01"] * len(self.input_values),
             }
@@ -57,7 +57,7 @@ class SingleVarAggregatorExample:
     def expected_output(self) -> pl.DataFrame:
         return pl.DataFrame(
             {
-                "pred_time_uuid": [1],
+                "prediction_time_uuid": [1],
                 f"value_{self.aggregator.name}_fallback_nan": self.expected_output_values,
             }
         )
@@ -100,13 +100,13 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
         ComplexAggregatorExample(
             aggregator=SlopeAggregator(timestamp_col_name="timestamp"),
             input_frame=str_to_pl_df(
-                """pred_time_uuid,timestamp,value
+                """prediction_time_uuid,timestamp,value
 1,2013-01-01,1
 1,2013-01-02,3
 """
             ).lazy(),
             expected_output=str_to_pl_df(
-                """pred_time_uuid,value_slope_fallback_nan
+                """prediction_time_uuid,value_slope_fallback_nan
 1,2.0,
 """
             ),
@@ -114,14 +114,14 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
         ComplexAggregatorExample(
             aggregator=EarliestAggregator(timestamp_col_name="timestamp"),
             input_frame=str_to_pl_df(
-                """pred_time_uuid,timestamp,value
+                """prediction_time_uuid,timestamp,value
 1,2013-01-01,1, # Kept, first value in 1
 1,2013-01-02,2, # Dropped, second value in 1
 2,2013-01-04,3, # Dropped, second value in 2
 2,2013-01-03,4, # Kept, first value in 2"""
             ).lazy(),
             expected_output=str_to_pl_df(
-                """pred_time_uuid,value_earliest_fallback_nan
+                """prediction_time_uuid,value_earliest_fallback_nan
 1,1,
 2,4,"""
             ),
@@ -129,14 +129,14 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
         ComplexAggregatorExample(
             aggregator=LatestAggregator(timestamp_col_name="timestamp"),
             input_frame=str_to_pl_df(
-                """pred_time_uuid,timestamp,value
+                """prediction_time_uuid,timestamp,value
 1,2013-01-01,1, # Dropped, first value in 1
 1,2013-01-02,2, # Kept, second value in 1
 2,2013-01-04,3, # Kept, second value in 2
 2,2013-01-03,4, # Dropped, first value in 2"""
             ).lazy(),
             expected_output=str_to_pl_df(
-                """pred_time_uuid,value_latest_fallback_nan
+                """prediction_time_uuid,value_latest_fallback_nan
 1,2,
 2,3,"""
             ),
@@ -149,7 +149,7 @@ def test_aggregator(example: AggregatorExampleType):
         masked_frame=TimeMaskedFrame(
             init_df=example.input_frame,
             value_col_names=["value"],
-            pred_time_uuid_col_name="pred_time_uuid",
+            prediction_time_uuid_col_name="prediction_time_uuid",
             timestamp_col_name="timestamp",
         ),
         aggregators=[example.aggregator],

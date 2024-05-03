@@ -15,7 +15,7 @@ class FeatureCache(metaclass=ABCMeta):
         self,
         *args: Any,
         prediction_times_df: pd.DataFrame,
-        pred_time_uuid_col_name: str = "pred_time_uuid",
+        prediction_time_uuid_col_name: str = "prediction_time_uuid",
         entity_id_col_name: str = "entity_id",
         timestamp_col_name: str = "timestamp",
     ):
@@ -26,13 +26,13 @@ class FeatureCache(metaclass=ABCMeta):
             prediction_times_df (Optional[pd.DataFrame], optional): DataFrame containing prediction times.
                 Must be set at some point, but doesn't have to be set at init.
                 Useful when e.g. used as a component in TimeseriesFlattener, which already knows the prediction_times_df and can set it as a pointer during initialization. Defaults to None. Defaults to None.
-            pred_time_uuid_col_name (str, optional): Name of column containing prediction time uuids.
+            prediction_time_uuid_col_name (str, optional): Name of column containing prediction time uuids.
             entity_id_col_name (str, optional): Name of column containing entity ids. Defaults to "entity_id".
             timestamp_col_name (str, optional): Name of column containing timestamps. Defaults to "timestamp".
-            Defaults to "pred_time_uuid".
+            Defaults to "prediction_time_uuid".
         """
         self.prediction_times_df = prediction_times_df
-        self.pred_time_uuid_col_name = pred_time_uuid_col_name
+        self.prediction_time_uuid_col_name = prediction_time_uuid_col_name
 
     @abstractmethod
     def feature_exists(self, feature_spec: TemporalSpec) -> bool:

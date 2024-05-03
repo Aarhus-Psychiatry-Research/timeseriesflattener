@@ -10,7 +10,7 @@ from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 from .default_column_names import (
     default_entity_id_col_name,
     default_pred_time_col_name,
-    default_pred_time_uuid_col_name,
+    default_prediction_time_uuid_col_name,
 )
 
 if TYPE_CHECKING:
@@ -31,7 +31,7 @@ class PredictionTimeFrame:
     init_df: InitVar[InitDF_T]
     entity_id_col_name: str = default_entity_id_col_name
     timestamp_col_name: str = default_pred_time_col_name
-    pred_time_uuid_col_name: str = default_pred_time_uuid_col_name
+    prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
     coerce_to_lazy: InitVar[bool] = True
 
     def __post_init__(self, init_df: InitDF_T, coerce_to_lazy: bool):
@@ -43,7 +43,7 @@ class PredictionTimeFrame:
         self.df = self.df.with_columns(
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
-            ).alias(self.pred_time_uuid_col_name)
+            ).alias(self.prediction_time_uuid_col_name)
         )
 
         _validate_col_name_columns_exist(obj=self)
