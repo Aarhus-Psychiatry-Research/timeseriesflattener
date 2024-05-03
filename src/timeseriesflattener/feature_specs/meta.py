@@ -17,7 +17,6 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
 
-ValueType = Union[int, float, str, None]
 InitDF_T = Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]
 
 

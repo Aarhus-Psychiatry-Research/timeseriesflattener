@@ -10,7 +10,7 @@ from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 from .default_column_names import default_entity_id_col_name
 
 if TYPE_CHECKING:
-    from .meta import InitDF_T, ValueType
+    from .meta import InitDF_T
 
 
 @dataclass
@@ -41,4 +41,4 @@ class StaticSpec:
 
     value_frame: StaticFrame
     column_prefix: str
-    fallback: ValueType
+    fallback: Union[int, float, str, None]

@@ -15,8 +15,6 @@ from .frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from .feature_specs.meta import ValueType
-
 if TYPE_CHECKING:
     import datetime as dt
 
@@ -52,7 +50,7 @@ class AggregatedValueFrame:
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
 
-    def fill_nulls(self, fallback: ValueType) -> AggregatedValueFrame:
+    def fill_nulls(self, fallback: Union[int, float, str, None]) -> AggregatedValueFrame:
         filled = self.df.with_columns(
             pl.col(self.value_col_name)
             .fill_null(fallback)

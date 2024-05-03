@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+import datetime as dt
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING, Union
 
 import polars as pl
-import datetime as dt
 
 from .._frame_validator import _validate_col_name_columns_exist
-from .meta import ValueFrame, ValueType, _lookdistance_to_normalised_lookperiod
+from .meta import ValueFrame, _lookdistance_to_normalised_lookperiod
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -23,10 +23,12 @@ class OutcomeSpec:
     value_frame: ValueFrame
     lookahead_distances: InitVar[Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]]
     aggregators: Sequence[Aggregator]
-    fallback: ValueType
+    fallback: Union[int, float, str, None]
     column_prefix: str = "outc"
 
-    def __post_init__(self, lookahead_distances: Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]):
+    def __post_init__(
+        self, lookahead_distances: Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]
+    ):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in lookahead_distances
