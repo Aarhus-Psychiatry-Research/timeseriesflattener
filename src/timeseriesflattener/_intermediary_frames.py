@@ -6,9 +6,6 @@ from typing import TYPE_CHECKING, Union
 import polars as pl
 
 from ._frame_validator import _validate_col_name_columns_exist
-from .feature_specs.default_column_names import (
-    default_timestamp_col_name,
-)
 from .frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 if TYPE_CHECKING:
@@ -24,7 +21,7 @@ class TimeMaskedFrame:
 
     init_df: pl.LazyFrame
     value_col_names: Sequence[str]
-    timestamp_col_name: str = default_timestamp_col_name
+    timestamp_col_name: str = "timestamp"
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
     validate_cols_exist: bool = True
 

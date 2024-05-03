@@ -7,7 +7,6 @@ import polars as pl
 
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
-from .default_column_names import default_pred_time_col_name
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
