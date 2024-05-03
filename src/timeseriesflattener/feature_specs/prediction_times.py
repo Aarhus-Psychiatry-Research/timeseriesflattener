@@ -26,7 +26,7 @@ class PredictionTimeFrame:
 
     init_df: InitVar[InitDF_T]
     entity_id_col_name: str = "entity_id"
-    timestamp_col_name: str = default_pred_time_col_name
+    timestamp_col_name: str = "pred_timestamp"
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
     coerce_to_lazy: InitVar[bool] = True
 
