@@ -7,7 +7,6 @@ import polars as pl
 
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
-from .default_column_names import default_entity_id_col_name
 
 if TYPE_CHECKING:
     from .meta import InitDF_T
@@ -23,7 +22,7 @@ class TimestampValueFrame:
     """
 
     init_df: InitVar[InitDF_T]
-    entity_id_col_name: str = default_entity_id_col_name
+    entity_id_col_name: str = "entity_id"
     value_timestamp_col_name: str = "timestamp"
 
     def __post_init__(self, init_df: InitDF_T):

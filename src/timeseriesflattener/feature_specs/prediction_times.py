@@ -8,7 +8,6 @@ import polars as pl
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 from .default_column_names import (
-    default_entity_id_col_name,
     default_pred_time_col_name,
     default_prediction_time_uuid_col_name,
 )
@@ -29,7 +28,7 @@ class PredictionTimeFrame:
     """
 
     init_df: InitVar[InitDF_T]
-    entity_id_col_name: str = default_entity_id_col_name
+    entity_id_col_name: str = "entity_id"
     timestamp_col_name: str = default_pred_time_col_name
     prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
     coerce_to_lazy: InitVar[bool] = True

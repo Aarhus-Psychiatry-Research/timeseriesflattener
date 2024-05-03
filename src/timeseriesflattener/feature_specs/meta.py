@@ -8,8 +8,6 @@ from typing import TYPE_CHECKING, Literal, Union
 import pandas as pd
 import polars as pl
 
-from timeseriesflattener.feature_specs.default_column_names import default_entity_id_col_name
-
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
@@ -31,7 +29,7 @@ class ValueFrame:
     """
 
     init_df: InitVar[InitDF_T]
-    entity_id_col_name: str = default_entity_id_col_name
+    entity_id_col_name: str = "entity_id"
     value_timestamp_col_name: str = "timestamp"
     coerce_to_lazy: InitVar[bool] = True
 
