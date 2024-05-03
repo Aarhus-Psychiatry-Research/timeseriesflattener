@@ -6,7 +6,6 @@ import pandas as pd
 import polars as pl
 
 
-
 def _anyframe_to_lazyframe(
     init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
 ) -> pl.LazyFrame:

@@ -10,7 +10,6 @@ import numpy as np
 import polars as pl
 import pytest
 from iterpy.iter import Iter
-
 from timeseriesflattener.aggregators import Aggregator, MaxAggregator, MeanAggregator
 from timeseriesflattener.feature_specs.meta import ValueFrame
 from timeseriesflattener.feature_specs.prediction_times import PredictionTimeFrame

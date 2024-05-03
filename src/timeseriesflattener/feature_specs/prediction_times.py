@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-
 @dataclass
 class PredictionTimeFrame:
     """Specification for prediction times, i.e. the times for which predictions are made.

@@ -11,7 +11,6 @@ from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 
-
 @dataclass
 class ValueFrame:
     """A frame that contains the values of a time series.
