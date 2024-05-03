@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.2 (2024-05-03)
+
+### Fix
+
+* Rename 'pred_time_uuid' to 'prediction_time_uuid' ([`fe44fd8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/fe44fd8c0abd9c28009b5d38bfcad28fbfabbf86))
+
 ## v2.2.1 (2024-05-02)
 
 ### Fix
