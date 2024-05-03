@@ -8,7 +8,7 @@ import polars.selectors as cs
 from iterpy.iter import Iter
 
 from .._intermediary_frames import ProcessedFrame, TimeDeltaFrame, TimeMaskedFrame
-from ..feature_specs.meta import InitDF_T, ValueFrame
+from ..feature_specs.meta import ValueFrame
 from ..feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
 from ..feature_specs.prediction_times import PredictionTimeFrame
 from ..feature_specs.predictor import PredictorSpec

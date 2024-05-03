@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Union
 
 import pandas as pd
 import polars as pl
 
-if TYPE_CHECKING:
-    from ..feature_specs.meta import InitDF_T
 
 
-def _anyframe_to_lazyframe(init_df: InitDF_T) -> pl.LazyFrame:
+def _anyframe_to_lazyframe(
+    init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
+) -> pl.LazyFrame:
     if isinstance(init_df, pl.LazyFrame):
         return init_df
     if isinstance(init_df, pl.DataFrame):
@@ -19,5 +19,7 @@ def _anyframe_to_lazyframe(init_df: InitDF_T) -> pl.LazyFrame:
     raise ValueError(f"Unsupported type: {type(init_df)}.")
 
 
-def _anyframe_to_eagerframe(init_df: InitDF_T) -> pl.DataFrame:
+def _anyframe_to_eagerframe(
+    init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
+) -> pl.DataFrame:
     return _anyframe_to_lazyframe(init_df).collect()

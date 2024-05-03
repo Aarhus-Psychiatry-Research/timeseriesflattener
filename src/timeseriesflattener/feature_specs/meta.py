@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import datetime as dt
-from collections.abc import Sequence
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Literal, Union
+from typing import Literal, Union
 
 import pandas as pd
 import polars as pl
@@ -11,11 +10,6 @@ import polars as pl
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
-
-
-InitDF_T = Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]
 
 
 @dataclass
@@ -28,12 +22,14 @@ class ValueFrame:
         Additional columns containing the values of the time series. The name of the columns will be used for feature naming.
     """
 
-    init_df: InitVar[InitDF_T]
+    init_df: InitVar[Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]]
     entity_id_col_name: str = "entity_id"
     value_timestamp_col_name: str = "timestamp"
     coerce_to_lazy: InitVar[bool] = True
 
-    def __post_init__(self, init_df: InitDF_T, coerce_to_lazy: bool):
+    def __post_init__(
+        self, init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame], coerce_to_lazy: bool
+    ):
         if coerce_to_lazy:
             self.df = _anyframe_to_lazyframe(init_df)
         else:

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
+import pandas as pd
 import polars as pl
 
 from .._frame_validator import _validate_col_name_columns_exist
@@ -11,7 +12,6 @@ from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from .meta import InitDF_T
 
 
 @dataclass
@@ -23,13 +23,15 @@ class PredictionTimeFrame:
         timestamp_col_name: The name of the column containing the timestamps for when to make a prediction.
     """
 
-    init_df: InitVar[InitDF_T]
+    init_df: InitVar[Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]]
     entity_id_col_name: str = "entity_id"
     timestamp_col_name: str = "pred_timestamp"
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
     coerce_to_lazy: InitVar[bool] = True
 
-    def __post_init__(self, init_df: InitDF_T, coerce_to_lazy: bool):
+    def __post_init__(
+        self, init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame], coerce_to_lazy: bool
+    ):
         if coerce_to_lazy:
             self.df = _anyframe_to_lazyframe(init_df)
         else:

@@ -3,22 +3,21 @@ from __future__ import annotations
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING, Union
 
+import pandas as pd
 import polars as pl
 
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
-if TYPE_CHECKING:
-    from .meta import InitDF_T
 
 
 @dataclass
 class StaticFrame:
-    init_df: InitVar[InitDF_T]
+    init_df: InitVar[Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]]
 
     entity_id_col_name: str = "entity_id"
 
-    def __post_init__(self, init_df: InitDF_T):
+    def __post_init__(self, init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]):
         self.df = _anyframe_to_lazyframe(init_df)
         _validate_col_name_columns_exist(obj=self)
         self.value_col_names = [col for col in self.df.columns if col != self.entity_id_col_name]
