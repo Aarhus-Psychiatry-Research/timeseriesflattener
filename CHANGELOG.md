@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.3 (2024-05-07)
+
+### Fix
+
+* Expose ValueSpecification ([`b670fc8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b670fc891a2cdfcb4eed01d82fd9b3f627a5b9b8))
+
 ## v2.2.2 (2024-05-03)
 
 ### Fix
