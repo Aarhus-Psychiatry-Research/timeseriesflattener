@@ -97,10 +97,25 @@ class Flattener:
     predictiontime_frame: PredictionTimeFrame
     compute_lazily: bool = False
     n_workers: int | None = None
+    """Flatten multiple irregular time series to a static feature set.
+    
+    Args:
+        predictiontime_frame (PredictionTimeFrame): A frame that contains the prediction times.
+        compute_lazily (bool): If True, the computation will be done lazily. Defaults to False.
+        n_workers (int | None): The number of workers to use for multiprocessing. 
+            If None, multiprocessing will be handled entirely by polars, otherwise, 
+            specify the number of workers to use with joblib. Defaults to None."""
 
     def aggregate_timeseries(
         self, specs: Sequence[ValueSpecification], step_size: dt.timedelta | None = None
     ) -> AggregatedFrame:
+        """Perform the aggregation/flattening.
+        
+        Args:
+            specs (Sequence[ValueSpecification]): The specifications for the features to be created.
+            step_size (dt.timedelta | None): The step size for the aggregation. 
+                If not None, will aggregate prediction times in chunks of step_size. 
+                Reduce if you encounter memory issues. Defaults to None."""
         if self.compute_lazily:
             print(
                 "We have encountered performance issues on Windows when using lazy evaluation. If you encounter performance issues, try setting lazy=False."
