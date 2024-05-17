@@ -4,7 +4,7 @@ import datetime as dt
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import polars as pl
 import tqdm
@@ -27,9 +27,9 @@ if TYPE_CHECKING:
 
     from .feature_specs.prediction_times import PredictionTimeFrame
 
-ValueSpecification: TypeAlias = (
-    PredictorSpec | OutcomeSpec | BooleanOutcomeSpec | TimeDeltaSpec | StaticSpec
-)
+ValueSpecification: TypeAlias = Union[
+    PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec
+]
 
 
 @dataclass(frozen=True)
