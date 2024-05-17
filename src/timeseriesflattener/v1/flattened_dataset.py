@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Sequence
+from typing import Callable, List, Optional, Sequence, Union
 
 import coloredlogs
 import numpy as np
@@ -724,7 +724,7 @@ class TimeseriesFlattener:
                     f"{spec.feature_base_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?"
                 )
 
-    def add_spec(self, spec: Sequence[AnySpec] | AnySpec):
+    def add_spec(self, spec: Sequence[Union[AnySpec, AnySpec]]):
         """Add a specification to the flattened dataset.
 
         This adds it to a queue of unprocessed specs, which are not processed
