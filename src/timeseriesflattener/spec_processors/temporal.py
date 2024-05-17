@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Union
 
 import polars as pl
 import polars.selectors as cs
@@ -148,7 +148,7 @@ def _slice_and_aggregate_spec(
     return masked_aggregator(sliced_frame)
 
 
-TemporalSpec = PredictorSpec | OutcomeSpec | BooleanOutcomeSpec
+TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
 
 
 def _get_pred_time_range(frame: PredictionTimeFrame) -> tuple[dt.datetime, dt.datetime]:
