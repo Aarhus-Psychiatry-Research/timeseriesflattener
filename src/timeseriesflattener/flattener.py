@@ -27,8 +27,9 @@ if TYPE_CHECKING:
 
     from .feature_specs.prediction_times import PredictionTimeFrame
 
-ValueSpecification: TypeAlias = PredictorSpec | OutcomeSpec | BooleanOutcomeSpec | TimeDeltaSpec | StaticSpec
-
+ValueSpecification: TypeAlias = (
+    PredictorSpec | OutcomeSpec | BooleanOutcomeSpec | TimeDeltaSpec | StaticSpec
+)
 
 
 @dataclass(frozen=True)
