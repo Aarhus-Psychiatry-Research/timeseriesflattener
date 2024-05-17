@@ -2,6 +2,7 @@
 
 utilities. If this file grows, consider splitting it up.
 """
+from __future__ import annotations
 
 import functools
 import logging
