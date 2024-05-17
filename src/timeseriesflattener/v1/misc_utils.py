@@ -7,7 +7,7 @@ import functools
 import logging
 import os
 from pathlib import Path
-from typing import Any, Callable, Dict, Hashable, List, Union
+from typing import Any, Callable, Dict, Hashable, List
 
 import catalogue
 import pandas as pd

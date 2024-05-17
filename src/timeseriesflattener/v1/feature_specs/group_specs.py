@@ -1,7 +1,7 @@
 from __future__ import annotations
 import itertools
 from dataclasses import dataclass
-from typing import Dict, List, Sequence, Tuple, Union
+from typing import Dict, List, Sequence, Tuple
 
 import pandas as pd
 from timeseriesflattener.v1.aggregation_fns import AggregationFunType

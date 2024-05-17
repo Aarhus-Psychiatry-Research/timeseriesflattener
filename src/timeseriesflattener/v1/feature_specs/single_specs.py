@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Tuple, Union
+from typing import Tuple
 
 import pandas as pd
 from timeseriesflattener.v1.aggregation_fns import AggregationFunType

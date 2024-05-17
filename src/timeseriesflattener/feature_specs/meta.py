@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 from dataclasses import InitVar, dataclass
-from typing import Literal, Union
+from typing import Literal
 
 import pandas as pd
 import polars as pl

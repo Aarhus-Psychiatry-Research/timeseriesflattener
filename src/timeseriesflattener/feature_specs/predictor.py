@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from .._frame_validator import _validate_col_name_columns_exist
 from .meta import ValueFrame, _lookdistance_to_normalised_lookperiod

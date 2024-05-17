@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import InitVar, dataclass
-from typing import Union
 
 import pandas as pd
 import polars as pl

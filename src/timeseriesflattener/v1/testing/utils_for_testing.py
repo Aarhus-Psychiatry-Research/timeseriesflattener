@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from io import StringIO
-from typing import Any, List, Optional, Sequence, Union
+from typing import Any, List, Optional, Sequence
 
 
 import numpy as np

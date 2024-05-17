@@ -8,7 +8,7 @@ import random
 import time
 from datetime import timedelta
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Callable, List, Optional, Sequence
 
 import coloredlogs
 import numpy as np

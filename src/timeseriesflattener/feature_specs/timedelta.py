@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, Union
+from typing import TYPE_CHECKING, Literal
 
 from .._frame_validator import _validate_col_name_columns_exist
 from .meta import ValueFrame
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 @dataclass
 class TimeDeltaSpec:
     init_frame: TimestampValueFrame
-    fallback: Union[int, float, str, None]
+    fallback: int | float | str | None
     output_name: str
     column_prefix: str = "pred"
     time_format: Literal["seconds", "minutes", "hours", "days", "years"] = "days"
