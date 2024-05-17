@@ -19,11 +19,11 @@ class TimestampValueFrame:
         value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column's values must be datetimes.
     """
 
-    init_df: InitVar[Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]]
+    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
     entity_id_col_name: str = "entity_id"
     value_timestamp_col_name: str = "timestamp"
 
-    def __post_init__(self, init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]):
+    def __post_init__(self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame):
         self.df = _anyframe_to_lazyframe(init_df)
         _validate_col_name_columns_exist(obj=self)
 

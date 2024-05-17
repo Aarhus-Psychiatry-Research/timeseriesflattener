@@ -21,13 +21,13 @@ class OutcomeSpec:
     """Specification for an outcome. If your outcome is binary/boolean, you can use BooleanOutcomeSpec instead."""
 
     value_frame: ValueFrame
-    lookahead_distances: InitVar[Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]]
+    lookahead_distances: InitVar[Sequence[dt.timedelta | tuple[dt.timedelta, dt.timedelta]]]
     aggregators: Sequence[Aggregator]
-    fallback: Union[int, float, str, None]
+    fallback: int | float | str | None
     column_prefix: str = "outc"
 
     def __post_init__(
-        self, lookahead_distances: Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]
+        self, lookahead_distances: Sequence[dt.timedelta | tuple[dt.timedelta, dt.timedelta]]
     ):
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
@@ -50,7 +50,7 @@ class BooleanOutcomeSpec:
     """
 
     init_frame: InitVar[TimestampValueFrame]
-    lookahead_distances: Sequence[Union[dt.timedelta, tuple[dt.timedelta, dt.timedelta]]]
+    lookahead_distances: Sequence[dt.timedelta | tuple[dt.timedelta, dt.timedelta]]
     aggregators: Sequence[Aggregator]
     output_name: str
     column_prefix: str = "outc"

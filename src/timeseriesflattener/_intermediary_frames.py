@@ -46,7 +46,7 @@ class AggregatedValueFrame:
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
 
-    def fill_nulls(self, fallback: Union[int, float, str, None]) -> AggregatedValueFrame:
+    def fill_nulls(self, fallback: int | float | str | None) -> AggregatedValueFrame:
         filled = self.df.with_columns(
             pl.col(self.value_col_name)
             .fill_null(fallback)

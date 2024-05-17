@@ -63,7 +63,7 @@ class SingleVarAggregatorExample:
         )
 
 
-AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExample]
+AggregatorExampleType = ComplexAggregatorExample | SingleVarAggregatorExample
 
 # TODO: Write integration tests with Earliest and Latest aggregators, since they will depend on sorting
 

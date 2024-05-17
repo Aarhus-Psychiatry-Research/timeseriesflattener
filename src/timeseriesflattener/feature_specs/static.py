@@ -12,11 +12,11 @@ from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 @dataclass
 class StaticFrame:
-    init_df: InitVar[Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]]
+    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
 
     entity_id_col_name: str = "entity_id"
 
-    def __post_init__(self, init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]):
+    def __post_init__(self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame):
         self.df = _anyframe_to_lazyframe(init_df)
         _validate_col_name_columns_exist(obj=self)
         self.value_col_names = [col for col in self.df.columns if col != self.entity_id_col_name]
@@ -38,4 +38,4 @@ class StaticSpec:
 
     value_frame: StaticFrame
     column_prefix: str
-    fallback: Union[int, float, str, None]
+    fallback: int | float | str | None

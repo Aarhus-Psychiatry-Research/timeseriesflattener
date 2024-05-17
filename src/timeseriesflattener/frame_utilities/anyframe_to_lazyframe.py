@@ -6,9 +6,7 @@ import pandas as pd
 import polars as pl
 
 
-def _anyframe_to_lazyframe(
-    init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
-) -> pl.LazyFrame:
+def _anyframe_to_lazyframe(init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame) -> pl.LazyFrame:
     if isinstance(init_df, pl.LazyFrame):
         return init_df
     if isinstance(init_df, pl.DataFrame):
@@ -18,7 +16,5 @@ def _anyframe_to_lazyframe(
     raise ValueError(f"Unsupported type: {type(init_df)}.")
 
 
-def _anyframe_to_eagerframe(
-    init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame],
-) -> pl.DataFrame:
+def _anyframe_to_eagerframe(init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame) -> pl.DataFrame:
     return _anyframe_to_lazyframe(init_df).collect()

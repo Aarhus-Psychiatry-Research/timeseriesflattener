@@ -21,13 +21,13 @@ class ValueFrame:
         Additional columns containing the values of the time series. The name of the columns will be used for feature naming.
     """
 
-    init_df: InitVar[Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]]
+    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
     entity_id_col_name: str = "entity_id"
     value_timestamp_col_name: str = "timestamp"
     coerce_to_lazy: InitVar[bool] = True
 
     def __post_init__(
-        self, init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame], coerce_to_lazy: bool
+        self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame, coerce_to_lazy: bool
     ):
         if coerce_to_lazy:
             self.df = _anyframe_to_lazyframe(init_df)

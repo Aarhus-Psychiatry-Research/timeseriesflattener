@@ -22,14 +22,14 @@ class PredictionTimeFrame:
         timestamp_col_name: The name of the column containing the timestamps for when to make a prediction.
     """
 
-    init_df: InitVar[Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]]
+    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
     entity_id_col_name: str = "entity_id"
     timestamp_col_name: str = "pred_timestamp"
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
     coerce_to_lazy: InitVar[bool] = True
 
     def __post_init__(
-        self, init_df: Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame], coerce_to_lazy: bool
+        self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame, coerce_to_lazy: bool
     ):
         if coerce_to_lazy:
             self.df = _anyframe_to_lazyframe(init_df)

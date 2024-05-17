@@ -107,7 +107,7 @@ def _mask_outside_lookperiod(
 def _aggregate_masked_frame(
     masked_frame: TimeMaskedFrame,
     aggregators: Sequence[Aggregator],
-    fallback: Union[int, float, str, None],
+    fallback: int | float | str | None,
 ) -> pl.LazyFrame:
     aggregator_expressions = [
         aggregator(value_col_name)
@@ -148,7 +148,7 @@ def _slice_and_aggregate_spec(
     return masked_aggregator(sliced_frame)
 
 
-TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
+TemporalSpec = PredictorSpec | OutcomeSpec | BooleanOutcomeSpec
 
 
 def _get_pred_time_range(frame: PredictionTimeFrame) -> tuple[dt.datetime, dt.datetime]:

@@ -12,7 +12,7 @@ from timeseriesflattener.v1.misc_utils import PROJECT_ROOT
 def setup_logger(
     name: str,
     level: int = logging.DEBUG,
-    log_file_path: Optional[Union[str, Path]] = None,
+    log_file_path: Optional[str | Path] = None,
     fmt: str = "%(asctime)s [%(levelname)s] %(message)s",
 ) -> logging.Logger:
     """

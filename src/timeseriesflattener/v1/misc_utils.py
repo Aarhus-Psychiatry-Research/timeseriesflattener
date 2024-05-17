@@ -84,7 +84,7 @@ def format_dict_for_printing(d: dict) -> str:
     )
 
 
-def load_dataset_from_file(file_path: Path, nrows: Union[int, None] = None) -> pd.DataFrame:
+def load_dataset_from_file(file_path: Path, nrows: int | None = None) -> pd.DataFrame:
     """Load dataset from file. Handles csv and parquet files based on suffix.
 
     Args:

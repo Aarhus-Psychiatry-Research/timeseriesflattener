@@ -1,6 +1,9 @@
 """Utilities for testing."""
+from __future__ import annotations
+
 from io import StringIO
 from typing import Any, List, Optional, Sequence, Union
+
 
 import numpy as np
 import pandas as pd
@@ -82,7 +85,7 @@ def str_to_df(
     return df.loc[:, ~df.columns.str.contains("^Unnamed")]
 
 
-def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: AnySpec) -> Union[str, List[str]]:
+def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: AnySpec) -> str | List[str]:
     """Get value columns based on spec. Checks if multiple value columns are present."""
     feature_name = spec.feature_base_name
     value_cols = df.columns[df.columns.str.contains(feature_name)].tolist()
@@ -94,7 +97,7 @@ def _get_value_cols_based_on_spec(df: pd.DataFrame, spec: AnySpec) -> Union[str,
 
 
 def assert_flattened_data_as_expected(
-    prediction_times_df: Union[pd.DataFrame, str],
+    prediction_times_df: pd.DataFrame | str,
     output_spec: AnySpec,
     expected_df: Optional[pd.DataFrame] = None,
     expected_values: Optional[Sequence[Any]] = None,
