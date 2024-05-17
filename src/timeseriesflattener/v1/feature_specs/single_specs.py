@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Tuple, Union
 
 import pandas as pd
 from timeseriesflattener.v1.aggregation_fns import AggregationFunType
@@ -117,9 +117,9 @@ class OutcomeSpec(BaseModel):
 
     timeseries_df: pd.DataFrame
     feature_base_name: str
-    lookahead_days: float | Tuple[float, float]
+    lookahead_days: Union[float, Tuple[float, float]]
     aggregation_fn: AggregationFunType
-    fallback: float | int
+    fallback: Union[float, int]
     incident: bool
     prefix: str = "outc"
 
@@ -171,8 +171,8 @@ class PredictorSpec(BaseModel):
     timeseries_df: pd.DataFrame
     feature_base_name: str
     aggregation_fn: AggregationFunType
-    fallback: float | int
-    lookbehind_days: float | Tuple[float, float]
+    fallback: Union[float, int]
+    lookbehind_days: Union[float, Tuple[float, float]]
     prefix: str = "pred"
 
     @property

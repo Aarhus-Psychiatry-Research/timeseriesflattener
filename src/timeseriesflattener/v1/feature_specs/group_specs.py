@@ -1,7 +1,7 @@
 from __future__ import annotations
 import itertools
 from dataclasses import dataclass
-from typing import Dict, List, Sequence, Tuple
+from typing import Dict, List, Sequence, Tuple, Union
 
 import pandas as pd
 from timeseriesflattener.v1.aggregation_fns import AggregationFunType
@@ -40,10 +40,10 @@ class PredictorGroupSpec(BaseModel):
     """
 
     # Shared attributes from GroupSpec
-    lookbehind_days: Sequence[float | Tuple[float, float]]
+    lookbehind_days: Sequence[Union[float, Tuple[float, float]]]
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[AggregationFunType]
-    fallback: Sequence[int | float | str]
+    fallback: Sequence[Union[int, float, str]]
     prefix: str = "pred"
 
     def create_combinations(self) -> List[PredictorSpec]:
@@ -82,10 +82,10 @@ class OutcomeGroupSpec(BaseModel):
     prefix: str = "outc"
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[AggregationFunType]
-    fallback: Sequence[int | float | str]
+    fallback: Sequence[Union[int, float, str]]
 
     # Individual attributes
-    lookahead_days: Sequence[float | Tuple[float, float]]
+    lookahead_days: Sequence[Union[float, Tuple[float, float]]]
     incident: Sequence[bool]
 
     def create_combinations(self) -> List[OutcomeSpec]:
