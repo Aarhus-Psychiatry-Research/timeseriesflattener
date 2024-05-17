@@ -256,7 +256,18 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.aggregate_timeseries">
 <span class="sig-name descname"><span class="pre">aggregate_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">ValueSpecification</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dt.timedelta</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AggregatedFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/flattener.html#Flattener.aggregate_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattener.Flattener.aggregate_timeseries" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Perform the aggregation/flattening.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>specs</strong> – The specifications for the features to be created.</p></li>
+<li><p><strong>step_size</strong> – The step size for the aggregation.
+If not None, will aggregate prediction times in chunks of step_size.
+Reduce if you encounter memory issues.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.compute_lazily">
@@ -266,7 +277,19 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.n_workers">
 <span class="sig-name descname"><span class="pre">n_workers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#timeseriesflattener.flattener.Flattener.n_workers" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Flatten multiple irregular time series to a static feature set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>predictiontime_frame</strong> – A frame that contains the prediction times.</p></li>
+<li><p><strong>compute_lazily</strong> – If True, the computation will be done lazily.</p></li>
+<li><p><strong>n_workers</strong> – The number of workers to use for multiprocessing.
+If None, multiprocessing will be handled entirely by polars, otherwise,
+specify the number of workers to use with joblib.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.predictiontime_frame">
