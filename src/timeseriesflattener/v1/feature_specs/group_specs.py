@@ -106,7 +106,7 @@ class OutcomeGroupSpec(BaseModel):
         ]
 
 
-GroupSpec = PredictorGroupSpec | OutcomeGroupSpec
+GroupSpec = Union[PredictorGroupSpec, OutcomeGroupSpec]
 
 
 def create_feature_combinations_from_dict(

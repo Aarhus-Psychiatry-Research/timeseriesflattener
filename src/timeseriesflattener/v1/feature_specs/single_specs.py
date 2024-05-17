@@ -192,5 +192,5 @@ class PredictorSpec(BaseModel):
         )
 
 
-TemporalSpec = PredictorSpec | OutcomeSpec
-AnySpec = StaticSpec | TemporalSpec
+TemporalSpec = Union[PredictorSpec, OutcomeSpec]
+AnySpec = Union[StaticSpec, TemporalSpec]
