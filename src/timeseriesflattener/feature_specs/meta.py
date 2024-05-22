@@ -1,30 +1,14 @@
 from __future__ import annotations
 
 import datetime as dt
-from collections.abc import Sequence
 from dataclasses import InitVar, dataclass
-from typing import TYPE_CHECKING, Literal, Union
+from typing import Literal
 
 import pandas as pd
 import polars as pl
 
-from timeseriesflattener.feature_specs.default_column_names import default_entity_id_col_name
-
 from .._frame_validator import _validate_col_name_columns_exist
 from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
-
-if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
-
-
-ValueType = Union[int, float, str, None]
-InitDF_T = Union[pl.LazyFrame, pl.DataFrame, pd.DataFrame]
-
-
-LookDistance = dt.timedelta
-
-
-LookDistances: TypeAlias = Sequence[Union[LookDistance, tuple[LookDistance, LookDistance]]]
 
 
 @dataclass
@@ -37,12 +21,14 @@ class ValueFrame:
         Additional columns containing the values of the time series. The name of the columns will be used for feature naming.
     """
 
-    init_df: InitVar[InitDF_T]
-    entity_id_col_name: str = default_entity_id_col_name
+    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
+    entity_id_col_name: str = "entity_id"
     value_timestamp_col_name: str = "timestamp"
     coerce_to_lazy: InitVar[bool] = True
 
-    def __post_init__(self, init_df: InitDF_T, coerce_to_lazy: bool):
+    def __post_init__(
+        self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame, coerce_to_lazy: bool
+    ):
         if coerce_to_lazy:
             self.df = _anyframe_to_lazyframe(init_df)
         else:
@@ -63,8 +49,8 @@ class ValueFrame:
 
 @dataclass(frozen=True)
 class LookPeriod:
-    first: LookDistance
-    last: LookDistance
+    first: dt.timedelta
+    last: dt.timedelta
 
     def __post_init__(self):
         if self.first >= self.last:
@@ -74,11 +60,11 @@ class LookPeriod:
 
 
 def _lookdistance_to_normalised_lookperiod(
-    lookdistance: LookDistance | tuple[LookDistance, LookDistance],
+    lookdistance: dt.timedelta | tuple[dt.timedelta, dt.timedelta],
     direction: Literal["ahead", "behind"],
 ) -> LookPeriod:
     is_ahead = direction == "ahead"
-    if isinstance(lookdistance, LookDistance):
+    if isinstance(lookdistance, dt.timedelta):
         return LookPeriod(
             first=dt.timedelta(days=0) if is_ahead else -lookdistance,
             last=lookdistance if is_ahead else dt.timedelta(0),

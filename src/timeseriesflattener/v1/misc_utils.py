@@ -2,12 +2,13 @@
 
 utilities. If this file grows, consider splitting it up.
 """
+from __future__ import annotations
 
 import functools
 import logging
 import os
 from pathlib import Path
-from typing import Any, Callable, Dict, Hashable, List, Union
+from typing import Any, Callable, Dict, Hashable, List
 
 import catalogue
 import pandas as pd
@@ -84,7 +85,7 @@ def format_dict_for_printing(d: dict) -> str:
     )
 
 
-def load_dataset_from_file(file_path: Path, nrows: Union[int, None] = None) -> pd.DataFrame:
+def load_dataset_from_file(file_path: Path, nrows: int | None = None) -> pd.DataFrame:
     """Load dataset from file. Handles csv and parquet files based on suffix.
 
     Args:

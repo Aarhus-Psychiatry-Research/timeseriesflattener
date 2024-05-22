@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
 
 from .._frame_validator import _validate_col_name_columns_exist
-from .meta import ValueFrame, ValueType
+from .meta import ValueFrame
 
 if TYPE_CHECKING:
     import polars as pl
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 @dataclass
 class TimeDeltaSpec:
     init_frame: TimestampValueFrame
-    fallback: ValueType
+    fallback: int | float | str | None
     output_name: str
     column_prefix: str = "pred"
     time_format: Literal["seconds", "minutes", "hours", "days", "years"] = "days"

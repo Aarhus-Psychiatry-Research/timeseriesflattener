@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from typing import Tuple, Union
 
@@ -21,7 +22,7 @@ class LookPeriod:
 @dataclass(frozen=True)
 class CoercedFloats:
     lookperiod: LookPeriod
-    fallback: Union[float, int]
+    fallback: float | int
 
 
 def can_be_coerced_losslessly_to_int(value: float) -> bool:
@@ -79,7 +80,7 @@ def get_temporal_col_name(
     feature_base_name: str,
     lookperiod: LookPeriod,
     aggregation_fn: AggregationFunType,
-    fallback: Union[float, int],
+    fallback: float | int,
 ) -> str:
     """Get the column name for the temporal feature."""
     coerced = coerce_floats(lookperiod=lookperiod, fallback=fallback)

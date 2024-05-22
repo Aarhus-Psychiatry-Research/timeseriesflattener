@@ -6,16 +6,10 @@ from typing import TYPE_CHECKING
 import polars as pl
 
 from ._frame_validator import _validate_col_name_columns_exist
-from .feature_specs.default_column_names import (
-    default_prediction_time_uuid_col_name,
-    default_timestamp_col_name,
-)
 from .frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
-    from .feature_specs.meta import ValueType
 
 if TYPE_CHECKING:
     import datetime as dt
@@ -27,8 +21,8 @@ class TimeMaskedFrame:
 
     init_df: pl.LazyFrame
     value_col_names: Sequence[str]
-    timestamp_col_name: str = default_timestamp_col_name
-    prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
+    timestamp_col_name: str = "timestamp"
+    prediction_time_uuid_col_name: str = "prediction_time_uuid"
     validate_cols_exist: bool = True
 
     def __post_init__(self):
@@ -47,12 +41,12 @@ class TimeMaskedFrame:
 class AggregatedValueFrame:
     df: pl.LazyFrame
     value_col_name: str
-    prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
+    prediction_time_uuid_col_name: str = "prediction_time_uuid"
 
     def __post_init__(self):
         _validate_col_name_columns_exist(obj=self)
 
-    def fill_nulls(self, fallback: ValueType) -> AggregatedValueFrame:
+    def fill_nulls(self, fallback: int | float | str | None) -> AggregatedValueFrame:
         filled = self.df.with_columns(
             pl.col(self.value_col_name)
             .fill_null(fallback)
@@ -76,7 +70,7 @@ class TimeDeltaFrame:
     df: pl.LazyFrame
     value_col_names: Sequence[str]
     value_timestamp_col_name: str
-    prediction_time_uuid_col_name: str = default_prediction_time_uuid_col_name
+    prediction_time_uuid_col_name: str = "prediction_time_uuid"
     timedelta_col_name: str = "time_from_prediction_to_value"
 
     def __post_init__(self):

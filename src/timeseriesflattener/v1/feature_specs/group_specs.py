@@ -1,3 +1,4 @@
+from __future__ import annotations
 import itertools
 from dataclasses import dataclass
 from typing import Dict, List, Sequence, Tuple, Union
@@ -18,10 +19,10 @@ from typing import Protocol
 
 
 class V1PGSProtocol(Protocol):
-    lookbehind_days: Sequence[Union[float, Tuple[float, float]]]
+    lookbehind_days: Sequence[float | Tuple[float, float]]
     named_dataframes: Sequence[NamedDataframe]
     aggregation_fns: Sequence[AggregationFunType]
-    fallback: Sequence[Union[int, float, str]]
+    fallback: Sequence[int | float | str]
     prefix: str = "pred"
 
 
@@ -109,8 +110,8 @@ GroupSpec = Union[PredictorGroupSpec, OutcomeGroupSpec]
 
 
 def create_feature_combinations_from_dict(
-    dictionary: Dict[str, Union[str, list]],
-) -> List[Dict[str, Union[str, float, int]]]:
+    dictionary: Dict[str, str | list],
+) -> List[Dict[str, str | float | int]]:
     """Create feature combinations from a dictionary of feature specifications.
     Only unpacks the top level of lists.
     Args:

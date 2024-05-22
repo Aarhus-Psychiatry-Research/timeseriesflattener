@@ -8,17 +8,17 @@ import polars.selectors as cs
 from iterpy.iter import Iter
 
 from .._intermediary_frames import ProcessedFrame, TimeDeltaFrame, TimeMaskedFrame
+from ..feature_specs.meta import ValueFrame
 from ..feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
+from ..feature_specs.prediction_times import PredictionTimeFrame
 from ..feature_specs.predictor import PredictorSpec
 from ..frame_utilities._horisontally_concat import horizontally_concatenate_dfs
-from ..feature_specs.prediction_times import PredictionTimeFrame
-from ..feature_specs.meta import ValueFrame, InitDF_T
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from ..feature_specs.meta import LookPeriod, ValueType
+    from ..feature_specs.meta import LookPeriod
 
 
 def _get_timedelta_frame(
@@ -105,7 +105,9 @@ def _mask_outside_lookperiod(
 
 
 def _aggregate_masked_frame(
-    masked_frame: TimeMaskedFrame, aggregators: Sequence[Aggregator], fallback: ValueType
+    masked_frame: TimeMaskedFrame,
+    aggregators: Sequence[Aggregator],
+    fallback: int | float | str | None,
 ) -> pl.LazyFrame:
     aggregator_expressions = [
         aggregator(value_col_name)
