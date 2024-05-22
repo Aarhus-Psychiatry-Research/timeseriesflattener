@@ -228,30 +228,14 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">InitVar</span><span class="p">,</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
 
-<span class="kn">from</span> <span class="nn">timeseriesflattener.feature_specs.default_column_names</span> <span class="kn">import</span> <span class="n">default_entity_id_col_name</span>
-
 <span class="kn">from</span> <span class="nn">.._frame_validator</span> <span class="kn">import</span> <span class="n">_validate_col_name_columns_exist</span>
 <span class="kn">from</span> <span class="nn">..frame_utilities.anyframe_to_lazyframe</span> <span class="kn">import</span> <span class="n">_anyframe_to_lazyframe</span>
-
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypeAlias</span>
-
-
-<span class="n">ValueType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-<span class="n">InitDF_T</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
-
-
-<span class="n">LookDistance</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span>
-
-
-<span class="n">LookDistances</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">LookDistance</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">LookDistance</span><span class="p">,</span> <span class="n">LookDistance</span><span class="p">]]]</span>
 
 
 <div class="viewcode-block" id="ValueFrame"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.meta.ValueFrame">[docs]</a><span class="nd">@dataclass</span>
@@ -264,12 +248,14 @@
 <span class="sd">        Additional columns containing the values of the time series. The name of the columns will be used for feature naming.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">InitDF_T</span><span class="p">]</span>
-    <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">default_entity_id_col_name</span>
+    <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
+    <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;entity_id&quot;</span>
     <span class="n">value_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;timestamp&quot;</span>
     <span class="n">coerce_to_lazy</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">InitDF_T</span><span class="p">,</span> <span class="n">coerce_to_lazy</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">coerce_to_lazy</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="p">):</span>
         <span class="k">if</span> <span class="n">coerce_to_lazy</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">_anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -290,8 +276,8 @@
 
 <div class="viewcode-block" id="LookPeriod"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.meta.LookPeriod">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">LookPeriod</span><span class="p">:</span>
-    <span class="n">first</span><span class="p">:</span> <span class="n">LookDistance</span>
-    <span class="n">last</span><span class="p">:</span> <span class="n">LookDistance</span>
+    <span class="n">first</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span>
+    <span class="n">last</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">:</span>
@@ -301,11 +287,11 @@
 
 
 <span class="k">def</span> <span class="nf">_lookdistance_to_normalised_lookperiod</span><span class="p">(</span>
-    <span class="n">lookdistance</span><span class="p">:</span> <span class="n">LookDistance</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">LookDistance</span><span class="p">,</span> <span class="n">LookDistance</span><span class="p">],</span>
+    <span class="n">lookdistance</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">],</span>
     <span class="n">direction</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ahead&quot;</span><span class="p">,</span> <span class="s2">&quot;behind&quot;</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LookPeriod</span><span class="p">:</span>
     <span class="n">is_ahead</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;ahead&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lookdistance</span><span class="p">,</span> <span class="n">LookDistance</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lookdistance</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LookPeriod</span><span class="p">(</span>
             <span class="n">first</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_ahead</span> <span class="k">else</span> <span class="o">-</span><span class="n">lookdistance</span><span class="p">,</span>
             <span class="n">last</span><span class="o">=</span><span class="n">lookdistance</span> <span class="k">if</span> <span class="n">is_ahead</span> <span class="k">else</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>

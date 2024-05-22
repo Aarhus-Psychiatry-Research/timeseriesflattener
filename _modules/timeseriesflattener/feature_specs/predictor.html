@@ -227,11 +227,12 @@
           <h1>Source code for timeseriesflattener.feature_specs.predictor</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">InitVar</span><span class="p">,</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">from</span> <span class="nn">.._frame_validator</span> <span class="kn">import</span> <span class="n">_validate_col_name_columns_exist</span>
-<span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">LookDistances</span><span class="p">,</span> <span class="n">ValueFrame</span><span class="p">,</span> <span class="n">ValueType</span><span class="p">,</span> <span class="n">_lookdistance_to_normalised_lookperiod</span>
+<span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">ValueFrame</span><span class="p">,</span> <span class="n">_lookdistance_to_normalised_lookperiod</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
@@ -252,12 +253,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">value_frame</span><span class="p">:</span> <span class="n">ValueFrame</span>
-    <span class="n">lookbehind_distances</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">LookDistances</span><span class="p">]</span>
+    <span class="n">lookbehind_distances</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">]]]</span>
     <span class="n">aggregators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Aggregator</span><span class="p">]</span>
-    <span class="n">fallback</span><span class="p">:</span> <span class="n">ValueType</span>
+    <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookbehind_distances</span><span class="p">:</span> <span class="n">LookDistances</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">lookbehind_distances</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">]]</span>
+    <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">normalised_lookperiod</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">_lookdistance_to_normalised_lookperiod</span><span class="p">(</span><span class="n">lookdistance</span><span class="o">=</span><span class="n">lookdistance</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;behind&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">lookdistance</span> <span class="ow">in</span> <span class="n">lookbehind_distances</span>

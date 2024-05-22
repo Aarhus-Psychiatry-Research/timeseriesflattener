@@ -231,7 +231,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span>
 
 <span class="kn">from</span> <span class="nn">.._frame_validator</span> <span class="kn">import</span> <span class="n">_validate_col_name_columns_exist</span>
-<span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">ValueFrame</span><span class="p">,</span> <span class="n">ValueType</span>
+<span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">ValueFrame</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
@@ -242,7 +242,7 @@
 <div class="viewcode-block" id="TimeDeltaSpec"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.timedelta.TimeDeltaSpec">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TimeDeltaSpec</span><span class="p">:</span>
     <span class="n">init_frame</span><span class="p">:</span> <span class="n">TimestampValueFrame</span>
-    <span class="n">fallback</span><span class="p">:</span> <span class="n">ValueType</span>
+    <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span>
     <span class="n">time_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">,</span> <span class="s2">&quot;minutes&quot;</span><span class="p">,</span> <span class="s2">&quot;hours&quot;</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">,</span> <span class="s2">&quot;years&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;days&quot;</span>

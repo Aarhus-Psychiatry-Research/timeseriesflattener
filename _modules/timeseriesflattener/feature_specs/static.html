@@ -228,25 +228,21 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">InitVar</span><span class="p">,</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
 
 <span class="kn">from</span> <span class="nn">.._frame_validator</span> <span class="kn">import</span> <span class="n">_validate_col_name_columns_exist</span>
 <span class="kn">from</span> <span class="nn">..frame_utilities.anyframe_to_lazyframe</span> <span class="kn">import</span> <span class="n">_anyframe_to_lazyframe</span>
-<span class="kn">from</span> <span class="nn">.default_column_names</span> <span class="kn">import</span> <span class="n">default_entity_id_col_name</span>
-
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">InitDF_T</span><span class="p">,</span> <span class="n">ValueType</span>
 
 
 <div class="viewcode-block" id="StaticFrame"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.static.StaticFrame">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">StaticFrame</span><span class="p">:</span>
-    <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">InitDF_T</span><span class="p">]</span>
+    <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
 
-    <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">default_entity_id_col_name</span>
+    <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;entity_id&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">InitDF_T</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">_anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
         <span class="n">_validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">]</span>
@@ -268,7 +264,7 @@
 
     <span class="n">value_frame</span><span class="p">:</span> <span class="n">StaticFrame</span>
     <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">fallback</span><span class="p">:</span> <span class="n">ValueType</span></div>
+    <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span></div>
 </pre></div>
         </article>
       </div>
