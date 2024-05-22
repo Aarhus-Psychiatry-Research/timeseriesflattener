@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.5 (2024-05-22)
+
+### Fix
+
+* Use Union in pydantic basemodels ([`a80a9c2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a80a9c24c6eb7e0ceadba021eb4474325b560a38))
+
 ## v2.2.4 (2024-05-17)
 
 ### Fix
