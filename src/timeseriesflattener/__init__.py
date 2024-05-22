@@ -22,3 +22,6 @@ from .aggregators import (
 
 # Flattener
 from .flattener import Flattener
+
+# Utilities
+from .flattener import ValueSpecification

@@ -2,6 +2,23 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.4 (2024-05-17)
+
+### Fix
+
+* Don't mix types in HasValuesAggregator fallback ([`dfdf5dd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/dfdf5dd1417639e76ec1639f7c689464c1012f05))
+
+### Documentation
+
+* Remove type hint in docstring ([`a4fe254`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/a4fe254e87a0796bd1f63d803e35e57e86ae8e34))
+* Add docstring to flattener ([`64ee0b0`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/64ee0b09f8949cd85fa1345b371920ab5300749d))
+
+## v2.2.3 (2024-05-07)
+
+### Fix
+
+* Expose ValueSpecification ([`b670fc8`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/b670fc891a2cdfcb4eed01d82fd9b3f627a5b9b8))
+
 ## v2.2.2 (2024-05-03)
 
 ### Fix
