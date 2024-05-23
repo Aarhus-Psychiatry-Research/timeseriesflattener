@@ -110,11 +110,11 @@ class Flattener:
         self, specs: Sequence[ValueSpecification], step_size: dt.timedelta | None = None
     ) -> AggregatedFrame:
         """Perform the aggregation/flattening.
-        
+
         Args:
             specs: The specifications for the features to be created.
-            step_size: The step size for the aggregation. 
-                If not None, will aggregate prediction times in chunks of step_size. 
+            step_size: The step size for the aggregation.
+                If not None, will aggregate prediction times in chunks of step_size.
                 Reduce if you encounter memory issues."""
         if self.compute_lazily:
             print(
