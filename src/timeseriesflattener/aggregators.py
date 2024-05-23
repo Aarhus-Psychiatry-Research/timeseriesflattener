@@ -157,8 +157,3 @@ class SlopeAggregator(Aggregator):
         numerator = pl.corr(x_col, y_col, propagate_nans=True) * y_col.std()
         denominator = x_col.std()
         return (numerator / denominator).alias(self.new_col_name(column_name))
-
-
-if __name__ == "__main__":
-    agg = MeanAggregator()
-    print(agg("value"))
