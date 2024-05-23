@@ -61,17 +61,16 @@ class BooleanOutcomeSpec:
     column_prefix: str = "outc"
 
     def __post_init__(self, init_frame: TimestampValueFrame):
-        for aggregator in self.aggregators:
-            _validate_compatible_fallback_type_for_aggregator(
-                aggregator=aggregator, fallback=self.fallback
-            )
-
         self.normalised_lookperiod = [
             _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in self.lookahead_distances
         ]
 
         self.fallback = 0
+        for aggregator in self.aggregators:
+            _validate_compatible_fallback_type_for_aggregator(
+                aggregator=aggregator, fallback=self.fallback
+            )
 
         self.value_frame = ValueFrame(
             init_df=init_frame.df.with_columns((pl.lit(1)).alias(self.output_name)),
