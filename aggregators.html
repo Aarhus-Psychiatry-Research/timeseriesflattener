@@ -263,6 +263,11 @@
 <span class="sig-name descname"><span class="pre">new_col_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">previous_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/aggregators.html#Aggregator.new_col_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.aggregators.Aggregator.new_col_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.Aggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.aggregators.Aggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -274,6 +279,12 @@
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.CountAggregator.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'count'</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.CountAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.CountAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.CountAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -288,6 +299,12 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.EarliestAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.EarliestAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.EarliestAggregator.timestamp_col_name">
 <span class="sig-name descname"><span class="pre">timestamp_col_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.EarliestAggregator.timestamp_col_name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
@@ -298,11 +315,17 @@
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.HasValuesAggregator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HasValuesAggregator</span></span><a class="reference internal" href="_modules/timeseriesflattener/aggregators.html#HasValuesAggregator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.aggregators.HasValuesAggregator" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#timeseriesflattener.aggregators.Aggregator" title="timeseriesflattener.aggregators.Aggregator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Aggregator</span></code></a></p>
-<p>Examines whether any values exist in the column. If so, returns 1, else 0.</p>
+<p>Examines whether any values exist in the column. If so, returns True, else False.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.HasValuesAggregator.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bool'</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.HasValuesAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.HasValuesAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.HasValuesAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -315,6 +338,12 @@
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.LatestAggregator.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.LatestAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.LatestAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.LatestAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.LatestAggregator.timestamp_col_name">
@@ -333,6 +362,12 @@
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'max'</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.MaxAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.MaxAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.MaxAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -344,6 +379,12 @@
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.MeanAggregator.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mean'</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.MeanAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.MeanAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.MeanAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -357,6 +398,12 @@
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'min'</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.MinAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.MinAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.MinAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -368,6 +415,12 @@
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.SlopeAggregator.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.SlopeAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.SlopeAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.SlopeAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.SlopeAggregator.timestamp_col_name">
@@ -386,6 +439,12 @@
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sum'</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.SumAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.SumAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.SumAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -397,6 +456,12 @@
 <dt class="sig sig-object py" id="timeseriesflattener.aggregators.VarianceAggregator.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'var'</span></em><a class="headerlink" href="#timeseriesflattener.aggregators.VarianceAggregator.name" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="timeseriesflattener.aggregators.VarianceAggregator.output_type">
+<span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#timeseriesflattener.aggregators.VarianceAggregator.output_type" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -470,49 +535,60 @@
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.Aggregator"><code class="docutils literal notranslate"><span class="pre">Aggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.Aggregator.name"><code class="docutils literal notranslate"><span class="pre">Aggregator.name</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.Aggregator.new_col_name"><code class="docutils literal notranslate"><span class="pre">Aggregator.new_col_name()</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.Aggregator.output_type"><code class="docutils literal notranslate"><span class="pre">Aggregator.output_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.CountAggregator"><code class="docutils literal notranslate"><span class="pre">CountAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.CountAggregator.name"><code class="docutils literal notranslate"><span class="pre">CountAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.CountAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">CountAggregator.output_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.EarliestAggregator"><code class="docutils literal notranslate"><span class="pre">EarliestAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.EarliestAggregator.name"><code class="docutils literal notranslate"><span class="pre">EarliestAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.EarliestAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">EarliestAggregator.output_type</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.EarliestAggregator.timestamp_col_name"><code class="docutils literal notranslate"><span class="pre">EarliestAggregator.timestamp_col_name</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.HasValuesAggregator"><code class="docutils literal notranslate"><span class="pre">HasValuesAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.HasValuesAggregator.name"><code class="docutils literal notranslate"><span class="pre">HasValuesAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.HasValuesAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">HasValuesAggregator.output_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.LatestAggregator"><code class="docutils literal notranslate"><span class="pre">LatestAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.LatestAggregator.name"><code class="docutils literal notranslate"><span class="pre">LatestAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.LatestAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">LatestAggregator.output_type</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.LatestAggregator.timestamp_col_name"><code class="docutils literal notranslate"><span class="pre">LatestAggregator.timestamp_col_name</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.MaxAggregator"><code class="docutils literal notranslate"><span class="pre">MaxAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.MaxAggregator.name"><code class="docutils literal notranslate"><span class="pre">MaxAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.MaxAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">MaxAggregator.output_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.MeanAggregator"><code class="docutils literal notranslate"><span class="pre">MeanAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.MeanAggregator.name"><code class="docutils literal notranslate"><span class="pre">MeanAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.MeanAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">MeanAggregator.output_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.MinAggregator"><code class="docutils literal notranslate"><span class="pre">MinAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.MinAggregator.name"><code class="docutils literal notranslate"><span class="pre">MinAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.MinAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">MinAggregator.output_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.SlopeAggregator"><code class="docutils literal notranslate"><span class="pre">SlopeAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.SlopeAggregator.name"><code class="docutils literal notranslate"><span class="pre">SlopeAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.SlopeAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">SlopeAggregator.output_type</span></code></a></li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.SlopeAggregator.timestamp_col_name"><code class="docutils literal notranslate"><span class="pre">SlopeAggregator.timestamp_col_name</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.SumAggregator"><code class="docutils literal notranslate"><span class="pre">SumAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.SumAggregator.name"><code class="docutils literal notranslate"><span class="pre">SumAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.SumAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">SumAggregator.output_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.VarianceAggregator"><code class="docutils literal notranslate"><span class="pre">VarianceAggregator</span></code></a><ul>
 <li><a class="reference internal" href="#timeseriesflattener.aggregators.VarianceAggregator.name"><code class="docutils literal notranslate"><span class="pre">VarianceAggregator.name</span></code></a></li>
+<li><a class="reference internal" href="#timeseriesflattener.aggregators.VarianceAggregator.output_type"><code class="docutils literal notranslate"><span class="pre">VarianceAggregator.output_type</span></code></a></li>
 </ul>
 </li>
 </ul>

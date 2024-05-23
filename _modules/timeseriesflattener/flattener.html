@@ -337,11 +337,11 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">specs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ValueSpecification</span><span class="p">],</span> <span class="n">step_size</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AggregatedFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the aggregation/flattening.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            specs: The specifications for the features to be created.</span>
-<span class="sd">            step_size: The step size for the aggregation. </span>
-<span class="sd">                If not None, will aggregate prediction times in chunks of step_size. </span>
+<span class="sd">            step_size: The step size for the aggregation.</span>
+<span class="sd">                If not None, will aggregate prediction times in chunks of step_size.</span>
 <span class="sd">                Reduce if you encounter memory issues.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_lazily</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>

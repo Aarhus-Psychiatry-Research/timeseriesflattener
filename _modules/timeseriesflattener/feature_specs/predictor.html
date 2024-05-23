@@ -233,6 +233,7 @@
 
 <span class="kn">from</span> <span class="nn">.._frame_validator</span> <span class="kn">import</span> <span class="n">_validate_col_name_columns_exist</span>
 <span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">ValueFrame</span><span class="p">,</span> <span class="n">_lookdistance_to_normalised_lookperiod</span>
+<span class="kn">from</span> <span class="nn">..aggregators</span> <span class="kn">import</span> <span class="n">_validate_compatible_fallback_type_for_aggregator</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
@@ -266,6 +267,10 @@
             <span class="k">for</span> <span class="n">lookdistance</span> <span class="ow">in</span> <span class="n">lookbehind_distances</span>
         <span class="p">]</span>
         <span class="n">_validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">aggregator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregators</span><span class="p">:</span>
+            <span class="n">_validate_compatible_fallback_type_for_aggregator</span><span class="p">(</span>
+                <span class="n">aggregator</span><span class="o">=</span><span class="n">aggregator</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span>
+            <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">:</span>
