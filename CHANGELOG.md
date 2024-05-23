@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v2.2.6 (2024-05-23)
+
+### Fix
+
+* Change to type instead of instantiated type ([`e327665`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/e3276650ad1751d4c325256b91856c94b1567b99))
+* Misc ([`46c6707`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/46c670727c25ae8e5552a412e867f2e3791dc473))
+* Validate fallback is compatible with output of aggregator ([`6fe230b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/6fe230bd5889e4a89215a08c4e0b9130c105f920))
+
 ## v2.2.5 (2024-05-22)
 
 ### Fix
