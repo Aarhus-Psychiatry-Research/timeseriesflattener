@@ -20,6 +20,7 @@ from .aggregators import (
     SlopeAggregator,
     SumAggregator,
     VarianceAggregator,
+    _validate_compatible_fallback_type_for_aggregator,
 )
 from .spec_processors.temporal import _aggregate_masked_frame
 from .test_flattener import assert_frame_equal
@@ -91,7 +92,10 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
             aggregator=VarianceAggregator(), input_values=[1, 2], expected_output_values=[0.5]
         ),
         SingleVarAggregatorExample(
-            aggregator=HasValuesAggregator(), input_values=[1, 2], expected_output_values=[1], fallback_str="False"
+            aggregator=HasValuesAggregator(),
+            input_values=[1, 2],
+            expected_output_values=[1],
+            fallback_str="False",
         ),
         SingleVarAggregatorExample(
             aggregator=HasValuesAggregator(),
@@ -159,3 +163,30 @@ def test_aggregator(example: AggregatorExampleType):
     )
 
     assert_frame_equal(result.collect(), example.expected_output)
+
+
+@pytest.mark.parametrize(
+    ("aggregator", "fallback", "valid_fallback"),
+    [
+        (MeanAggregator(), 1, True),
+        (MeanAggregator(), np.nan, True),
+        (HasValuesAggregator(), np.nan, False),
+        (HasValuesAggregator(), False, True),
+        (HasValuesAggregator(), 1, False),
+    ],
+)
+def test_valid_fallback_for_aggregator(
+    aggregator: Aggregator, fallback: float | int | bool | None, valid_fallback: bool
+):
+    if valid_fallback:
+        assert (
+            _validate_compatible_fallback_type_for_aggregator(
+                aggregator=aggregator, fallback=fallback
+            )
+            is None
+        )
+    else:
+        with pytest.raises(ValueError):
+            _validate_compatible_fallback_type_for_aggregator(
+                aggregator=aggregator, fallback=fallback
+            )

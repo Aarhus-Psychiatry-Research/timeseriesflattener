@@ -7,8 +7,20 @@ import polars as pl
 from attr import dataclass
 
 
+def _validate_compatible_fallback_type_for_aggregator(
+    aggregator: Aggregator, fallback: str | int | float | None
+) -> None:
+    try:
+        pl.Series([aggregator.output_type()]).fill_null(fallback)
+    except:
+        raise ValueError(
+            f"Invalid fallback value {fallback} for aggregator {aggregator.__class__.__name__}. Fallback of type {type(fallback)} is not compatible with the aggregator's output type of {type(aggregator.output_type)}."
+        )
+
+
 class Aggregator(ABC):
     name: str
+    output_type: type[float | int | bool]
 
     @abstractmethod
     def __call__(self, column_name: str) -> pl.Expr:
@@ -22,6 +34,7 @@ class MinAggregator(Aggregator):
     """Returns the minimum value in the look window."""
 
     name: str = "min"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).min().alias(self.new_col_name(column_name))
@@ -31,6 +44,7 @@ class MaxAggregator(Aggregator):
     """Returns the maximum value in the look window."""
 
     name: str = "max"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).max().alias(self.new_col_name(column_name))
@@ -40,6 +54,7 @@ class MeanAggregator(Aggregator):
     """Returns the mean value in the look window."""
 
     name: str = "mean"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).mean().alias(self.new_col_name(column_name))
@@ -49,6 +64,7 @@ class CountAggregator(Aggregator):
     """Returns the count of non-null values in the look window."""
 
     name: str = "count"
+    output_type = int
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).count().alias(self.new_col_name(column_name))
@@ -60,6 +76,7 @@ class EarliestAggregator(Aggregator):
 
     timestamp_col_name: str
     name: str = "earliest"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         return (
@@ -76,6 +93,7 @@ class LatestAggregator(Aggregator):
 
     timestamp_col_name: str
     name: str = "latest"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         return (
@@ -90,6 +108,7 @@ class SumAggregator(Aggregator):
     """Returns the sum of all values in the look window."""
 
     name: str = "sum"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).sum().alias(self.new_col_name(column_name))
@@ -99,15 +118,17 @@ class VarianceAggregator(Aggregator):
     """Returns the variance of the values in the look window"""
 
     name: str = "var"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).var().alias(self.new_col_name(column_name))
 
 
 class HasValuesAggregator(Aggregator):
-    """Examines whether any values exist in the column. If so, returns 1, else 0."""
+    """Examines whether any values exist in the column. If so, returns True, else False."""
 
     name: str = "bool"
+    output_type = bool
 
     def __call__(self, column_name: str) -> pl.Expr:
         return (
@@ -126,6 +147,7 @@ class SlopeAggregator(Aggregator):
 
     timestamp_col_name: str
     name: str = "slope"
+    output_type = float
 
     def __call__(self, column_name: str) -> pl.Expr:
         # Convert to days for the slope. Arbitrarily chosen to be the number of days since 1970-01-01.

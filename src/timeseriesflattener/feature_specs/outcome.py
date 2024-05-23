@@ -8,6 +8,7 @@ import polars as pl
 
 from .._frame_validator import _validate_col_name_columns_exist
 from .meta import ValueFrame, _lookdistance_to_normalised_lookperiod
+from ..aggregators import _validate_compatible_fallback_type_for_aggregator
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -34,6 +35,10 @@ class OutcomeSpec:
             for lookdistance in lookahead_distances
         ]
         _validate_col_name_columns_exist(obj=self)
+        for aggregator in self.aggregators:
+            _validate_compatible_fallback_type_for_aggregator(
+                aggregator=aggregator, fallback=self.fallback
+            )
 
     @property
     def df(self) -> pl.LazyFrame:
@@ -62,6 +67,10 @@ class BooleanOutcomeSpec:
         ]
 
         self.fallback = 0
+        for aggregator in self.aggregators:
+            _validate_compatible_fallback_type_for_aggregator(
+                aggregator=aggregator, fallback=self.fallback
+            )
 
         self.value_frame = ValueFrame(
             init_df=init_frame.df.with_columns((pl.lit(1)).alias(self.output_name)),

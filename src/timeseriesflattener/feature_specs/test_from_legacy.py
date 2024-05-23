@@ -41,7 +41,6 @@ def test_create_predictorspec_from_legacy():
             summed,
             count,
             variance,
-            boolean,
             change_per_day,
         ],
         fallback=[0],

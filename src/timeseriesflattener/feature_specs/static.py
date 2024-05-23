@@ -32,7 +32,7 @@ class StaticSpec:
 
     The value_frame must contain columns:
         entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
-        additional columns containing the values of the static feature. The name of the columns will be used for feature naming.
+        additional columns containing the values of the static feature. The names of the columns will be used for feature naming.
     """
 
     value_frame: StaticFrame
