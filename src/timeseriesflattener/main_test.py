@@ -47,7 +47,7 @@ def assert_frame_equal(
     polars_testing.assert_frame_equal(
         result.drop(ignore_colums),
         expected.drop(ignore_colums),
-        check_dtype=False,
+        check_dtypes=False,
         check_column_order=False,
     )
 

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class PredictorSpec:
-    """Specification for a predictor.
+    """Specification for a temporal predictor.
 
     The value_frame must contain columns:
         entity_id_col_name: The name of the column containing the entity ids.
