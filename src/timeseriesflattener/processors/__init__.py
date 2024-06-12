@@ -1,5 +1,7 @@
 from __future__ import annotations
-from timeseriesflattener import PredictionTimeFrame, ValueSpecification
+from typing import Union
+from timeseriesflattener.specs.outcome import BooleanOutcomeSpec, OutcomeSpec
+from timeseriesflattener.specs.prediction_times import PredictionTimeFrame
 import datetime as dt
 
 from timeseriesflattener.intermediary import ProcessedFrame
@@ -7,7 +9,12 @@ from timeseriesflattener.processors.static import process_static_spec
 from timeseriesflattener.processors.temporal import process_temporal_spec
 from timeseriesflattener.processors.timedelta import process_timedelta_spec
 from timeseriesflattener.specs.static import StaticSpec
+from timeseriesflattener.specs.temporal import PredictorSpec
 from timeseriesflattener.specs.timedelta import TimeDeltaSpec
+
+ValueSpecification = Union[
+    PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec
+]
 
 
 def process_spec(

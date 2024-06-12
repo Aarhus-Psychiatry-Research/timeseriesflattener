@@ -19,6 +19,7 @@ from .specs.outcome import BooleanOutcomeSpec, OutcomeSpec
 from .specs.temporal import PredictorSpec
 from .specs.static import StaticSpec
 from .specs.timedelta import TimeDeltaSpec
+from .processors import ValueSpecification
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -26,10 +27,6 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
     from .specs.prediction_times import PredictionTimeFrame
-
-ValueSpecification: TypeAlias = Union[
-    PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec
-]
 
 
 @dataclass(frozen=True)
