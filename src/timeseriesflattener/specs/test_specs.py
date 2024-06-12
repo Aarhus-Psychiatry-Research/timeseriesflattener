@@ -9,7 +9,7 @@ from timeseriesflattener.aggregators import MeanAggregator
 
 from .value import ValueFrame
 from .outcome import OutcomeSpec
-from .predictor import PredictorSpec
+from .temporal import PredictorSpec
 from .timedelta import TimeDeltaSpec
 from .timestamp import TimestampValueFrame
 

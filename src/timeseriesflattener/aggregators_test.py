@@ -22,8 +22,8 @@ from .aggregators import (
     VarianceAggregator,
     validate_compatible_fallback_type_for_aggregator,
 )
-from .spec_processors.temporal import _aggregate_masked_frame
-from .test_flattener import assert_frame_equal
+from .main_test import assert_frame_equal
+from .processors.temporal import _aggregate_masked_frame
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

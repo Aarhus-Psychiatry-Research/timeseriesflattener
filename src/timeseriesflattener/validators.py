@@ -7,13 +7,13 @@ from iterpy.iter import Iter
 
 if TYPE_CHECKING:
     from .intermediary import AggregatedValueFrame, TimeDeltaFrame, TimeMaskedFrame
-    from .feature_specs.value import ValueFrame
-    from .feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
-    from .feature_specs.prediction_times import PredictionTimeFrame
-    from .feature_specs.predictor import PredictorSpec
-    from .feature_specs.static import StaticFrame
-    from .feature_specs.timedelta import TimeDeltaSpec
-    from .feature_specs.timestamp import TimestampValueFrame
+    from .specs.value import ValueFrame
+    from .specs.outcome import BooleanOutcomeSpec, OutcomeSpec
+    from .specs.prediction_times import PredictionTimeFrame
+    from .specs.temporal import PredictorSpec
+    from .specs.static import StaticFrame
+    from .specs.timedelta import TimeDeltaSpec
+    from .specs.timestamp import TimestampValueFrame
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import datetime as dt
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
@@ -12,13 +11,14 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
 from timeseriesflattener.aggregators import EarliestAggregator, MeanAggregator
 
-from . import flattener
-from ._frame_validator import SpecColumnError
-from .feature_specs.value import ValueFrame
-from .feature_specs.outcome import OutcomeSpec
-from .feature_specs.prediction_times import PredictionTimeFrame
-from .feature_specs.predictor import PredictorSpec
-from .feature_specs.static import StaticSpec, StaticFrame
+from . import Flattener
+from .validators import SpecColumnError
+from .specs.value import ValueFrame
+from .specs.outcome import OutcomeSpec
+from .specs.prediction_times import PredictionTimeFrame
+from .specs.temporal import PredictorSpec
+from .specs.static import StaticSpec, StaticFrame
+import timeseriesflattener
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -68,7 +68,7 @@ class FlattenerExample:
     ],
     ids=lambda example: example.should,
 )
-def test_flattener(example: FlattenerExample):
+def main_tests(example: FlattenerExample):
     pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp
         1,2021-01-03"""
@@ -81,7 +81,7 @@ def test_flattener(example: FlattenerExample):
         1,4,2021-01-03"""
     )
 
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
         compute_lazily=example.lazy,
         n_workers=example.n_workers,
@@ -115,7 +115,7 @@ def test_keep_prediction_times_without_predictors():
         1,1,2021-01-01"""
     )
 
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
     ).aggregate_timeseries(
         specs=[
@@ -139,7 +139,7 @@ def test_keep_prediction_times_without_predictors():
     assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
-def test_flattener_multiple_features():
+def main_tests_multiple_features():
     pred_frame = str_to_pl_df(
         """entity_id,pred_timestamp
         1,2021-01-03"""
@@ -152,7 +152,7 @@ def test_flattener_multiple_features():
         1,4,2021-01-03"""
     )
 
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
     ).aggregate_timeseries(
         specs=[
@@ -180,15 +180,17 @@ def test_flattener_multiple_features():
 
 
 def test_error_if_conflicting_value_col_names():
-    with pytest.raises(flattener.SpecError, match=".*unique.*"):
-        flattener.Flattener(predictiontime_frame=FakePredictiontimeFrame).aggregate_timeseries(
+    with pytest.raises(timeseriesflattener.main.SpecError, match=".*unique.*"):
+        Flattener(predictiontime_frame=FakePredictiontimeFrame).aggregate_timeseries(
             specs=[FakePredictorSpec, FakePredictorSpec]
         )
 
 
 def test_error_if_missing_entity_id_column():
-    with pytest.raises(flattener.SpecError, match=".*is missing in the .* specification.*"):
-        flattener.Flattener(
+    with pytest.raises(
+        timeseriesflattener.main.SpecError, match=".*is missing in the .* specification.*"
+    ):
+        Flattener(
             predictiontime_frame=PredictionTimeFrame(
                 init_df=pl.LazyFrame(
                     {
@@ -214,7 +216,7 @@ def test_predictor_with_interval_lookperiod():
                         1,2021-12-30 00:00:01, 2
                         1,2021-12-15 00:00:00, 1
                         """
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(init_df=str_to_pl_df(prediction_times_df_str))
     ).aggregate_timeseries(
         specs=[
@@ -241,7 +243,7 @@ def test_outcome_with_interval_lookperiod():
                         1,2022-01-02 00:00:01, 2
                         1,2022-01-15 00:00:00, 1
                         """
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(init_df=str_to_pl_df(prediction_times_df_str))
     ).aggregate_timeseries(
         specs=[
@@ -268,7 +270,7 @@ def test_add_static_spec():
                         1,2022-01-02 00:00:01, 2
                         1,2022-01-15 00:00:00, 1
                         """
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(init_df=str_to_pl_df(prediction_times_df_str))
     ).aggregate_timeseries(
         specs=[
@@ -295,7 +297,7 @@ def test_add_features_with_non_default_entity_id_col_name():
                         1,2022-01-02 00:00:01, 2
                         1,2022-01-15 00:00:00, 1
                         """
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(
             init_df=str_to_pl_df(prediction_times_df_str), entity_id_col_name="dw_ek_borger"
         )
@@ -332,7 +334,7 @@ def test_multiple_features_with_unordered_prediction_times(step_size):
                         1,1
                         2,2
                         """
-    result = flattener.Flattener(
+    result = Flattener(
         predictiontime_frame=PredictionTimeFrame(init_df=str_to_pl_df(prediction_times_df_str))
     ).aggregate_timeseries(
         specs=[

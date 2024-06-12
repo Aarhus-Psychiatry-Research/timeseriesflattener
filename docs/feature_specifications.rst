@@ -4,46 +4,46 @@ Feature specifications
 .. FlattenedDataset
 
 
-timeseriesflattener.feature_specs
+timeseriesflattener.specs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: timeseriesflattener.feature_specs.predictor
+.. automodule:: timeseriesflattener.specs.temporal
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: timeseriesflattener.feature_specs.prediction_times
+.. automodule:: timeseriesflattener.specs.prediction_times
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: timeseriesflattener.feature_specs.meta
+.. automodule:: timeseriesflattener.specs.meta
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: timeseriesflattener.feature_specs.outcome
+.. automodule:: timeseriesflattener.specs.outcome
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: timeseriesflattener.feature_specs.static
+.. automodule:: timeseriesflattener.specs.static
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: timeseriesflattener.feature_specs.timedelta
+.. automodule:: timeseriesflattener.specs.timedelta
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: timeseriesflattener.feature_specs.timestamp
+.. automodule:: timeseriesflattener.specs.timestamp
    :members:
    :undoc-members:
    :show-inheritance:

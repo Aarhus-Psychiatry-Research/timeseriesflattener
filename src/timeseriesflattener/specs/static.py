@@ -4,9 +4,9 @@ from dataclasses import InitVar, dataclass
 
 import pandas as pd
 import polars as pl
+from timeseriesflattener.validators import validate_col_name_columns_exist
 
-from ..validators
-from ..frame_utilities.anyframe_to_lazyframe import anyframe_to_lazyframe
+from ..utils import anyframe_to_lazyframe
 
 
 @dataclass

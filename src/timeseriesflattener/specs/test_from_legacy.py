@@ -16,7 +16,7 @@ from timeseriesflattener.v1.aggregation_fns import (
 from timeseriesflattener.v1.feature_specs.group_specs import NamedDataframe
 
 from .from_legacy import PredictorGroupSpec
-from .predictor import PredictorSpec
+from .temporal import PredictorSpec
 
 
 def test_create_predictorspec_from_legacy():

@@ -1,10 +1,10 @@
 """Generate dataframe with prediction times."""
 from __future__ import annotations
 
-from timeseriesflattener.misc_utils import PROJECT_ROOT
 from timeseriesflattener.testing.synth_data_generator.synth_col_generators import (
     generate_data_columns,
 )
+from timeseriesflattener.v1.misc_utils import PROJECT_ROOT
 
 if __name__ == "__main__":
     # Get project root directory

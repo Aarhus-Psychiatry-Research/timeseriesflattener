@@ -11,21 +11,21 @@ import tqdm
 from iterpy.iter import Iter
 from rich.progress import track
 
-from timeseriesflattener.frame_utilities._horisontally_concat import horizontally_concatenate_dfs
-from timeseriesflattener.process_spec import process_spec
+from timeseriesflattener.utils import horizontally_concatenate_dfs
+from timeseriesflattener.processors import process_spec
 
 from .intermediary import AggregatedFrame
-from .feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
-from .feature_specs.predictor import PredictorSpec
-from .feature_specs.static import StaticSpec
-from .feature_specs.timedelta import TimeDeltaSpec
+from .specs.outcome import BooleanOutcomeSpec, OutcomeSpec
+from .specs.temporal import PredictorSpec
+from .specs.static import StaticSpec
+from .specs.timedelta import TimeDeltaSpec
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from typing_extensions import TypeAlias
 
-    from .feature_specs.prediction_times import PredictionTimeFrame
+    from .specs.prediction_times import PredictionTimeFrame
 
 ValueSpecification: TypeAlias = Union[
     PredictorSpec, OutcomeSpec, BooleanOutcomeSpec, TimeDeltaSpec, StaticSpec
@@ -122,16 +122,16 @@ class Flattener:
             )
 
         # Check for conflicts in the specs
-        conflicting_specs = _get_spec_conflicts(specs)
+        conflicting_specs = _get_spec_conflicts(specs).to_list()
         underspecified_specs = _specs_contain_required_columns(
             specs=specs, predictiontime_frame=self.predictiontime_frame
-        )
+        ).to_list()
         errors = Iter([conflicting_specs, underspecified_specs]).flatten()
 
         if errors.count() > 0:
             raise SpecError(
                 "Conflicting specs."
-                + "".join(errors.map(lambda error: f"  \n - {error.description}").to_list())
+                + "".join(errors.map(lambda error: f"  \n - {error.description}").to_list())  # type: ignore
             )
 
         if not self.compute_lazily:

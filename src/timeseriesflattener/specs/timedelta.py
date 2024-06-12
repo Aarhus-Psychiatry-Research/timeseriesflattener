@@ -3,7 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
 
-from ..validators
+from timeseriesflattener.validators import validate_col_name_columns_exist
+
 from .value import ValueFrame
 
 if TYPE_CHECKING:

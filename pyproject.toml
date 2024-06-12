@@ -95,13 +95,7 @@ rye = { dev-dependencies = [
 ] }
 
 [tool.pyright]
-exclude = [
-  ".*venv*/",
-  ".venv38/",
-  ".tox",
-  ".benchmark_cache",
-  "src/timeseriesflattener",
-]
+exclude = [".*venv*/", ".venv38/", ".tox", ".benchmark_cache"]
 
 [tool.ruff]
 line-length = 100

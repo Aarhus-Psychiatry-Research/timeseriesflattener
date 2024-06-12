@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 from ..intermediary import ProcessedFrame
 
 if TYPE_CHECKING:
-    from ..feature_specs.prediction_times import PredictionTimeFrame
-    from ..feature_specs.static import StaticSpec
+    from ..specs.prediction_times import PredictionTimeFrame
+    from ..specs.static import StaticSpec
 
 
 def process_static_spec(

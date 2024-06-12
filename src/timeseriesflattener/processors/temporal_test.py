@@ -6,17 +6,17 @@ import numpy as np
 import polars as pl
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-import timeseriesflattener.spec_processors.temporal as process_spec
-import timeseriesflattener.spec_processors.timedelta
-from timeseriesflattener.feature_specs.predictor import PredictorSpec
+import timeseriesflattener.processors.temporal as process_spec
+import timeseriesflattener.processors.timedelta
+from timeseriesflattener.specs.temporal import PredictorSpec
 
 from ..intermediary import TimeDeltaFrame, TimeMaskedFrame
 from ..aggregators import MaxAggregator, MeanAggregator
-from ..feature_specs.value import LookPeriod, ValueFrame
-from ..feature_specs.prediction_times import PredictionTimeFrame
-from ..feature_specs.timedelta import TimeDeltaSpec
-from ..feature_specs.timestamp import TimestampValueFrame
-from ..test_flattener import assert_frame_equal
+from ..specs.value import LookPeriod, ValueFrame
+from ..specs.prediction_times import PredictionTimeFrame
+from ..specs.timedelta import TimeDeltaSpec
+from ..specs.timestamp import TimestampValueFrame
+from ..main_test import assert_frame_equal
 
 
 def test_aggregate_over_fallback():
@@ -244,7 +244,7 @@ def test_process_time_from_event_spec():
         1,2020-01-01"""
     )
 
-    result = timeseriesflattener.spec_processors.timedelta.process_timedelta_spec(
+    result = timeseriesflattener.processors.timedelta.process_timedelta_spec(
         predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
         spec=TimeDeltaSpec(
             init_frame=TimestampValueFrame(init_df=value_frame),
