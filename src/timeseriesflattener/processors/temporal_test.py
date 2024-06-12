@@ -10,12 +10,12 @@ import timeseriesflattener.spec_processors.temporal as process_spec
 import timeseriesflattener.spec_processors.timedelta
 from timeseriesflattener.feature_specs.predictor import PredictorSpec
 
-from .._intermediary_frames import TimeDeltaFrame, TimeMaskedFrame
+from ..intermediary import TimeDeltaFrame, TimeMaskedFrame
 from ..aggregators import MaxAggregator, MeanAggregator
-from ..feature_specs.meta import LookPeriod, ValueFrame
+from ..feature_specs.value import LookPeriod, ValueFrame
 from ..feature_specs.prediction_times import PredictionTimeFrame
 from ..feature_specs.timedelta import TimeDeltaSpec
-from ..feature_specs.timestamp_frame import TimestampValueFrame
+from ..feature_specs.timestamp import TimestampValueFrame
 from ..test_flattener import assert_frame_equal
 
 

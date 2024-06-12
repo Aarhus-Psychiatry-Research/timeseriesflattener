@@ -6,15 +6,15 @@ from typing import TYPE_CHECKING
 
 import polars as pl
 
-from .._frame_validator import _validate_col_name_columns_exist
-from .meta import ValueFrame, _lookdistance_to_normalised_lookperiod
-from ..aggregators import _validate_compatible_fallback_type_for_aggregator
+from ..validators import validate_col_name_columns_exist
+from .value import ValueFrame, lookdistance_to_normalised_lookperiod
+from ..aggregators import validate_compatible_fallback_type_for_aggregator
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from .timestamp_frame import TimestampValueFrame
+    from .timestamp import TimestampValueFrame
 
 
 @dataclass
@@ -31,12 +31,12 @@ class OutcomeSpec:
         self, lookahead_distances: Sequence[dt.timedelta | tuple[dt.timedelta, dt.timedelta]]
     ):
         self.normalised_lookperiod = [
-            _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
+            lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in lookahead_distances
         ]
-        _validate_col_name_columns_exist(obj=self)
+        validate_col_name_columns_exist(obj=self)
         for aggregator in self.aggregators:
-            _validate_compatible_fallback_type_for_aggregator(
+            validate_compatible_fallback_type_for_aggregator(
                 aggregator=aggregator, fallback=self.fallback
             )
 
@@ -62,13 +62,13 @@ class BooleanOutcomeSpec:
 
     def __post_init__(self, init_frame: TimestampValueFrame):
         self.normalised_lookperiod = [
-            _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
+            lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="ahead")
             for lookdistance in self.lookahead_distances
         ]
 
         self.fallback = 0
         for aggregator in self.aggregators:
-            _validate_compatible_fallback_type_for_aggregator(
+            validate_compatible_fallback_type_for_aggregator(
                 aggregator=aggregator, fallback=self.fallback
             )
 

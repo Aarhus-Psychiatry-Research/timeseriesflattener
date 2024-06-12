@@ -14,7 +14,7 @@ from rich.progress import track
 from timeseriesflattener.frame_utilities._horisontally_concat import horizontally_concatenate_dfs
 from timeseriesflattener.process_spec import process_spec
 
-from ._intermediary_frames import AggregatedFrame
+from .intermediary import AggregatedFrame
 from .feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
 from .feature_specs.predictor import PredictorSpec
 from .feature_specs.static import StaticSpec

@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING
 from iterpy.iter import Iter
 
 if TYPE_CHECKING:
-    from ._intermediary_frames import AggregatedValueFrame, TimeDeltaFrame, TimeMaskedFrame
-    from .feature_specs.meta import ValueFrame
+    from .intermediary import AggregatedValueFrame, TimeDeltaFrame, TimeMaskedFrame
+    from .feature_specs.value import ValueFrame
     from .feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
     from .feature_specs.prediction_times import PredictionTimeFrame
     from .feature_specs.predictor import PredictorSpec
     from .feature_specs.static import StaticFrame
     from .feature_specs.timedelta import TimeDeltaSpec
-    from .feature_specs.timestamp_frame import TimestampValueFrame
+    from .feature_specs.timestamp import TimestampValueFrame
 
 
 @dataclass(frozen=True)
@@ -21,7 +21,7 @@ class SpecColumnError(Exception):
     description: str
 
 
-def _validate_col_name_columns_exist(
+def validate_col_name_columns_exist(
     obj: PredictionTimeFrame
     | ValueFrame
     | TimeMaskedFrame

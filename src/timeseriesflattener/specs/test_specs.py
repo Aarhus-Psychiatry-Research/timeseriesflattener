@@ -7,11 +7,11 @@ import pytest
 
 from timeseriesflattener.aggregators import MeanAggregator
 
-from .meta import ValueFrame
+from .value import ValueFrame
 from .outcome import OutcomeSpec
 from .predictor import PredictorSpec
 from .timedelta import TimeDeltaSpec
-from .timestamp_frame import TimestampValueFrame
+from .timestamp import TimestampValueFrame
 
 MockValueFrame = ValueFrame(
     init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"], "entity_id": [1]})

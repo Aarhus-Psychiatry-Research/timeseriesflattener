@@ -14,7 +14,7 @@ from timeseriesflattener.aggregators import EarliestAggregator, MeanAggregator
 
 from . import flattener
 from ._frame_validator import SpecColumnError
-from .feature_specs.meta import ValueFrame
+from .feature_specs.value import ValueFrame
 from .feature_specs.outcome import OutcomeSpec
 from .feature_specs.prediction_times import PredictionTimeFrame
 from .feature_specs.predictor import PredictorSpec

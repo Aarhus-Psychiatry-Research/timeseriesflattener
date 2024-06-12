@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 import pandas as pd
 import polars as pl
 
-from .._frame_validator import _validate_col_name_columns_exist
-from ..frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
+from ..validators
+from ..frame_utilities.anyframe_to_lazyframe import anyframe_to_lazyframe
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -32,7 +32,7 @@ class PredictionTimeFrame:
         self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame, coerce_to_lazy: bool
     ):
         if coerce_to_lazy:
-            self.df = _anyframe_to_lazyframe(init_df)
+            self.df = anyframe_to_lazyframe(init_df)
         else:
             self.df: pl.LazyFrame = init_df
 
@@ -42,7 +42,7 @@ class PredictionTimeFrame:
             ).alias(self.prediction_time_uuid_col_name)
         )
 
-        _validate_col_name_columns_exist(obj=self)
+        validate_col_name_columns_exist(obj=self)
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):

@@ -7,8 +7,8 @@ import polars as pl
 import polars.selectors as cs
 from iterpy.iter import Iter
 
-from .._intermediary_frames import ProcessedFrame, TimeDeltaFrame, TimeMaskedFrame
-from ..feature_specs.meta import ValueFrame
+from ..intermediary import ProcessedFrame, TimeDeltaFrame, TimeMaskedFrame
+from ..feature_specs.value import ValueFrame
 from ..feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
 from ..feature_specs.prediction_times import PredictionTimeFrame
 from ..feature_specs.predictor import PredictorSpec
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from ..feature_specs.meta import LookPeriod
+    from ..feature_specs.value import LookPeriod
 
 
 def _get_timedelta_frame(

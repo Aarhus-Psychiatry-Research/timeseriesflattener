@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 
 import polars as pl
 
-from ._frame_validator import _validate_col_name_columns_exist
-from .frame_utilities.anyframe_to_lazyframe import _anyframe_to_lazyframe
+from ._frame_validator import validate_col_name_columns_exist
+from .frame_utilities.anyframe_to_lazyframe import anyframe_to_lazyframe
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -27,7 +27,7 @@ class TimeMaskedFrame:
 
     def __post_init__(self):
         if self.validate_cols_exist:
-            _validate_col_name_columns_exist(obj=self)
+            validate_col_name_columns_exist(obj=self)
 
     @property
     def df(self) -> pl.LazyFrame:
@@ -44,7 +44,7 @@ class AggregatedValueFrame:
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
 
     def __post_init__(self):
-        _validate_col_name_columns_exist(obj=self)
+        validate_col_name_columns_exist(obj=self)
 
     def fill_nulls(self, fallback: int | float | str | None) -> AggregatedValueFrame:
         filled = self.df.with_columns(
@@ -74,7 +74,7 @@ class TimeDeltaFrame:
     timedelta_col_name: str = "time_from_prediction_to_value"
 
     def __post_init__(self):
-        _validate_col_name_columns_exist(obj=self)
+        validate_col_name_columns_exist(obj=self)
 
     def get_timedeltas(self) -> Sequence[dt.datetime]:
         return self.collect().get_column(self.timedelta_col_name).to_list()
@@ -100,7 +100,7 @@ class AggregatedFrame:
     prediction_time_uuid_col_name: str
 
     def __post_init__(self, init_df: pl.LazyFrame):
-        self.df = _anyframe_to_lazyframe(init_df)
+        self.df = anyframe_to_lazyframe(init_df)
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):

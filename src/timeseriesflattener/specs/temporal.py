@@ -4,9 +4,9 @@ import datetime as dt
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
-from .._frame_validator import _validate_col_name_columns_exist
-from .meta import ValueFrame, _lookdistance_to_normalised_lookperiod
-from ..aggregators import _validate_compatible_fallback_type_for_aggregator
+from ..validators import validate_col_name_columns_exist
+from .value import ValueFrame, lookdistance_to_normalised_lookperiod
+from ..aggregators import validate_compatible_fallback_type_for_aggregator
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -36,12 +36,12 @@ class PredictorSpec:
         self, lookbehind_distances: Sequence[dt.timedelta | tuple[dt.timedelta, dt.timedelta]]
     ):
         self.normalised_lookperiod = [
-            _lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="behind")
+            lookdistance_to_normalised_lookperiod(lookdistance=lookdistance, direction="behind")
             for lookdistance in lookbehind_distances
         ]
-        _validate_col_name_columns_exist(obj=self)
+        validate_col_name_columns_exist(obj=self)
         for aggregator in self.aggregators:
-            _validate_compatible_fallback_type_for_aggregator(
+            validate_compatible_fallback_type_for_aggregator(
                 aggregator=aggregator, fallback=self.fallback
             )
 

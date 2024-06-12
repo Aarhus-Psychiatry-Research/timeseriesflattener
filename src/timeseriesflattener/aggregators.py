@@ -7,7 +7,7 @@ import polars as pl
 from attr import dataclass
 
 
-def _validate_compatible_fallback_type_for_aggregator(
+def validate_compatible_fallback_type_for_aggregator(
     aggregator: Aggregator, fallback: str | int | float | None
 ) -> None:
     try:

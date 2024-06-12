@@ -43,7 +43,7 @@ timeseriesflattener.feature_specs
    :show-inheritance:
 
 
-.. automodule:: timeseriesflattener.feature_specs.timestamp_frame
+.. automodule:: timeseriesflattener.feature_specs.timestamp
    :members:
    :undoc-members:
    :show-inheritance:
