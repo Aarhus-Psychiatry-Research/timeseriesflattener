@@ -36,7 +36,7 @@ class PredictionTimeFrame:
         else:
             self.df: pl.LazyFrame = init_df  # type: ignore
 
-        self.df = self.df.with_columns(
+        self.df = self.df.with_columns(  # type: ignore
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
             ).alias(self.prediction_time_uuid_col_name)

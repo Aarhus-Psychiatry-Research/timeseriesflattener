@@ -175,7 +175,7 @@ def test_slice_without_any_within_window():
         result.get_column("pred_is_null_within_0_to_2_days"),
         timedelta_frame.df.collect().get_column("is_null"),
         check_names=False,
-        check_dtype=False,
+        check_dtypes=False,
     )
 
 
