@@ -55,8 +55,8 @@ def _get_timedelta_frame(
 
 
 def _null_values_outside_lookwindow(
-    df: pl.LazyFrame, lookwindow_predicate: pl.Expr, cols_to_null: Sequence[str]
-) -> pl.LazyFrame:
+    df: pl.DataFrame, lookwindow_predicate: pl.Expr, cols_to_null: Sequence[str]
+) -> pl.DataFrame:
     for col_to_null in cols_to_null:
         df = df.with_columns(
             pl.when(lookwindow_predicate).then(pl.col(col_to_null)).otherwise(None)
@@ -108,7 +108,7 @@ def _aggregate_masked_frame(
     masked_frame: TimeMaskedFrame,
     aggregators: Sequence[Aggregator],
     fallback: int | float | str | None,
-) -> pl.LazyFrame:
+) -> pl.DataFrame:
     aggregator_expressions = [
         aggregator(value_col_name)
         for aggregator in aggregators
@@ -138,12 +138,12 @@ def _aggregate_masked_frame(
 
 
 TimeMasker = Callable[[TimeDeltaFrame], TimeMaskedFrame]
-MaskedAggregator = Callable[[TimeMaskedFrame], pl.LazyFrame]
+MaskedAggregator = Callable[[TimeMaskedFrame], pl.DataFrame]
 
 
 def _slice_and_aggregate_spec(
     timedelta_frame: TimeDeltaFrame, masked_aggregator: MaskedAggregator, time_masker: TimeMasker
-) -> pl.LazyFrame:
+) -> pl.DataFrame:
     sliced_frame = time_masker(timedelta_frame)
     return masked_aggregator(sliced_frame)
 
@@ -152,8 +152,8 @@ TemporalSpec = Union[PredictorSpec, OutcomeSpec, BooleanOutcomeSpec]
 
 
 def _get_pred_time_range(frame: PredictionTimeFrame) -> tuple[dt.datetime, dt.datetime]:
-    if isinstance(frame.df, pl.LazyFrame):
-        df = frame.df.collect()
+    if isinstance(frame.df, pl.DataFrame):
+        df = frame.df
     else:
         df = frame.df
 
@@ -219,7 +219,7 @@ def _create_step_frames(
 
 def _flatten_temporal_spec(
     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
-) -> list[pl.LazyFrame]:
+) -> list[pl.DataFrame]:
     return (
         Iter(spec.normalised_lookperiod)
         .map(

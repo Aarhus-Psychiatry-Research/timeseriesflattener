@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 @dataclass(frozen=True)
 class ComplexAggregatorExample:
     aggregator: Aggregator
-    input_frame: pl.LazyFrame
+    input_frame: pl.DataFrame
     expected_output: pl.DataFrame
 
 
@@ -46,8 +46,8 @@ class SingleVarAggregatorExample:
     fallback_str: str = "nan"
 
     @property
-    def input_frame(self) -> pl.LazyFrame:
-        return pl.LazyFrame(
+    def input_frame(self) -> pl.DataFrame:
+        return pl.DataFrame(
             {
                 "prediction_time_uuid": [1] * len(self.input_values),
                 "value": self.input_values,
@@ -110,7 +110,7 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
 1,2013-01-01,1
 1,2013-01-02,3
 """
-            ).lazy(),
+            ),
             expected_output=str_to_pl_df(
                 """prediction_time_uuid,value_slope_fallback_nan
 1,2.0,
@@ -125,7 +125,7 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
 1,2013-01-02,2, # Dropped, second value in 1
 2,2013-01-04,3, # Dropped, second value in 2
 2,2013-01-03,4, # Kept, first value in 2"""
-            ).lazy(),
+            ),
             expected_output=str_to_pl_df(
                 """prediction_time_uuid,value_earliest_fallback_nan
 1,1,
@@ -140,7 +140,7 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
 1,2013-01-02,2, # Kept, second value in 1
 2,2013-01-04,3, # Kept, second value in 2
 2,2013-01-03,4, # Dropped, first value in 2"""
-            ).lazy(),
+            ),
             expected_output=str_to_pl_df(
                 """prediction_time_uuid,value_latest_fallback_nan
 1,2,
@@ -162,7 +162,7 @@ def test_aggregator(example: AggregatorExampleType):
         fallback=np.nan if example.aggregator.name != "bool" else False,
     )
 
-    assert_frame_equal(result.collect(), example.expected_output)
+    assert_frame_equal(result, example.expected_output)
 
 
 @pytest.mark.parametrize(

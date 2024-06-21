@@ -14,7 +14,7 @@ from .timedelta import TimeDeltaSpec
 from .timestamp import TimestampValueFrame
 
 MockValueFrame = ValueFrame(
-    init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"], "entity_id": [1]})
+    init_df=pl.DataFrame({"value": [1], "timestamp": ["2021-01-01"], "entity_id": [1]})
 )
 
 
@@ -52,7 +52,7 @@ def test_timedelta_spec_error_if_non_unique_ids():
     with pytest.raises(ValueError, match=".*Expected only one value.*"):
         TimeDeltaSpec(
             init_frame=TimestampValueFrame(
-                init_df=pl.LazyFrame(
+                init_df=pl.DataFrame(
                     {"timestamp": ["2021-01-01", "2021-01-02"], "entity_id": [1, 1]}
                 ),
                 value_timestamp_col_name="timestamp",

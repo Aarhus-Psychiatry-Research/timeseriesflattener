@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 
 
 def horizontally_concatenate_dfs(
-    dfs: Sequence[pl.LazyFrame], prediction_time_uuid_col_name: str
-) -> pl.LazyFrame:
+    dfs: Sequence[pl.DataFrame], prediction_time_uuid_col_name: str
+) -> pl.DataFrame:
     dfs_without_identifiers = (
         Iter(dfs).map(lambda df: df.drop([prediction_time_uuid_col_name])).to_list()
     )
@@ -28,11 +28,9 @@ def horizontally_concatenate_dfs(
     return pl.concat([dfs[0], *dfs_without_identifiers[1:]], how="horizontal")
 
 
-def anyframe_to_lazyframe(init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame) -> pl.LazyFrame:
-    if isinstance(init_df, pl.LazyFrame):
-        return init_df
+def anyframe_to_pl_frame(init_df: pl.DataFrame | pd.DataFrame) -> pl.DataFrame:
     if isinstance(init_df, pl.DataFrame):
-        return init_df.lazy()
+        return init_df
     if isinstance(init_df, pd.DataFrame):
-        return pl.from_pandas(init_df).lazy()
+        return pl.from_pandas(init_df)
     raise ValueError(f"Unsupported type: {type(init_df)}.")

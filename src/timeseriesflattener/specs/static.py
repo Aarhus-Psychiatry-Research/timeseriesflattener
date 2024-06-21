@@ -6,24 +6,24 @@ import pandas as pd
 import polars as pl
 from timeseriesflattener.validators import validate_col_name_columns_exist
 
-from ..utils import anyframe_to_lazyframe
+from ..utils import anyframe_to_pl_frame
 
 
 @dataclass
 class StaticFrame:
-    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
+    init_df: InitVar[pl.DataFrame | pd.DataFrame]
 
     entity_id_col_name: str = "entity_id"
 
-    def __post_init__(self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame):
-        self.df = anyframe_to_lazyframe(init_df)
+    def __post_init__(self, init_df: pl.DataFrame | pd.DataFrame):
+        self.df = anyframe_to_pl_frame(init_df)
         validate_col_name_columns_exist(obj=self)
         self.value_col_names = [col for col in self.df.columns if col != self.entity_id_col_name]
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
             return self.df
-        return self.df.collect()
+        return self.df
 
 
 @dataclass(frozen=True)

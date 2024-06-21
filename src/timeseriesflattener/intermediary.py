@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import InitVar, dataclass
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import polars as pl
 
 from .validators import validate_col_name_columns_exist
-from .utils import anyframe_to_lazyframe
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
 class TimeMaskedFrame:
     """A frame that has had all values outside its lookbehind and lookahead distances masked."""
 
-    init_df: pl.LazyFrame
+    init_df: pl.DataFrame
     value_col_names: Sequence[str]
     timestamp_col_name: str = "timestamp"
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
@@ -30,16 +29,13 @@ class TimeMaskedFrame:
             validate_col_name_columns_exist(obj=self)
 
     @property
-    def df(self) -> pl.LazyFrame:
+    def df(self) -> pl.DataFrame:
         return self.init_df
-
-    def collect(self) -> pl.DataFrame:
-        return self.init_df.collect()
 
 
 @dataclass
 class AggregatedValueFrame:
-    df: pl.LazyFrame
+    df: pl.DataFrame
     value_col_name: str
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
 
@@ -62,12 +58,12 @@ class AggregatedValueFrame:
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
             return self.df
-        return self.df.collect()
+        return self.df
 
 
 @dataclass
 class TimeDeltaFrame:
-    df: pl.LazyFrame
+    df: pl.DataFrame
     value_col_names: Sequence[str]
     value_timestamp_col_name: str
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
@@ -77,10 +73,7 @@ class TimeDeltaFrame:
         validate_col_name_columns_exist(obj=self)
 
     def get_timedeltas(self) -> Sequence[dt.datetime]:
-        return self.collect().get_column(self.timedelta_col_name).to_list()
-
-    def collect(self) -> pl.DataFrame:
-        return self.df.collect()
+        return self.df.get_column(self.timedelta_col_name).to_list()
 
 
 @dataclass
@@ -94,26 +87,18 @@ class AggregatedFrame:
         prediction_time_uuid_col_name: The name of the column containing the prediction time uuids. Must be a string, and the column's values must be strings which are unique.
     """
 
-    init_df: InitVar[pl.LazyFrame]
+    df: pl.DataFrame
     entity_id_col_name: str
     timestamp_col_name: str
     prediction_time_uuid_col_name: str
 
-    def __post_init__(self, init_df: pl.LazyFrame):
-        self.df = anyframe_to_lazyframe(init_df)
-
-    def collect(self) -> pl.DataFrame:
-        if isinstance(self.df, pl.DataFrame):
-            return self.df
-        return self.df.collect()
-
 
 @dataclass(frozen=True)
 class ProcessedFrame:
-    df: pl.LazyFrame
+    df: pl.DataFrame
     prediction_time_uuid_col_name: str
 
     def collect(self) -> pl.DataFrame:
         if isinstance(self.df, pl.DataFrame):
             return self.df
-        return self.df.collect()
+        return self.df

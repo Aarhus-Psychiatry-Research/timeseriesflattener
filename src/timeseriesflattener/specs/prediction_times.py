@@ -7,7 +7,7 @@ import pandas as pd
 import polars as pl
 
 from ..validators import validate_col_name_columns_exist
-from ..utils import anyframe_to_lazyframe
+from ..utils import anyframe_to_pl_frame
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -22,21 +22,16 @@ class PredictionTimeFrame:
         timestamp_col_name: The name of the column containing the timestamps for when to make a prediction.
     """
 
-    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
+    init_df: InitVar[pl.DataFrame | pd.DataFrame]
     entity_id_col_name: str = "entity_id"
     timestamp_col_name: str = "pred_timestamp"
     prediction_time_uuid_col_name: str = "prediction_time_uuid"
-    coerce_to_lazy: InitVar[bool] = True
 
-    def __post_init__(
-        self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame, coerce_to_lazy: bool
-    ):
-        if coerce_to_lazy:
-            self.df = anyframe_to_lazyframe(init_df)
-        else:
-            self.df: pl.LazyFrame = init_df  # type: ignore
+    def __post_init__(self, init_df: pl.DataFrame | pd.DataFrame):
+        # Sort to ensure alignment when processing multiple specs and concatenating in the end.
+        self.df = anyframe_to_pl_frame(init_df).sort(self.timestamp_col_name)
 
-        self.df = self.df.with_columns(  # type: ignore
+        self.df = self.df.with_columns(
             pl.concat_str(
                 pl.col(self.entity_id_col_name), pl.lit("-"), pl.col(self.timestamp_col_name)
             ).alias(self.prediction_time_uuid_col_name)
@@ -45,9 +40,7 @@ class PredictionTimeFrame:
         validate_col_name_columns_exist(obj=self)
 
     def collect(self) -> pl.DataFrame:
-        if isinstance(self.df, pl.DataFrame):
-            return self.df
-        return self.df.collect()
+        return self.df
 
     def required_columns(self) -> Sequence[str]:
         return [self.entity_id_col_name]

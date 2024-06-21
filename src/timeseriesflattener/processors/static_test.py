@@ -37,7 +37,7 @@ def test_process_static_spec():
        """
     )
 
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result, expected)
 
 
 def test_process_static_spec_multiple_values():
@@ -65,4 +65,4 @@ def test_process_static_spec_multiple_values():
 2-2021-01-01 00:00:00.000000,c,d
        """
     )
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result, expected)

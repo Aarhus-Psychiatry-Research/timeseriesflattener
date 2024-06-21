@@ -41,7 +41,7 @@ class OutcomeSpec:
             )
 
     @property
-    def df(self) -> pl.LazyFrame:
+    def df(self) -> pl.DataFrame:
         return self.value_frame.df
 
 
@@ -79,5 +79,5 @@ class BooleanOutcomeSpec:
         )
 
     @property
-    def df(self) -> pl.LazyFrame:
+    def df(self) -> pl.DataFrame:
         return self.value_frame.df
