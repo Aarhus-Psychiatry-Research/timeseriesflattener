@@ -124,8 +124,4 @@ Output:
 
 
 ## 🎓 Projects
-PSYCOP projects which use `timeseriesflattener`. Note that some of these projects have yet to be published and are thus private.
-
-| Project                 | Publications |                                                                                                                                                                                                                                       |
-| ----------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **[Type 2 Diabetes](https://github.com/Aarhus-Psychiatry-Research/psycop-common/tree/main/psycop/projects/t2d)**   |              | Prediction of type 2 diabetes among patients with visits to psychiatric hospital departments                                                                                                                                          |
+PSYCOP projects use `timeseriesflattener`, see more at the [monorepo](https://github.com/Aarhus-Psychiatry-Research/psycop-common/tree/main/psycop/projects).
