@@ -261,10 +261,7 @@
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">max_values_per_id</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">init_frame</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_frame</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">unique_counts</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_frame</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_frame</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">)</span><span class="o">.</span><span class="n">unique_counts</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">max_values_per_id</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -280,7 +277,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">value_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span></div>
 </pre></div>
         </article>

@@ -233,7 +233,7 @@
 <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
 <span class="kn">from</span> <span class="nn">timeseriesflattener.validators</span> <span class="kn">import</span> <span class="n">validate_col_name_columns_exist</span>
 
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">anyframe_to_lazyframe</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">anyframe_to_pl_frame</span>
 
 
 <div class="viewcode-block" id="TimestampValueFrame"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.timestamp.TimestampValueFrame">[docs]</a><span class="nd">@dataclass</span>
@@ -245,18 +245,18 @@
 <span class="sd">        value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column&#39;s values must be datetimes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
+    <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
     <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;entity_id&quot;</span>
     <span class="n">value_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;timestamp&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">anyframe_to_pl_frame</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
         <span class="n">validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TimestampValueFrame.collect"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.timestamp.TimestampValueFrame.collect">[docs]</a>    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span></div></div>
 </pre></div>
         </article>
       </div>
