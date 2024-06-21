@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
-        <title>timeseriesflattener.feature_specs.outcome - Timeseriesflattener</title>
+        <title>timeseriesflattener.specs.timestamp - Timeseriesflattener</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -224,90 +224,39 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for timeseriesflattener.feature_specs.outcome</h1><div class="highlight"><pre>
+          <h1>Source code for timeseriesflattener.specs.timestamp</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">InitVar</span><span class="p">,</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
+<span class="kn">from</span> <span class="nn">timeseriesflattener.validators</span> <span class="kn">import</span> <span class="n">validate_col_name_columns_exist</span>
 
-<span class="kn">from</span> <span class="nn">.._frame_validator</span> <span class="kn">import</span> <span class="n">_validate_col_name_columns_exist</span>
-<span class="kn">from</span> <span class="nn">.meta</span> <span class="kn">import</span> <span class="n">ValueFrame</span><span class="p">,</span> <span class="n">_lookdistance_to_normalised_lookperiod</span>
-<span class="kn">from</span> <span class="nn">..aggregators</span> <span class="kn">import</span> <span class="n">_validate_compatible_fallback_type_for_aggregator</span>
-
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
-
-    <span class="kn">from</span> <span class="nn">..aggregators</span> <span class="kn">import</span> <span class="n">Aggregator</span>
-    <span class="kn">from</span> <span class="nn">.timestamp_frame</span> <span class="kn">import</span> <span class="n">TimestampValueFrame</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">anyframe_to_lazyframe</span>
 
 
-<div class="viewcode-block" id="OutcomeSpec"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.outcome.OutcomeSpec">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">OutcomeSpec</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for an outcome. If your outcome is binary/boolean, you can use BooleanOutcomeSpec instead.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TimestampValueFrame"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.timestamp.TimestampValueFrame">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TimestampValueFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Timestamps, useful for computing e.g. age.</span>
 
-    <span class="n">value_frame</span><span class="p">:</span> <span class="n">ValueFrame</span>
-    <span class="n">lookahead_distances</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">]]]</span>
-    <span class="n">aggregators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Aggregator</span><span class="p">]</span>
-    <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
-    <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;outc&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">lookahead_distances</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">]]</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">normalised_lookperiod</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">_lookdistance_to_normalised_lookperiod</span><span class="p">(</span><span class="n">lookdistance</span><span class="o">=</span><span class="n">lookdistance</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;ahead&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">lookdistance</span> <span class="ow">in</span> <span class="n">lookahead_distances</span>
-        <span class="p">]</span>
-        <span class="n">_validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">aggregator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregators</span><span class="p">:</span>
-            <span class="n">_validate_compatible_fallback_type_for_aggregator</span><span class="p">(</span>
-                <span class="n">aggregator</span><span class="o">=</span><span class="n">aggregator</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span>
-            <span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span></div>
-
-
-<div class="viewcode-block" id="BooleanOutcomeSpec"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.outcome.BooleanOutcomeSpec">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">BooleanOutcomeSpec</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a boolean outcome, e.g. whether a patient received a treatment or not.</span>
-
-<span class="sd">    The init_frame must contain columns:</span>
+<span class="sd">    Must contain columns:</span>
 <span class="sd">        entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column&#39;s values must be strings which are unique.</span>
-<span class="sd">        value_timestamp_col_name: The name of the column containing the timestamps of when the event occurs. Must be a string, and the column&#39;s values must be datetimes.</span>
+<span class="sd">        value_timestamp_col_name: The name of the column containing the timestamps. Must be a string, and the column&#39;s values must be datetimes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">init_frame</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">TimestampValueFrame</span><span class="p">]</span>
-    <span class="n">lookahead_distances</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">]]</span>
-    <span class="n">aggregators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Aggregator</span><span class="p">]</span>
-    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;outc&quot;</span>
+    <span class="n">init_df</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
+    <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;entity_id&quot;</span>
+    <span class="n">value_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;timestamp&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_frame</span><span class="p">:</span> <span class="n">TimestampValueFrame</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">normalised_lookperiod</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">_lookdistance_to_normalised_lookperiod</span><span class="p">(</span><span class="n">lookdistance</span><span class="o">=</span><span class="n">lookdistance</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;ahead&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">lookdistance</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookahead_distances</span>
-        <span class="p">]</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
+        <span class="n">validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">fallback</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">aggregator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregators</span><span class="p">:</span>
-            <span class="n">_validate_compatible_fallback_type_for_aggregator</span><span class="p">(</span>
-                <span class="n">aggregator</span><span class="o">=</span><span class="n">aggregator</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback</span>
-            <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">value_frame</span> <span class="o">=</span> <span class="n">ValueFrame</span><span class="p">(</span>
-            <span class="n">init_df</span><span class="o">=</span><span class="n">init_frame</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">((</span><span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">)),</span>
-            <span class="n">entity_id_col_name</span><span class="o">=</span><span class="n">init_frame</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">,</span>
-            <span class="n">value_timestamp_col_name</span><span class="o">=</span><span class="n">init_frame</span><span class="o">.</span><span class="n">value_timestamp_col_name</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span></div>
+<div class="viewcode-block" id="TimestampValueFrame.collect"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.timestamp.TimestampValueFrame.collect">[docs]</a>    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div></div>
 </pre></div>
         </article>
       </div>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 5.3.0 and Furo 2023.03.27 -->
-        <title>timeseriesflattener.feature_specs.prediction_times - Timeseriesflattener</title>
+        <title>timeseriesflattener.specs.prediction_times - Timeseriesflattener</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -224,7 +224,7 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for timeseriesflattener.feature_specs.prediction_times</h1><div class="highlight"><pre>
+          <h1>Source code for timeseriesflattener.specs.prediction_times</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">InitVar</span><span class="p">,</span> <span class="n">dataclass</span>
@@ -233,14 +233,14 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
 
-<span class="kn">from</span> <span class="nn">.._frame_validator</span> <span class="kn">import</span> <span class="n">_validate_col_name_columns_exist</span>
-<span class="kn">from</span> <span class="nn">..frame_utilities.anyframe_to_lazyframe</span> <span class="kn">import</span> <span class="n">_anyframe_to_lazyframe</span>
+<span class="kn">from</span> <span class="nn">..validators</span> <span class="kn">import</span> <span class="n">validate_col_name_columns_exist</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">anyframe_to_lazyframe</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
 
 
-<div class="viewcode-block" id="PredictionTimeFrame"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame">[docs]</a><span class="nd">@dataclass</span>
+<div class="viewcode-block" id="PredictionTimeFrame"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.prediction_times.PredictionTimeFrame">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">PredictionTimeFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for prediction times, i.e. the times for which predictions are made.</span>
 
@@ -259,24 +259,24 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">init_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">|</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">coerce_to_lazy</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">coerce_to_lazy</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">_anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">anyframe_to_lazyframe</span><span class="p">(</span><span class="n">init_df</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">=</span> <span class="n">init_df</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span> <span class="o">=</span> <span class="n">init_df</span>  <span class="c1"># type: ignore</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
             <span class="n">pl</span><span class="o">.</span><span class="n">concat_str</span><span class="p">(</span>
                 <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">),</span> <span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">)</span>
             <span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prediction_time_uuid_col_name</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="n">_validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">validate_col_name_columns_exist</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PredictionTimeFrame.collect"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.collect">[docs]</a>    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="PredictionTimeFrame.collect"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.prediction_times.PredictionTimeFrame.collect">[docs]</a>    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PredictionTimeFrame.required_columns"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame.required_columns">[docs]</a>    <span class="k">def</span> <span class="nf">required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="PredictionTimeFrame.required_columns"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.prediction_times.PredictionTimeFrame.required_columns">[docs]</a>    <span class="k">def</span> <span class="nf">required_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_id_col_name</span><span class="p">]</span></div></div>
 </pre></div>
         </article>

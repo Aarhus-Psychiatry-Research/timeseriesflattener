@@ -7,12 +7,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="flattener.html" />
 <meta property="og:site_name" content="timeseriesflattener" />
-<meta property="og:description" content="timeseriesflattener.flattener:" />
+<meta property="og:description" content="timeseriesflattener:" />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/_images/social_previews/summary_flattener_a21a42e0.png" />
-<meta property="og:image:alt" content="timeseriesflattener.flattener:" />
-<meta name="description" content="timeseriesflattener.flattener:" />
+<meta property="og:image" content="/_images/social_previews/summary_flattener_fba030bc.png" />
+<meta property="og:image:alt" content="timeseriesflattener:" />
+<meta name="description" content="timeseriesflattener:" />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Aggregators" href="aggregators.html" />
 
@@ -247,101 +247,9 @@
         <article role="main">
           <section id="timeseriesflattener">
 <h1>Timeseriesflattener<a class="headerlink" href="#timeseriesflattener" title="Permalink to this heading">#</a></h1>
-<section id="module-timeseriesflattener.flattener">
-<span id="timeseriesflattener-flattener"></span><h2>timeseriesflattener.flattener<a class="headerlink" href="#module-timeseriesflattener.flattener" title="Permalink to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Flattener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictiontime_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'PredictionTimeFrame'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_lazily</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'bool'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int</span> <span class="pre">|</span> <span class="pre">None'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattener.html#Flattener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattener.Flattener" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.aggregate_timeseries">
-<span class="sig-name descname"><span class="pre">aggregate_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">ValueSpecification</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dt.timedelta</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AggregatedFrame</span></span></span><a class="reference internal" href="_modules/timeseriesflattener/flattener.html#Flattener.aggregate_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattener.Flattener.aggregate_timeseries" title="Permalink to this definition">#</a></dt>
-<dd><p>Perform the aggregation/flattening.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>specs</strong> – The specifications for the features to be created.</p></li>
-<li><p><strong>step_size</strong> – The step size for the aggregation.
-If not None, will aggregate prediction times in chunks of step_size.
-Reduce if you encounter memory issues.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.compute_lazily">
-<span class="sig-name descname"><span class="pre">compute_lazily</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#timeseriesflattener.flattener.Flattener.compute_lazily" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.n_workers">
-<span class="sig-name descname"><span class="pre">n_workers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#timeseriesflattener.flattener.Flattener.n_workers" title="Permalink to this definition">#</a></dt>
-<dd><p>Flatten multiple irregular time series to a static feature set.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>predictiontime_frame</strong> – A frame that contains the prediction times.</p></li>
-<li><p><strong>compute_lazily</strong> – If True, the computation will be done lazily.</p></li>
-<li><p><strong>n_workers</strong> – The number of workers to use for multiprocessing.
-If None, multiprocessing will be handled entirely by polars, otherwise,
-specify the number of workers to use with joblib.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.Flattener.predictiontime_frame">
-<span class="sig-name descname"><span class="pre">predictiontime_frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="feature_specifications.html#timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame" title="timeseriesflattener.feature_specs.prediction_times.PredictionTimeFrame"><span class="pre">PredictionTimeFrame</span></a></em><a class="headerlink" href="#timeseriesflattener.flattener.Flattener.predictiontime_frame" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.MissingColumnNameError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MissingColumnNameError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattener.html#MissingColumnNameError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattener.MissingColumnNameError" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.MissingColumnNameError.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.flattener.MissingColumnNameError.description" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.SpecError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpecError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattener.html#SpecError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattener.SpecError" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.SpecError.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#timeseriesflattener.flattener.SpecError.description" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.SpecRequirementPair">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SpecRequirementPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">required_columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'Sequence[str]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'ValueSpecification'</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/timeseriesflattener/flattener.html#SpecRequirementPair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattener.SpecRequirementPair" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.SpecRequirementPair.missing_columns">
-<span class="sig-name descname"><span class="pre">missing_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iter</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/timeseriesflattener/flattener.html#SpecRequirementPair.missing_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#timeseriesflattener.flattener.SpecRequirementPair.missing_columns" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.SpecRequirementPair.required_columns">
-<span class="sig-name descname"><span class="pre">required_columns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#timeseriesflattener.flattener.SpecRequirementPair.required_columns" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="timeseriesflattener.flattener.SpecRequirementPair.spec">
-<span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ValueSpecification</span></em><a class="headerlink" href="#timeseriesflattener.flattener.SpecRequirementPair.spec" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
+<section id="id1">
+<h2>timeseriesflattener<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<span class="target" id="module-timeseriesflattener"></span></section>
 </section>
 
         </article>
@@ -399,30 +307,7 @@ specify the number of workers to use with joblib.</p></li>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Timeseriesflattener</a><ul>
-<li><a class="reference internal" href="#module-timeseriesflattener.flattener">timeseriesflattener.flattener</a><ul>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.Flattener"><code class="docutils literal notranslate"><span class="pre">Flattener</span></code></a><ul>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.Flattener.aggregate_timeseries"><code class="docutils literal notranslate"><span class="pre">Flattener.aggregate_timeseries()</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.Flattener.compute_lazily"><code class="docutils literal notranslate"><span class="pre">Flattener.compute_lazily</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.Flattener.n_workers"><code class="docutils literal notranslate"><span class="pre">Flattener.n_workers</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.Flattener.predictiontime_frame"><code class="docutils literal notranslate"><span class="pre">Flattener.predictiontime_frame</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.MissingColumnNameError"><code class="docutils literal notranslate"><span class="pre">MissingColumnNameError</span></code></a><ul>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.MissingColumnNameError.description"><code class="docutils literal notranslate"><span class="pre">MissingColumnNameError.description</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.SpecError"><code class="docutils literal notranslate"><span class="pre">SpecError</span></code></a><ul>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.SpecError.description"><code class="docutils literal notranslate"><span class="pre">SpecError.description</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.SpecRequirementPair"><code class="docutils literal notranslate"><span class="pre">SpecRequirementPair</span></code></a><ul>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.SpecRequirementPair.missing_columns"><code class="docutils literal notranslate"><span class="pre">SpecRequirementPair.missing_columns()</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.SpecRequirementPair.required_columns"><code class="docutils literal notranslate"><span class="pre">SpecRequirementPair.required_columns</span></code></a></li>
-<li><a class="reference internal" href="#timeseriesflattener.flattener.SpecRequirementPair.spec"><code class="docutils literal notranslate"><span class="pre">SpecRequirementPair.spec</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id1">timeseriesflattener</a></li>
 </ul>
 </li>
 </ul>

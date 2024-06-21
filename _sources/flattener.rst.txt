@@ -4,10 +4,10 @@ Timeseriesflattener
 .. FlattenedDataset
 
 
-timeseriesflattener.flattener
+timeseriesflattener
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: timeseriesflattener.flattener
+.. automodule:: timeseriesflattener
    :members:
    :undoc-members:
    :show-inheritance:
