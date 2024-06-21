@@ -2,10 +2,8 @@
 
 # Timeseriesflattener
 
-[![github actions docs](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions/workflows/documentation.yml/badge.svg)](https://aarhus-psychiatry-research.github.io/timeseriesflattener/)
 [![github actions pytest](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions/workflows/main_test_and_release.yml/badge.svg)](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions)
 [![python versions](https://img.shields.io/pypi/pyversions/timeseriesflattener)](https://pypi.org/project/timeseriesflattener/)
-[![Code style: black](https://img.shields.io/badge/Code%20Style-Black-black)](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html)
 
 [![PyPI version](https://badge.fury.io/py/timeseriesflattener.svg)](https://pypi.org/project/timeseriesflattener/)
 [![status](https://joss.theoj.org/papers/3bbea8745668d1aa40ff796c6fd3db87/status.svg)](https://joss.theoj.org/papers/3bbea8745668d1aa40ff796c6fd3db87)
