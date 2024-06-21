@@ -208,12 +208,10 @@ def _create_step_frames(
         entity_id_col_name=predictiontime_frame.entity_id_col_name,
         timestamp_col_name=predictiontime_frame.timestamp_col_name,
         prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
-        coerce_to_lazy=False,
     ), ValueFrame(
         init_df=step_value_df,
         entity_id_col_name=vf.entity_id_col_name,
         value_timestamp_col_name=vf.value_timestamp_col_name,
-        coerce_to_lazy=False,
     )
 
 

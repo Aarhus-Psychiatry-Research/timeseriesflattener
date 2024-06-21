@@ -134,7 +134,7 @@ def test_keep_prediction_times_without_predictors():
         }
     )
 
-    assert_frame_equal(result, expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def main_tests_multiple_features():
@@ -174,7 +174,7 @@ def main_tests_multiple_features():
 1-2021-01-03 00:00:00.000000,3.0,3.0"""
     )
 
-    assert_frame_equal(result, expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_error_if_conflicting_value_col_names():
@@ -230,7 +230,7 @@ def test_predictor_with_interval_lookperiod():
         """prediction_time_uuid,pred_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result, expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_outcome_with_interval_lookperiod():
@@ -257,7 +257,7 @@ def test_outcome_with_interval_lookperiod():
         """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result, expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_add_static_spec():
@@ -284,7 +284,7 @@ def test_add_static_spec():
         """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result, expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_add_features_with_non_default_entity_id_col_name():
@@ -315,7 +315,7 @@ def test_add_features_with_non_default_entity_id_col_name():
         """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result, expected, ignore_colums=["dw_ek_borger", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["dw_ek_borger", "pred_timestamp"])
 
 
 @pytest.mark.parametrize("step_size", [None, dt.timedelta(days=30)])

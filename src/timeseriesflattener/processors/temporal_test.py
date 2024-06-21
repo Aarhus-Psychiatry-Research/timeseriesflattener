@@ -172,7 +172,7 @@ def test_slice_without_any_within_window():
     from polars.testing import assert_series_equal
 
     assert_series_equal(
-        result.get_column("pred_is_null_within_0_to_2_days"),
+        result.df.get_column("pred_is_null_within_0_to_2_days"),
         timedelta_frame.df.get_column("is_null"),
         check_names=False,
         check_dtypes=False,
@@ -261,7 +261,7 @@ def test_process_time_from_event_spec():
        """
     )
 
-    assert_frame_equal(result, expected)
+    assert_frame_equal(result.df, expected)
 
 
 def test_process_temporal_spec_multiple_values():
@@ -288,7 +288,7 @@ def test_process_temporal_spec_multiple_values():
         """prediction_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_0,pred_value_2_within_0_to_1_days_mean_fallback_0
 1-2021-01-01 00:00:00.000000,1,2"""
     )
-    assert_frame_equal(result, expected)
+    assert_frame_equal(result.df, expected)
 
 
 def test_sliding_window():
@@ -339,4 +339,4 @@ def test_sliding_window():
 1-2022-01-01 00:00:00.000000,0.0,11.5"""
     )
 
-    assert_frame_equal(result, expected)
+    assert_frame_equal(result.df, expected)

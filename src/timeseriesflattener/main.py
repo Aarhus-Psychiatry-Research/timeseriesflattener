@@ -100,7 +100,11 @@ class Flattener:
         n_workers: The number of workers to use for multiprocessing. 
             If None, multiprocessing will be handled entirely by polars, otherwise, 
             multiple processes will be used with joblib. 
-            Multiprocessing adds some performance at the cost of memory pressure."""
+            Multiprocessing adds some performance at the cost of memory pressure.
+            Note that we already attempted multi-threaded processing with Polars, but the query
+            optimiser took an infinite amount of time to optimise the query, 
+            so we removed it after commit 73772874802940b6b1e17c110b9c06aa4dd5f8fb.
+        """
 
     def _process_specs(
         self, specs: Sequence[ValueSpecification], step_size: dt.timedelta | None = None
