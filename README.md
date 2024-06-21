@@ -10,13 +10,14 @@
 [![PyPI version](https://badge.fury.io/py/timeseriesflattener.svg)](https://pypi.org/project/timeseriesflattener/)
 [![status](https://joss.theoj.org/papers/3bbea8745668d1aa40ff796c6fd3db87/status.svg)](https://joss.theoj.org/papers/3bbea8745668d1aa40ff796c6fd3db87)
 
-Time series from e.g. electronic health records often have a large number of variables, are sampled at irregular intervals and tend to have a large number of missing values. Before this type of data can be used for prediction modelling with machine learning methods such as logistic regression or XGBoost, the data needs to be reshaped.  
+Time series from e.g. electronic health records often have a large number of variables, are sampled at irregular intervals and tend to have a large number of missing values. Before this type of data can be used for prediction modelling with machine learning methods such as logistic regression or XGBoost, the data needs to be reshaped.
 
-In essence, the time series need to be *flattened* so that each prediction time is represented by a set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window. 
+In essence, the time series need to be _flattened_ so that each prediction time is represented by a set of predictor values and an outcome value. These predictor values can be constructed by aggregating the preceding values in the time series within a certain time window.
 
-`timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series.  
+`timeseriesflattener` aims to simplify this process by providing an easy-to-use and fully-specified pipeline for flattening complex time series.
 
 ## 🔧 Installation
+
 To get started using timeseriesflattener simply install it using pip by running the following line in your terminal:
 
 ```
@@ -58,7 +59,7 @@ from timeseriesflattener import (
 
 predictor_spec = PredictorSpec(
     value_frame=ValueFrame(
-        init_df=predictor_df.lazy(), entity_id_col_name="id", value_timestamp_col_name="date"
+        init_df=predictor_df, entity_id_col_name="id", value_timestamp_col_name="date"
     ),
     lookbehind_distances=[dt.timedelta(days=1)],
     aggregators=[MaxAggregator(), MinAggregator()],
@@ -68,7 +69,7 @@ predictor_spec = PredictorSpec(
 
 outcome_spec = OutcomeSpec(
     value_frame=ValueFrame(
-        init_df=outcome_df.lazy(), entity_id_col_name="id", value_timestamp_col_name="date"
+        init_df=outcome_df, entity_id_col_name="id", value_timestamp_col_name="date"
     ),
     lookahead_distances=[dt.timedelta(days=1)],
     aggregators=[MaxAggregator(), MinAggregator()],
@@ -81,29 +82,29 @@ from timeseriesflattener import Flattener
 
 result = Flattener(
     predictiontime_frame=PredictionTimeFrame(
-        init_df=prediction_times_df.lazy(), entity_id_col_name="id", timestamp_col_name="date"
+        init_df=prediction_times_df, entity_id_col_name="id", timestamp_col_name="date"
     )
 ).aggregate_timeseries(specs=[predictor_spec, outcome_spec])
-result.collect()
+result.df
 
 ```
+
 Output:
 
-|      |   id | date                | prediction_time_uuid  | pred_test_feature_within_30_days_mean_fallback_nan | outc_test_outcome_within_31_days_maximum_fallback_0_dichotomous |
-| ---: | ---: | :------------------ | :-------------------- | -------------------------------------------------: | --------------------------------------------------------------: |
-|    0 |    1 | 2020-01-01 00:00:00 | 1-2020-01-01-00-00-00 |                                                2.5 |                                                               0 |
-|    1 |    1 | 2020-02-01 00:00:00 | 1-2020-02-01-00-00-00 |                                                  1 |                                                               1 |
-|    2 |    2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00 |                                                  4 |                                                               0 |
-
+|     |  id | date                | prediction_time_uuid  | pred_test_feature_within_30_days_mean_fallback_nan | outc_test_outcome_within_31_days_maximum_fallback_0_dichotomous |
+| --: | --: | :------------------ | :-------------------- | -------------------------------------------------: | --------------------------------------------------------------: |
+|   0 |   1 | 2020-01-01 00:00:00 | 1-2020-01-01-00-00-00 |                                                2.5 |                                                               0 |
+|   1 |   1 | 2020-02-01 00:00:00 | 1-2020-02-01-00-00-00 |                                                  1 |                                                               1 |
+|   2 |   2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00 |                                                  4 |                                                               0 |
 
 ## 📖 Documentation
 
-| Documentation          |                                                                                        |
-| ---------------------- | -------------------------------------------------------------------------------------- |
-| 🎓 **[Tutorial]**       | Simple and advanced tutorials to get you started using `timeseriesflattener`           |
-| 🎛 **[General docs]** | The detailed reference for timeseriesflattener's API. |
-| 🙋 **[FAQ]**            | Frequently asked question                                                              |
-| 🗺️ **[Roadmap]**        | Kanban board for the roadmap for the project                                           |
+| Documentation        |                                                                              |
+| -------------------- | ---------------------------------------------------------------------------- |
+| 🎓 **[Tutorial]**    | Simple and advanced tutorials to get you started using `timeseriesflattener` |
+| 🎛 **[General docs]** | The detailed reference for timeseriesflattener's API.                        |
+| 🙋 **[FAQ]**         | Frequently asked question                                                    |
+| 🗺️ **[Roadmap]**     | Kanban board for the roadmap for the project                                 |
 
 [Tutorial]: https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html
 [General docs]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
@@ -112,16 +113,16 @@ Output:
 
 ## 💬 Where to ask questions
 
-| Type                           |                        |
-| ------------------------------ | ---------------------- |
+| Type                            |                        |
+| ------------------------------- | ---------------------- |
 | 🚨 **Bug Reports**              | [GitHub Issue Tracker] |
 | 🎁 **Feature Requests & Ideas** | [GitHub Issue Tracker] |
 | 👩‍💻 **Usage Questions**          | [GitHub Discussions]   |
-| 🗯 **General Discussion**       | [GitHub Discussions]   |
+| 🗯 **General Discussion**        | [GitHub Discussions]   |
 
 [github issue tracker]: https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/issues
 [github discussions]: https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/discussions
 
-
 ## 🎓 Projects
+
 PSYCOP projects use `timeseriesflattener`, see more at the [monorepo](https://github.com/Aarhus-Psychiatry-Research/psycop-common/tree/main/psycop/projects).

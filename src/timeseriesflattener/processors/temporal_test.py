@@ -22,7 +22,7 @@ from ..main_test import assert_frame_equal
 def test_aggregate_over_fallback():
     masked_frame = TimeMaskedFrame(
         validate_cols_exist=False,
-        init_df=pl.LazyFrame(
+        init_df=pl.DataFrame(
             {
                 "prediction_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
                 "value": [None, None],
@@ -41,13 +41,13 @@ def test_aggregate_over_fallback():
 1-2021-01-03,0"""
     )
 
-    assert_frame_equal(aggregated_values.collect(), expected)
+    assert_frame_equal(aggregated_values, expected)
 
 
 def test_aggregate_with_null():
     masked_frame = TimeMaskedFrame(
         validate_cols_exist=False,
-        init_df=pl.LazyFrame(
+        init_df=pl.DataFrame(
             {
                 "prediction_time_uuid": ["1-2021-01-03", "1-2021-01-03"],
                 "value": [1, None],
@@ -66,7 +66,7 @@ def test_aggregate_with_null():
 1-2021-01-03,1"""
     )
 
-    assert_frame_equal(aggregated_values.collect(), expected)
+    assert_frame_equal(aggregated_values, expected)
 
 
 def test_aggregate_within_slice():
@@ -78,7 +78,7 @@ def test_aggregate_within_slice():
 1-2021-01-03,2
 2-2021-01-03,2
 2-2021-01-03,4"""
-        ).lazy(),
+        ),
         value_col_names=["value"],
     )
 
@@ -92,7 +92,7 @@ def test_aggregate_within_slice():
 2-2021-01-03,3"""
     )
 
-    assert_frame_equal(aggregated_values.collect(), expected)
+    assert_frame_equal(aggregated_values, expected)
 
 
 def test_get_timedelta_frame():
@@ -111,8 +111,8 @@ def test_get_timedelta_frame():
     expected_timedeltas = [dt.timedelta(days=-2), dt.timedelta(days=-1), dt.timedelta(days=0)]
 
     result = process_spec._get_timedelta_frame(
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
-        value_frame=ValueFrame(init_df=value_frame.lazy()),
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
+        value_frame=ValueFrame(init_df=value_frame),
     )
 
     assert result.get_timedeltas() == expected_timedeltas
@@ -135,9 +135,9 @@ def test_get_timedelta_frame_same_timestamp_col_names():
 
     result = process_spec._get_timedelta_frame(
         predictiontime_frame=PredictionTimeFrame(
-            init_df=pred_frame.lazy(), timestamp_col_name="timestamp"
+            init_df=pred_frame, timestamp_col_name="timestamp"
         ),
-        value_frame=ValueFrame(init_df=value_frame.lazy()),
+        value_frame=ValueFrame(init_df=value_frame),
     )
 
     assert result.get_timedeltas() == expected_timedeltas
@@ -145,7 +145,7 @@ def test_get_timedelta_frame_same_timestamp_col_names():
 
 def test_slice_without_any_within_window():
     timedelta_frame = TimeDeltaFrame(
-        df=pl.LazyFrame(
+        df=pl.DataFrame(
             {
                 "prediction_time_uuid": [1, 1, 2, 2],
                 "time_from_prediction_to_value": [
@@ -167,13 +167,13 @@ def test_slice_without_any_within_window():
         lookperiod=LookPeriod(first=dt.timedelta(days=-2), last=dt.timedelta(days=0)),
         column_prefix="pred",
         value_col_names=["is_null"],
-    ).collect()
+    )
 
     from polars.testing import assert_series_equal
 
     assert_series_equal(
-        result.get_column("pred_is_null_within_0_to_2_days"),
-        timedelta_frame.df.collect().get_column("is_null"),
+        result.df.get_column("pred_is_null_within_0_to_2_days"),
+        timedelta_frame.df.get_column("is_null"),
         check_names=False,
         check_dtypes=False,
     )
@@ -188,7 +188,7 @@ def test_multiple_aggregators():
 1-2021-01-03,2
 2-2021-01-03,2
 2-2021-01-03,4"""
-        ).lazy(),
+        ),
         value_col_names=["value"],
     )
 
@@ -202,7 +202,7 @@ def test_multiple_aggregators():
 2-2021-01-03,3,4"""
     )
 
-    assert_frame_equal(aggregated_values.collect(), expected)
+    assert_frame_equal(aggregated_values, expected)
 
 
 def test_masking_multiple_values_multiple_aggregators():
@@ -214,7 +214,7 @@ def test_masking_multiple_values_multiple_aggregators():
 1-2021-01-03,2,np.nan
 2-2021-01-03,2,np.nan
 2-2021-01-03,4,np.nan"""
-        ).lazy(),
+        ),
         value_col_names=["value_1", "value_2"],
     )
 
@@ -228,7 +228,7 @@ def test_masking_multiple_values_multiple_aggregators():
 2-2021-01-03,3,0,4,0"""
     )
 
-    assert_frame_equal(aggregated_values.collect(), expected)
+    assert_frame_equal(aggregated_values, expected)
 
 
 def test_process_time_from_event_spec():
@@ -261,7 +261,7 @@ def test_process_time_from_event_spec():
        """
     )
 
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.df, expected)
 
 
 def test_process_temporal_spec_multiple_values():
@@ -276,19 +276,19 @@ def test_process_temporal_spec_multiple_values():
 
     result = process_spec.process_temporal_spec(
         spec=PredictorSpec(
-            value_frame=ValueFrame(init_df=value_frame.lazy()),
+            value_frame=ValueFrame(init_df=value_frame),
             lookbehind_distances=[dt.timedelta(days=1)],
             aggregators=[MeanAggregator()],
             fallback=0,
         ),
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
     )
 
     expected = str_to_pl_df(
         """prediction_time_uuid,pred_value_1_within_0_to_1_days_mean_fallback_0,pred_value_2_within_0_to_1_days_mean_fallback_0
 1-2021-01-01 00:00:00.000000,1,2"""
     )
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.df, expected)
 
 
 def test_sliding_window():
@@ -317,7 +317,7 @@ def test_sliding_window():
 
     result = process_spec.process_temporal_spec(
         spec=PredictorSpec(
-            value_frame=ValueFrame(init_df=value_frame.lazy()),
+            value_frame=ValueFrame(init_df=value_frame),
             lookbehind_distances=[
                 dt.timedelta(days=10),
                 dt.timedelta(days=365),
@@ -325,7 +325,7 @@ def test_sliding_window():
             aggregators=[MeanAggregator()],
             fallback=0,
         ),
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame),
         step_size=dt.timedelta(days=365),
     )
 
@@ -339,4 +339,4 @@ def test_sliding_window():
 1-2022-01-01 00:00:00.000000,0.0,11.5"""
     )
 
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.df, expected)

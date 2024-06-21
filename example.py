@@ -32,7 +32,7 @@ from timeseriesflattener import (
 
 predictor_spec = PredictorSpec(
     value_frame=ValueFrame(
-        init_df=predictor_df.lazy(), entity_id_col_name="id", value_timestamp_col_name="date"
+        init_df=predictor_df, entity_id_col_name="id", value_timestamp_col_name="date"
     ),
     lookbehind_distances=[dt.timedelta(days=1)],
     aggregators=[MaxAggregator(), MinAggregator()],
@@ -42,7 +42,7 @@ predictor_spec = PredictorSpec(
 
 outcome_spec = OutcomeSpec(
     value_frame=ValueFrame(
-        init_df=outcome_df.lazy(), entity_id_col_name="id", value_timestamp_col_name="date"
+        init_df=outcome_df, entity_id_col_name="id", value_timestamp_col_name="date"
     ),
     lookahead_distances=[dt.timedelta(days=1)],
     aggregators=[MaxAggregator(), MinAggregator()],
@@ -55,7 +55,7 @@ from timeseriesflattener import Flattener
 
 result = Flattener(
     predictiontime_frame=PredictionTimeFrame(
-        init_df=prediction_times_df.lazy(), entity_id_col_name="id", timestamp_col_name="date"
+        init_df=prediction_times_df, entity_id_col_name="id", timestamp_col_name="date"
     )
 ).aggregate_timeseries(specs=[predictor_spec, outcome_spec])
-result.collect()
+result  # type: ignore # noqa: B018

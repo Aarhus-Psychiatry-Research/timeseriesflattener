@@ -24,14 +24,14 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 FakePredictiontimeFrame = PredictionTimeFrame(
-    init_df=pl.LazyFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})
+    init_df=pl.DataFrame({"entity_id": [1], "pred_timestamp": ["2021-01-03"]})
 )
 FakeValueFrame = ValueFrame(
-    init_df=pl.LazyFrame({"entity_id": [1], "value": [1], "timestamp": ["2021-01-01"]})
+    init_df=pl.DataFrame({"entity_id": [1], "value": [1], "timestamp": ["2021-01-01"]})
 )
 FakePredictorSpec = PredictorSpec(
     value_frame=ValueFrame(
-        init_df=pl.LazyFrame(
+        init_df=pl.DataFrame(
             {"entity_id": [1], "FakeValueColName": [1], "timestamp": ["2021-01-01"]}
         )
     ),
@@ -62,8 +62,8 @@ class FlattenerExample:
 @pytest.mark.parametrize(
     ("example"),
     [
-        FlattenerExample(should="work with lazy flattening", lazy=True),
-        FlattenerExample(should="work with eager flattening", lazy=False),
+        FlattenerExample(should="work with lazy flattening"),
+        FlattenerExample(should="work with eager flattening"),
         FlattenerExample(should="work with multiprocessing", n_workers=2),
     ],
     ids=lambda example: example.should,
@@ -82,13 +82,11 @@ def main_tests(example: FlattenerExample):
     )
 
     result = Flattener(
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy()),
-        compute_lazily=example.lazy,
-        n_workers=example.n_workers,
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame), n_workers=example.n_workers
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.lazy()),
+                value_frame=ValueFrame(init_df=value_frame),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
@@ -101,7 +99,7 @@ def main_tests(example: FlattenerExample):
 1,2021-01-03 00:00:00.000000,1-2021-01-03 00:00:00.000000,3.0"""
     )
 
-    assert_frame_equal(result.collect(), expected)
+    assert_frame_equal(result.df, expected)
 
 
 def test_keep_prediction_times_without_predictors():
@@ -116,11 +114,11 @@ def test_keep_prediction_times_without_predictors():
     )
 
     result = Flattener(
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame)
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.lazy()),
+                value_frame=ValueFrame(init_df=value_frame),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator(), EarliestAggregator(timestamp_col_name="timestamp")],
                 fallback=123,
@@ -136,7 +134,7 @@ def test_keep_prediction_times_without_predictors():
         }
     )
 
-    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def main_tests_multiple_features():
@@ -153,17 +151,17 @@ def main_tests_multiple_features():
     )
 
     result = Flattener(
-        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame.lazy())
+        predictiontime_frame=PredictionTimeFrame(init_df=pred_frame)
     ).aggregate_timeseries(
         specs=[
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.rename({"value": "value_1"}).lazy()),
+                value_frame=ValueFrame(init_df=value_frame.rename({"value": "value_1"})),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
             ),
             PredictorSpec(
-                value_frame=ValueFrame(init_df=value_frame.rename({"value": "value_2"}).lazy()),
+                value_frame=ValueFrame(init_df=value_frame.rename({"value": "value_2"})),
                 lookbehind_distances=[dt.timedelta(days=1)],
                 aggregators=[MeanAggregator()],
                 fallback=np.nan,
@@ -176,7 +174,7 @@ def main_tests_multiple_features():
 1-2021-01-03 00:00:00.000000,3.0,3.0"""
     )
 
-    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_error_if_conflicting_value_col_names():
@@ -192,7 +190,7 @@ def test_error_if_missing_entity_id_column():
     ):
         Flattener(
             predictiontime_frame=PredictionTimeFrame(
-                init_df=pl.LazyFrame(
+                init_df=pl.DataFrame(
                     {
                         "no_entity_id": [1, 2, 3],
                         "pred_timestamp": ["2013-01-01", "2013-01-01", "2013-01-01"],
@@ -205,7 +203,7 @@ def test_error_if_missing_entity_id_column():
 
 def test_error_if_missing_column_in_valueframe():
     with pytest.raises(SpecColumnError, match="Missing columns: *"):
-        ValueFrame(init_df=pl.LazyFrame({"value": [1], "timestamp": ["2021-01-01"]}))
+        ValueFrame(init_df=pl.DataFrame({"value": [1], "timestamp": ["2021-01-01"]}))
 
 
 def test_predictor_with_interval_lookperiod():
@@ -232,7 +230,7 @@ def test_predictor_with_interval_lookperiod():
         """prediction_time_uuid,pred_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_outcome_with_interval_lookperiod():
@@ -259,7 +257,7 @@ def test_outcome_with_interval_lookperiod():
         """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_add_static_spec():
@@ -286,7 +284,7 @@ def test_add_static_spec():
         """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result.collect(), expected, ignore_colums=["entity_id", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["entity_id", "pred_timestamp"])
 
 
 def test_add_features_with_non_default_entity_id_col_name():
@@ -317,7 +315,7 @@ def test_add_features_with_non_default_entity_id_col_name():
         """prediction_time_uuid,outc_value_within_5_to_30_days_mean_fallback_nan
 1-2022-01-01 00:00:00.000000,1"""
     )
-    assert_frame_equal(result.collect(), expected, ignore_colums=["dw_ek_borger", "pred_timestamp"])
+    assert_frame_equal(result.df, expected, ignore_colums=["dw_ek_borger", "pred_timestamp"])
 
 
 @pytest.mark.parametrize("step_size", [None, dt.timedelta(days=30)])
@@ -360,7 +358,7 @@ def test_multiple_features_with_unordered_prediction_times(step_size):
 """
     ).sort("prediction_time_uuid")
     assert_frame_equal(
-        result.df.collect().sort("prediction_time_uuid"),
+        result.df.sort("prediction_time_uuid"),
         expected,
         ignore_colums=["entity_id", "pred_timestamp"],
     )

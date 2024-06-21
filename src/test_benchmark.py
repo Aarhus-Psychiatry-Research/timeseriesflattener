@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 def _generate_valueframe(n_obseravations: int, feature_name: str) -> ValueFrame:
     return ValueFrame(
-        init_df=pl.LazyFrame(
+        init_df=pl.DataFrame(
             {
                 "entity_id": list(range(n_obseravations)),
                 feature_name: [random.random() for _ in range(n_obseravations)],
@@ -53,7 +53,7 @@ def _generate_benchmark_dataset(
     lookbehinds: Sequence[dt.timedelta | tuple[dt.timedelta, dt.timedelta]],
 ) -> BenchmarkDataset:
     pred_time_df = PredictionTimeFrame(
-        init_df=pl.LazyFrame(
+        init_df=pl.DataFrame(
             {
                 "entity_id": list(range(n_pred_times)),
                 "pred_timestamp": [
@@ -141,7 +141,7 @@ def test_bench(
         lookbehinds=[dt.timedelta(days=i + 1) for i in range(example.n_lookbehinds)],
     )
 
-    flattener = Flattener(predictiontime_frame=dataset.pred_time_frame, compute_lazily=False)
+    flattener = Flattener(predictiontime_frame=dataset.pred_time_frame)
 
     try:
 

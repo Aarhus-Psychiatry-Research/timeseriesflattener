@@ -34,7 +34,7 @@ class SpecError(Exception):
     description: str
 
 
-def _get_spec_conflicts(specs: Sequence[ValueSpecification]) -> Iter[SpecError]:
+def _get_spec_conflicts(specs: Sequence[ValueSpecification]) -> list[SpecError]:
     conflicting_value_col_names = (
         Iter(specs)
         .map(lambda s: s.value_frame.value_col_names)
@@ -48,7 +48,7 @@ def _get_spec_conflicts(specs: Sequence[ValueSpecification]) -> Iter[SpecError]:
         )
     )
 
-    return conflicting_value_col_names
+    return conflicting_value_col_names.to_list()
 
 
 @dataclass(frozen=True)
@@ -69,7 +69,7 @@ class SpecRequirementPair:
 
 def _specs_contain_required_columns(
     specs: Sequence[ValueSpecification], predictiontime_frame: PredictionTimeFrame
-) -> Iter[MissingColumnNameError]:
+) -> list[MissingColumnNameError]:
     missing_col_names = (
         Iter(specs)
         .map(
@@ -86,77 +86,38 @@ def _specs_contain_required_columns(
         )
     )
 
-    return missing_col_names
+    return missing_col_names.to_list()
 
 
 @dataclass
 class Flattener:
     predictiontime_frame: PredictionTimeFrame
-    compute_lazily: bool = False
     n_workers: int | None = None
     """Flatten multiple irregular time series to a static feature set.
     
     Args:
         predictiontime_frame: A frame that contains the prediction times.
-        compute_lazily: If True, the computation will be done lazily.
         n_workers: The number of workers to use for multiprocessing. 
             If None, multiprocessing will be handled entirely by polars, otherwise, 
-            specify the number of workers to use with joblib. """
+            multiple processes will be used with joblib. 
+            Multiprocessing adds some performance at the cost of memory pressure.
+            Note that we already attempted multi-threaded processing with Polars, but the query
+            optimiser took an infinite amount of time to optimise the query, 
+            so we removed it after commit 73772874802940b6b1e17c110b9c06aa4dd5f8fb.
+        """
 
-    def aggregate_timeseries(
+    def _process_specs(
         self, specs: Sequence[ValueSpecification], step_size: dt.timedelta | None = None
-    ) -> AggregatedFrame:
-        """Perform the aggregation/flattening.
-
-        Args:
-            specs: The specifications for the features to be created.
-            step_size: The step size for the aggregation.
-                If not None, will aggregate prediction times in chunks of step_size.
-                Reduce if you encounter memory issues."""
-        if self.compute_lazily:
-            print(
-                "We have encountered performance issues on Windows when using lazy evaluation. If you encounter performance issues, try setting lazy=False."
-            )
-
-        # Check for conflicts in the specs
-        conflicting_specs = _get_spec_conflicts(specs).to_list()
-        underspecified_specs = _specs_contain_required_columns(
-            specs=specs, predictiontime_frame=self.predictiontime_frame
-        ).to_list()
-        errors = Iter([conflicting_specs, underspecified_specs]).flatten()
-
-        if errors.count() > 0:
-            raise SpecError(
-                "Conflicting specs."
-                + "".join(errors.map(lambda error: f"  \n - {error.description}").to_list())  # type: ignore
-            )
-
-        if not self.compute_lazily:
-            self.predictiontime_frame.df = self.predictiontime_frame.collect()  # type: ignore
-            for spec in specs:
-                spec.value_frame.df = spec.value_frame.collect()  # type: ignore
-        else:
-            self.predictiontime_frame.df = self.predictiontime_frame.df.lazy()
-            for spec in specs:
-                spec.value_frame.df = spec.value_frame.df.lazy()
-
-        self.predictiontime_frame.df = self.predictiontime_frame.df.sort(
-            self.predictiontime_frame.timestamp_col_name
-        )  # type: ignore
-
+    ) -> Sequence[pl.DataFrame]:
         # Process and collect the specs. One-by-one, to get feedback on progress.
-        dfs: Sequence[pl.LazyFrame] = []
+        dfs: Sequence[pl.DataFrame] = []
         if self.n_workers is None:
             for spec in track(specs, description="Processing specs..."):
                 print(f"Processing spec: {spec.value_frame.value_col_names}")
                 processed_spec = process_spec(
                     predictiontime_frame=self.predictiontime_frame, spec=spec, step_size=step_size
                 )
-
-                if isinstance(processed_spec.df, pl.LazyFrame):
-                    dfs.append(processed_spec.collect().lazy())
-                else:
-                    dfs.append(processed_spec.df)
+                dfs.append(processed_spec.df)
         else:
             print(
                 "Processing specs with multiprocessing. Note that this multiplies memory pressure by the number of workers. If you run out of memory, try reducing the number of workers, or relying exclusively on Polars paralellisation or setting it to None."
@@ -170,14 +131,42 @@ class Flattener:
                 )
                 dfs = [value_frame.df for value_frame in value_frames]
 
+        return dfs
+
+    def aggregate_timeseries(
+        self, specs: Sequence[ValueSpecification], step_size: dt.timedelta | None = None
+    ) -> AggregatedFrame:
+        """Perform the aggregation/flattening.
+
+        Args:
+            specs: The specifications for the features to be created.
+            step_size: The chunk size for prediction time processing.
+                If None, will process all prediction times in one go.
+                If not None, will process prediction times in chunks of step_size.
+                Smaller chunk sizes will reduce memory pressure, but increase processing time.
+        """
+
+        # Check for errors in specs
+        errors = _get_spec_conflicts(specs) + _specs_contain_required_columns(
+            specs=specs, predictiontime_frame=self.predictiontime_frame
+        )
+
+        if len(errors) > 0:
+            raise SpecError(
+                "Conflicting specs."
+                + "".join(Iter(errors).map(lambda error: f"  \n - {error.description}").to_list())
+            )
+
+        dfs = self._process_specs(specs=specs, step_size=step_size)
+
         feature_dfs = horizontally_concatenate_dfs(
             dfs,
             prediction_time_uuid_col_name=self.predictiontime_frame.prediction_time_uuid_col_name,
         )
 
         return AggregatedFrame(
-            init_df=horizontally_concatenate_dfs(
-                [self.predictiontime_frame.df, feature_dfs],  # type: ignore
+            df=horizontally_concatenate_dfs(
+                [self.predictiontime_frame.df, feature_dfs],
                 prediction_time_uuid_col_name=self.predictiontime_frame.prediction_time_uuid_col_name,
             ),
             entity_id_col_name=self.predictiontime_frame.entity_id_col_name,

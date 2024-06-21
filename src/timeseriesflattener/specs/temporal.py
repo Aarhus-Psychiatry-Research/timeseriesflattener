@@ -46,5 +46,5 @@ class PredictorSpec:
             )
 
     @property
-    def df(self) -> pl.LazyFrame:
+    def df(self) -> pl.DataFrame:
         return self.value_frame.df

@@ -8,7 +8,7 @@ import pandas as pd
 import polars as pl
 
 from ..validators import validate_col_name_columns_exist
-from ..utils import anyframe_to_lazyframe
+from ..utils import anyframe_to_pl_frame
 
 
 @dataclass
@@ -21,18 +21,12 @@ class ValueFrame:
         Additional columns containing the values of the time series. The name of the columns will be used for feature naming.
     """
 
-    init_df: InitVar[pl.LazyFrame | pl.DataFrame | pd.DataFrame]
+    init_df: InitVar[pl.DataFrame | pd.DataFrame]
     entity_id_col_name: str = "entity_id"
     value_timestamp_col_name: str = "timestamp"
-    coerce_to_lazy: InitVar[bool] = True
 
-    def __post_init__(
-        self, init_df: pl.LazyFrame | pl.DataFrame | pd.DataFrame, coerce_to_lazy: bool
-    ):
-        if coerce_to_lazy:
-            self.df = anyframe_to_lazyframe(init_df)
-        else:
-            self.df: pl.LazyFrame = init_df  # type: ignore
+    def __post_init__(self, init_df: pl.DataFrame | pd.DataFrame):
+        self.df = anyframe_to_pl_frame(init_df)
 
         validate_col_name_columns_exist(obj=self)
         self.value_col_names = [
@@ -40,11 +34,6 @@ class ValueFrame:
             for col in self.df.columns
             if col not in [self.entity_id_col_name, self.value_timestamp_col_name]
         ]
-
-    def collect(self) -> pl.DataFrame:
-        if isinstance(self.df, pl.DataFrame):
-            return self.df
-        return self.df.collect()
 
 
 @dataclass(frozen=True)

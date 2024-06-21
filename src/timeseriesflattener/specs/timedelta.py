@@ -34,10 +34,7 @@ class TimeDeltaSpec:
     def __post_init__(self):
         validate_col_name_columns_exist(obj=self)
         max_values_per_id = (
-            self.init_frame.collect()
-            .get_column(self.init_frame.entity_id_col_name)
-            .unique_counts()
-            .max()
+            self.init_frame.df.get_column(self.init_frame.entity_id_col_name).unique_counts().max()
         )
         if max_values_per_id > 1:  # type: ignore
             raise ValueError(
@@ -53,5 +50,5 @@ class TimeDeltaSpec:
         self.value_frame.value_col_names = [self.output_name]
 
     @property
-    def df(self) -> pl.LazyFrame:
+    def df(self) -> pl.DataFrame:
         return self.value_frame.df
