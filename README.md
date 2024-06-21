@@ -85,7 +85,7 @@ result = Flattener(
         init_df=prediction_times_df, entity_id_col_name="id", timestamp_col_name="date"
     )
 ).aggregate_timeseries(specs=[predictor_spec, outcome_spec])
-result
+result.df
 
 ```
 
