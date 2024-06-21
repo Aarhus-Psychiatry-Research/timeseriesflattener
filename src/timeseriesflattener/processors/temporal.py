@@ -7,18 +7,18 @@ import polars as pl
 import polars.selectors as cs
 from iterpy.iter import Iter
 
-from .._intermediary_frames import ProcessedFrame, TimeDeltaFrame, TimeMaskedFrame
-from ..feature_specs.meta import ValueFrame
-from ..feature_specs.outcome import BooleanOutcomeSpec, OutcomeSpec
-from ..feature_specs.prediction_times import PredictionTimeFrame
-from ..feature_specs.predictor import PredictorSpec
-from ..frame_utilities._horisontally_concat import horizontally_concatenate_dfs
+from ..intermediary import ProcessedFrame, TimeDeltaFrame, TimeMaskedFrame
+from ..specs.value import ValueFrame
+from ..specs.outcome import BooleanOutcomeSpec, OutcomeSpec
+from ..specs.prediction_times import PredictionTimeFrame
+from ..specs.temporal import PredictorSpec
+from ..utils import horizontally_concatenate_dfs
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from ..feature_specs.meta import LookPeriod
+    from ..specs.value import LookPeriod
 
 
 def _get_timedelta_frame(

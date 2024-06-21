@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-from ..feature_specs.prediction_times import PredictionTimeFrame
-from ..feature_specs.static import StaticFrame, StaticSpec
-from ..process_spec import process_spec
-from ..test_flattener import assert_frame_equal
+from ..specs.prediction_times import PredictionTimeFrame
+from ..specs.static import StaticFrame, StaticSpec
+from ..processors import process_spec
+from ..main_test import assert_frame_equal
 
 
 def test_process_static_spec():

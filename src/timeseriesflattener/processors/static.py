@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .._intermediary_frames import ProcessedFrame
+from ..intermediary import ProcessedFrame
 
 if TYPE_CHECKING:
-    from ..feature_specs.prediction_times import PredictionTimeFrame
-    from ..feature_specs.static import StaticSpec
+    from ..specs.prediction_times import PredictionTimeFrame
+    from ..specs.static import StaticSpec
 
 
 def process_static_spec(

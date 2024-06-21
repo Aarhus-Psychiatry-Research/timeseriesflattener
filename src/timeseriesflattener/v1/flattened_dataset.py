@@ -2,6 +2,7 @@
 
 Takes a time-series and flattens it into a set of prediction times with describing values.
 """
+from __future__ import annotations
 import datetime as dt
 import logging
 import random
@@ -131,7 +132,7 @@ class TimeseriesFlattener:
 
         self.timestamp_col_name = timestamp_col_name
         self.entity_id_col_name = entity_id_col_name
-        self.predictor_col_name_prefix = predictor_col_name_prefix
+        self.temporal_col_name_prefix = predictor_col_name_prefix
         self.outcome_col_name_prefix = outcome_col_name_prefix
         self.prediction_time_uuid_col_name = "prediction_time_uuid"
         self.cache = cache
@@ -724,7 +725,7 @@ class TimeseriesFlattener:
                     f"{spec.feature_base_name}: Minimum timestamp is {min_timestamp} - perhaps ints were coerced to timestamps?"
                 )
 
-    def add_spec(self, spec: Sequence[Union[AnySpec, AnySpec]]):
+    def add_spec(self, spec: Sequence[AnySpec] | AnySpec):
         """Add a specification to the flattened dataset.
 
         This adds it to a queue of unprocessed specs, which are not processed

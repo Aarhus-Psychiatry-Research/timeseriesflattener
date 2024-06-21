@@ -359,14 +359,16 @@ def test_incident_addition_with_multiple_timestamps_raises_meaningful_error():
     )
 
     flattened_dataset.add_spec(
-        spec=OutcomeSpec(
-            timeseries_df=event_times_df,
-            lookahead_days=2,
-            incident=True,
-            fallback=np.NaN,
-            feature_base_name="value",
-            aggregation_fn=maximum,
-        )
+        spec=[
+            OutcomeSpec(
+                timeseries_df=event_times_df,
+                lookahead_days=2,
+                incident=True,
+                fallback=np.NaN,
+                feature_base_name="value",
+                aggregation_fn=maximum,
+            )
+        ]
     )
 
     with pytest.raises(ValueError, match="Since incident = True"):
@@ -406,14 +408,16 @@ def test_incident_outcome_removing_prediction_times():
     )
 
     flattened_dataset.add_spec(
-        spec=OutcomeSpec(
-            timeseries_df=event_times_df,
-            lookahead_days=2,
-            incident=True,
-            fallback=np.NaN,
-            feature_base_name="value",
-            aggregation_fn=maximum,
-        )
+        spec=[
+            OutcomeSpec(
+                timeseries_df=event_times_df,
+                lookahead_days=2,
+                incident=True,
+                fallback=np.NaN,
+                feature_base_name="value",
+                aggregation_fn=maximum,
+            )
+        ]
     )
 
     outcome_df = flattened_dataset.get_df().reset_index(drop=True)
@@ -596,14 +600,16 @@ def test_add_temporal_incident_binary_outcome():
     )
 
     flattened_dataset.add_spec(
-        spec=OutcomeSpec(
-            timeseries_df=event_times_df,
-            lookahead_days=2,
-            incident=True,
-            fallback=np.NaN,
-            feature_base_name="value",
-            aggregation_fn=maximum,
-        )
+        spec=[
+            OutcomeSpec(
+                timeseries_df=event_times_df,
+                lookahead_days=2,
+                incident=True,
+                fallback=np.NaN,
+                feature_base_name="value",
+                aggregation_fn=maximum,
+            )
+        ]
     )
 
     outcome_df = flattened_dataset.get_df()
@@ -654,14 +660,16 @@ def test_add_outcome_timestamps():
     )
 
     flattened_dataset.add_spec(
-        spec=OutcomeSpec(
-            timeseries_df=event_times_df,
-            lookahead_days=10,
-            incident=False,
-            fallback=np.NaN,
-            feature_base_name="timestamp",
-            aggregation_fn=latest,
-        )
+        spec=[
+            OutcomeSpec(
+                timeseries_df=event_times_df,
+                lookahead_days=10,
+                incident=False,
+                fallback=np.NaN,
+                feature_base_name="timestamp",
+                aggregation_fn=latest,
+            )
+        ]
     )
 
     outcome_df = flattened_dataset.get_df()

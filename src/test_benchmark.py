@@ -10,11 +10,11 @@ import numpy as np
 import polars as pl
 import pytest
 from iterpy.iter import Iter
+from timeseriesflattener import Flattener
 from timeseriesflattener.aggregators import Aggregator, MaxAggregator, MeanAggregator
-from timeseriesflattener.feature_specs.meta import ValueFrame
-from timeseriesflattener.feature_specs.prediction_times import PredictionTimeFrame
-from timeseriesflattener.feature_specs.predictor import PredictorSpec
-from timeseriesflattener.flattener import Flattener
+from timeseriesflattener.specs.prediction_times import PredictionTimeFrame
+from timeseriesflattener.specs.temporal import PredictorSpec
+from timeseriesflattener.specs.value import ValueFrame
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

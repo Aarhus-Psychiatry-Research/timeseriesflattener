@@ -4,11 +4,11 @@ from typing import TYPE_CHECKING
 
 import polars as pl
 
-from .._intermediary_frames import ProcessedFrame
+from ..intermediary import ProcessedFrame
 
 if TYPE_CHECKING:
-    from ..feature_specs.prediction_times import PredictionTimeFrame
-    from ..feature_specs.timedelta import TimeDeltaSpec
+    from ..specs.prediction_times import PredictionTimeFrame
+    from ..specs.timedelta import TimeDeltaSpec
 
 
 _days_to_format_division = {

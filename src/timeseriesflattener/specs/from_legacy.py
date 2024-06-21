@@ -20,7 +20,7 @@ from timeseriesflattener.v1.aggregation_fns import (
 )
 from timeseriesflattener.v1.feature_specs.group_specs import NamedDataframe, V1PGSProtocol
 
-import timeseriesflattener.feature_specs.predictor as v2_specs
+import timeseriesflattener.specs.temporal as v2_specs
 
 from ..aggregators import (
     Aggregator,
@@ -34,7 +34,7 @@ from ..aggregators import (
     SumAggregator,
     VarianceAggregator,
 )
-from .meta import ValueFrame
+from .value import ValueFrame
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence

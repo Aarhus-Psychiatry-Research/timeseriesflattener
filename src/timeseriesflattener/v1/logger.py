@@ -1,4 +1,5 @@
 """Example of how to setup a logger with sensible defaults."""
+from __future__ import annotations
 
 import logging
 from pathlib import Path

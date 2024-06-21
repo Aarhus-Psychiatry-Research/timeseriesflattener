@@ -1,4 +1,5 @@
 """Utilities for testing."""
+
 from __future__ import annotations
 
 from io import StringIO
@@ -116,20 +117,20 @@ def assert_flattened_data_as_expected(
         drop_pred_times_with_insufficient_look_distance=drop_pred_times_with_insufficient_look_distance,
     )
 
-    flattened_ds.add_spec(spec=output_spec)
+    flattened_ds.add_spec(spec=[output_spec])
 
     if expected_df:
         for col in expected_df.columns:
             assert_series_equal(
-                left=flattened_ds.get_df()[col], right=expected_df[col], check_dtype=False
-            )
+                left=flattened_ds.get_df()[col], right=expected_df[col], check_dtypes=False
+            )  # type: ignore
     elif expected_values:
         output_df = flattened_ds.get_df()
         value_cols = _get_value_cols_based_on_spec(output_df, output_spec)
         output = pd.Series(output_df[value_cols].values)
         expected = pd.Series(expected_values)
 
-        assert_series_equal(output, expected, check_dtype=False)
+        assert_series_equal(output, expected, check_dtypes=False)  # type: ignore
     else:
         raise ValueError("Must provide an expected set of data")
 

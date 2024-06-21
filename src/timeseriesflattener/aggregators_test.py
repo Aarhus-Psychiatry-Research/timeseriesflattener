@@ -8,7 +8,7 @@ import polars as pl
 import pytest
 from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 
-from ._intermediary_frames import TimeMaskedFrame
+from .intermediary import TimeMaskedFrame
 from .aggregators import (
     CountAggregator,
     EarliestAggregator,
@@ -20,10 +20,10 @@ from .aggregators import (
     SlopeAggregator,
     SumAggregator,
     VarianceAggregator,
-    _validate_compatible_fallback_type_for_aggregator,
+    validate_compatible_fallback_type_for_aggregator,
 )
-from .spec_processors.temporal import _aggregate_masked_frame
-from .test_flattener import assert_frame_equal
+from .main_test import assert_frame_equal
+from .processors.temporal import _aggregate_masked_frame
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -180,13 +180,13 @@ def test_valid_fallback_for_aggregator(
 ):
     if valid_fallback:
         assert (
-            _validate_compatible_fallback_type_for_aggregator(
+            validate_compatible_fallback_type_for_aggregator(
                 aggregator=aggregator, fallback=fallback
             )
             is None
         )
     else:
         with pytest.raises(ValueError):
-            _validate_compatible_fallback_type_for_aggregator(
+            validate_compatible_fallback_type_for_aggregator(
                 aggregator=aggregator, fallback=fallback
             )
