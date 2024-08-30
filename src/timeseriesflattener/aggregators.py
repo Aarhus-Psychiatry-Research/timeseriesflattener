@@ -192,7 +192,7 @@ class SlopeAggregator(Aggregator):
 
     def __call__(self, column_name: str) -> pl.Expr:
         # Convert to days for the slope. Arbitrarily chosen to be the number of days since 1970-01-01.
-        x_col = (pl.col(self.timestamp_col_name) - dt.datetime(1970, 1, 1)).dt.days()
+        x_col = (pl.col(self.timestamp_col_name) - dt.datetime(1970, 1, 1)).dt.total_days()
         y_col = pl.col(column_name)
 
         numerator = pl.corr(x_col, y_col, propagate_nans=True) * y_col.std()
