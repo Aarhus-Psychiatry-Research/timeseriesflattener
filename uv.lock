@@ -3232,7 +3232,7 @@ requires-dist = [
     { name = "frozendict", specifier = ">=2.3.4" },
     { name = "furo", marker = "extra == 'docs'", specifier = "==2023.3.27" },
     { name = "invoke", marker = "extra == 'dev'", specifier = "==2.1.1" },
-    { name = "ipykernel", marker = "extra == 'docs'" },
+    { name = "ipykernel", marker = "extra == 'docs'", specifier = ">=6.29.5" },
     { name = "ipykernel", extras = ["docs"], specifier = ">=6.29.5" },
     { name = "iterpy", specifier = "==1.6.0" },
     { name = "jupyter", marker = "extra == 'tutorials'", specifier = ">=1.0.0,<1.1.0" },
