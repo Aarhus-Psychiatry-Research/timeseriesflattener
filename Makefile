@@ -4,6 +4,9 @@ test-tutorials:
 types:
 	uv run pyright src
 
+install:
+	uv sync --all-extras
+
 lint:
 	uv run pre-commit run --all-files
 

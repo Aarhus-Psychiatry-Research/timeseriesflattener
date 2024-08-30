@@ -18,7 +18,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create github hosts file
-        run: | # If this file is not created, the dev container fails because of non-existent mount
+        run:
+          | # If this file is not created, the dev container fails because of non-existent mount
           mkdir -p ~/.config/gh
           touch ~/.config/gh/hosts.yml
 
@@ -26,4 +27,4 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           runCmd: |
-            inv types
+            make types
