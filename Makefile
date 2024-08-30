@@ -1,5 +1,5 @@
 test-tutorials:
-	find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs jupyter nbconvert --to notebook --execute
+	find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs uv run jupyter nbconvert --to notebook --execute
 
 types:
 	uv run pyright src
