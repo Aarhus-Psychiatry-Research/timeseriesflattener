@@ -58,6 +58,7 @@ class PredictorSpec:
     @staticmethod
     def from_primitives(
         df: pl.DataFrame,
+        entity_id_col_name: str,
         lookbehind_days: Sequence[float | tuple[float, float]],
         aggregators: Sequence[AggregatorName],
         value_timestamp_col_name: str = "timestamp",
@@ -70,7 +71,7 @@ class PredictorSpec:
         return PredictorSpec(
             value_frame=ValueFrame(
                 init_df=df,
-                entity_id_col_name=df.get_column(df.columns[0]).name,
+                entity_id_col_name=entity_id_col_name,
                 value_timestamp_col_name=value_timestamp_col_name,
             ),
             lookbehind_distances=lookbehind_distances,
