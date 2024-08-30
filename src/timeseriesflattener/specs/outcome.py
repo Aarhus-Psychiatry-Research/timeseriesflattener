@@ -15,11 +15,12 @@ from ..aggregators import (
     validate_compatible_fallback_type_for_aggregator,
 )
 
+from .timestamp import TimestampValueFrame
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from .timestamp import TimestampValueFrame
 
 
 @dataclass
