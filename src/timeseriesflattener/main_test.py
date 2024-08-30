@@ -45,8 +45,8 @@ def assert_frame_equal(
     result: pl.DataFrame, expected: pl.DataFrame, ignore_colums: Sequence[str] = ()
 ):
     polars_testing.assert_frame_equal(
-        result.drop(ignore_colums),
-        expected.drop(ignore_colums),
+        result.drop(ignore_colums, strict=False),
+        expected.drop(ignore_colums, strict=False),
         check_dtypes=False,
         check_column_order=False,
     )

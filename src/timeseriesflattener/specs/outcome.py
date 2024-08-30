@@ -4,6 +4,7 @@ import datetime as dt
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
+import pandas as pd
 import polars as pl
 from timeseriesflattener.specs import _lookdistance_to_timedelta
 
@@ -114,7 +115,7 @@ class BooleanOutcomeSpec:
 
     @staticmethod
     def from_primitives(
-        df: pl.DataFrame,
+        df: pl.DataFrame | pd.DataFrame,
         entity_id_col_name: str,
         lookahead_days: Sequence[float | tuple[float, float]],
         aggregators: Sequence[AggregatorName],
