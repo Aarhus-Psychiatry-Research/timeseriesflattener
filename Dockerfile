@@ -6,5 +6,5 @@ WORKDIR /app
 VOLUME psycop-common
 
 COPY . /app
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install .
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --all-extras
