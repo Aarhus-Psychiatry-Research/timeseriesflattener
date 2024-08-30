@@ -26,4 +26,4 @@ runs:
       uses: devcontainers/ci@v0.3
       with:
         runCmd: |
-          inv test --pytest-args "src/" --pytest-args --pytest-args "--cov=src" --pytest-args "--cov-report term-missing" --pytest-args="--color=yes" --pytest-args="-n auto"
+          inv test --pytest-args="-n auto"
