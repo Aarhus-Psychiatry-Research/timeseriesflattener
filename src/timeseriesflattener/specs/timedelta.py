@@ -52,3 +52,24 @@ class TimeDeltaSpec:
     @property
     def df(self) -> pl.DataFrame:
         return self.value_frame.df
+
+    @staticmethod
+    def from_primitives(
+        df: pl.DataFrame,
+        entity_id_col_name: str,
+        output_name: str,
+        value_timestamp_col_name: str = "timestamp",
+        column_prefix: str = "pred",
+        fallback: int | float | str | None = 0,
+    ) -> TimeDeltaSpec:
+        """Create a TimeDeltaSpec from primitives."""
+        return TimeDeltaSpec(
+            init_frame=TimestampValueFrame(
+                init_df=df,
+                value_timestamp_col_name=value_timestamp_col_name,
+                entity_id_col_name=entity_id_col_name,
+            ),
+            fallback=fallback,
+            output_name=output_name,
+            column_prefix=column_prefix,
+        )

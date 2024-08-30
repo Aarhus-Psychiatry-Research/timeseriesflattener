@@ -4,9 +4,15 @@ import datetime as dt
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
+from timeseriesflattener.specs.outcome import _lookdistance_to_timedelta
+
 from ..validators import validate_col_name_columns_exist
 from .value import ValueFrame, lookdistance_to_normalised_lookperiod
-from ..aggregators import validate_compatible_fallback_type_for_aggregator
+from ..aggregators import (
+    AggregatorName,
+    strings_to_aggregators,
+    validate_compatible_fallback_type_for_aggregator,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -48,3 +54,27 @@ class PredictorSpec:
     @property
     def df(self) -> pl.DataFrame:
         return self.value_frame.df
+
+    @staticmethod
+    def from_primitives(
+        df: pl.DataFrame,
+        lookbehind_days: Sequence[float | tuple[float, float]],
+        aggregators: Sequence[AggregatorName],
+        value_timestamp_col_name: str = "timestamp",
+        column_prefix: str = "pred",
+        fallback: int | float | str | None = 0,
+    ) -> PredictorSpec:
+        """Create a PredictorSpec from primitives."""
+        lookbehind_distances = [_lookdistance_to_timedelta(d) for d in lookbehind_days]
+
+        return PredictorSpec(
+            value_frame=ValueFrame(
+                init_df=df,
+                entity_id_col_name=df.get_column(df.columns[0]).name,
+                value_timestamp_col_name=value_timestamp_col_name,
+            ),
+            lookbehind_distances=lookbehind_distances,
+            aggregators=strings_to_aggregators(aggregators, value_timestamp_col_name),
+            fallback=fallback,
+            column_prefix=column_prefix,
+        )
