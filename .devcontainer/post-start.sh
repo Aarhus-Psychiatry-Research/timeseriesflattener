@@ -1,2 +1,2 @@
 #!/bin/bash
-uv sync --frozen --all-extras
+uv sync --all-extras

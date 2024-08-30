@@ -8,4 +8,4 @@ VOLUME psycop-common
 
 COPY . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --all-extras
+    uv sync --all-extras
