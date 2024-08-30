@@ -5,6 +5,7 @@ from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
 import polars as pl
+from timeseriesflattener.specs import _lookdistance_to_timedelta
 
 from ..validators import validate_col_name_columns_exist
 from .value import ValueFrame, lookdistance_to_normalised_lookperiod
@@ -19,14 +20,6 @@ if TYPE_CHECKING:
 
     from ..aggregators import Aggregator
     from .timestamp import TimestampValueFrame
-
-
-def _lookdistance_to_timedelta(
-    lookdistance: float | tuple[float, float],
-) -> tuple[dt.timedelta, dt.timedelta]:
-    if isinstance(lookdistance, tuple):
-        return (dt.timedelta(days=lookdistance[0]), dt.timedelta(days=lookdistance[1]))
-    return (dt.timedelta(days=0), dt.timedelta(days=lookdistance))
 
 
 @dataclass

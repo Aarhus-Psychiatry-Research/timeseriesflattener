@@ -4,7 +4,7 @@ import datetime as dt
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
-from timeseriesflattener.specs.outcome import _lookdistance_to_timedelta
+from timeseriesflattener.specs import _lookdistance_to_timedelta
 
 from ..validators import validate_col_name_columns_exist
 from .value import ValueFrame, lookdistance_to_normalised_lookperiod

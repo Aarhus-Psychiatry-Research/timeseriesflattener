@@ -6,7 +6,6 @@ from typing import Literal, Sequence
 
 import polars as pl
 from attr import dataclass
-from timeseriesflattener.specs import timestamp
 
 
 def validate_compatible_fallback_type_for_aggregator(
@@ -21,16 +20,16 @@ def validate_compatible_fallback_type_for_aggregator(
 
 
 AggregatorName = Literal[
-    "max",
-    "min",
-    "mean",
-    "sum",
-    "count",
-    "variance",
     "bool",
     "change_per_day",
-    "slope",
+    "count",
     "has_values",
+    "max",
+    "mean",
+    "min",
+    "slope",
+    "sum",
+    "variance",
 ]
 
 
@@ -45,16 +44,16 @@ def strings_to_aggregators(
 
 def string_to_aggregator(aggregator_name: AggregatorName, timestamp_col_name: str) -> Aggregator:
     str2aggr: dict[AggregatorName, Aggregator] = {
-        "max": MaxAggregator(),
-        "min": MinAggregator(),
-        "mean": MeanAggregator(),
-        "sum": SumAggregator(),
-        "count": CountAggregator(),
-        "variance": VarianceAggregator(),
         "bool": HasValuesAggregator(),
         "change_per_day": SlopeAggregator(timestamp_col_name=timestamp_col_name),
-        "slope": SlopeAggregator(timestamp_col_name=timestamp_col_name),
+        "count": CountAggregator(),
         "has_values": HasValuesAggregator(),
+        "max": MaxAggregator(),
+        "mean": MeanAggregator(),
+        "min": MinAggregator(),
+        "slope": SlopeAggregator(timestamp_col_name=timestamp_col_name),
+        "sum": SumAggregator(),
+        "variance": VarianceAggregator(),
     }
 
     return str2aggr[aggregator_name]
