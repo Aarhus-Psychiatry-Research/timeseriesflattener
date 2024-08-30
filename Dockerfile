@@ -1,4 +1,5 @@
 FROM python:3.9
+ENV UV_SYSTEM_PYTHON=true
 COPY --from=ghcr.io/astral-sh/uv:0.4.0 /uv /bin/uv
 
 # Set the working directory to /app
