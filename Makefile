@@ -1,12 +1,14 @@
-.DEFAULT_GOAL := help
-help: 
-	@echo "This project uses Invoke (pyinvoke.org) for task management."
-	@echo Install it via 
-	@echo 
-	@echo "     pip install invoke"
-	@echo
-	@echo and then run 
-	@echo 
-	@echo "     inv --list"
-	@echo 
-	@echo to get available tasks.
+test-tutorials:
+	find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs jupyter nbconvert --to notebook --execute
+
+types:
+	uv run pyright src
+
+lint:
+	uv run pre-commit run --all-files
+
+test:
+	uv run pytest src -n auto -rfE --failed-first --benchmark-disable
+
+qtest:
+	uv run pytest src -n auto -rfE --failed-first --benchmark-disable --testmon
