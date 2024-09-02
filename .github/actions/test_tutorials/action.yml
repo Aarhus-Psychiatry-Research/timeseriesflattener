@@ -21,7 +21,7 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        make install
+        make install-tutorials
 
     ### Run tests
     - name: Compile notebooks and check for errors
