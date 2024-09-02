@@ -4,15 +4,15 @@ import datetime as dt
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
-from timeseriesflattener.specs import _lookdistance_to_timedelta
+from timeseriesflattener.specs import _lookdistance_to_timedelta_days
 
-from ..validators import validate_col_name_columns_exist
-from .value import ValueFrame, lookdistance_to_normalised_lookperiod
 from ..aggregators import (
     AggregatorName,
     strings_to_aggregators,
     validate_compatible_fallback_type_for_aggregator,
 )
+from ..validators import validate_col_name_columns_exist
+from .value import ValueFrame, lookdistance_to_normalised_lookperiod
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -66,7 +66,7 @@ class PredictorSpec:
         fallback: int | float | str | None = 0,
     ) -> PredictorSpec:
         """Create a PredictorSpec from primitives."""
-        lookbehind_distances = [_lookdistance_to_timedelta(d) for d in lookbehind_days]
+        lookbehind_distances = [_lookdistance_to_timedelta_days(d) for d in lookbehind_days]
 
         return PredictorSpec(
             value_frame=ValueFrame(

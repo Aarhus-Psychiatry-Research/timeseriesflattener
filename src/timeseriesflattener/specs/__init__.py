@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 import datetime as dt
 
 
-def _lookdistance_to_timedelta(
+def _lookdistance_to_timedelta_days(
     lookdistance: float | tuple[float, float],
 ) -> tuple[dt.timedelta, dt.timedelta]:
     if isinstance(lookdistance, tuple):

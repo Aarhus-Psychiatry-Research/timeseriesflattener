@@ -6,17 +6,17 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 import polars as pl
-from timeseriesflattener.specs import _lookdistance_to_timedelta
 
-from ..validators import validate_col_name_columns_exist
-from .value import ValueFrame, lookdistance_to_normalised_lookperiod
+from timeseriesflattener.specs import _lookdistance_to_timedelta_days
+
 from ..aggregators import (
     AggregatorName,
     strings_to_aggregators,
     validate_compatible_fallback_type_for_aggregator,
 )
-
+from ..validators import validate_col_name_columns_exist
 from .timestamp import TimestampValueFrame
+from .value import ValueFrame, lookdistance_to_normalised_lookperiod
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -61,7 +61,7 @@ class OutcomeSpec:
         column_prefix: str = "outc",
     ) -> OutcomeSpec:
         """Create an OutcomeSpec from primitives."""
-        lookahead_distances = [_lookdistance_to_timedelta(d) for d in lookahead_days]
+        lookahead_distances = [_lookdistance_to_timedelta_days(d) for d in lookahead_days]
 
         return OutcomeSpec(
             value_frame=ValueFrame(
@@ -123,7 +123,7 @@ class BooleanOutcomeSpec:
         column_prefix: str = "outc",
     ) -> BooleanOutcomeSpec:
         """Create an OutcomeSpec from primitives."""
-        lookahead_distances = [_lookdistance_to_timedelta(d) for d in lookahead_days]
+        lookahead_distances = [_lookdistance_to_timedelta_days(d) for d in lookahead_days]
 
         return BooleanOutcomeSpec(
             init_frame=TimestampValueFrame(
