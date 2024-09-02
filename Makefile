@@ -14,7 +14,7 @@ install-docs:
 # Tests
 test-tutorials:
 	make install-tutorials
-	find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs uv run jupyter nbconvert --to notebook --execute
+	find docs/tutorials -name '*.ipynb' | grep -v 'nbconvert' | xargs -P 4 -I {} uv run jupyter nbconvert {} --to notebook --execute
 
 test:
 	make install-tests
