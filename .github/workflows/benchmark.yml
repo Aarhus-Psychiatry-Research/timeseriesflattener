@@ -26,11 +26,8 @@ jobs:
         shell: bash
         run: uv python install
 
-      - name: Install dependencies
-        run: make install
-
       - name: Run benchmarks
         uses: CodSpeedHQ/action@v2
         with:
           token: ${{ secrets.CODSPEED_TOKEN }}
-          run: uv run pytest src --codspeed
+          run: make benchmark

@@ -20,6 +20,10 @@ test:
 	make install-tests
 	uv run pytest src -n auto -rfE --failed-first --benchmark-disable
 
+benchmark:
+	make install
+	uv run pytest src --codspeed
+
 qtest:
 	uv run pytest src -n auto -rfE --failed-first --benchmark-disable --testmon
 
