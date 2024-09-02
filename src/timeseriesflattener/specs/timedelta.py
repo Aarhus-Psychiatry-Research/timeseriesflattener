@@ -20,8 +20,8 @@ class TimeDeltaSpec:
     output_name: str
     column_prefix: str = "pred"
     time_format: Literal["seconds", "minutes", "hours", "days", "years"] = "days"
-    """Specification for a time delta feature, i.e. the time between a prediction timestamp and a value timestamp.
-    Useful for e.g. calculating age or the time since a certain event.
+    """Specification for a time delta featre for an entity, i.e. the time between a prediction timestamp and a birthdate.
+    Useful for e.g. calculating age or the time since a certain event. Joins on the entity_id column.
 
     init_frame must contain columns:
         entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
