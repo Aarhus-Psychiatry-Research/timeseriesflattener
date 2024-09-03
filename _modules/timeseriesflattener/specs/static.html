@@ -264,7 +264,21 @@
 
     <span class="n">value_frame</span><span class="p">:</span> <span class="n">StaticFrame</span>
     <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span></div>
+    <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="StaticSpec.from_primitives"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.static.StaticSpec.from_primitives">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_primitives</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StaticSpec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a StaticSpec from primitives.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">StaticSpec</span><span class="p">(</span>
+            <span class="n">value_frame</span><span class="o">=</span><span class="n">StaticFrame</span><span class="p">(</span><span class="n">init_df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">entity_id_col_name</span><span class="o">=</span><span class="n">entity_id_col_name</span><span class="p">),</span>
+            <span class="n">column_prefix</span><span class="o">=</span><span class="n">column_prefix</span><span class="p">,</span>
+            <span class="n">fallback</span><span class="o">=</span><span class="n">fallback</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
 </pre></div>
         </article>
       </div>

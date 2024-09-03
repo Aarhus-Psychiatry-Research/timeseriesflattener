@@ -66,11 +66,11 @@
                             "│ │ Number of columns │ 2      │ │ datetime64  │ 1     │                                                          │\n",
                             "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
                             "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-                            "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100    </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7400</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
-                            "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓  │\n",
+                            "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100   </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   4959</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2886</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2485</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4922</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7443</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  9999</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
+                            "│ └──────────────────┴──────┴─────────┴─────────┴────────┴──────┴────────┴────────┴────────┴────────┴──────────┘  │\n",
                             "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
@@ -90,11 +90,11 @@
                             "│ │ Number of columns │ 2      │ │ datetime64  │ 1     │                                                          │\n",
                             "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
                             "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-                            "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  4900\u001b[0m │ \u001b[36m  7400\u001b[0m │ \u001b[36m  10000\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
-                            "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓  │\n",
+                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩  │\n",
+                            "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   4959\u001b[0m │ \u001b[36m  2886\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m  2485\u001b[0m │ \u001b[36m  4922\u001b[0m │ \u001b[36m  7443\u001b[0m │ \u001b[36m  9999\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
+                            "│ └──────────────────┴──────┴─────────┴─────────┴────────┴──────┴────────┴────────┴────────┴────────┴──────────┘  │\n",
                             "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
@@ -117,7 +117,7 @@
                             "  white-space: pre-wrap;\n",
                             "}\n",
                             "</style>\n",
-                            "<small>shape: (10_000, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th></tr><tr><td>i64</td><td>datetime[μs]</td></tr></thead><tbody><tr><td>0</td><td>1969-01-11 09:55:00</td></tr><tr><td>1</td><td>1965-03-15 07:16:00</td></tr><tr><td>2</td><td>1969-09-13 23:18:00</td></tr><tr><td>3</td><td>1968-02-04 16:16:00</td></tr><tr><td>4</td><td>1965-01-28 12:33:00</td></tr><tr><td>5</td><td>1967-10-09 06:22:00</td></tr><tr><td>7</td><td>1969-11-17 02:50:00</td></tr><tr><td>8</td><td>1965-12-11 02:17:00</td></tr><tr><td>9</td><td>1965-08-21 22:00:00</td></tr><tr><td>10</td><td>1965-12-26 16:45:00</td></tr><tr><td>11</td><td>1966-07-09 13:54:00</td></tr><tr><td>12</td><td>1968-01-26 22:35:00</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9990</td><td>1965-11-16 21:02:00</td></tr><tr><td>9990</td><td>1967-06-09 02:48:00</td></tr><tr><td>9991</td><td>1966-07-05 03:18:00</td></tr><tr><td>9994</td><td>1965-04-20 06:19:00</td></tr><tr><td>9994</td><td>1967-05-07 04:44:00</td></tr><tr><td>9995</td><td>1968-08-23 11:30:00</td></tr><tr><td>9995</td><td>1965-11-24 05:42:00</td></tr><tr><td>9996</td><td>1965-01-30 17:19:00</td></tr><tr><td>9996</td><td>1965-07-18 17:12:00</td></tr><tr><td>9997</td><td>1967-06-08 07:52:00</td></tr><tr><td>9999</td><td>1965-07-19 14:59:00</td></tr><tr><td>9999</td><td>1968-02-07 22:24:00</td></tr></tbody></table></div>"
+                            "<small>shape: (10_000, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th></tr><tr><td>i64</td><td>datetime[μs]</td></tr></thead><tbody><tr><td>0</td><td>1969-01-11 09:55:00</td></tr><tr><td>1</td><td>1965-03-15 07:16:00</td></tr><tr><td>2</td><td>1969-09-13 23:18:00</td></tr><tr><td>3</td><td>1968-02-04 16:16:00</td></tr><tr><td>4</td><td>1965-01-28 12:33:00</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9996</td><td>1965-01-30 17:19:00</td></tr><tr><td>9996</td><td>1965-07-18 17:12:00</td></tr><tr><td>9997</td><td>1967-06-08 07:52:00</td></tr><tr><td>9999</td><td>1965-07-19 14:59:00</td></tr><tr><td>9999</td><td>1968-02-07 22:24:00</td></tr></tbody></table></div>"
                         ],
                         "text/plain": [
                             "shape: (10_000, 2)\n",
@@ -177,7 +177,7 @@
         },
         {
             "cell_type": "code",
-            "execution_count": null,
+            "execution_count": 2,
             "metadata": {},
             "outputs": [
                 {
@@ -193,12 +193,12 @@
                             "│ └───────────────────┴────────┘ │ float64     │ 1     │                                                          │\n",
                             "│                                └─────────────┴───────┘                                                          │\n",
                             "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━┓  │\n",
-                            "│ ┃<span style=\"font-weight: bold\"> column_name     </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %   </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0        </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75   </span>┃<span style=\"font-weight: bold\"> p100   </span>┃<span style=\"font-weight: bold\"> hist    </span>┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id      </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇ </span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value          </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2.9</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.00015</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    10</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇ </span> │  │\n",
-                            "│ └─────────────────┴──────┴────────┴────────┴────────┴───────────┴────────┴────────┴───────┴────────┴─────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━┳━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
+                            "│ ┃<span style=\"font-weight: bold\"> column_name    </span>┃<span style=\"font-weight: bold\"> NA  </span>┃<span style=\"font-weight: bold\"> NA %  </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd      </span>┃<span style=\"font-weight: bold\"> p0          </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100  </span>┃<span style=\"font-weight: bold\"> hist   </span>┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━╇━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id     </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   4994</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   2887</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">          0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2486</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4996</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7487</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 9999</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇</span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value         </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4.983</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2.885</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.0001514</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2.483</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 4.975</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 7.486</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   10</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇</span> │  │\n",
+                            "│ └────────────────┴─────┴───────┴─────────┴─────────┴─────────────┴────────┴────────┴────────┴───────┴────────┘  │\n",
                             "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
@@ -219,12 +219,12 @@
                             "│ └───────────────────┴────────┘ │ float64     │ 1     │                                                          │\n",
                             "│                                └─────────────┴───────┘                                                          │\n",
                             "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━┓  │\n",
-                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0       \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │\n",
-                            "│ │ \u001b[38;5;141mentity_id      \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m        0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m 7500\u001b[0m │ \u001b[36m 10000\u001b[0m │ \u001b[32m▇▇▇▇▇▇ \u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141mvalue          \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     5\u001b[0m │ \u001b[36m   2.9\u001b[0m │ \u001b[36m  0.00015\u001b[0m │ \u001b[36m   2.5\u001b[0m │ \u001b[36m     5\u001b[0m │ \u001b[36m  7.5\u001b[0m │ \u001b[36m    10\u001b[0m │ \u001b[32m▇▇▇▇▇▇ \u001b[0m │  │\n",
-                            "│ └─────────────────┴──────┴────────┴────────┴────────┴───────────┴────────┴────────┴───────┴────────┴─────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━┳━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
+                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA % \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0         \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100 \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist  \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━╇━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
+                            "│ │ \u001b[38;5;141mentity_id     \u001b[0m │ \u001b[36m  0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   4994\u001b[0m │ \u001b[36m   2887\u001b[0m │ \u001b[36m          0\u001b[0m │ \u001b[36m  2486\u001b[0m │ \u001b[36m  4996\u001b[0m │ \u001b[36m  7487\u001b[0m │ \u001b[36m 9999\u001b[0m │ \u001b[32m▇▇▇▇▇▇\u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141mvalue         \u001b[0m │ \u001b[36m  0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m  4.983\u001b[0m │ \u001b[36m  2.885\u001b[0m │ \u001b[36m  0.0001514\u001b[0m │ \u001b[36m 2.483\u001b[0m │ \u001b[36m 4.975\u001b[0m │ \u001b[36m 7.486\u001b[0m │ \u001b[36m   10\u001b[0m │ \u001b[32m▇▇▇▇▇▇\u001b[0m │  │\n",
+                            "│ └────────────────┴─────┴───────┴─────────┴─────────┴─────────────┴────────┴────────┴────────┴───────┴────────┘  │\n",
                             "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
@@ -247,7 +247,7 @@
                             "  white-space: pre-wrap;\n",
                             "}\n",
                             "</style>\n",
-                            "<small>shape: (100_000, 3)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>f64</td></tr></thead><tbody><tr><td>0</td><td>1967-06-12 14:06:00</td><td>0.174793</td></tr><tr><td>0</td><td>1968-04-15 01:45:00</td><td>3.072293</td></tr><tr><td>0</td><td>1968-12-09 05:42:00</td><td>1.315754</td></tr><tr><td>0</td><td>1969-06-20 18:07:00</td><td>2.812481</td></tr><tr><td>0</td><td>1967-11-26 01:59:00</td><td>2.981185</td></tr><tr><td>0</td><td>1968-09-07 01:45:00</td><td>0.173205</td></tr><tr><td>0</td><td>1969-02-21 03:29:00</td><td>9.943505</td></tr><tr><td>0</td><td>1967-11-26 13:45:00</td><td>5.470792</td></tr><tr><td>0</td><td>1967-05-12 12:44:00</td><td>0.970382</td></tr><tr><td>0</td><td>1965-05-03 05:23:00</td><td>6.630007</td></tr><tr><td>0</td><td>1969-10-19 10:29:00</td><td>0.799246</td></tr><tr><td>0</td><td>1969-11-25 18:39:00</td><td>2.868688</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9999</td><td>1967-12-11 21:34:00</td><td>5.379503</td></tr><tr><td>9999</td><td>1968-05-26 12:28:00</td><td>9.645746</td></tr><tr><td>9999</td><td>1966-04-23 02:37:00</td><td>8.924175</td></tr><tr><td>9999</td><td>1968-10-24 18:47:00</td><td>2.34615</td></tr><tr><td>9999</td><td>1967-11-12 07:33:00</td><td>4.414524</td></tr><tr><td>9999</td><td>1966-07-15 20:55:00</td><td>0.684468</td></tr><tr><td>9999</td><td>1968-01-08 02:41:00</td><td>3.250538</td></tr><tr><td>9999</td><td>1968-08-19 10:15:00</td><td>0.671907</td></tr><tr><td>9999</td><td>1966-01-03 22:34:00</td><td>4.158796</td></tr><tr><td>9999</td><td>1966-06-27 10:55:00</td><td>4.414455</td></tr><tr><td>9999</td><td>1968-04-02 12:58:00</td><td>1.552491</td></tr><tr><td>9999</td><td>1969-06-24 07:19:00</td><td>4.501553</td></tr></tbody></table></div>"
+                            "<small>shape: (100_000, 3)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>f64</td></tr></thead><tbody><tr><td>0</td><td>1967-06-12 14:06:00</td><td>0.174793</td></tr><tr><td>0</td><td>1968-04-15 01:45:00</td><td>3.072293</td></tr><tr><td>0</td><td>1968-12-09 05:42:00</td><td>1.315754</td></tr><tr><td>0</td><td>1969-06-20 18:07:00</td><td>2.812481</td></tr><tr><td>0</td><td>1967-11-26 01:59:00</td><td>2.981185</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9999</td><td>1968-08-19 10:15:00</td><td>0.671907</td></tr><tr><td>9999</td><td>1966-01-03 22:34:00</td><td>4.158796</td></tr><tr><td>9999</td><td>1966-06-27 10:55:00</td><td>4.414455</td></tr><tr><td>9999</td><td>1968-04-02 12:58:00</td><td>1.552491</td></tr><tr><td>9999</td><td>1969-06-24 07:19:00</td><td>4.501553</td></tr></tbody></table></div>"
                         ],
                         "text/plain": [
                             "shape: (100_000, 3)\n",
@@ -304,7 +304,7 @@
         },
         {
             "cell_type": "code",
-            "execution_count": null,
+            "execution_count": 3,
             "metadata": {},
             "outputs": [
                 {
@@ -319,12 +319,12 @@
                             "│ │ Number of columns │ 2      │ └─────────────┴───────┘                                                          │\n",
                             "│ └───────────────────┴────────┘                                                                                  │\n",
                             "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-                            "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100    </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">female          </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇    ▇ </span> │  │\n",
-                            "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┓  │\n",
+                            "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %   </span>┃<span style=\"font-weight: bold\"> mean      </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100   </span>┃<span style=\"font-weight: bold\"> hist    </span>┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     4999</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2887</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4999</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  9999</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇ </span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">female          </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.4984</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇    ▇ </span> │  │\n",
+                            "│ └──────────────────┴──────┴────────┴───────────┴────────┴──────┴────────┴────────┴────────┴────────┴─────────┘  │\n",
                             "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n",
                             "</pre>\n"
                         ],
@@ -338,12 +338,12 @@
                             "│ │ Number of columns │ 2      │ └─────────────┴───────┘                                                          │\n",
                             "│ └───────────────────┴────────┘                                                                                  │\n",
                             "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-                            "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  7500\u001b[0m │ \u001b[36m  10000\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141mfemale          \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   0.5\u001b[0m │ \u001b[36m   0.5\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[32m ▇    ▇ \u001b[0m │  │\n",
-                            "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┓  │\n",
+                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━┩  │\n",
+                            "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     4999\u001b[0m │ \u001b[36m  2887\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  4999\u001b[0m │ \u001b[36m  7500\u001b[0m │ \u001b[36m  9999\u001b[0m │ \u001b[32m▇▇▇▇▇▇ \u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141mfemale          \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m   0.4984\u001b[0m │ \u001b[36m   0.5\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[32m▇    ▇ \u001b[0m │  │\n",
+                            "│ └──────────────────┴──────┴────────┴───────────┴────────┴──────┴────────┴────────┴────────┴────────┴─────────┘  │\n",
                             "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n"
                         ]
                     },
@@ -360,7 +360,7 @@
                             "  white-space: pre-wrap;\n",
                             "}\n",
                             "</style>\n",
-                            "<small>shape: (9_999, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>female</th></tr><tr><td>i64</td><td>i64</td></tr></thead><tbody><tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>1</td></tr><tr><td>4</td><td>0</td></tr><tr><td>5</td><td>0</td></tr><tr><td>6</td><td>0</td></tr><tr><td>7</td><td>0</td></tr><tr><td>8</td><td>1</td></tr><tr><td>9</td><td>0</td></tr><tr><td>10</td><td>0</td></tr><tr><td>11</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9988</td><td>1</td></tr><tr><td>9989</td><td>0</td></tr><tr><td>9990</td><td>1</td></tr><tr><td>9991</td><td>0</td></tr><tr><td>9992</td><td>0</td></tr><tr><td>9993</td><td>0</td></tr><tr><td>9994</td><td>1</td></tr><tr><td>9995</td><td>0</td></tr><tr><td>9996</td><td>0</td></tr><tr><td>9997</td><td>1</td></tr><tr><td>9998</td><td>1</td></tr><tr><td>9999</td><td>0</td></tr></tbody></table></div>"
+                            "<small>shape: (9_999, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>female</th></tr><tr><td>i64</td><td>i64</td></tr></thead><tbody><tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>1</td></tr><tr><td>4</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9995</td><td>0</td></tr><tr><td>9996</td><td>0</td></tr><tr><td>9997</td><td>1</td></tr><tr><td>9998</td><td>1</td></tr><tr><td>9999</td><td>0</td></tr></tbody></table></div>"
                         ],
                         "text/plain": [
                             "shape: (9_999, 2)\n",
@@ -423,7 +423,7 @@
         },
         {
             "cell_type": "code",
-            "execution_count": null,
+            "execution_count": 4,
             "metadata": {},
             "outputs": [
                 {
@@ -438,12 +438,12 @@
                             "│ │ Number of columns │ 3      │ │ datetime64  │ 1     │                                                          │\n",
                             "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
                             "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-                            "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100    </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   4</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5100</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7600</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value           </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">     ▇  </span> │  │\n",
-                            "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓  │\n",
+                            "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd     </span>┃<span style=\"font-weight: bold\"> p0   </span>┃<span style=\"font-weight: bold\"> p25    </span>┃<span style=\"font-weight: bold\"> p50    </span>┃<span style=\"font-weight: bold\"> p75    </span>┃<span style=\"font-weight: bold\"> p100   </span>┃<span style=\"font-weight: bold\"> hist     </span>┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5032</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   4</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  2499</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5109</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  7555</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  9992</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▇▇▇▇▇▇ </span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">value           </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">     ▇  </span> │  │\n",
+                            "│ └──────────────────┴──────┴─────────┴─────────┴────────┴──────┴────────┴────────┴────────┴────────┴──────────┘  │\n",
                             "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
@@ -463,12 +463,12 @@
                             "│ │ Number of columns │ 3      │ │ datetime64  │ 1     │                                                          │\n",
                             "│ └───────────────────┴────────┘ └─────────────┴───────┘                                                          │\n",
                             "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┓  │\n",
-                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━┩  │\n",
-                            "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m  5000\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m   4\u001b[0m │ \u001b[36m  2500\u001b[0m │ \u001b[36m  5100\u001b[0m │ \u001b[36m  7600\u001b[0m │ \u001b[36m  10000\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141mvalue           \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m   1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[32m     ▇  \u001b[0m │  │\n",
-                            "│ └──────────────────┴──────┴─────────┴────────┴────────┴──────┴────────┴────────┴────────┴─────────┴──────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓  │\n",
+                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist    \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩  │\n",
+                            "│ │ \u001b[38;5;141mentity_id       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m   5032\u001b[0m │ \u001b[36m  2900\u001b[0m │ \u001b[36m   4\u001b[0m │ \u001b[36m  2499\u001b[0m │ \u001b[36m  5109\u001b[0m │ \u001b[36m  7555\u001b[0m │ \u001b[36m  9992\u001b[0m │ \u001b[32m ▇▇▇▇▇▇ \u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141mvalue           \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[36m      1\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m   1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[36m     1\u001b[0m │ \u001b[32m     ▇  \u001b[0m │  │\n",
+                            "│ └──────────────────┴──────┴─────────┴─────────┴────────┴──────┴────────┴────────┴────────┴────────┴──────────┘  │\n",
                             "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
@@ -491,7 +491,7 @@
                             "  white-space: pre-wrap;\n",
                             "}\n",
                             "</style>\n",
-                            "<small>shape: (3_103, 3)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>i64</td></tr></thead><tbody><tr><td>1727</td><td>1966-08-01 07:08:00</td><td>1</td></tr><tr><td>2269</td><td>1965-09-07 11:14:00</td><td>1</td></tr><tr><td>6050</td><td>1969-10-28 22:11:00</td><td>1</td></tr><tr><td>2230</td><td>1966-10-06 16:26:00</td><td>1</td></tr><tr><td>6449</td><td>1966-02-06 14:18:00</td><td>1</td></tr><tr><td>3165</td><td>1965-03-03 18:44:00</td><td>1</td></tr><tr><td>9602</td><td>1968-07-01 03:24:00</td><td>1</td></tr><tr><td>9569</td><td>1968-02-07 11:17:00</td><td>1</td></tr><tr><td>12</td><td>1965-04-17 07:17:00</td><td>1</td></tr><tr><td>9224</td><td>1967-12-01 09:23:00</td><td>1</td></tr><tr><td>2638</td><td>1966-12-11 07:07:00</td><td>1</td></tr><tr><td>3415</td><td>1968-06-20 21:58:00</td><td>1</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9679</td><td>1967-12-11 09:25:00</td><td>1</td></tr><tr><td>3376</td><td>1969-03-23 02:20:00</td><td>1</td></tr><tr><td>8348</td><td>1966-02-10 10:22:00</td><td>1</td></tr><tr><td>3370</td><td>1969-07-01 12:05:00</td><td>1</td></tr><tr><td>4576</td><td>1968-02-04 19:26:00</td><td>1</td></tr><tr><td>3623</td><td>1968-02-13 14:43:00</td><td>1</td></tr><tr><td>5591</td><td>1967-03-13 02:57:00</td><td>1</td></tr><tr><td>9563</td><td>1969-03-07 08:20:00</td><td>1</td></tr><tr><td>899</td><td>1967-07-30 06:03:00</td><td>1</td></tr><tr><td>7979</td><td>1967-02-13 12:39:00</td><td>1</td></tr><tr><td>8479</td><td>1965-09-11 10:29:00</td><td>1</td></tr><tr><td>1655</td><td>1966-05-21 13:06:00</td><td>1</td></tr></tbody></table></div>"
+                            "<small>shape: (3_103, 3)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>value</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>i64</td></tr></thead><tbody><tr><td>9614</td><td>1968-07-25 20:32:00</td><td>1</td></tr><tr><td>7518</td><td>1967-05-22 15:26:00</td><td>1</td></tr><tr><td>6163</td><td>1967-09-21 17:10:00</td><td>1</td></tr><tr><td>6068</td><td>1967-01-22 22:27:00</td><td>1</td></tr><tr><td>5508</td><td>1969-08-29 18:27:00</td><td>1</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>3129</td><td>1966-10-12 14:42:00</td><td>1</td></tr><tr><td>4049</td><td>1966-05-05 03:52:00</td><td>1</td></tr><tr><td>3915</td><td>1969-04-28 04:43:00</td><td>1</td></tr><tr><td>7726</td><td>1967-07-28 07:27:00</td><td>1</td></tr><tr><td>7294</td><td>1968-11-13 14:03:00</td><td>1</td></tr></tbody></table></div>"
                         ],
                         "text/plain": [
                             "shape: (3_103, 3)\n",
@@ -500,17 +500,17 @@
                             "│ ---       ┆ ---                 ┆ ---   │\n",
                             "│ i64       ┆ datetime[μs]        ┆ i64   │\n",
                             "╞═══════════╪═════════════════════╪═══════╡\n",
-                            "│ 1727      ┆ 1966-08-01 07:08:00 ┆ 1     │\n",
-                            "│ 2269      ┆ 1965-09-07 11:14:00 ┆ 1     │\n",
-                            "│ 6050      ┆ 1969-10-28 22:11:00 ┆ 1     │\n",
-                            "│ 2230      ┆ 1966-10-06 16:26:00 ┆ 1     │\n",
-                            "│ 6449      ┆ 1966-02-06 14:18:00 ┆ 1     │\n",
+                            "│ 9614      ┆ 1968-07-25 20:32:00 ┆ 1     │\n",
+                            "│ 7518      ┆ 1967-05-22 15:26:00 ┆ 1     │\n",
+                            "│ 6163      ┆ 1967-09-21 17:10:00 ┆ 1     │\n",
+                            "│ 6068      ┆ 1967-01-22 22:27:00 ┆ 1     │\n",
+                            "│ 5508      ┆ 1969-08-29 18:27:00 ┆ 1     │\n",
                             "│ …         ┆ …                   ┆ …     │\n",
-                            "│ 9563      ┆ 1969-03-07 08:20:00 ┆ 1     │\n",
-                            "│ 899       ┆ 1967-07-30 06:03:00 ┆ 1     │\n",
-                            "│ 7979      ┆ 1967-02-13 12:39:00 ┆ 1     │\n",
-                            "│ 8479      ┆ 1965-09-11 10:29:00 ┆ 1     │\n",
-                            "│ 1655      ┆ 1966-05-21 13:06:00 ┆ 1     │\n",
+                            "│ 3129      ┆ 1966-10-12 14:42:00 ┆ 1     │\n",
+                            "│ 4049      ┆ 1966-05-05 03:52:00 ┆ 1     │\n",
+                            "│ 3915      ┆ 1969-04-28 04:43:00 ┆ 1     │\n",
+                            "│ 7726      ┆ 1967-07-28 07:27:00 ┆ 1     │\n",
+                            "│ 7294      ┆ 1968-11-13 14:03:00 ┆ 1     │\n",
                             "└───────────┴─────────────────────┴───────┘"
                         ]
                     },
@@ -579,20 +579,9 @@
         },
         {
             "cell_type": "code",
-            "execution_count": null,
+            "execution_count": 5,
             "metadata": {},
-            "outputs": [
-                {
-                    "ename": "",
-                    "evalue": "",
-                    "output_type": "error",
-                    "traceback": [
-                        "\u001b[1;31mRunning cells with '.venv' requires the ipykernel package.\n",
-                        "\u001b[1;31mRun the following command to install 'ipykernel' into the Python environment. \n",
-                        "\u001b[1;31mCommand: '/Users/au554730/Desktop/Projects/timeseriesflattener/.venv/bin/python -m pip install ipykernel -U --force-reinstall'"
-                    ]
-                }
-            ],
+            "outputs": [],
             "source": [
                 "import datetime as dt\n",
                 "\n",
@@ -602,6 +591,16 @@
                 "\n",
                 "test_df = pd.DataFrame({\"entity_id\": [0], \"timestamp\": [pd.Timestamp(\"2020-01-01\")]})\n",
                 "\n",
+                "outcome_spec = BooleanOutcomeSpec.from_primitives(\n",
+                "    df=test_df,\n",
+                "    entity_id_col_name=\"entity_id\",\n",
+                "    value_timestamp_col_name=\"timestamp\",\n",
+                "    lookahead_days=[365],\n",
+                "    aggregators=[\"max\"],\n",
+                "    column_prefix=\"outc\",\n",
+                ")\n",
+                "\n",
+                "# Alternatively, if you prefer types\n",
                 "outcome_spec = BooleanOutcomeSpec(\n",
                 "    init_frame=TimestampValueFrame(\n",
                 "        entity_id_col_name=\"entity_id\", init_df=test_df, value_timestamp_col_name=\"timestamp\"\n",
@@ -628,6 +627,13 @@
             ]
         },
         {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": []
+        },
+        {
             "attachments": {},
             "cell_type": "markdown",
             "metadata": {},
@@ -645,24 +651,25 @@
         },
         {
             "cell_type": "code",
-            "execution_count": null,
+            "execution_count": 6,
             "metadata": {},
-            "outputs": [
-                {
-                    "ename": "",
-                    "evalue": "",
-                    "output_type": "error",
-                    "traceback": [
-                        "\u001b[1;31mRunning cells with '.venv' requires the ipykernel package.\n",
-                        "\u001b[1;31mRun the following command to install 'ipykernel' into the Python environment. \n",
-                        "\u001b[1;31mCommand: '/Users/au554730/Desktop/Projects/timeseriesflattener/.venv/bin/python -m pip install ipykernel -U --force-reinstall'"
-                    ]
-                }
-            ],
+            "outputs": [],
             "source": [
                 "import numpy as np\n",
                 "from timeseriesflattener import PredictorSpec, StaticSpec\n",
                 "from timeseriesflattener.aggregators import MeanAggregator\n",
+                "\n",
+                "temporal_predictor_spec = PredictorSpec.from_primitives(\n",
+                "    df=df_synth_predictors.rename({\"value\": \"value_1\"}),\n",
+                "    entity_id_col_name=\"entity_id\",\n",
+                "    value_timestamp_col_name=\"timestamp\",\n",
+                "    aggregators=[\"mean\"],\n",
+                "    column_prefix=\"pred\",\n",
+                "    fallback=np.nan,\n",
+                "    lookbehind_days=[730],\n",
+                ")\n",
+                "\n",
+                "# Alternatively, if you prefer types\n",
                 "\n",
                 "temporal_predictor_spec = PredictorSpec(\n",
                 "    value_frame=ValueFrame(\n",
@@ -705,21 +712,21 @@
         },
         {
             "cell_type": "code",
-            "execution_count": null,
+            "execution_count": 7,
             "metadata": {},
-            "outputs": [
-                {
-                    "ename": "",
-                    "evalue": "",
-                    "output_type": "error",
-                    "traceback": [
-                        "\u001b[1;31mRunning cells with '.venv' requires the ipykernel package.\n",
-                        "\u001b[1;31mRun the following command to install 'ipykernel' into the Python environment. \n",
-                        "\u001b[1;31mCommand: '/Users/au554730/Desktop/Projects/timeseriesflattener/.venv/bin/python -m pip install ipykernel -U --force-reinstall'"
-                    ]
-                }
-            ],
+            "outputs": [],
             "source": [
+                "temporal_interval_predictor_spec = PredictorSpec.from_primitives(\n",
+                "    df=df_synth_predictors.rename({\"value\": \"value_2\"}),\n",
+                "    entity_id_col_name=\"entity_id\",\n",
+                "    value_timestamp_col_name=\"timestamp\",\n",
+                "    aggregators=[\"mean\"],\n",
+                "    column_prefix=\"pred\",\n",
+                "    fallback=np.nan,\n",
+                "    lookbehind_days=[(10, 365)],\n",
+                ")\n",
+                "\n",
+                "# Alternatively, if you prefer types\n",
                 "temporal_interval_predictor_spec = PredictorSpec(\n",
                 "    value_frame=ValueFrame(\n",
                 "        entity_id_col_name=\"entity_id\",\n",
@@ -746,7 +753,7 @@
         },
         {
             "cell_type": "code",
-            "execution_count": null,
+            "execution_count": 8,
             "metadata": {},
             "outputs": [
                 {
@@ -759,7 +766,7 @@
                             "  white-space: pre-wrap;\n",
                             "}\n",
                             "</style>\n",
-                            "<small>shape: (9_999, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>female</th></tr><tr><td>i64</td><td>i64</td></tr></thead><tbody><tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>1</td></tr><tr><td>4</td><td>0</td></tr><tr><td>5</td><td>0</td></tr><tr><td>6</td><td>0</td></tr><tr><td>7</td><td>0</td></tr><tr><td>8</td><td>1</td></tr><tr><td>9</td><td>0</td></tr><tr><td>10</td><td>0</td></tr><tr><td>11</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9988</td><td>1</td></tr><tr><td>9989</td><td>0</td></tr><tr><td>9990</td><td>1</td></tr><tr><td>9991</td><td>0</td></tr><tr><td>9992</td><td>0</td></tr><tr><td>9993</td><td>0</td></tr><tr><td>9994</td><td>1</td></tr><tr><td>9995</td><td>0</td></tr><tr><td>9996</td><td>0</td></tr><tr><td>9997</td><td>1</td></tr><tr><td>9998</td><td>1</td></tr><tr><td>9999</td><td>0</td></tr></tbody></table></div>"
+                            "<small>shape: (9_999, 2)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>female</th></tr><tr><td>i64</td><td>i64</td></tr></thead><tbody><tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>1</td></tr><tr><td>4</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td></tr><tr><td>9995</td><td>0</td></tr><tr><td>9996</td><td>0</td></tr><tr><td>9997</td><td>1</td></tr><tr><td>9998</td><td>1</td></tr><tr><td>9999</td><td>0</td></tr></tbody></table></div>"
                         ],
                         "text/plain": [
                             "shape: (9_999, 2)\n",
@@ -790,6 +797,11 @@
             "source": [
                 "from timeseriesflattener import StaticFrame\n",
                 "\n",
+                "sex_predictor_spec = StaticSpec.from_primitives(\n",
+                "    df=df_synth_sex, entity_id_col_name=\"entity_id\", column_prefix=\"pred\", fallback=np.nan\n",
+                ")\n",
+                "\n",
+                "# Alternatively, if you prefer types\n",
                 "sex_predictor_spec = StaticSpec(\n",
                 "    value_frame=StaticFrame(init_df=df_synth_sex), column_prefix=\"pred\", fallback=np.nan\n",
                 ")\n",
@@ -802,7 +814,7 @@
             "cell_type": "markdown",
             "metadata": {},
             "source": [
-                "Note that we don't need to specify which columns to aggregate. Timeseriesflattener aggregates all columns that are not `entity_id_col_name` or `value_timestamp_col_name` and uses the name(s) of the column(s) for the output."
+                "Note that we don't need to specify which columns to aggregate. Timeseriesflattener aggregates all columns that are not `entity_id_col_name` or `value_timestamp_col_name` and uses the name(s) of the column(s) for the output.\n"
             ]
         },
         {
@@ -840,21 +852,18 @@
         },
         {
             "cell_type": "code",
-            "execution_count": 16,
+            "execution_count": 10,
             "metadata": {},
             "outputs": [
                 {
                     "data": {
-                        "text/html": [
-                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">/Users/au484925/Desktop/Git/timeseriesflattener/.venv/lib/python3.9/site-packages/rich/live.py:231: UserWarning: \n",
-                            "install \"ipywidgets\" for Jupyter support\n",
-                            "  warnings.warn('install \"ipywidgets\" for Jupyter support')\n",
-                            "</pre>\n"
-                        ],
+                        "application/vnd.jupyter.widget-view+json": {
+                            "model_id": "f25333ef77e543b88cd5420e89c48571",
+                            "version_major": 2,
+                            "version_minor": 0
+                        },
                         "text/plain": [
-                            "/Users/au484925/Desktop/Git/timeseriesflattener/.venv/lib/python3.9/site-packages/rich/live.py:231: UserWarning: \n",
-                            "install \"ipywidgets\" for Jupyter support\n",
-                            "  warnings.warn('install \"ipywidgets\" for Jupyter support')\n"
+                            "Output()"
                         ]
                     },
                     "metadata": {},
@@ -863,11 +872,11 @@
                 {
                     "data": {
                         "text/html": [
-                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: female\n",
+                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: ['female']\n",
                             "</pre>\n"
                         ],
                         "text/plain": [
-                            "Processing spec: female\n"
+                            "Processing spec: ['female']\n"
                         ]
                     },
                     "metadata": {},
@@ -876,11 +885,11 @@
                 {
                     "data": {
                         "text/html": [
-                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: value_1\n",
+                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: ['value_1']\n",
                             "</pre>\n"
                         ],
                         "text/plain": [
-                            "Processing spec: value_1\n"
+                            "Processing spec: ['value_1']\n"
                         ]
                     },
                     "metadata": {},
@@ -889,11 +898,11 @@
                 {
                     "data": {
                         "text/html": [
-                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: value_2\n",
+                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: ['value_2']\n",
                             "</pre>\n"
                         ],
                         "text/plain": [
-                            "Processing spec: value_2\n"
+                            "Processing spec: ['value_2']\n"
                         ]
                     },
                     "metadata": {},
@@ -902,11 +911,11 @@
                 {
                     "data": {
                         "text/html": [
-                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: value\n",
+                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Processing spec: ['outcome']\n",
                             "</pre>\n"
                         ],
                         "text/plain": [
-                            "Processing spec: value\n"
+                            "Processing spec: ['outcome']\n"
                         ]
                     },
                     "metadata": {},
@@ -925,27 +934,6 @@
                 {
                     "data": {
                         "text/html": [
-                            "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">\n",
-                            "</pre>\n"
-                        ],
-                        "text/plain": [
-                            "\n"
-                        ]
-                    },
-                    "metadata": {},
-                    "output_type": "display_data"
-                },
-                {
-                    "name": "stderr",
-                    "output_type": "stream",
-                    "text": [
-                        "/Users/au484925/Desktop/Git/timeseriesflattener/.venv/lib/python3.9/site-packages/numpy/lib/histograms.py:885: RuntimeWarning: invalid value encountered in divide\n",
-                        "  return n/db/n.sum(), bin_edges\n"
-                    ]
-                },
-                {
-                    "data": {
-                        "text/html": [
                             "<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">╭──────────────────────────────────────────────── skimpy summary ─────────────────────────────────────────────────╮\n",
                             "│ <span style=\"font-style: italic\">         Data Summary         </span> <span style=\"font-style: italic\">      Data Types       </span>                                                          │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                                                          │\n",
@@ -957,21 +945,22 @@
                             "│                                │ string      │ 1     │                                                          │\n",
                             "│                                └─────────────┴───────┘                                                          │\n",
                             "│ <span style=\"font-style: italic\">                                                    number                                                    </span>  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
-                            "│ ┃<span style=\"font-weight: bold\"> column_name             </span>┃<span style=\"font-weight: bold\"> NA     </span>┃<span style=\"font-weight: bold\"> NA %  </span>┃<span style=\"font-weight: bold\"> mean    </span>┃<span style=\"font-weight: bold\"> sd    </span>┃<span style=\"font-weight: bold\"> p0    </span>┃<span style=\"font-weight: bold\"> p25   </span>┃<span style=\"font-weight: bold\"> p50   </span>┃<span style=\"font-weight: bold\"> p75  </span>┃<span style=\"font-weight: bold\"> p100  </span>┃<span style=\"font-weight: bold\"> hist   </span>┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id              </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   5000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2500</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 4900</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">7400</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">10000</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇</span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_female_fallback_na</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0.49</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇    ▇</span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">n                      </span> │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_value_1_within_0_t</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.97</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.66</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4.3</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 5.6</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    9</span> │ <span style=\"color: #008000; text-decoration-color: #008000\"> ▁▇▇▂ </span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">o_730_days_mean_fallbac</span> │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">k_nan                  </span> │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_value_2_within_10_</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 10000</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  100</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> nan</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  nan</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">      </span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">to_365_days_mean_fallba</span> │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">ck_nan                 </span> │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">outc_value_within_0_to_</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.0001</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 0.01</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">  ▇   </span> │  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">365_days_max_fallback_0</span> │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ └─────────────────────────┴────────┴───────┴─────────┴───────┴───────┴───────┴───────┴──────┴───────┴────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
+                            "│ ┃<span style=\"font-weight: bold\"> column_name           </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %  </span>┃<span style=\"font-weight: bold\"> mean   </span>┃<span style=\"font-weight: bold\"> sd    </span>┃<span style=\"font-weight: bold\"> p0        </span>┃<span style=\"font-weight: bold\"> p25   </span>┃<span style=\"font-weight: bold\"> p50   </span>┃<span style=\"font-weight: bold\"> p75   </span>┃<span style=\"font-weight: bold\"> p100  </span>┃<span style=\"font-weight: bold\"> hist   </span>┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">entity_id            </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  4959</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2886</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 2485</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 4922</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 7443</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 9999</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇▇▇▇▇▇</span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_female_fallback_</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">0.4931</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.5</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    1</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▇    ▇</span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">nan                  </span> │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_value_1_within_0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">1072</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">10.72</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  5.01</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">1.842</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">  0.01491</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">3.851</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">5.023</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">6.178</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">9.946</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▁▃▇▇▃▁</span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">_to_730_days_mean_fal</span> │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">lback_nan            </span> │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_value_2_within_1</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">2060</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 20.6</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 5.008</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">2.222</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">0.0003901</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 3.52</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">5.014</span> │ <span style=\"color: #008080; text-decoration-color: #008080\"> 6.56</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">9.997</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">▂▅▇▇▅▂</span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">0_to_365_days_mean_fa</span> │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">llback_nan           </span> │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">outc_outcome_within_0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008000; text-decoration-color: #008000\">    ▇ </span> │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">_to_365_days_max_fall</span> │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">back_0               </span> │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ └───────────────────────┴──────┴───────┴────────┴───────┴───────────┴───────┴───────┴───────┴───────┴────────┘  │\n",
                             "│ <span style=\"font-style: italic\">                                                   datetime                                                   </span>  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃<span style=\"font-weight: bold\"> column_name      </span>┃<span style=\"font-weight: bold\"> NA   </span>┃<span style=\"font-weight: bold\"> NA %    </span>┃<span style=\"font-weight: bold\"> first                      </span>┃<span style=\"font-weight: bold\"> last                       </span>┃<span style=\"font-weight: bold\"> frequency    </span>┃  │\n",
@@ -979,11 +968,11 @@
                             "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">timestamp       </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">   0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">      0</span> │ <span style=\"color: #800000; text-decoration-color: #800000\">   1965-01-02 09:35:00    </span> │ <span style=\"color: #800000; text-decoration-color: #800000\">   1969-12-31 21:42:00    </span> │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">None        </span> │  │\n",
                             "│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │\n",
                             "│ <span style=\"font-style: italic\">                                                    string                                                    </span>  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓  │\n",
-                            "│ ┃<span style=\"font-weight: bold\"> column_name                   </span>┃<span style=\"font-weight: bold\"> NA     </span>┃<span style=\"font-weight: bold\"> NA %       </span>┃<span style=\"font-weight: bold\"> words per row               </span>┃<span style=\"font-weight: bold\"> total words            </span>┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩  │\n",
-                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">pred_time_uuid               </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">     0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">         0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">                          2</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">                 20000</span> │  │\n",
-                            "│ └───────────────────────────────┴────────┴────────────┴─────────────────────────────┴────────────────────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓  │\n",
+                            "│ ┃<span style=\"font-weight: bold\"> column_name                           </span>┃<span style=\"font-weight: bold\"> NA    </span>┃<span style=\"font-weight: bold\"> NA %      </span>┃<span style=\"font-weight: bold\"> words per row            </span>┃<span style=\"font-weight: bold\"> total words         </span>┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩  │\n",
+                            "│ │ <span style=\"color: #af87ff; text-decoration-color: #af87ff\">prediction_time_uuid                 </span> │ <span style=\"color: #008080; text-decoration-color: #008080\">    0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">        0</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">                       2</span> │ <span style=\"color: #008080; text-decoration-color: #008080\">              20000</span> │  │\n",
+                            "│ └───────────────────────────────────────┴───────┴───────────┴──────────────────────────┴─────────────────────┘  │\n",
                             "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n",
                             "</pre>\n"
                         ],
@@ -999,21 +988,22 @@
                             "│                                │ string      │ 1     │                                                          │\n",
                             "│                                └─────────────┴───────┘                                                          │\n",
                             "│ \u001b[3m                                                    number                                                    \u001b[0m  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
-                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name            \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA % \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75 \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100 \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist  \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
-                            "│ │ \u001b[38;5;141mentity_id              \u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   5000\u001b[0m │ \u001b[36m 2900\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m 2500\u001b[0m │ \u001b[36m 4900\u001b[0m │ \u001b[36m7400\u001b[0m │ \u001b[36m10000\u001b[0m │ \u001b[32m▇▇▇▇▇▇\u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141mpred_female_fallback_na\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   0.49\u001b[0m │ \u001b[36m  0.5\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   1\u001b[0m │ \u001b[36m    1\u001b[0m │ \u001b[32m▇    ▇\u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141mn                      \u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ \u001b[38;5;141mpred_value_1_within_0_t\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m      5\u001b[0m │ \u001b[36m 0.97\u001b[0m │ \u001b[36m 0.66\u001b[0m │ \u001b[36m  4.3\u001b[0m │ \u001b[36m    5\u001b[0m │ \u001b[36m 5.6\u001b[0m │ \u001b[36m    9\u001b[0m │ \u001b[32m ▁▇▇▂ \u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141mo_730_days_mean_fallbac\u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ \u001b[38;5;141mk_nan                  \u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ \u001b[38;5;141mpred_value_2_within_10_\u001b[0m │ \u001b[36m 10000\u001b[0m │ \u001b[36m  100\u001b[0m │ \u001b[36m    nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[36m nan\u001b[0m │ \u001b[36m  nan\u001b[0m │ \u001b[32m      \u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141mto_365_days_mean_fallba\u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ \u001b[38;5;141mck_nan                 \u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ │ \u001b[38;5;141moutc_value_within_0_to_\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m 0.0001\u001b[0m │ \u001b[36m 0.01\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m    1\u001b[0m │ \u001b[32m  ▇   \u001b[0m │  │\n",
-                            "│ │ \u001b[38;5;141m365_days_max_fallback_0\u001b[0m │        │       │         │       │       │       │       │      │       │        │  │\n",
-                            "│ └─────────────────────────┴────────┴───────┴─────────┴───────┴───────┴───────┴───────┴──────┴───────┴────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┓  │\n",
+                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name          \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA % \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mmean  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1msd   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp0       \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp25  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp50  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp75  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mp100 \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mhist  \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━┩  │\n",
+                            "│ │ \u001b[38;5;141mentity_id            \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m  4959\u001b[0m │ \u001b[36m 2886\u001b[0m │ \u001b[36m        0\u001b[0m │ \u001b[36m 2485\u001b[0m │ \u001b[36m 4922\u001b[0m │ \u001b[36m 7443\u001b[0m │ \u001b[36m 9999\u001b[0m │ \u001b[32m▇▇▇▇▇▇\u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141mpred_female_fallback_\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m0.4931\u001b[0m │ \u001b[36m  0.5\u001b[0m │ \u001b[36m        0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    1\u001b[0m │ \u001b[36m    1\u001b[0m │ \u001b[32m▇    ▇\u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141mnan                  \u001b[0m │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ \u001b[38;5;141mpred_value_1_within_0\u001b[0m │ \u001b[36m1072\u001b[0m │ \u001b[36m10.72\u001b[0m │ \u001b[36m  5.01\u001b[0m │ \u001b[36m1.842\u001b[0m │ \u001b[36m  0.01491\u001b[0m │ \u001b[36m3.851\u001b[0m │ \u001b[36m5.023\u001b[0m │ \u001b[36m6.178\u001b[0m │ \u001b[36m9.946\u001b[0m │ \u001b[32m▁▃▇▇▃▁\u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141m_to_730_days_mean_fal\u001b[0m │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ \u001b[38;5;141mlback_nan            \u001b[0m │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ \u001b[38;5;141mpred_value_2_within_1\u001b[0m │ \u001b[36m2060\u001b[0m │ \u001b[36m 20.6\u001b[0m │ \u001b[36m 5.008\u001b[0m │ \u001b[36m2.222\u001b[0m │ \u001b[36m0.0003901\u001b[0m │ \u001b[36m 3.52\u001b[0m │ \u001b[36m5.014\u001b[0m │ \u001b[36m 6.56\u001b[0m │ \u001b[36m9.997\u001b[0m │ \u001b[32m▂▅▇▇▅▂\u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141m0_to_365_days_mean_fa\u001b[0m │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ \u001b[38;5;141mllback_nan           \u001b[0m │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ \u001b[38;5;141moutc_outcome_within_0\u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m        0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[32m    ▇ \u001b[0m │  │\n",
+                            "│ │ \u001b[38;5;141m_to_365_days_max_fall\u001b[0m │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ │ \u001b[38;5;141mback_0               \u001b[0m │      │       │        │       │           │       │       │       │       │        │  │\n",
+                            "│ └───────────────────────┴──────┴───────┴────────┴───────┴───────────┴───────┴───────┴───────┴───────┴────────┘  │\n",
                             "│ \u001b[3m                                                   datetime                                                   \u001b[0m  │\n",
                             "│ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓  │\n",
                             "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfirst                     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mlast                      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mfrequency   \u001b[0m\u001b[1m \u001b[0m┃  │\n",
@@ -1021,11 +1011,11 @@
                             "│ │ \u001b[38;5;141mtimestamp       \u001b[0m │ \u001b[36m   0\u001b[0m │ \u001b[36m      0\u001b[0m │ \u001b[31m   1965-01-02 09:35:00    \u001b[0m │ \u001b[31m   1969-12-31 21:42:00    \u001b[0m │ \u001b[38;5;141mNone        \u001b[0m │  │\n",
                             "│ └──────────────────┴──────┴─────────┴────────────────────────────┴────────────────────────────┴──────────────┘  │\n",
                             "│ \u001b[3m                                                    string                                                    \u001b[0m  │\n",
-                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓  │\n",
-                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name                  \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA    \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %      \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mwords per row              \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mtotal words           \u001b[0m\u001b[1m \u001b[0m┃  │\n",
-                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩  │\n",
-                            "│ │ \u001b[38;5;141mpred_time_uuid               \u001b[0m │ \u001b[36m     0\u001b[0m │ \u001b[36m         0\u001b[0m │ \u001b[36m                          2\u001b[0m │ \u001b[36m                 20000\u001b[0m │  │\n",
-                            "│ └───────────────────────────────┴────────┴────────────┴─────────────────────────────┴────────────────────────┘  │\n",
+                            "│ ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓  │\n",
+                            "│ ┃\u001b[1m \u001b[0m\u001b[1mcolumn_name                          \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA   \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mNA %     \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mwords per row           \u001b[0m\u001b[1m \u001b[0m┃\u001b[1m \u001b[0m\u001b[1mtotal words        \u001b[0m\u001b[1m \u001b[0m┃  │\n",
+                            "│ ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩  │\n",
+                            "│ │ \u001b[38;5;141mprediction_time_uuid                 \u001b[0m │ \u001b[36m    0\u001b[0m │ \u001b[36m        0\u001b[0m │ \u001b[36m                       2\u001b[0m │ \u001b[36m              20000\u001b[0m │  │\n",
+                            "│ └───────────────────────────────────────┴───────┴───────────┴──────────────────────────┴─────────────────────┘  │\n",
                             "╰────────────────────────────────────────────────────── End ──────────────────────────────────────────────────────╯\n"
                         ]
                     },
@@ -1037,14 +1027,14 @@
                         "text/plain": [
                             "['entity_id',\n",
                             " 'timestamp',\n",
-                            " 'pred_time_uuid',\n",
+                            " 'prediction_time_uuid',\n",
                             " 'pred_female_fallback_nan',\n",
                             " 'pred_value_1_within_0_to_730_days_mean_fallback_nan',\n",
                             " 'pred_value_2_within_10_to_365_days_mean_fallback_nan',\n",
-                            " 'outc_value_within_0_to_365_days_max_fallback_0']"
+                            " 'outc_outcome_within_0_to_365_days_max_fallback_0']"
                         ]
                     },
-                    "execution_count": 16,
+                    "execution_count": 10,
                     "metadata": {},
                     "output_type": "execute_result"
                 }
@@ -1066,7 +1056,7 @@
         },
         {
             "cell_type": "code",
-            "execution_count": 17,
+            "execution_count": 11,
             "metadata": {},
             "outputs": [
                 {
@@ -1079,51 +1069,51 @@
                             "  white-space: pre-wrap;\n",
                             "}\n",
                             "</style>\n",
-                            "<small>shape: (10_000, 7)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>pred_time_uuid</th><th>pred_female_fallback_nan</th><th>predX</th><th>predX_30_to_90</th><th>outc_Y</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>str</td><td>i64</td><td>f64</td><td>f64</td><td>i32</td></tr></thead><tbody><tr><td>9903</td><td>1968-05-09 21:24:00</td><td>&quot;9903-1968-05-0…</td><td>0</td><td>3.197213</td><td>NaN</td><td>0</td></tr><tr><td>7465</td><td>1966-05-24 01:23:00</td><td>&quot;7465-1966-05-2…</td><td>1</td><td>4.243969</td><td>NaN</td><td>0</td></tr><tr><td>6447</td><td>1967-09-25 18:08:00</td><td>&quot;6447-1967-09-2…</td><td>1</td><td>5.260492</td><td>NaN</td><td>0</td></tr><tr><td>2121</td><td>1966-05-05 20:52:00</td><td>&quot;2121-1966-05-0…</td><td>0</td><td>4.798062</td><td>NaN</td><td>0</td></tr><tr><td>4927</td><td>1968-06-30 12:13:00</td><td>&quot;4927-1968-06-3…</td><td>0</td><td>4.040067</td><td>NaN</td><td>0</td></tr><tr><td>5475</td><td>1967-01-09 03:09:00</td><td>&quot;5475-1967-01-0…</td><td>0</td><td>5.953548</td><td>NaN</td><td>0</td></tr><tr><td>3157</td><td>1969-10-07 05:01:00</td><td>&quot;3157-1969-10-0…</td><td>1</td><td>5.068696</td><td>NaN</td><td>0</td></tr><tr><td>9793</td><td>1968-12-15 12:59:00</td><td>&quot;9793-1968-12-1…</td><td>0</td><td>6.93591</td><td>NaN</td><td>0</td></tr><tr><td>5962</td><td>1965-11-08 17:03:00</td><td>&quot;5962-1965-11-0…</td><td>0</td><td>4.112929</td><td>NaN</td><td>0</td></tr><tr><td>9768</td><td>1967-07-04 23:09:00</td><td>&quot;9768-1967-07-0…</td><td>1</td><td>5.053019</td><td>NaN</td><td>0</td></tr><tr><td>9861</td><td>1969-01-22 17:34:00</td><td>&quot;9861-1969-01-2…</td><td>0</td><td>3.828896</td><td>NaN</td><td>0</td></tr><tr><td>657</td><td>1969-04-14 15:47:00</td><td>&quot;657-1969-04-14…</td><td>0</td><td>5.124361</td><td>NaN</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>6542</td><td>1967-04-15 14:37:00</td><td>&quot;6542-1967-04-1…</td><td>1</td><td>6.099213</td><td>NaN</td><td>0</td></tr><tr><td>5607</td><td>1966-02-14 02:15:00</td><td>&quot;5607-1966-02-1…</td><td>0</td><td>4.235413</td><td>NaN</td><td>0</td></tr><tr><td>4228</td><td>1967-02-26 05:45:00</td><td>&quot;4228-1967-02-2…</td><td>0</td><td>5.181058</td><td>NaN</td><td>0</td></tr><tr><td>8337</td><td>1965-07-14 08:14:00</td><td>&quot;8337-1965-07-1…</td><td>0</td><td>5.184373</td><td>NaN</td><td>0</td></tr><tr><td>9745</td><td>1969-02-04 01:18:00</td><td>&quot;9745-1969-02-0…</td><td>1</td><td>6.005186</td><td>NaN</td><td>0</td></tr><tr><td>7222</td><td>1966-06-07 16:10:00</td><td>&quot;7222-1966-06-0…</td><td>0</td><td>4.666051</td><td>NaN</td><td>0</td></tr><tr><td>3385</td><td>1967-07-17 19:18:00</td><td>&quot;3385-1967-07-1…</td><td>1</td><td>6.98234</td><td>NaN</td><td>0</td></tr><tr><td>7159</td><td>1966-12-12 16:32:00</td><td>&quot;7159-1966-12-1…</td><td>0</td><td>5.022668</td><td>NaN</td><td>0</td></tr><tr><td>147</td><td>1965-03-12 05:32:00</td><td>&quot;147-1965-03-12…</td><td>1</td><td>5.927239</td><td>NaN</td><td>0</td></tr><tr><td>1421</td><td>1968-04-15 15:53:00</td><td>&quot;1421-1968-04-1…</td><td>0</td><td>6.061767</td><td>NaN</td><td>0</td></tr><tr><td>3353</td><td>1966-01-15 10:04:00</td><td>&quot;3353-1966-01-1…</td><td>0</td><td>6.108344</td><td>NaN</td><td>0</td></tr><tr><td>1940</td><td>1968-05-17 10:49:00</td><td>&quot;1940-1968-05-1…</td><td>0</td><td>4.909043</td><td>NaN</td><td>0</td></tr></tbody></table></div>"
+                            "<small>shape: (10_000, 7)</small><table border=\"1\" class=\"dataframe\"><thead><tr><th>entity_id</th><th>timestamp</th><th>prediction_time_uuid</th><th>pred_female_fallback_nan</th><th>predX</th><th>predX_30_to_90</th><th>outc_Y</th></tr><tr><td>i64</td><td>datetime[μs]</td><td>str</td><td>i64</td><td>f64</td><td>f64</td><td>i32</td></tr></thead><tbody><tr><td>9852</td><td>1965-01-02 09:35:00</td><td>&quot;9852-1965-01-02 09:35:00.00000…</td><td>1</td><td>NaN</td><td>NaN</td><td>0</td></tr><tr><td>1467</td><td>1965-01-02 10:05:00</td><td>&quot;1467-1965-01-02 10:05:00.00000…</td><td>0</td><td>NaN</td><td>NaN</td><td>0</td></tr><tr><td>1125</td><td>1965-01-02 12:55:00</td><td>&quot;1125-1965-01-02 12:55:00.00000…</td><td>0</td><td>NaN</td><td>NaN</td><td>0</td></tr><tr><td>649</td><td>1965-01-02 14:01:00</td><td>&quot;649-1965-01-02 14:01:00.000000&quot;</td><td>0</td><td>NaN</td><td>NaN</td><td>0</td></tr><tr><td>2070</td><td>1965-01-03 08:01:00</td><td>&quot;2070-1965-01-03 08:01:00.00000…</td><td>1</td><td>NaN</td><td>NaN</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>334</td><td>1969-12-31 16:32:00</td><td>&quot;334-1969-12-31 16:32:00.000000&quot;</td><td>1</td><td>7.252526</td><td>NaN</td><td>0</td></tr><tr><td>3363</td><td>1969-12-31 17:52:00</td><td>&quot;3363-1969-12-31 17:52:00.00000…</td><td>1</td><td>3.679667</td><td>2.409664</td><td>0</td></tr><tr><td>7929</td><td>1969-12-31 18:22:00</td><td>&quot;7929-1969-12-31 18:22:00.00000…</td><td>0</td><td>4.943585</td><td>7.475979</td><td>0</td></tr><tr><td>6002</td><td>1969-12-31 20:07:00</td><td>&quot;6002-1969-12-31 20:07:00.00000…</td><td>1</td><td>5.593583</td><td>7.076598</td><td>0</td></tr><tr><td>864</td><td>1969-12-31 21:42:00</td><td>&quot;864-1969-12-31 21:42:00.000000&quot;</td><td>1</td><td>5.520416</td><td>NaN</td><td>0</td></tr></tbody></table></div>"
                         ],
                         "text/plain": [
                             "shape: (10_000, 7)\n",
                             "┌───────────┬────────────────┬────────────────┬────────────────┬──────────┬───────────────┬────────┐\n",
-                            "│ entity_id ┆ timestamp      ┆ pred_time_uuid ┆ pred_female_fa ┆ predX    ┆ predX_30_to_9 ┆ outc_Y │\n",
-                            "│ ---       ┆ ---            ┆ ---            ┆ llback_nan     ┆ ---      ┆ 0             ┆ ---    │\n",
-                            "│ i64       ┆ datetime[μs]   ┆ str            ┆ ---            ┆ f64      ┆ ---           ┆ i32    │\n",
-                            "│           ┆                ┆                ┆ i64            ┆          ┆ f64           ┆        │\n",
+                            "│ entity_id ┆ timestamp      ┆ prediction_tim ┆ pred_female_fa ┆ predX    ┆ predX_30_to_9 ┆ outc_Y │\n",
+                            "│ ---       ┆ ---            ┆ e_uuid         ┆ llback_nan     ┆ ---      ┆ 0             ┆ ---    │\n",
+                            "│ i64       ┆ datetime[μs]   ┆ ---            ┆ ---            ┆ f64      ┆ ---           ┆ i32    │\n",
+                            "│           ┆                ┆ str            ┆ i64            ┆          ┆ f64           ┆        │\n",
                             "╞═══════════╪════════════════╪════════════════╪════════════════╪══════════╪═══════════════╪════════╡\n",
-                            "│ 9903      ┆ 1968-05-09     ┆ 9903-1968-05-0 ┆ 0              ┆ 3.197213 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 21:24:00       ┆ 9 21:24:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ 7465      ┆ 1966-05-24     ┆ 7465-1966-05-2 ┆ 1              ┆ 4.243969 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 01:23:00       ┆ 4 01:23:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ 6447      ┆ 1967-09-25     ┆ 6447-1967-09-2 ┆ 1              ┆ 5.260492 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 18:08:00       ┆ 5 18:08:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ 2121      ┆ 1966-05-05     ┆ 2121-1966-05-0 ┆ 0              ┆ 4.798062 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 20:52:00       ┆ 5 20:52:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ 4927      ┆ 1968-06-30     ┆ 4927-1968-06-3 ┆ 0              ┆ 4.040067 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 12:13:00       ┆ 0 12:13:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ …         ┆ …              ┆ …              ┆ …              ┆ …        ┆ …             ┆ …      │\n",
-                            "│ 7159      ┆ 1966-12-12     ┆ 7159-1966-12-1 ┆ 0              ┆ 5.022668 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 16:32:00       ┆ 2 16:32:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ 147       ┆ 1965-03-12     ┆ 147-1965-03-12 ┆ 1              ┆ 5.927239 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 05:32:00       ┆ 05:32:00.00000 ┆                ┆          ┆               ┆        │\n",
+                            "│ 9852      ┆ 1965-01-02     ┆ 9852-1965-01-0 ┆ 1              ┆ NaN      ┆ NaN           ┆ 0      │\n",
+                            "│           ┆ 09:35:00       ┆ 2 09:35:00.000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 00…            ┆                ┆          ┆               ┆        │\n",
+                            "│ 1467      ┆ 1965-01-02     ┆ 1467-1965-01-0 ┆ 0              ┆ NaN      ┆ NaN           ┆ 0      │\n",
+                            "│           ┆ 10:05:00       ┆ 2 10:05:00.000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 00…            ┆                ┆          ┆               ┆        │\n",
+                            "│ 1125      ┆ 1965-01-02     ┆ 1125-1965-01-0 ┆ 0              ┆ NaN      ┆ NaN           ┆ 0      │\n",
+                            "│           ┆ 12:55:00       ┆ 2 12:55:00.000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 00…            ┆                ┆          ┆               ┆        │\n",
+                            "│ 649       ┆ 1965-01-02     ┆ 649-1965-01-02 ┆ 0              ┆ NaN      ┆ NaN           ┆ 0      │\n",
+                            "│           ┆ 14:01:00       ┆ 14:01:00.00000 ┆                ┆          ┆               ┆        │\n",
                             "│           ┆                ┆ 0              ┆                ┆          ┆               ┆        │\n",
-                            "│ 1421      ┆ 1968-04-15     ┆ 1421-1968-04-1 ┆ 0              ┆ 6.061767 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 15:53:00       ┆ 5 15:53:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ 3353      ┆ 1966-01-15     ┆ 3353-1966-01-1 ┆ 0              ┆ 6.108344 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 10:04:00       ┆ 5 10:04:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
-                            "│ 1940      ┆ 1968-05-17     ┆ 1940-1968-05-1 ┆ 0              ┆ 4.909043 ┆ NaN           ┆ 0      │\n",
-                            "│           ┆ 10:49:00       ┆ 7 10:49:00.000 ┆                ┆          ┆               ┆        │\n",
-                            "│           ┆                ┆ 000            ┆                ┆          ┆               ┆        │\n",
+                            "│ 2070      ┆ 1965-01-03     ┆ 2070-1965-01-0 ┆ 1              ┆ NaN      ┆ NaN           ┆ 0      │\n",
+                            "│           ┆ 08:01:00       ┆ 3 08:01:00.000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 00…            ┆                ┆          ┆               ┆        │\n",
+                            "│ …         ┆ …              ┆ …              ┆ …              ┆ …        ┆ …             ┆ …      │\n",
+                            "│ 334       ┆ 1969-12-31     ┆ 334-1969-12-31 ┆ 1              ┆ 7.252526 ┆ NaN           ┆ 0      │\n",
+                            "│           ┆ 16:32:00       ┆ 16:32:00.00000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 0              ┆                ┆          ┆               ┆        │\n",
+                            "│ 3363      ┆ 1969-12-31     ┆ 3363-1969-12-3 ┆ 1              ┆ 3.679667 ┆ 2.409664      ┆ 0      │\n",
+                            "│           ┆ 17:52:00       ┆ 1 17:52:00.000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 00…            ┆                ┆          ┆               ┆        │\n",
+                            "│ 7929      ┆ 1969-12-31     ┆ 7929-1969-12-3 ┆ 0              ┆ 4.943585 ┆ 7.475979      ┆ 0      │\n",
+                            "│           ┆ 18:22:00       ┆ 1 18:22:00.000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 00…            ┆                ┆          ┆               ┆        │\n",
+                            "│ 6002      ┆ 1969-12-31     ┆ 6002-1969-12-3 ┆ 1              ┆ 5.593583 ┆ 7.076598      ┆ 0      │\n",
+                            "│           ┆ 20:07:00       ┆ 1 20:07:00.000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 00…            ┆                ┆          ┆               ┆        │\n",
+                            "│ 864       ┆ 1969-12-31     ┆ 864-1969-12-31 ┆ 1              ┆ 5.520416 ┆ NaN           ┆ 0      │\n",
+                            "│           ┆ 21:42:00       ┆ 21:42:00.00000 ┆                ┆          ┆               ┆        │\n",
+                            "│           ┆                ┆ 0              ┆                ┆          ┆               ┆        │\n",
                             "└───────────┴────────────────┴────────────────┴────────────────┴──────────┴───────────────┴────────┘"
                         ]
                     },
-                    "execution_count": 17,
+                    "execution_count": 11,
                     "metadata": {},
                     "output_type": "execute_result"
                 }
@@ -1157,6 +1147,11 @@
                 "4. Our predictor columns, prefixed with `pred_` and\n",
                 "5. Our outcome columns, prefixed with `outc_`\n"
             ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": []
         },
         {
             "cell_type": "markdown",

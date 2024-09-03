@@ -247,8 +247,8 @@
     <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span>
     <span class="n">time_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">,</span> <span class="s2">&quot;minutes&quot;</span><span class="p">,</span> <span class="s2">&quot;hours&quot;</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">,</span> <span class="s2">&quot;years&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;days&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a time delta feature, i.e. the time between a prediction timestamp and a value timestamp.</span>
-<span class="sd">    Useful for e.g. calculating age or the time since a certain event.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification for a time delta feature for an entity, i.e. the time between a prediction timestamp and a value timestamp (e.g. a birthdate).</span>
+<span class="sd">    Useful for e.g. calculating age or the time since a certain event. Joins on the entity_id column.</span>
 
 <span class="sd">    init_frame must contain columns:</span>
 <span class="sd">        entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column&#39;s values must be strings which are unique.</span>
@@ -278,7 +278,28 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_frame</span><span class="o">.</span><span class="n">df</span>
+
+<div class="viewcode-block" id="TimeDeltaSpec.from_primitives"><a class="viewcode-back" href="../../../feature_specifications.html#timeseriesflattener.specs.timedelta.TimeDeltaSpec.from_primitives">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_primitives</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">entity_id_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value_timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+        <span class="n">column_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pred&quot;</span><span class="p">,</span>
+        <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TimeDeltaSpec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a TimeDeltaSpec from primitives.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TimeDeltaSpec</span><span class="p">(</span>
+            <span class="n">init_frame</span><span class="o">=</span><span class="n">TimestampValueFrame</span><span class="p">(</span>
+                <span class="n">init_df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+                <span class="n">value_timestamp_col_name</span><span class="o">=</span><span class="n">value_timestamp_col_name</span><span class="p">,</span>
+                <span class="n">entity_id_col_name</span><span class="o">=</span><span class="n">entity_id_col_name</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">fallback</span><span class="o">=</span><span class="n">fallback</span><span class="p">,</span>
+            <span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span>
+            <span class="n">column_prefix</span><span class="o">=</span><span class="n">column_prefix</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
 </pre></div>
         </article>
       </div>

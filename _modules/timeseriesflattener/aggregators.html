@@ -229,6 +229,7 @@
 
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
 <span class="kn">from</span> <span class="nn">attr</span> <span class="kn">import</span> <span class="n">dataclass</span>
@@ -243,6 +244,46 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Invalid fallback value </span><span class="si">{</span><span class="n">fallback</span><span class="si">}</span><span class="s2"> for aggregator </span><span class="si">{</span><span class="n">aggregator</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. Fallback of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">fallback</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not compatible with the aggregator&#39;s output type of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">aggregator</span><span class="o">.</span><span class="n">output_type</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span></div>
+
+
+<span class="n">AggregatorName</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;change_per_day&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;count&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;has_values&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;slope&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;variance&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="strings_to_aggregators"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.strings_to_aggregators">[docs]</a><span class="k">def</span> <span class="nf">strings_to_aggregators</span><span class="p">(</span>
+    <span class="n">aggregator_names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AggregatorName</span><span class="p">],</span> <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Aggregator</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">string_to_aggregator</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">timestamp_col_name</span><span class="o">=</span><span class="n">timestamp_col_name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aggregator_names</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="string_to_aggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.string_to_aggregator">[docs]</a><span class="k">def</span> <span class="nf">string_to_aggregator</span><span class="p">(</span><span class="n">aggregator_name</span><span class="p">:</span> <span class="n">AggregatorName</span><span class="p">,</span> <span class="n">timestamp_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Aggregator</span><span class="p">:</span>
+    <span class="n">str2aggr</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AggregatorName</span><span class="p">,</span> <span class="n">Aggregator</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="n">HasValuesAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;change_per_day&quot;</span><span class="p">:</span> <span class="n">SlopeAggregator</span><span class="p">(</span><span class="n">timestamp_col_name</span><span class="o">=</span><span class="n">timestamp_col_name</span><span class="p">),</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">CountAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;has_values&quot;</span><span class="p">:</span> <span class="n">HasValuesAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">MaxAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">MeanAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">MinAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;slope&quot;</span><span class="p">:</span> <span class="n">SlopeAggregator</span><span class="p">(</span><span class="n">timestamp_col_name</span><span class="o">=</span><span class="n">timestamp_col_name</span><span class="p">),</span>
+        <span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="n">SumAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;variance&quot;</span><span class="p">:</span> <span class="n">VarianceAggregator</span><span class="p">(),</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">str2aggr</span><span class="p">[</span><span class="n">aggregator_name</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Aggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.Aggregator">[docs]</a><span class="k">class</span> <span class="nc">Aggregator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -352,7 +393,7 @@
 
 
 <div class="viewcode-block" id="HasValuesAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.HasValuesAggregator">[docs]</a><span class="k">class</span> <span class="nc">HasValuesAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Examines whether any values exist in the column. If so, returns True, else False.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Examines whether any values exist in the look window. If so, returns True, else False.&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bool&quot;</span>
     <span class="n">output_type</span> <span class="o">=</span> <span class="nb">bool</span>
@@ -378,7 +419,7 @@
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
         <span class="c1"># Convert to days for the slope. Arbitrarily chosen to be the number of days since 1970-01-01.</span>
-        <span class="n">x_col</span> <span class="o">=</span> <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">)</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">days</span><span class="p">()</span>
+        <span class="n">x_col</span> <span class="o">=</span> <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_col_name</span><span class="p">)</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_days</span><span class="p">()</span>
         <span class="n">y_col</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
 
         <span class="n">numerator</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">x_col</span><span class="p">,</span> <span class="n">y_col</span><span class="p">,</span> <span class="n">propagate_nans</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">y_col</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
