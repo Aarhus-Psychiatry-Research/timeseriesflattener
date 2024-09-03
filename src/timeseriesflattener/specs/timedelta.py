@@ -20,8 +20,8 @@ class TimeDeltaSpec:
     output_name: str
     column_prefix: str = "pred"
     time_format: Literal["seconds", "minutes", "hours", "days", "years"] = "days"
-    """Specification for a time delta feature, i.e. the time between a prediction timestamp and a value timestamp.
-    Useful for e.g. calculating age or the time since a certain event.
+    """Specification for a time delta feature for an entity, i.e. the time between a prediction timestamp and a value timestamp (e.g. a birthdate).
+    Useful for e.g. calculating age or the time since a certain event. Joins on the entity_id column.
 
     init_frame must contain columns:
         entity_id_col_name: The name of the column containing the entity ids. Must be a string, and the column's values must be strings which are unique.
@@ -52,3 +52,24 @@ class TimeDeltaSpec:
     @property
     def df(self) -> pl.DataFrame:
         return self.value_frame.df
+
+    @staticmethod
+    def from_primitives(
+        df: pl.DataFrame,
+        entity_id_col_name: str,
+        output_name: str,
+        value_timestamp_col_name: str = "timestamp",
+        column_prefix: str = "pred",
+        fallback: int | float | str | None = 0,
+    ) -> TimeDeltaSpec:
+        """Create a TimeDeltaSpec from primitives."""
+        return TimeDeltaSpec(
+            init_frame=TimestampValueFrame(
+                init_df=df,
+                value_timestamp_col_name=value_timestamp_col_name,
+                entity_id_col_name=entity_id_col_name,
+            ),
+            fallback=fallback,
+            output_name=output_name,
+            column_prefix=column_prefix,
+        )

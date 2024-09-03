@@ -21,7 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">=3.8.0,<3.13.0"
+requires-python = ">=3.9.0,<3.13.0"
 dependencies = [
   "scipy>=1.8.0",
   "scikit-learn>=1.1.2",
@@ -35,9 +35,10 @@ dependencies = [
   "frozendict>=2.3.4",
   "coloredlogs>14.0.0",
   "tqdm>4.1.0",
-  "polars>0.19.0",
+  "polars>=0.19.0",
   "iterpy==1.6.0",
   "rich>=13.0.0",
+  "ipykernel[docs]>=6.29.5",
 ]
 
 [project.license]
@@ -67,8 +68,9 @@ docs = [
   "sphinxext-opengraph==0.8.2",
   "myst-nb==0.17.2",
   "sphinx_design==0.3.0",
+  "ipykernel>=6.29.5",
 ]
-tutorials = ["jupyter>=1.0.0,<1.1.0", "skimpy>=0.0.11"]
+tutorials = ["jupyter>=1.0.0,<1.1.0", "skimpy==0.0.15"]
 
 [project.readme]
 file = "README.md"
@@ -79,20 +81,8 @@ homepage = "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
 repository = "https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"
 documentation = "https://aarhus-psychiatry-research.github.io/timeseriesflattener/"
 
-[tool]
-rye = { dev-dependencies = [
-  "pytest>=7.1.3, <7.3.0",
-  "pytest-cov>=3.0.0, <3.1.0",
-  "pytest-xdist>=3.0.0, <3.2.0",
-  "pytest-sugar>=0.9.4, <0.10.0",
-  "pytest-testmon==2.1.0",
-  "pytest-benchmark==4.0.0",
-  "pytest-codspeed==2.2.0",
-  "invoke==2.1.1",
-  "pyright==1.1.330.post0",
-  "pandas-stubs>=2.0.3.230814",
-  "ruff>=0.2.2",
-] }
+[tool.uv]
+override-dependencies = ["polars >= 1.0"]
 
 [tool.pyright]
 exclude = [".*venv*/", ".venv38/", ".tox", ".benchmark_cache"]

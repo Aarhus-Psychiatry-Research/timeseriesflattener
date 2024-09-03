@@ -38,3 +38,17 @@ class StaticSpec:
     value_frame: StaticFrame
     column_prefix: str
     fallback: int | float | str | None
+
+    @staticmethod
+    def from_primitives(
+        df: pl.DataFrame,
+        entity_id_col_name: str,
+        column_prefix: str,
+        fallback: int | float | str | None,
+    ) -> StaticSpec:
+        """Create a StaticSpec from primitives."""
+        return StaticSpec(
+            value_frame=StaticFrame(init_df=df, entity_id_col_name=entity_id_col_name),
+            column_prefix=column_prefix,
+            fallback=fallback,
+        )

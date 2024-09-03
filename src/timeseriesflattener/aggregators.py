@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 from abc import ABC, abstractmethod
+from typing import Literal, Sequence
 
 import polars as pl
 from attr import dataclass
@@ -16,6 +17,46 @@ def validate_compatible_fallback_type_for_aggregator(
         raise ValueError(
             f"Invalid fallback value {fallback} for aggregator {aggregator.__class__.__name__}. Fallback of type {type(fallback)} is not compatible with the aggregator's output type of {type(aggregator.output_type)}."
         )
+
+
+AggregatorName = Literal[
+    "bool",
+    "change_per_day",
+    "count",
+    "has_values",
+    "max",
+    "mean",
+    "min",
+    "slope",
+    "sum",
+    "variance",
+]
+
+
+def strings_to_aggregators(
+    aggregator_names: Sequence[AggregatorName], timestamp_col_name: str
+) -> Sequence[Aggregator]:
+    return [
+        string_to_aggregator(name, timestamp_col_name=timestamp_col_name)
+        for name in aggregator_names
+    ]
+
+
+def string_to_aggregator(aggregator_name: AggregatorName, timestamp_col_name: str) -> Aggregator:
+    str2aggr: dict[AggregatorName, Aggregator] = {
+        "bool": HasValuesAggregator(),
+        "change_per_day": SlopeAggregator(timestamp_col_name=timestamp_col_name),
+        "count": CountAggregator(),
+        "has_values": HasValuesAggregator(),
+        "max": MaxAggregator(),
+        "mean": MeanAggregator(),
+        "min": MinAggregator(),
+        "slope": SlopeAggregator(timestamp_col_name=timestamp_col_name),
+        "sum": SumAggregator(),
+        "variance": VarianceAggregator(),
+    }
+
+    return str2aggr[aggregator_name]
 
 
 class Aggregator(ABC):
@@ -125,7 +166,7 @@ class VarianceAggregator(Aggregator):
 
 
 class HasValuesAggregator(Aggregator):
-    """Examines whether any values exist in the column. If so, returns True, else False."""
+    """Examines whether any values exist in the look window. If so, returns True, else False."""
 
     name: str = "bool"
     output_type = bool
@@ -151,7 +192,7 @@ class SlopeAggregator(Aggregator):
 
     def __call__(self, column_name: str) -> pl.Expr:
         # Convert to days for the slope. Arbitrarily chosen to be the number of days since 1970-01-01.
-        x_col = (pl.col(self.timestamp_col_name) - dt.datetime(1970, 1, 1)).dt.days()
+        x_col = (pl.col(self.timestamp_col_name) - dt.datetime(1970, 1, 1)).dt.total_days()
         y_col = pl.col(column_name)
 
         numerator = pl.corr(x_col, y_col, propagate_nans=True) * y_col.std()

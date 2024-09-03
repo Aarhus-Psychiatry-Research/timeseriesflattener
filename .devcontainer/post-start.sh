@@ -1,10 +1,3 @@
-# Setup lefthook
+#!/bin/bash
 git init
-lefthook install
-
-# Disable Graphite pager
-gt user pager --disable
-
-# Install dependencies
-pip install -e ".[dev, test]"
-
+uv sync --all-extras

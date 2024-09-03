@@ -131,7 +131,7 @@ def _aggregate_masked_frame(
     rename_mapping = dict(value_columns)
 
     with_fallback = grouped_frame.with_columns(
-        cs.contains(masked_frame.value_col_names).fill_null(fallback)
+        cs.contains(*masked_frame.value_col_names).fill_null(fallback)
     ).rename(rename_mapping)
 
     return with_fallback

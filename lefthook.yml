@@ -16,5 +16,5 @@ pre-commit:
   commands:
     format:
       glob: "*.{py}"
-      run: inv lint
+      run: make lint
       stage_fixed: true

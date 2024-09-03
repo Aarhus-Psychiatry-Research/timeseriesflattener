@@ -4,17 +4,24 @@ import datetime as dt
 from dataclasses import InitVar, dataclass
 from typing import TYPE_CHECKING
 
+import pandas as pd
 import polars as pl
 
+from timeseriesflattener.specs import _lookdistance_to_timedelta_days
+
+from ..aggregators import (
+    AggregatorName,
+    strings_to_aggregators,
+    validate_compatible_fallback_type_for_aggregator,
+)
 from ..validators import validate_col_name_columns_exist
+from .timestamp import TimestampValueFrame
 from .value import ValueFrame, lookdistance_to_normalised_lookperiod
-from ..aggregators import validate_compatible_fallback_type_for_aggregator
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from ..aggregators import Aggregator
-    from .timestamp import TimestampValueFrame
 
 
 @dataclass
@@ -43,6 +50,30 @@ class OutcomeSpec:
     @property
     def df(self) -> pl.DataFrame:
         return self.value_frame.df
+
+    @staticmethod
+    def from_primitives(
+        df: pl.DataFrame,
+        entity_id_col_name: str,
+        lookahead_days: Sequence[float | tuple[float, float]],
+        aggregators: Sequence[AggregatorName],
+        value_timestamp_col_name: str = "timestamp",
+        column_prefix: str = "outc",
+    ) -> OutcomeSpec:
+        """Create an OutcomeSpec from primitives."""
+        lookahead_distances = [_lookdistance_to_timedelta_days(d) for d in lookahead_days]
+
+        return OutcomeSpec(
+            value_frame=ValueFrame(
+                init_df=df,
+                entity_id_col_name=entity_id_col_name,
+                value_timestamp_col_name=value_timestamp_col_name,
+            ),
+            lookahead_distances=lookahead_distances,
+            aggregators=strings_to_aggregators(aggregators, value_timestamp_col_name),
+            fallback=0,
+            column_prefix=column_prefix,
+        )
 
 
 @dataclass
@@ -81,3 +112,27 @@ class BooleanOutcomeSpec:
     @property
     def df(self) -> pl.DataFrame:
         return self.value_frame.df
+
+    @staticmethod
+    def from_primitives(
+        df: pl.DataFrame | pd.DataFrame,
+        entity_id_col_name: str,
+        lookahead_days: Sequence[float | tuple[float, float]],
+        aggregators: Sequence[AggregatorName],
+        value_timestamp_col_name: str = "timestamp",
+        column_prefix: str = "outc",
+    ) -> BooleanOutcomeSpec:
+        """Create an OutcomeSpec from primitives."""
+        lookahead_distances = [_lookdistance_to_timedelta_days(d) for d in lookahead_days]
+
+        return BooleanOutcomeSpec(
+            init_frame=TimestampValueFrame(
+                init_df=df,
+                value_timestamp_col_name=value_timestamp_col_name,
+                entity_id_col_name=entity_id_col_name,
+            ),
+            lookahead_distances=lookahead_distances,
+            aggregators=strings_to_aggregators(aggregators, value_timestamp_col_name),
+            output_name=column_prefix,
+            column_prefix=column_prefix,
+        )

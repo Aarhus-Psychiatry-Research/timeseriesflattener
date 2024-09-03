@@ -37,7 +37,7 @@ def synth_predictor_binary() -> pl.DataFrame:
 def load_synth_outcome() -> pl.DataFrame:
     # Get first row for each id
     df = load_raw_test_csv("synth_raw_binary_2.csv")
-    df = df.groupby("entity_id").last()
+    df = df.group_by("entity_id").last()
 
     # Drop all rows with a value equal to 1
     df = df.filter(pl.col("value") == 1)
