@@ -1,6 +1,6 @@
 <a href="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener"><img src="https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/blob/main/docs/_static/icon.png?raw=true" width="200" align="right"/></a>
 
-# Timeseriesflattener
+## Timeseriesflattener
 
 [![github actions pytest](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions/workflows/main_test_and_release.yml/badge.svg)](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/actions)
 [![python versions](https://img.shields.io/pypi/pyversions/timeseriesflattener)](https://pypi.org/project/timeseriesflattener/)
