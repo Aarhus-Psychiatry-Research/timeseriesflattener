@@ -95,19 +95,9 @@ Output:
 |   1 |   1 | 2020-02-01 00:00:00 | 1-2020-02-01-00-00-00 |                                                  1 |                                                               1 |
 |   2 |   2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00 |                                                  4 |                                                               0 |
 
-## 📖 Documentation
-
-| Documentation        |                                                                              |
-| -------------------- | ---------------------------------------------------------------------------- |
-| 🎓 **[Tutorial]**    | Simple and advanced tutorials to get you started using `timeseriesflattener` |
-| 🎛 **[General docs]** | The detailed reference for timeseriesflattener's API.                        |
-| 🙋 **[FAQ]**         | Frequently asked question                                                    |
-| 🗺️ **[Roadmap]**     | Kanban board for the roadmap for the project                                 |
-
-[Tutorial]: https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html
-[General docs]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/
-[FAQ]: https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/faq.html
-[Roadmap]: https://github.com/orgs/Aarhus-Psychiatry-Research/projects/11/views/1
+## 📖 Tutorial
+* 🎓 **[Tutorials](https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html)**
+* **[General docs](https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/)**
 
 ## 💬 Where to ask questions
 
