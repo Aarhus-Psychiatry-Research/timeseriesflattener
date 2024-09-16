@@ -96,8 +96,8 @@ Output:
 |   2 |   2 | 2020-02-01 00:00:00 | 2-2020-02-01-00-00-00 |                                                  4 |                                                               0 |
 
 ## 📖 Tutorial
-* 🎓 **[Tutorials](https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html)**
-* **[General docs](https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/)**
+* 🎓 [Tutorials](https://aarhus-psychiatry-research.github.io/timeseriesflattener/tutorials.html)
+* 📖 [General docs](https://Aarhus-Psychiatry-Research.github.io/timeseriesflattener/)
 
 ## 💬 Where to ask questions
 
