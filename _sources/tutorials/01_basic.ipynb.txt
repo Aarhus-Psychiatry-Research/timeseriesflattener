@@ -43,7 +43,7 @@
             "source": [
                 "### Loading prediction times\n",
                 "\n",
-                "Predictin times consist of two elements:\n",
+                "Prediction times consist of two elements:\n",
                 "\n",
                 "1. The entity id. This is the entity about which the prediction is issued. In medical contexts, this is frequently a patient.\n",
                 "2. The timestamp at which the prediction is to be issued.\n"
