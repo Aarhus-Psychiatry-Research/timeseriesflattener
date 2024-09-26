@@ -16,7 +16,7 @@ In essence, the time series need to be _flattened_ so that each prediction time 
 
 ## 🔧 Installation
 
-To get started using timeseriesflattener simply install it using pip by running the following line in your terminal:
+To get started using timeseriesflattener simply install it using pip by running the following line in your terminal: 
 
 ```
 pip install timeseriesflattener
