@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.4.0 (2024-09-27)
+
+### Feature
+
+* Remove pandas upper bound dependency ([`5144eba`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5144eba712e1e52d915d03b1c39b85e8d8f9064b))
+
 ## v2.3.0 (2024-09-27)
 
 ### Feature
