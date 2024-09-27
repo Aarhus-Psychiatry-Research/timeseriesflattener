@@ -28,14 +28,14 @@ base_float_predictor_combinations = PredictorGroupSpec(
     ],
     lookbehind_days=[365, 730],
     aggregation_fns=[mean],
-    fallback=[np.NaN],
+    fallback=[np.nan],
 ).create_combinations()
 
 base_binary_predictor_combinations = PredictorGroupSpec(
     named_dataframes=[NamedDataframe(df=synth_predictor_binary(), name="synth_predictor_binary")],
     lookbehind_days=[365, 730],
     aggregation_fns=[maximum],
-    fallback=[np.NaN],
+    fallback=[np.nan],
 ).create_combinations()
 
 
