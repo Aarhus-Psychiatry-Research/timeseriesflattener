@@ -2,6 +2,19 @@
 
 <!--next-version-placeholder-->
 
+## v2.3.0 (2024-09-27)
+
+### Feature
+
+* Release please ([`c2c0719`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/c2c0719e2732e1288e0728459c14bac43c662227))
+
+### Documentation
+
+* Update 03_text.ipynb ([`bd5be7c`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/bd5be7c0e933d8020784faf01f17200f255a4709))
+* Update 03_text.ipynb ([`aa780c1`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/aa780c14a34b1f34bfc60b4976b8909fe5aa95f6))
+* Update 01_basic.ipynb ([`2dac3fd`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/2dac3fdb830724f31dbbac7be6cba3f4b3d04ef5))
+* Update README.md ([`eab8961`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/eab89610b15a3ecc25780834fb46ec90318a94db))
+
 ## v2.2.6 (2024-05-23)
 
 ### Fix
