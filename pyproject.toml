@@ -48,7 +48,7 @@ file = "LICENSE"
 dev = [
   "pyright==1.1.330.post0",
   "pre-commit==3.4.0",
-  "ruff==0.2.1",                # important that these match the pre-commit hooks
+  "ruff==0.6.8",                # important that these match the pre-commit hooks
   "pandas-stubs==2.2.0.240218", # type stubs for pandas
   "invoke==2.1.1",
 ]
