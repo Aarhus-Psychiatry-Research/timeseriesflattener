@@ -87,7 +87,7 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
             aggregator=CountAggregator(), input_values=[1, 2], expected_output_values=[2]
         ),
         SingleVarAggregatorExample(
-            aggregator=CountAggregator(), input_values=[1, 2, 1], expected_output_values=[2]
+            aggregator=UniqueCountAggregator(), input_values=[1, 2, 1], expected_output_values=[2]
         ),
         SingleVarAggregatorExample(
             aggregator=SumAggregator(), input_values=[1, 2], expected_output_values=[3]
