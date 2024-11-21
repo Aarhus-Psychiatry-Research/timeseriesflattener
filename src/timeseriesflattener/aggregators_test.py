@@ -11,6 +11,7 @@ from timeseriesflattener.testing.utils_for_testing import str_to_pl_df
 from .intermediary import TimeMaskedFrame
 from .aggregators import (
     CountAggregator,
+    UniqueCountAggregator,
     EarliestAggregator,
     HasValuesAggregator,
     LatestAggregator,
@@ -84,6 +85,9 @@ AggregatorExampleType = Union[ComplexAggregatorExample, SingleVarAggregatorExamp
         ),
         SingleVarAggregatorExample(
             aggregator=CountAggregator(), input_values=[1, 2], expected_output_values=[2]
+        ),
+        SingleVarAggregatorExample(
+            aggregator=CountAggregator(), input_values=[1, 2, 1], expected_output_values=[2]
         ),
         SingleVarAggregatorExample(
             aggregator=SumAggregator(), input_values=[1, 2], expected_output_values=[3]

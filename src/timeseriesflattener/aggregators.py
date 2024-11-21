@@ -23,6 +23,7 @@ AggregatorName = Literal[
     "bool",
     "change_per_day",
     "count",
+    "unique_count",
     "has_values",
     "max",
     "mean",
@@ -47,6 +48,7 @@ def string_to_aggregator(aggregator_name: AggregatorName, timestamp_col_name: st
         "bool": HasValuesAggregator(),
         "change_per_day": SlopeAggregator(timestamp_col_name=timestamp_col_name),
         "count": CountAggregator(),
+        "unique_count": UniqueCountAggregator(),
         "has_values": HasValuesAggregator(),
         "max": MaxAggregator(),
         "mean": MeanAggregator(),
@@ -64,8 +66,7 @@ class Aggregator(ABC):
     output_type: type[float | int | bool]
 
     @abstractmethod
-    def __call__(self, column_name: str) -> pl.Expr:
-        ...
+    def __call__(self, column_name: str) -> pl.Expr: ...
 
     def new_col_name(self, previous_col_name: str) -> str:
         return f"{previous_col_name}_{self.name}"
@@ -109,6 +110,16 @@ class CountAggregator(Aggregator):
 
     def __call__(self, column_name: str) -> pl.Expr:
         return pl.col(column_name).count().alias(self.new_col_name(column_name))
+
+
+class UniqueCountAggregator(Aggregator):
+    """Returns the count of non-null values in the look window."""
+
+    name: str = "unique_count"
+    output_type = int
+
+    def __call__(self, column_name: str) -> pl.Expr:
+        return pl.col(column_name).n_unique().alias(self.new_col_name(column_name))
 
 
 @dataclass(frozen=True)
