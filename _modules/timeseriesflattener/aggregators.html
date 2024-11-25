@@ -250,6 +250,7 @@
     <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
     <span class="s2">&quot;change_per_day&quot;</span><span class="p">,</span>
     <span class="s2">&quot;count&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;unique_count&quot;</span><span class="p">,</span>
     <span class="s2">&quot;has_values&quot;</span><span class="p">,</span>
     <span class="s2">&quot;max&quot;</span><span class="p">,</span>
     <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
@@ -274,6 +275,7 @@
         <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="n">HasValuesAggregator</span><span class="p">(),</span>
         <span class="s2">&quot;change_per_day&quot;</span><span class="p">:</span> <span class="n">SlopeAggregator</span><span class="p">(</span><span class="n">timestamp_col_name</span><span class="o">=</span><span class="n">timestamp_col_name</span><span class="p">),</span>
         <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">CountAggregator</span><span class="p">(),</span>
+        <span class="s2">&quot;unique_count&quot;</span><span class="p">:</span> <span class="n">UniqueCountAggregator</span><span class="p">(),</span>
         <span class="s2">&quot;has_values&quot;</span><span class="p">:</span> <span class="n">HasValuesAggregator</span><span class="p">(),</span>
         <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">MaxAggregator</span><span class="p">(),</span>
         <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">MeanAggregator</span><span class="p">(),</span>
@@ -291,8 +293,7 @@
     <span class="n">output_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">]</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
-        <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span> <span class="o">...</span>
 
 <div class="viewcode-block" id="Aggregator.new_col_name"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.Aggregator.new_col_name">[docs]</a>    <span class="k">def</span> <span class="nf">new_col_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">previous_col_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span></div></div>
@@ -336,6 +337,16 @@
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_name</span><span class="p">(</span><span class="n">column_name</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="UniqueCountAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.UniqueCountAggregator">[docs]</a><span class="k">class</span> <span class="nc">UniqueCountAggregator</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the count of non-null values in the look window.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unique_count&quot;</span>
+    <span class="n">output_type</span> <span class="o">=</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span><span class="o">.</span><span class="n">n_unique</span><span class="p">()</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_name</span><span class="p">(</span><span class="n">column_name</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="EarliestAggregator"><a class="viewcode-back" href="../../aggregators.html#timeseriesflattener.aggregators.EarliestAggregator">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
