@@ -84,7 +84,7 @@ pytest==7.2.2
     # via pytest-testmon
     # via pytest-xdist
 pytest-benchmark==4.0.0
-pytest-codspeed==2.2.0
+pytest-codspeed==3.0.1
 pytest-cov==3.0.0
 pytest-sugar==0.9.7
 pytest-testmon==2.1.0
