@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v2.5.0 (2024-11-25)
+
+### Feature
+
+* Add new UniqueCountAggregator ([`5bd8ea2`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/5bd8ea2e9f9cdee365732cc5f1ef0827db24caa5))
+
+### Fix
+
+* Typo ([`9e59940`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/9e59940dc99ad12cda1521174a90c5e44ea71b26))
+
 ## v2.4.0 (2024-09-27)
 
 ### Feature
