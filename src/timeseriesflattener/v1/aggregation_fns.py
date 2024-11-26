@@ -1,7 +1,6 @@
 """Functions for resolving multiple values in a time-series into a single
 value."""
 
-
 from typing import Callable
 
 import catalogue
@@ -57,6 +56,10 @@ def summed(grouped_df: DataFrameGroupBy) -> DataFrame:
 
 def count(grouped_df: DataFrameGroupBy) -> DataFrame:
     return grouped_df.count()
+
+
+def unique_count(grouped_df: DataFrameGroupBy) -> DataFrame:
+    return grouped_df.nunique()
 
 
 def variance(grouped_df: DataFrameGroupBy) -> DataFrame:
