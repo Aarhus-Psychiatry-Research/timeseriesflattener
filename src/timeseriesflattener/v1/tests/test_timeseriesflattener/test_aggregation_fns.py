@@ -1,12 +1,12 @@
 """Tests of aggregation strategies."""
 
-
 import numpy as np
 
 from timeseriesflattener.v1.aggregation_fns import (
     boolean,
     change_per_day,
     count,
+    unique_count,
     earliest,
     latest,
     maximum,
@@ -232,6 +232,29 @@ def test_aggregation_count():
             lookahead_days=2,
             fallback=0,
             incident=False,
+        ),
+        expected_values=[2],
+    )
+
+
+def test_aggregation_unique_count():
+    prediction_times_str = """entity_id,timestamp,
+                            1,2021-12-31 00:00:00
+                            """
+    predictor_df_str = """entity_id,timestamp,value,
+                        1,2021-12-30 00:00:01, 1
+                        1,2021-12-30 00:00:02, 2,
+                        1,2021-12-30 00:00:03, 2,
+                        """
+
+    assert_flattened_data_as_expected(
+        prediction_times_df=prediction_times_str,
+        output_spec=PredictorSpec(
+            feature_base_name="value",
+            timeseries_df=str_to_df(predictor_df_str),
+            aggregation_fn=unique_count,
+            lookbehind_days=2,
+            fallback=0,
         ),
         expected_values=[2],
     )
