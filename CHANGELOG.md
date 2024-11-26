@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.5.1 (2024-11-26)
+
+### Fix
+
+* Add unique_count agg to v1 ([`8dcde63`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/8dcde63ec2ed6285b7324e2863f861e81a6170ec))
+
 ## v2.5.0 (2024-11-25)
 
 ### Feature
