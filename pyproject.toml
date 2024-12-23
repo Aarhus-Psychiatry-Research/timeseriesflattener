@@ -70,7 +70,7 @@ docs = [
   "sphinx_design==0.3.0",
   "ipykernel>=6.29.5",
 ]
-tutorials = ["jupyter>=1.0.0,<1.1.0", "skimpy==0.0.15"]
+tutorials = ["jupyter>=1.0.0,<1.1.0", "skimpy==0.0.16"]
 
 [project.readme]
 file = "README.md"
