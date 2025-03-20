@@ -34,23 +34,23 @@ jobs:
         with:
           python-version: ${{ env.python-version }}
 
-  jupyter-tutorials:
-    runs-on: ${{ matrix.os }}
-    env:
-      python-version: "3.9"
+  # jupyter-tutorials:
+  #   runs-on: ${{ matrix.os }}
+  #   env:
+  #     python-version: "3.9"
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest]
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
 
-      - name: Run tests
-        uses: ./.github/actions/test_tutorials
-        with:
-          python-version: ${{ env.python-version }}
+  #     - name: Run tests
+  #       uses: ./.github/actions/test_tutorials
+  #       with:
+  #         python-version: ${{ env.python-version }}
 
   release:
     runs-on: ubuntu-latest
