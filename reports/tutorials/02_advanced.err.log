@@ -1,17 +1,20 @@
 Traceback (most recent call last):
-  File "/home/runner/.local/lib/python3.10/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+  File "/home/runner/.local/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
-  File "/home/runner/.local/lib/python3.10/site-packages/nbclient/client.py", line 1305, in execute
+  File "/home/runner/.local/lib/python3.12/site-packages/nbclient/client.py", line 1305, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
-  File "/home/runner/.local/lib/python3.10/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/.local/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
     return loop.run_until_complete(inner)
-  File "/usr/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
     return future.result()
-  File "/home/runner/.local/lib/python3.10/site-packages/nbclient/client.py", line 705, in async_execute
+           ^^^^^^^^^^^^^^^
+  File "/home/runner/.local/lib/python3.12/site-packages/nbclient/client.py", line 705, in async_execute
     await self.async_execute_cell(
-  File "/home/runner/.local/lib/python3.10/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+  File "/home/runner/.local/lib/python3.12/site-packages/nbclient/client.py", line 1058, in async_execute_cell
     await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/home/runner/.local/lib/python3.10/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+  File "/home/runner/.local/lib/python3.12/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
@@ -21,170 +24,168 @@ df.head()
 ------------------
 
 
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mTypeError[0m                                 Traceback (most recent call last)
-Cell [0;32mIn[9], line 1[0m
-[0;32m----> 1[0m df [38;5;241m=[39m [43mflattener[49m[38;5;241;43m.[39;49m[43maggregate_timeseries[49m[43m([49m[43mspecs[49m[38;5;241;43m=[39;49m[43m[[49m[43mpredictor_spec[49m[43m][49m[43m)[49m[38;5;241m.[39mdf
-[1;32m      3[0m df[38;5;241m.[39mhead()
+[31m---------------------------------------------------------------------------[39m
+[31mTypeError[39m                                 Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[9][39m[32m, line 1[39m
+[32m----> [39m[32m1[39m df = [43mflattener[49m[43m.[49m[43maggregate_timeseries[49m[43m([49m[43mspecs[49m[43m=[49m[43m[[49m[43mpredictor_spec[49m[43m][49m[43m)[49m.df
+[32m      3[39m df.head()
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/main.py:160[0m, in [0;36mFlattener.aggregate_timeseries[0;34m(self, specs, step_size)[0m
-[1;32m    154[0m [38;5;28;01mif[39;00m [38;5;28mlen[39m(errors) [38;5;241m>[39m [38;5;241m0[39m:
-[1;32m    155[0m     [38;5;28;01mraise[39;00m SpecError(
-[1;32m    156[0m         [38;5;124m"[39m[38;5;124mConflicting specs.[39m[38;5;124m"[39m
-[1;32m    157[0m         [38;5;241m+[39m [38;5;124m"[39m[38;5;124m"[39m[38;5;241m.[39mjoin(Iter(errors)[38;5;241m.[39mmap([38;5;28;01mlambda[39;00m error: [38;5;124mf[39m[38;5;124m"[39m[38;5;124m  [39m[38;5;130;01m\n[39;00m[38;5;124m - [39m[38;5;132;01m{[39;00merror[38;5;241m.[39mdescription[38;5;132;01m}[39;00m[38;5;124m"[39m)[38;5;241m.[39mto_list())
-[1;32m    158[0m     )
-[0;32m--> 160[0m dfs [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_process_specs[49m[43m([49m[43mspecs[49m[38;5;241;43m=[39;49m[43mspecs[49m[43m,[49m[43m [49m[43mstep_size[49m[38;5;241;43m=[39;49m[43mstep_size[49m[43m)[49m
-[1;32m    162[0m feature_dfs [38;5;241m=[39m horizontally_concatenate_dfs(
-[1;32m    163[0m     dfs,
-[1;32m    164[0m     prediction_time_uuid_col_name[38;5;241m=[39m[38;5;28mself[39m[38;5;241m.[39mpredictiontime_frame[38;5;241m.[39mprediction_time_uuid_col_name,
-[1;32m    165[0m )
-[1;32m    167[0m [38;5;28;01mreturn[39;00m AggregatedFrame(
-[1;32m    168[0m     df[38;5;241m=[39mhorizontally_concatenate_dfs(
-[1;32m    169[0m         [[38;5;28mself[39m[38;5;241m.[39mpredictiontime_frame[38;5;241m.[39mdf, feature_dfs],
-[0;32m   (...)[0m
-[1;32m    174[0m     timestamp_col_name[38;5;241m=[39m[38;5;28mself[39m[38;5;241m.[39mpredictiontime_frame[38;5;241m.[39mtimestamp_col_name,
-[1;32m    175[0m )
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/main.py:160[39m, in [36mFlattener.aggregate_timeseries[39m[34m(self, specs, step_size)[39m
+[32m    154[39m [38;5;28;01mif[39;00m [38;5;28mlen[39m(errors) > [32m0[39m:
+[32m    155[39m     [38;5;28;01mraise[39;00m SpecError(
+[32m    156[39m         [33m"[39m[33mConflicting specs.[39m[33m"[39m
+[32m    157[39m         + [33m"[39m[33m"[39m.join(Iter(errors).map([38;5;28;01mlambda[39;00m error: [33mf[39m[33m"[39m[33m  [39m[38;5;130;01m\n[39;00m[33m - [39m[38;5;132;01m{[39;00merror.description[38;5;132;01m}[39;00m[33m"[39m).to_list())
+[32m    158[39m     )
+[32m--> [39m[32m160[39m dfs = [38;5;28;43mself[39;49m[43m.[49m[43m_process_specs[49m[43m([49m[43mspecs[49m[43m=[49m[43mspecs[49m[43m,[49m[43m [49m[43mstep_size[49m[43m=[49m[43mstep_size[49m[43m)[49m
+[32m    162[39m feature_dfs = horizontally_concatenate_dfs(
+[32m    163[39m     dfs,
+[32m    164[39m     prediction_time_uuid_col_name=[38;5;28mself[39m.predictiontime_frame.prediction_time_uuid_col_name,
+[32m    165[39m )
+[32m    167[39m [38;5;28;01mreturn[39;00m AggregatedFrame(
+[32m    168[39m     df=horizontally_concatenate_dfs(
+[32m    169[39m         [[38;5;28mself[39m.predictiontime_frame.df, feature_dfs],
+[32m   (...)[39m[32m    174[39m     timestamp_col_name=[38;5;28mself[39m.predictiontime_frame.timestamp_col_name,
+[32m    175[39m )
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/main.py:117[0m, in [0;36mFlattener._process_specs[0;34m(self, specs, step_size)[0m
-[1;32m    115[0m     [38;5;28;01mfor[39;00m spec [38;5;129;01min[39;00m track(specs, description[38;5;241m=[39m[38;5;124m"[39m[38;5;124mProcessing specs...[39m[38;5;124m"[39m):
-[1;32m    116[0m         [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mProcessing spec: [39m[38;5;132;01m{[39;00mspec[38;5;241m.[39mvalue_frame[38;5;241m.[39mvalue_col_names[38;5;132;01m}[39;00m[38;5;124m"[39m)
-[0;32m--> 117[0m         processed_spec [38;5;241m=[39m [43mprocess_spec[49m[43m([49m
-[1;32m    118[0m [43m            [49m[43mpredictiontime_frame[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mspec[49m[38;5;241;43m=[39;49m[43mspec[49m[43m,[49m[43m [49m[43mstep_size[49m[38;5;241;43m=[39;49m[43mstep_size[49m
-[1;32m    119[0m [43m        [49m[43m)[49m
-[1;32m    120[0m         dfs[38;5;241m.[39mappend(processed_spec[38;5;241m.[39mdf)
-[1;32m    121[0m [38;5;28;01melse[39;00m:
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/main.py:117[39m, in [36mFlattener._process_specs[39m[34m(self, specs, step_size)[39m
+[32m    115[39m     [38;5;28;01mfor[39;00m spec [38;5;129;01min[39;00m track(specs, description=[33m"[39m[33mProcessing specs...[39m[33m"[39m):
+[32m    116[39m         [38;5;28mprint[39m([33mf[39m[33m"[39m[33mProcessing spec: [39m[38;5;132;01m{[39;00mspec.value_frame.value_col_names[38;5;132;01m}[39;00m[33m"[39m)
+[32m--> [39m[32m117[39m         processed_spec = [43mprocess_spec[49m[43m([49m
+[32m    118[39m [43m            [49m[43mpredictiontime_frame[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mspec[49m[43m=[49m[43mspec[49m[43m,[49m[43m [49m[43mstep_size[49m[43m=[49m[43mstep_size[49m
+[32m    119[39m [43m        [49m[43m)[49m
+[32m    120[39m         dfs.append(processed_spec.df)
+[32m    121[39m [38;5;28;01melse[39;00m:
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/__init__.py:30[0m, in [0;36mprocess_spec[0;34m(spec, predictiontime_frame, step_size)[0m
-[1;32m     27[0m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(spec, StaticSpec):
-[1;32m     28[0m     [38;5;28;01mreturn[39;00m process_static_spec(spec, predictiontime_frame)
-[0;32m---> 30[0m [38;5;28;01mreturn[39;00m [43mprocess_temporal_spec[49m[43m([49m
-[1;32m     31[0m [43m    [49m[43mspec[49m[38;5;241;43m=[39;49m[43mspec[49m[43m,[49m[43m [49m[43mpredictiontime_frame[49m[38;5;241;43m=[39;49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mstep_size[49m[38;5;241;43m=[39;49m[43mstep_size[49m
-[1;32m     32[0m [43m[49m[43m)[49m
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/__init__.py:30[39m, in [36mprocess_spec[39m[34m(spec, predictiontime_frame, step_size)[39m
+[32m     27[39m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(spec, StaticSpec):
+[32m     28[39m     [38;5;28;01mreturn[39;00m process_static_spec(spec, predictiontime_frame)
+[32m---> [39m[32m30[39m [38;5;28;01mreturn[39;00m [43mprocess_temporal_spec[49m[43m([49m
+[32m     31[39m [43m    [49m[43mspec[49m[43m=[49m[43mspec[49m[43m,[49m[43m [49m[43mpredictiontime_frame[49m[43m=[49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mstep_size[49m[43m=[49m[43mstep_size[49m
+[32m     32[39m [43m[49m[43m)[49m
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:250[0m, in [0;36mprocess_temporal_spec[0;34m(spec, predictiontime_frame, step_size)[0m
-[1;32m    244[0m [38;5;28;01mdef[39;00m [38;5;21mprocess_temporal_spec[39m(
-[1;32m    245[0m     spec: TemporalSpec,
-[1;32m    246[0m     predictiontime_frame: PredictionTimeFrame,
-[1;32m    247[0m     step_size: dt[38;5;241m.[39mtimedelta [38;5;241m|[39m [38;5;28;01mNone[39;00m [38;5;241m=[39m [38;5;28;01mNone[39;00m,
-[1;32m    248[0m ) [38;5;241m-[39m[38;5;241m>[39m ProcessedFrame:
-[1;32m    249[0m     [38;5;28;01mif[39;00m step_size [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m:
-[0;32m--> 250[0m         aggregated_value_frames [38;5;241m=[39m [43m_flatten_temporal_spec[49m[43m([49m
-[1;32m    251[0m [43m            [49m[43mspec[49m[43m,[49m[43m [49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mspec[49m[38;5;241;43m.[39;49m[43mvalue_frame[49m
-[1;32m    252[0m [43m        [49m[43m)[49m
-[1;32m    254[0m         result_frame [38;5;241m=[39m horizontally_concatenate_dfs(
-[1;32m    255[0m             dfs[38;5;241m=[39maggregated_value_frames,
-[1;32m    256[0m             prediction_time_uuid_col_name[38;5;241m=[39mpredictiontime_frame[38;5;241m.[39mprediction_time_uuid_col_name,
-[1;32m    257[0m         )
-[1;32m    259[0m     [38;5;28;01melse[39;00m:
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:250[39m, in [36mprocess_temporal_spec[39m[34m(spec, predictiontime_frame, step_size)[39m
+[32m    244[39m [38;5;28;01mdef[39;00m [34mprocess_temporal_spec[39m(
+[32m    245[39m     spec: TemporalSpec,
+[32m    246[39m     predictiontime_frame: PredictionTimeFrame,
+[32m    247[39m     step_size: dt.timedelta | [38;5;28;01mNone[39;00m = [38;5;28;01mNone[39;00m,
+[32m    248[39m ) -> ProcessedFrame:
+[32m    249[39m     [38;5;28;01mif[39;00m step_size [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m:
+[32m--> [39m[32m250[39m         aggregated_value_frames = [43m_flatten_temporal_spec[49m[43m([49m
+[32m    251[39m [43m            [49m[43mspec[49m[43m,[49m[43m [49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mspec[49m[43m.[49m[43mvalue_frame[49m
+[32m    252[39m [43m        [49m[43m)[49m
+[32m    254[39m         result_frame = horizontally_concatenate_dfs(
+[32m    255[39m             dfs=aggregated_value_frames,
+[32m    256[39m             prediction_time_uuid_col_name=predictiontime_frame.prediction_time_uuid_col_name,
+[32m    257[39m         )
+[32m    259[39m     [38;5;28;01melse[39;00m:
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:223[0m, in [0;36m_flatten_temporal_spec[0;34m(spec, predictiontime_frame, value_frame)[0m
-[1;32m    218[0m [38;5;28;01mdef[39;00m [38;5;21m_flatten_temporal_spec[39m(
-[1;32m    219[0m     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
-[1;32m    220[0m ) [38;5;241m-[39m[38;5;241m>[39m [38;5;28mlist[39m[pl[38;5;241m.[39mDataFrame]:
-[1;32m    221[0m     [38;5;28;01mreturn[39;00m (
-[1;32m    222[0m         [43mIter[49m[43m([49m[43mspec[49m[38;5;241;43m.[39;49m[43mnormalised_lookperiod[49m[43m)[49m
-[0;32m--> 223[0m [43m        [49m[38;5;241;43m.[39;49m[43mmap[49m[43m([49m
-[1;32m    224[0m [43m            [49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43mlookperiod[49m[43m:[49m[43m [49m[43m_slice_and_aggregate_spec[49m[43m([49m
-[1;32m    225[0m [43m                [49m[43mtimedelta_frame[49m[38;5;241;43m=[39;49m[43m_get_timedelta_frame[49m[43m([49m
-[1;32m    226[0m [43m                    [49m[43mpredictiontime_frame[49m[38;5;241;43m=[39;49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mvalue_frame[49m[38;5;241;43m=[39;49m[43mvalue_frame[49m
-[1;32m    227[0m [43m                [49m[43m)[49m[43m,[49m
-[1;32m    228[0m [43m                [49m[43mmasked_aggregator[49m[38;5;241;43m=[39;49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43msliced_frame[49m[43m:[49m[43m [49m[43m_aggregate_masked_frame[49m[43m([49m
-[1;32m    229[0m [43m                    [49m[43maggregators[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43maggregators[49m[43m,[49m[43m [49m[43mfallback[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43mfallback[49m[43m,[49m[43m [49m[43mmasked_frame[49m[38;5;241;43m=[39;49m[43msliced_frame[49m
-[1;32m    230[0m [43m                [49m[43m)[49m[43m,[49m
-[1;32m    231[0m [43m                [49m[43mtime_masker[49m[38;5;241;43m=[39;49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43mtimedelta_frame[49m[43m:[49m[43m [49m[43m_mask_outside_lookperiod[49m[43m([49m
-[1;32m    232[0m [43m                    [49m[43mtimedelta_frame[49m[38;5;241;43m=[39;49m[43mtimedelta_frame[49m[43m,[49m
-[1;32m    233[0m [43m                    [49m[43mlookperiod[49m[38;5;241;43m=[39;49m[43mlookperiod[49m[43m,[49m
-[1;32m    234[0m [43m                    [49m[43mcolumn_prefix[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43mcolumn_prefix[49m[43m,[49m
-[1;32m    235[0m [43m                    [49m[43mvalue_col_names[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43mvalue_frame[49m[38;5;241;43m.[39;49m[43mvalue_col_names[49m[43m,[49m
-[1;32m    236[0m [43m                [49m[43m)[49m[43m,[49m
-[1;32m    237[0m [43m            [49m[43m)[49m
-[1;32m    238[0m [43m        [49m[43m)[49m
-[1;32m    239[0m         [38;5;241m.[39mflatten()
-[1;32m    240[0m         [38;5;241m.[39mto_list()
-[1;32m    241[0m     )
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:223[39m, in [36m_flatten_temporal_spec[39m[34m(spec, predictiontime_frame, value_frame)[39m
+[32m    218[39m [38;5;28;01mdef[39;00m [34m_flatten_temporal_spec[39m(
+[32m    219[39m     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
+[32m    220[39m ) -> [38;5;28mlist[39m[pl.DataFrame]:
+[32m    221[39m     [38;5;28;01mreturn[39;00m (
+[32m    222[39m         [43mIter[49m[43m([49m[43mspec[49m[43m.[49m[43mnormalised_lookperiod[49m[43m)[49m
+[32m--> [39m[32m223[39m [43m        [49m[43m.[49m[43mmap[49m[43m([49m
+[32m    224[39m [43m            [49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43mlookperiod[49m[43m:[49m[43m [49m[43m_slice_and_aggregate_spec[49m[43m([49m
+[32m    225[39m [43m                [49m[43mtimedelta_frame[49m[43m=[49m[43m_get_timedelta_frame[49m[43m([49m
+[32m    226[39m [43m                    [49m[43mpredictiontime_frame[49m[43m=[49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mvalue_frame[49m[43m=[49m[43mvalue_frame[49m
+[32m    227[39m [43m                [49m[43m)[49m[43m,[49m
+[32m    228[39m [43m                [49m[43mmasked_aggregator[49m[43m=[49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43msliced_frame[49m[43m:[49m[43m [49m[43m_aggregate_masked_frame[49m[43m([49m
+[32m    229[39m [43m                    [49m[43maggregators[49m[43m=[49m[43mspec[49m[43m.[49m[43maggregators[49m[43m,[49m[43m [49m[43mfallback[49m[43m=[49m[43mspec[49m[43m.[49m[43mfallback[49m[43m,[49m[43m [49m[43mmasked_frame[49m[43m=[49m[43msliced_frame[49m
+[32m    230[39m [43m                [49m[43m)[49m[43m,[49m
+[32m    231[39m [43m                [49m[43mtime_masker[49m[43m=[49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43mtimedelta_frame[49m[43m:[49m[43m [49m[43m_mask_outside_lookperiod[49m[43m([49m
+[32m    232[39m [43m                    [49m[43mtimedelta_frame[49m[43m=[49m[43mtimedelta_frame[49m[43m,[49m
+[32m    233[39m [43m                    [49m[43mlookperiod[49m[43m=[49m[43mlookperiod[49m[43m,[49m
+[32m    234[39m [43m                    [49m[43mcolumn_prefix[49m[43m=[49m[43mspec[49m[43m.[49m[43mcolumn_prefix[49m[43m,[49m
+[32m    235[39m [43m                    [49m[43mvalue_col_names[49m[43m=[49m[43mspec[49m[43m.[49m[43mvalue_frame[49m[43m.[49m[43mvalue_col_names[49m[43m,[49m
+[32m    236[39m [43m                [49m[43m)[49m[43m,[49m
+[32m    237[39m [43m            [49m[43m)[49m
+[32m    238[39m [43m        [49m[43m)[49m
+[32m    239[39m         .flatten()
+[32m    240[39m         .to_list()
+[32m    241[39m     )
 
-File [0;32m~/.local/lib/python3.10/site-packages/iterpy/iter.py:94[0m, in [0;36mIter.map[0;34m(self, func)[0m
-[1;32m     91[0m [38;5;28;01mdef[39;00m [38;5;21mmap[39m(  [38;5;66;03m# Ignore that it's shadowing a python built-in[39;00m
-[1;32m     92[0m     [38;5;28mself[39m, func: Callable[[T], S]
-[1;32m     93[0m ) [38;5;241m-[39m[38;5;241m>[39m Iter[S]:
-[0;32m---> 94[0m     [38;5;28;01mreturn[39;00m [43mIter[49m[43m([49m[38;5;28;43mmap[39;49m[43m([49m[43mfunc[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_iterator[49m[43m)[49m[43m)[49m
+[36mFile [39m[32m~/.local/lib/python3.12/site-packages/iterpy/iter.py:94[39m, in [36mIter.map[39m[34m(self, func)[39m
+[32m     91[39m [38;5;28;01mdef[39;00m [34mmap[39m(  [38;5;66;03m# Ignore that it's shadowing a python built-in[39;00m
+[32m     92[39m     [38;5;28mself[39m, func: Callable[[T], S]
+[32m     93[39m ) -> Iter[S]:
+[32m---> [39m[32m94[39m     [38;5;28;01mreturn[39;00m [43mIter[49m[43m([49m[38;5;28;43mmap[39;49m[43m([49m[43mfunc[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[43m.[49m[43m_iterator[49m[43m)[49m[43m)[49m
 
-File [0;32m~/.local/lib/python3.10/site-packages/iterpy/iter.py:21[0m, in [0;36mIter.__init__[0;34m(self, iterable)[0m
-[1;32m     20[0m [38;5;28;01mdef[39;00m [38;5;21m__init__[39m([38;5;28mself[39m, iterable: Iterable[T]) [38;5;241m-[39m[38;5;241m>[39m [38;5;28;01mNone[39;00m:
-[0;32m---> 21[0m     [38;5;28mself[39m[38;5;241m.[39m_nonconsumable_iterable: [38;5;28mlist[39m[T] [38;5;241m=[39m [38;5;28;43mlist[39;49m[43m([49m[43miterable[49m[43m)[49m
-[1;32m     22[0m     [38;5;28mself[39m[38;5;241m.[39m_current_index: [38;5;28mint[39m [38;5;241m=[39m [38;5;241m0[39m
+[36mFile [39m[32m~/.local/lib/python3.12/site-packages/iterpy/iter.py:21[39m, in [36mIter.__init__[39m[34m(self, iterable)[39m
+[32m     20[39m [38;5;28;01mdef[39;00m [34m__init__[39m([38;5;28mself[39m, iterable: Iterable[T]) -> [38;5;28;01mNone[39;00m:
+[32m---> [39m[32m21[39m     [38;5;28mself[39m._nonconsumable_iterable: [38;5;28mlist[39m[T] = [38;5;28;43mlist[39;49m[43m([49m[43miterable[49m[43m)[49m
+[32m     22[39m     [38;5;28mself[39m._current_index: [38;5;28mint[39m = [32m0[39m
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:224[0m, in [0;36m_flatten_temporal_spec.<locals>.<lambda>[0;34m(lookperiod)[0m
-[1;32m    218[0m [38;5;28;01mdef[39;00m [38;5;21m_flatten_temporal_spec[39m(
-[1;32m    219[0m     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
-[1;32m    220[0m ) [38;5;241m-[39m[38;5;241m>[39m [38;5;28mlist[39m[pl[38;5;241m.[39mDataFrame]:
-[1;32m    221[0m     [38;5;28;01mreturn[39;00m (
-[1;32m    222[0m         Iter(spec[38;5;241m.[39mnormalised_lookperiod)
-[1;32m    223[0m         [38;5;241m.[39mmap(
-[0;32m--> 224[0m             [38;5;28;01mlambda[39;00m lookperiod: [43m_slice_and_aggregate_spec[49m[43m([49m
-[1;32m    225[0m [43m                [49m[43mtimedelta_frame[49m[38;5;241;43m=[39;49m[43m_get_timedelta_frame[49m[43m([49m
-[1;32m    226[0m [43m                    [49m[43mpredictiontime_frame[49m[38;5;241;43m=[39;49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mvalue_frame[49m[38;5;241;43m=[39;49m[43mvalue_frame[49m
-[1;32m    227[0m [43m                [49m[43m)[49m[43m,[49m
-[1;32m    228[0m [43m                [49m[43mmasked_aggregator[49m[38;5;241;43m=[39;49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43msliced_frame[49m[43m:[49m[43m [49m[43m_aggregate_masked_frame[49m[43m([49m
-[1;32m    229[0m [43m                    [49m[43maggregators[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43maggregators[49m[43m,[49m[43m [49m[43mfallback[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43mfallback[49m[43m,[49m[43m [49m[43mmasked_frame[49m[38;5;241;43m=[39;49m[43msliced_frame[49m
-[1;32m    230[0m [43m                [49m[43m)[49m[43m,[49m
-[1;32m    231[0m [43m                [49m[43mtime_masker[49m[38;5;241;43m=[39;49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43mtimedelta_frame[49m[43m:[49m[43m [49m[43m_mask_outside_lookperiod[49m[43m([49m
-[1;32m    232[0m [43m                    [49m[43mtimedelta_frame[49m[38;5;241;43m=[39;49m[43mtimedelta_frame[49m[43m,[49m
-[1;32m    233[0m [43m                    [49m[43mlookperiod[49m[38;5;241;43m=[39;49m[43mlookperiod[49m[43m,[49m
-[1;32m    234[0m [43m                    [49m[43mcolumn_prefix[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43mcolumn_prefix[49m[43m,[49m
-[1;32m    235[0m [43m                    [49m[43mvalue_col_names[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43mvalue_frame[49m[38;5;241;43m.[39;49m[43mvalue_col_names[49m[43m,[49m
-[1;32m    236[0m [43m                [49m[43m)[49m[43m,[49m
-[1;32m    237[0m [43m            [49m[43m)[49m
-[1;32m    238[0m         )
-[1;32m    239[0m         [38;5;241m.[39mflatten()
-[1;32m    240[0m         [38;5;241m.[39mto_list()
-[1;32m    241[0m     )
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:224[39m, in [36m_flatten_temporal_spec.<locals>.<lambda>[39m[34m(lookperiod)[39m
+[32m    218[39m [38;5;28;01mdef[39;00m [34m_flatten_temporal_spec[39m(
+[32m    219[39m     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
+[32m    220[39m ) -> [38;5;28mlist[39m[pl.DataFrame]:
+[32m    221[39m     [38;5;28;01mreturn[39;00m (
+[32m    222[39m         Iter(spec.normalised_lookperiod)
+[32m    223[39m         .map(
+[32m--> [39m[32m224[39m             [38;5;28;01mlambda[39;00m lookperiod: [43m_slice_and_aggregate_spec[49m[43m([49m
+[32m    225[39m [43m                [49m[43mtimedelta_frame[49m[43m=[49m[43m_get_timedelta_frame[49m[43m([49m
+[32m    226[39m [43m                    [49m[43mpredictiontime_frame[49m[43m=[49m[43mpredictiontime_frame[49m[43m,[49m[43m [49m[43mvalue_frame[49m[43m=[49m[43mvalue_frame[49m
+[32m    227[39m [43m                [49m[43m)[49m[43m,[49m
+[32m    228[39m [43m                [49m[43mmasked_aggregator[49m[43m=[49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43msliced_frame[49m[43m:[49m[43m [49m[43m_aggregate_masked_frame[49m[43m([49m
+[32m    229[39m [43m                    [49m[43maggregators[49m[43m=[49m[43mspec[49m[43m.[49m[43maggregators[49m[43m,[49m[43m [49m[43mfallback[49m[43m=[49m[43mspec[49m[43m.[49m[43mfallback[49m[43m,[49m[43m [49m[43mmasked_frame[49m[43m=[49m[43msliced_frame[49m
+[32m    230[39m [43m                [49m[43m)[49m[43m,[49m
+[32m    231[39m [43m                [49m[43mtime_masker[49m[43m=[49m[38;5;28;43;01mlambda[39;49;00m[43m [49m[43mtimedelta_frame[49m[43m:[49m[43m [49m[43m_mask_outside_lookperiod[49m[43m([49m
+[32m    232[39m [43m                    [49m[43mtimedelta_frame[49m[43m=[49m[43mtimedelta_frame[49m[43m,[49m
+[32m    233[39m [43m                    [49m[43mlookperiod[49m[43m=[49m[43mlookperiod[49m[43m,[49m
+[32m    234[39m [43m                    [49m[43mcolumn_prefix[49m[43m=[49m[43mspec[49m[43m.[49m[43mcolumn_prefix[49m[43m,[49m
+[32m    235[39m [43m                    [49m[43mvalue_col_names[49m[43m=[49m[43mspec[49m[43m.[49m[43mvalue_frame[49m[43m.[49m[43mvalue_col_names[49m[43m,[49m
+[32m    236[39m [43m                [49m[43m)[49m[43m,[49m
+[32m    237[39m [43m            [49m[43m)[49m
+[32m    238[39m         )
+[32m    239[39m         .flatten()
+[32m    240[39m         .to_list()
+[32m    241[39m     )
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:148[0m, in [0;36m_slice_and_aggregate_spec[0;34m(timedelta_frame, masked_aggregator, time_masker)[0m
-[1;32m    144[0m [38;5;28;01mdef[39;00m [38;5;21m_slice_and_aggregate_spec[39m(
-[1;32m    145[0m     timedelta_frame: TimeDeltaFrame, masked_aggregator: MaskedAggregator, time_masker: TimeMasker
-[1;32m    146[0m ) [38;5;241m-[39m[38;5;241m>[39m pl[38;5;241m.[39mDataFrame:
-[1;32m    147[0m     sliced_frame [38;5;241m=[39m time_masker(timedelta_frame)
-[0;32m--> 148[0m     [38;5;28;01mreturn[39;00m [43mmasked_aggregator[49m[43m([49m[43msliced_frame[49m[43m)[49m
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:148[39m, in [36m_slice_and_aggregate_spec[39m[34m(timedelta_frame, masked_aggregator, time_masker)[39m
+[32m    144[39m [38;5;28;01mdef[39;00m [34m_slice_and_aggregate_spec[39m(
+[32m    145[39m     timedelta_frame: TimeDeltaFrame, masked_aggregator: MaskedAggregator, time_masker: TimeMasker
+[32m    146[39m ) -> pl.DataFrame:
+[32m    147[39m     sliced_frame = time_masker(timedelta_frame)
+[32m--> [39m[32m148[39m     [38;5;28;01mreturn[39;00m [43mmasked_aggregator[49m[43m([49m[43msliced_frame[49m[43m)[49m
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:228[0m, in [0;36m_flatten_temporal_spec.<locals>.<lambda>.<locals>.<lambda>[0;34m(sliced_frame)[0m
-[1;32m    218[0m [38;5;28;01mdef[39;00m [38;5;21m_flatten_temporal_spec[39m(
-[1;32m    219[0m     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
-[1;32m    220[0m ) [38;5;241m-[39m[38;5;241m>[39m [38;5;28mlist[39m[pl[38;5;241m.[39mDataFrame]:
-[1;32m    221[0m     [38;5;28;01mreturn[39;00m (
-[1;32m    222[0m         Iter(spec[38;5;241m.[39mnormalised_lookperiod)
-[1;32m    223[0m         [38;5;241m.[39mmap(
-[1;32m    224[0m             [38;5;28;01mlambda[39;00m lookperiod: _slice_and_aggregate_spec(
-[1;32m    225[0m                 timedelta_frame[38;5;241m=[39m_get_timedelta_frame(
-[1;32m    226[0m                     predictiontime_frame[38;5;241m=[39mpredictiontime_frame, value_frame[38;5;241m=[39mvalue_frame
-[1;32m    227[0m                 ),
-[0;32m--> 228[0m                 masked_aggregator[38;5;241m=[39m[38;5;28;01mlambda[39;00m sliced_frame: [43m_aggregate_masked_frame[49m[43m([49m
-[1;32m    229[0m [43m                    [49m[43maggregators[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43maggregators[49m[43m,[49m[43m [49m[43mfallback[49m[38;5;241;43m=[39;49m[43mspec[49m[38;5;241;43m.[39;49m[43mfallback[49m[43m,[49m[43m [49m[43mmasked_frame[49m[38;5;241;43m=[39;49m[43msliced_frame[49m
-[1;32m    230[0m [43m                [49m[43m)[49m,
-[1;32m    231[0m                 time_masker[38;5;241m=[39m[38;5;28;01mlambda[39;00m timedelta_frame: _mask_outside_lookperiod(
-[1;32m    232[0m                     timedelta_frame[38;5;241m=[39mtimedelta_frame,
-[1;32m    233[0m                     lookperiod[38;5;241m=[39mlookperiod,
-[1;32m    234[0m                     column_prefix[38;5;241m=[39mspec[38;5;241m.[39mcolumn_prefix,
-[1;32m    235[0m                     value_col_names[38;5;241m=[39mspec[38;5;241m.[39mvalue_frame[38;5;241m.[39mvalue_col_names,
-[1;32m    236[0m                 ),
-[1;32m    237[0m             )
-[1;32m    238[0m         )
-[1;32m    239[0m         [38;5;241m.[39mflatten()
-[1;32m    240[0m         [38;5;241m.[39mto_list()
-[1;32m    241[0m     )
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:228[39m, in [36m_flatten_temporal_spec.<locals>.<lambda>.<locals>.<lambda>[39m[34m(sliced_frame)[39m
+[32m    218[39m [38;5;28;01mdef[39;00m [34m_flatten_temporal_spec[39m(
+[32m    219[39m     spec: TemporalSpec, predictiontime_frame: PredictionTimeFrame, value_frame: ValueFrame
+[32m    220[39m ) -> [38;5;28mlist[39m[pl.DataFrame]:
+[32m    221[39m     [38;5;28;01mreturn[39;00m (
+[32m    222[39m         Iter(spec.normalised_lookperiod)
+[32m    223[39m         .map(
+[32m    224[39m             [38;5;28;01mlambda[39;00m lookperiod: _slice_and_aggregate_spec(
+[32m    225[39m                 timedelta_frame=_get_timedelta_frame(
+[32m    226[39m                     predictiontime_frame=predictiontime_frame, value_frame=value_frame
+[32m    227[39m                 ),
+[32m--> [39m[32m228[39m                 masked_aggregator=[38;5;28;01mlambda[39;00m sliced_frame: [43m_aggregate_masked_frame[49m[43m([49m
+[32m    229[39m [43m                    [49m[43maggregators[49m[43m=[49m[43mspec[49m[43m.[49m[43maggregators[49m[43m,[49m[43m [49m[43mfallback[49m[43m=[49m[43mspec[49m[43m.[49m[43mfallback[49m[43m,[49m[43m [49m[43mmasked_frame[49m[43m=[49m[43msliced_frame[49m
+[32m    230[39m [43m                [49m[43m)[49m,
+[32m    231[39m                 time_masker=[38;5;28;01mlambda[39;00m timedelta_frame: _mask_outside_lookperiod(
+[32m    232[39m                     timedelta_frame=timedelta_frame,
+[32m    233[39m                     lookperiod=lookperiod,
+[32m    234[39m                     column_prefix=spec.column_prefix,
+[32m    235[39m                     value_col_names=spec.value_frame.value_col_names,
+[32m    236[39m                 ),
+[32m    237[39m             )
+[32m    238[39m         )
+[32m    239[39m         .flatten()
+[32m    240[39m         .to_list()
+[32m    241[39m     )
 
-File [0;32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:134[0m, in [0;36m_aggregate_masked_frame[0;34m(masked_frame, aggregators, fallback)[0m
-[1;32m    122[0m value_columns [38;5;241m=[39m (
-[1;32m    123[0m     Iter(grouped_frame[38;5;241m.[39mcolumns)
-[1;32m    124[0m     [38;5;241m.[39mfilter(
-[0;32m   (...)[0m
-[1;32m    129[0m     [38;5;241m.[39mmap([38;5;28;01mlambda[39;00m old_name: (old_name, [38;5;124mf[39m[38;5;124m"[39m[38;5;132;01m{[39;00mold_name[38;5;132;01m}[39;00m[38;5;124m_fallback_[39m[38;5;132;01m{[39;00mfallback[38;5;132;01m}[39;00m[38;5;124m"[39m))
-[1;32m    130[0m )
-[1;32m    131[0m rename_mapping [38;5;241m=[39m [38;5;28mdict[39m(value_columns)
-[1;32m    133[0m with_fallback [38;5;241m=[39m grouped_frame[38;5;241m.[39mwith_columns(
-[0;32m--> 134[0m     [43mcs[49m[38;5;241;43m.[39;49m[43mcontains[49m[43m([49m[38;5;241;43m*[39;49m[43mmasked_frame[49m[38;5;241;43m.[39;49m[43mvalue_col_names[49m[43m)[49m[38;5;241m.[39mfill_null(fallback)
-[1;32m    135[0m )[38;5;241m.[39mrename(rename_mapping)
-[1;32m    137[0m [38;5;28;01mreturn[39;00m with_fallback
+[36mFile [39m[32m~/work/timeseriesflattener/timeseriesflattener/src/timeseriesflattener/processors/temporal.py:134[39m, in [36m_aggregate_masked_frame[39m[34m(masked_frame, aggregators, fallback)[39m
+[32m    122[39m value_columns = (
+[32m    123[39m     Iter(grouped_frame.columns)
+[32m    124[39m     .filter(
+[32m   (...)[39m[32m    129[39m     .map([38;5;28;01mlambda[39;00m old_name: (old_name, [33mf[39m[33m"[39m[38;5;132;01m{[39;00mold_name[38;5;132;01m}[39;00m[33m_fallback_[39m[38;5;132;01m{[39;00mfallback[38;5;132;01m}[39;00m[33m"[39m))
+[32m    130[39m )
+[32m    131[39m rename_mapping = [38;5;28mdict[39m(value_columns)
+[32m    133[39m with_fallback = grouped_frame.with_columns(
+[32m--> [39m[32m134[39m     [43mcs[49m[43m.[49m[43mcontains[49m[43m([49m[43m*[49m[43mmasked_frame[49m[43m.[49m[43mvalue_col_names[49m[43m)[49m.fill_null(fallback)
+[32m    135[39m ).rename(rename_mapping)
+[32m    137[39m [38;5;28;01mreturn[39;00m with_fallback
 
-[0;31mTypeError[0m: contains() takes 1 positional argument but 2 were given
+[31mTypeError[39m: contains() takes 1 positional argument but 2 were given
 
