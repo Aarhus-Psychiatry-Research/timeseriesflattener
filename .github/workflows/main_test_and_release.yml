@@ -3,7 +3,7 @@
 # 2) updates the version according to semantic versioning
 # 3) creates a release
 # 4) uploads the package to pypi
-name: Pytest
+name: tests
 
 on:
   pull_request:
