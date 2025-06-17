@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v2.5.2 (2025-06-17)
+
+### Fix
+
+* Upgrade protobuf ([`aa4dc8b`](https://github.com/Aarhus-Psychiatry-Research/timeseriesflattener/commit/aa4dc8bf5435211b62164b9e8029f3c6bd06f325))
+
 ## v2.5.1 (2024-11-26)
 
 ### Fix
